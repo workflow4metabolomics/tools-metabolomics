@@ -1,0 +1,254 @@
+<tool id="NmrBucketing" name="NMR_Bucketing" version="2015-01-08">
+    
+	<requirements>
+		<requirement type="binary"> R </requirement>
+	</requirements>
+    
+	<description> Bucketing and integration of NMR Bruker raw data
+	</description>
+    
+	<command interpreter="Rscript">
+		NmrBucketing_wrapper.R
+
+		#if $inputs.input == "lib":
+		    library $__app__.config.user_library_import_dir/$__user_email__/$inputs.library
+		#elif $inputs.input == "zip_file":
+		    zipfile $inputs.zip_file
+		#end if
+
+
+		## Bucket width
+		bucket_width $bucket_width
+		
+		## Spectra borders
+		left_border $left_border
+		right_border $right_border
+		
+		
+		## Spectra representation
+		graphType $graphType
+
+		## Exclusion zone
+		zone_exclusion_choices.choice ${zone_exclusion_choices.choice}
+		#if str($zone_exclusion_choices.choice) == 'yes':
+			#for $i in $zone_exclusion_choices.conditions:
+				zone_exclusion_left ${i.zone_exclusion_left}
+				zone_exclusion_right ${i.zone_exclusion_right}
+			#end for
+		#end if
+
+		## Outputs
+		logOut log.log
+		dataMatrixOut $dataMatrixOut
+		sampleOut $sampleOut
+		variableOut $variableOut
+		graphOut $graphOut; cat log.log
+	</command>
+    
+	<inputs>
+		<conditional name="inputs">
+		    <param name="input" type="select" label="Choose your inputs method" >
+		        <option value="zip_file" selected="true">Zip file from your history containing your Bruker directories</option>
+		        <option value="lib" >Library directory name</option>
+		    </param>
+		     <when value="zip_file">
+		     	<param name="zip_file" type="data" format="no_unzip.zip" label="Zip file" />
+		     </when>
+		    <when value="lib">
+		    	<param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data" >
+				<validator type="empty_field"/> 
+			</param>
+		    </when>
+
+	     	 </conditional>
+
+		<param name="bucket_width" label="Bucket width" type="float" value="0.04" help="Default value is 0.04 ppm"/>
+
+		<param name="left_border" label="Left Border" type="float" value="10.0" size="10" help="Default value is 10 ppm"/>
+		<param name="right_border" label="Right Border" type="float" value="0.5" size="10" help="Default value is 0.5 ppm"/>
+
+		<conditional name="zone_exclusion_choices">
+			<param name="choice" type="select" label="Exclusion zone(s)" help="Choose if you want to exclude particular zone(s)" >
+				<option value="yes" > yes </option>
+				<option value="no" selected="true"> no </option>
+			</param>
+			<when value="yes">
+				<repeat name="conditions" title="exclusion zones">
+					<param name="zone_exclusion_left" label="Left exclusion zone border" type="float" value="10.0" />
+					<param name="zone_exclusion_right" label="Right exclusion zone border" type="float" value="10.0" />
+				</repeat>
+			</when>
+		</conditional>
+
+		<param name="graphType" label="Spectra representation" type="select" help="Select 'None' for no representation,'Overlay' to overlay all spectra on a unique chart and 'One per individual' to generate an individual chart for each observation">
+			<option value="None"> none </option>
+			<option value="Overlay"> Overlay </option>
+			<option value="One_per_individual"> One_per_individual </option>
+		</param>
+
+	</inputs>
+    
+	<outputs>
+		<data format="tabular" name="dataMatrixOut" label="${tool.name}_bucketedData" />
+		<data format="tabular" name="sampleOut" label="${tool.name}_sampleMetadata" />
+		<data format="tabular" name="variableOut" label="${tool.name}_variableMetadata" />
+		<data format="pdf" name="graphOut" label="${tool.name}_spectra" >
+			<filter> graphType != "None" </filter>
+		</data>
+	</outputs>
+    
+	<stdio>
+	     <exit_code range="1:" level="fatal" />
+	</stdio>
+    
+	<help>
+	
+.. class:: infomark
+
+**Authors** Marie Tremblay-Franco (marie.tremblay-franco@toulouse.inra.fr), Marion Landi (marion.landi@clermont.inra.fr) and Franck Giacomoni (fgiacomoni@clermont.inra.fr)
+
+
+=============
+NMR Bucketing
+=============
+
+-----------
+Description
+-----------
+
+Bucketing / Binning (spectra segmentation in fixed-size windows) and integration (sum of absolute intensities inside each bucket) to preprocess NMR data
+ 
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+========================= ================= ======= =========
+Name                      output file       format  parameter
+========================= ================= ======= =========
+NA                        NA                zip      NA				
+========================= ================= ======= =========
+
+
+**Downstream tools**
+
++---------------------------+----------------------+--------+
+| Name                      | Output file          | Format |
++===========================+======================+========+
+|NmrNormalization           | dataMatrix.tsv       | Tabular|
++---------------------------+----------------------+--------+
+|Univariate                 | variableMetadata.tsv | Tabular|
++---------------------------+----------------------+--------+
+|Multivariate               | sampleMetadata.tsv   | Tabular|
++---------------------------+----------------------+--------+
+|                           | variableMetadata.tsv | Tabular|
++---------------------------+----------------------+--------+
+
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| Parameter : num + label   |   Format   |
++===========================+============+
+| 1 : Choose your inputs    |   zip      |
++---------------------------+------------+
+
+**Choose your inputs**
+
+You have two methods for your inputs:
+
+    | Zip file (recommended): You can put a zip file containing your inputs: myinputs.zip (containing all your conditions as sub-directories).
+    | library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories.
+
+.. image:: ./static/images/Mth_Architecture_Repertoire_Bruker.png
+        :width: 800
+
+----------
+Parameters
+----------
+
+Bucket width
+	| size of windows
+	|
+
+Left limit
+	| Upper boundary: values greater than this value are not used in the bucketing. Default value is 10.0 ppm
+	|
+
+Right limit
+	| Lower boundary: values lower than this value are not used in the bucketing. Default value is 0.5 ppm
+	|
+
+Exclusion zone(s)
+	| Spectral regions to exclude, water, solvents, ... resonance
+	| If YES: parameters **Lower exclusion zone** and **Upper exclusion zone** are visible,
+	| If NO: no zone to exclude
+	| Default value is NO
+	|
+
+Left exclusion zone
+	| Upper boundary of exclusion zone
+	|
+
+Right exclusion zone
+	| Lower boundary of exclusion zone
+
+| *Notes:* 
+| - these parameters can be used several times using the "Add new exclusion zones" button
+|
+
+Spectra representation:
+	| Graphical chart of bucketed and integrated raw files
+	| If "Overlay": the n (sample number) spectra are overlaid on the same figure
+	| If "One_per_individual": pdf file includes n pages (1 per sample)
+	|
+
+
+------------
+Output files
+------------
+
+
+bucketedData.tsv
+	| tabular output
+	| Data matrix with p rows (buckets) and n columns (samples) containing the intensities
+	|
+
+sampleMetadata.tsv
+	| tabular output
+	| file with n rows (samples) and 2 columns containing sample identifier (rownames) and sample order: the rownames of sampleMetadata must be identical to the colnames of the bucketedData. Can add columns with numeric and/or character sample metadata. This file is optional in the normalization step and mandatory in the statistical analysis step of the workflow.
+	|
+
+variableMetadata.tsv
+	| tabular output
+	| file with p rows (buckets) and 2 columns containing variable identifier (rownames) and bucket order: the rownames of variableMetadata must be identical to the rownames of the bucketedData. Can add columns with numeric and/or character variable metadata. This file is mandatory in the statistical analysis step of the workflow.
+	|
+
+spectra.pdf
+	| pdf output
+	| Graphical chart of bucketed and integrated data
+	| 
+
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+
+.. class:: warningmark
+
+Under construction
+
+.. image:: ./static/images/Mth_Travaux.png
+        :width: 100
+
+
+   </help>
+
+</tool>
+

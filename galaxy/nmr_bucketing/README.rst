@@ -16,4 +16,5 @@ Test Status
 
 Planemo test using conda: passed
 
+Planemo shed_test: passed
 

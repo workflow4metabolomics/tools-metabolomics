@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="R" version="3.1.2">
+        <repository name="package_r_3_1_2" owner="iuc" prior_installation_required="True" />
+    </package>
+
+    <package name="r-pracma" version="1.8.8">
+        <install version="1.0">
+            <actions>
+                <action type="setup_r_environment">
+                    <repository name="package_r_3_1_2" owner="iuc">
+                        <package name="R" version="3.1.2" />
+                    </repository>
+                    
+                    <package>http://application.sb-roscoff.fr/download/w4m/cran-archive/package_r_pracma_1_8_8/pracma_1.8.8.tar.gz</package>                    
+                    <package>http://application.sb-roscoff.fr/download/w4m/cran-archive/package_r_pracma_1_8_8/batch_1.1-4.tar.gz</package>
+                </action>
+            </actions>
+        </install>
+        <readme>
+batch: https://cran.r-project.org/web/packages/pracma/index.html
+pracma: Practical Numerical Math Functions
+
+Functions from numerical analysis and linear algebra, numerical optimization, differential equations, plus some special functions. Uses Matlab function names where appropriate to simplify porting.
+
+Author: 	Hans W. Borchers
+
+
+        </readme>
+    </package>
+</tool_dependency>

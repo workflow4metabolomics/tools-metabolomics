@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="R" version="3.1.2">
+        <repository name="package_r_3_1_2" owner="iuc" />
+    </package>
+    <package name="r-pracma" version="1.8.8">
+	<repository name="package_r_pracma_1_8_8" owner="lecorguille" />
+    </package>
+</tool_dependency>

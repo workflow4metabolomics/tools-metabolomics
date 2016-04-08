@@ -1,0 +1,7 @@
+categories: [Metabolomics]
+description: '[W4M][NMR] NMR Bucketing - Bucketing / Binning (spectra segmentation in fixed-size windows) and integration (sum of absolute intensities inside each bucket) to preprocess NMR data'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org'
+name: nmr_bucketing
+owner: marie-tremblay-metatoul
+remote_repository_url: https://github.com/workflow4metabolomics/nmr_bucketing

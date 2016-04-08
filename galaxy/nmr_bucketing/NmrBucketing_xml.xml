@@ -1,4 +1,4 @@
-<tool id="NmrBucketing" name="NMR_Bucketing" version="2015-01-08">
+<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.1">
 
     <description> Bucketing and integration of NMR Bruker raw data</description>
 

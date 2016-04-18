@@ -1,0 +1,20 @@
+
+# This is a special configuration file to run tests on Travis-CI via
+# GitHub notifications when changes are committed.
+#
+# See http://travis-ci.org/ for details
+language: python
+
+before_install:
+ - sudo apt-get install -y python-virtualenv
+ - virtualenv planemo-venv
+ - . planemo-venv/bin/activate
+ - pip install planemo
+ - planemo conda_init
+
+install:
+ - planemo conda_install ${TRAVIS_BUILD_DIR}/galaxy/nmr_bucketing/
+
+#TODO: delete --galaxy_branch "dev" as soon as planemo fix the bug
+script:
+ - planemo test --install_galaxy --no_cache_galaxy --conda_dependency_resolution ${TRAVIS_BUILD_DIR}/galaxy/nmr_bucketing/ --galaxy_branch "dev"

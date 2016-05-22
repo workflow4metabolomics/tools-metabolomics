@@ -269,7 +269,7 @@ The main recipe: [https://github.com/bioconda/bioconda-recipes/tree/master/recip
 ```
 #To install miniconda2
 #http://conda.pydata.org/miniconda.html
-#To install the IPO R library using conda:
+#To install the needed R library using conda:
 conda install r-batch r-pracma
 #To set an environment:
 conda create -n nmr_bucketing r-batch r-pracma`

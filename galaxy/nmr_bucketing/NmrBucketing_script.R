@@ -206,8 +206,11 @@ NmrBucketing <- function(directory,leftBorder = 10.0,rightBorder = 0.5,bucketSiz
 
     if (graph == "Overlay")
     {
+      x <- 1:length(BucketedData[,1])
       ymax <- max(bucketedSpectra)
-      plot(1:length(bucketedSpectra[,1]),bucketedSpectra[,1],ylim=c(0,ymax),type='l',col=1,xlab="Chemical shift",ylab="Intensity")
+      plot(x,BucketedData[,1],ylim=c(0,ymax),type='l',col=1,xlab="",xaxt="n",ylab="Intensity")
+      # x-axis labels
+      axis(1, at=seq(1,length(x),by=50),labels=gsub("B","",rownames(BucketedData)[seq(1,length(x),by=50)]), las=2)
       for (i in 2:ncol(bucketedSpectra))
       {
         spectre <- bucketedSpectra[,i]
@@ -219,7 +222,9 @@ NmrBucketing <- function(directory,leftBorder = 10.0,rightBorder = 0.5,bucketSiz
     {
       for (i in 1:ncol(bucketedSpectra))
       {
-        plot(1:length(bucketedSpectra[,i]),bucketedSpectra[,i],type='l',col=1,xlab="Chemical shift",ylab="Intensity")
+        x <- 1:length(BucketedData[,1])
+        plot(x,bucketedSpectra[,i],type='l',col=1,xlab="",xaxt="n",ylab="Intensity")
+        axis(1, at=seq(1,length(x),by=50),labels=gsub("B","",rownames(BucketedData)[seq(1,length(x),by=50)]), las=2)
       }
     }
     dev.off()

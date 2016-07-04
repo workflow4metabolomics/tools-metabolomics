@@ -96,9 +96,9 @@
     </inputs>
 
     <outputs>
-        <data format="tabular" name="dataMatrixOut" label="${tool.name}_bucketedData" />
         <data format="tabular" name="sampleOut" label="${tool.name}_sampleMetadata" />
         <data format="tabular" name="variableOut" label="${tool.name}_variableMetadata" />
+        <data format="tabular" name="dataMatrixOut" label="${tool.name}_bucketedData" />
         <data format="pdf" name="graphOut" label="${tool.name}_spectra" >
             <filter> graphType != "None" </filter>
         </data>

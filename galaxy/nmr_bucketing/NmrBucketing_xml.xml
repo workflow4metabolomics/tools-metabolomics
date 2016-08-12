@@ -1,4 +1,4 @@
-<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.1">
+<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.2">
 
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
@@ -270,6 +270,21 @@ Under construction
 .. image:: ./static/images/Mth_Travaux.png
 :width: 100
 
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+**Version 1.0.2 - 12/08/2016**
+
+- ENHANCEMENT: x-axis customization: add chemical shift labels 
+
+**Version 1.0.1 - 04/04/2016**
+
+- TEST: refactoring to pass planemo test using conda dependencies
+
+
+**Version 2015-01-08 - 08/01/2015**
 
     </help>
     <citations>

@@ -231,9 +231,6 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
   rownames(variableMetadata) <- rownames(bucketedSpectra)
   colnames(variableMetadata) <- "VariableOrder"
 
-  # fileName
-  cd(fileName)  
-  
   # Bucketed spectra graph
   if (graph != "None")
   {

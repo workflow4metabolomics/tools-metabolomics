@@ -8,7 +8,7 @@
 # Version 3 : 24-10-2016                                                                       #
 #                                                                                              #
 # Input files : modification on october 2016                                                   #
-#   - Raw bruker files included in user-defined directory                                      #
+#   - Raw bruker files included in user-defined fileName                                      #
 #   - Preprocessed files (alignment, ...) included in p x n dataframe                          #
 ################################################################################################
 NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,bucketSize = 0.04,exclusionZones,
@@ -135,13 +135,7 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
     return(f.bucket)
   }
   
-    
-  # File names
-  FileNames <- list.files(directory)
-  n <- length(FileNames)
-  
   # Exclusion zones
-##  if (exclusionZones == "yes")
   if (!is.null(exclusionZonesBorders))
   {
     exclusion.zone.m <- matrix(exclusionZonesBorders[[1]],nrow=1)
@@ -149,40 +143,78 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
       for (k in 2:length(exclusionZonesBorders))
         exclusion.zone.m <- rbind(exclusion.zone.m,exclusionZonesBorders[[k]])
   }
-
-  # Reading and Bucketing
-  directory <- paste(directory,"/",sep="")
-
-  i <- 1
-  while (i <= n)
+  
+  ## CHANGES
+    ## Inputs from zip or library (raw files)
+  if (fileType == "zip")
   {
-    # File reading
-    SampleDir <- paste(directory,FileNames[i],"/1/",sep="")
-    setwd(SampleDir)
-    DataDir <- "pdata/1"
-
-    rawSpectrum <- NmRBrucker_read(DataDir,rawSpectrum)
-
-    orderedSpectrum <- rawSpectrum[order(rawSpectrum[,1],decreasing=T), ]
+      # File names
+    FileNames <- list.files(fileName)
+    n <- length(FileNames)
     
-    # Removal of chemical shifts > leftBorder or < rightBorder boundaries
-    truncatedSpectrum <- orderedSpectrum[orderedSpectrum[,1] < leftBorder & orderedSpectrum[,1] > rightBorder, ]
-    truncatedSpectrum[,1] <- round(truncatedSpectrum[,1],3)
-    
-    # Bucketing
-    spectrum.bucket <- NmrBrucker_bucket(truncatedSpectrum)
-    
-    # spectrum Concatenation
-    if (i == 1)
-      bucketedSpectra <- spectrum.bucket
-    if (i > 1)
-      bucketedSpectra <- cbind(bucketedSpectra,spectrum.bucket[,2])
-    colnames(bucketedSpectra)[i+1] <- FileNames[i]
-    
-    # Next sample
-    rm(spectrum.bucket)
-    i <- i +1
+    # Reading and Bucketing
+    fileName <- paste(fileName,"/",sep="")
+  
+    i <- 1
+    while (i <= n)
+    {
+      # File reading
+      SampleDir <- paste(fileName,FileNames[i],"/1/",sep="")
+      setwd(SampleDir)
+      DataDir <- "pdata/1"
+  
+      rawSpectrum <- NmRBrucker_read(DataDir,rawSpectrum)
+  
+      orderedSpectrum <- rawSpectrum[order(rawSpectrum[,1],decreasing=T), ]
+      
+      # Removal of chemical shifts > leftBorder or < rightBorder boundaries
+      truncatedSpectrum <- orderedSpectrum[orderedSpectrum[,1] < leftBorder & orderedSpectrum[,1] > rightBorder, ]
+      truncatedSpectrum[,1] <- round(truncatedSpectrum[,1],3)
+      
+      # Bucketing
+      spectrum.bucket <- NmrBrucker_bucket(truncatedSpectrum)
+      
+      # spectrum Concatenation
+      if (i == 1)
+        bucketedSpectra <- spectrum.bucket
+      if (i > 1)
+        bucketedSpectra <- cbind(bucketedSpectra,spectrum.bucket[,2])
+      colnames(bucketedSpectra)[i+1] <- FileNames[i]
+      
+      # Next sample
+      rm(spectrum.bucket)
+      i <- i +1
+    }
+    # Directory
+    cd(fileName)  
   }
+  
+  ## Inputs from dataset (preprocessed files)
+  if (fileType=="tsv")
+  {
+    FileNames <- colnames(fileName)
+    n <- length(FileNames)
+    
+    for (i in 1:ncol(fileName))
+    {
+      orderedSpectrum <- cbind(as.numeric(rownames(fileName)),fileName[,i])
+      orderedSpectrum <- orderedSpectrum[order(orderedSpectrum[,1],decreasing=T), ]
+      
+      truncatedSpectrum <- orderedSpectrum[orderedSpectrum[,1] < leftBorder & orderedSpectrum[,1] > rightBorder, ]
+      truncatedSpectrum[,1] <- round(truncatedSpectrum[,1],3)
+      
+      # Bucketing
+      spectrum.bucket <- NmrBrucker_bucket(truncatedSpectrum)
+      
+      # spectrum Concatenation
+      if (i == 1)
+        bucketedSpectra <- spectrum.bucket
+      if (i > 1)
+        bucketedSpectra <- cbind(bucketedSpectra,spectrum.bucket[,2])
+      colnames(bucketedSpectra)[i+1] <- colnames(fileName)[i]
+    }
+  }
+  
   identifiants <- gsub("([- , * { } | \\[ ])","_",colnames(bucketedSpectra)[-1])
   colnames(bucketedSpectra) <- c(colnames(bucketedSpectra)[1],identifiants)
 
@@ -199,8 +231,8 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
   rownames(variableMetadata) <- rownames(bucketedSpectra)
   colnames(variableMetadata) <- "VariableOrder"
 
-  # Directory
-  cd(directory)  
+  # fileName
+  cd(fileName)  
   
   # Bucketed spectra graph
   if (graph != "None")

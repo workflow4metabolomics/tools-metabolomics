@@ -5,11 +5,15 @@
 # Starting date : 20-10-2014                                                                   #
 # Version 1 : 18-12-2014                                                                       #
 # Version 2 : 07-01-2015                                                                       #
+# Version 3 : 24-10-2016                                                                       #
 #                                                                                              #
-# Input files : files in included in user-defined directory                                    #
+# Input files : modification on october 2016                                                   #
+#   - Raw bruker files included in user-defined directory                                      #
+#   - Preprocessed files (alignment, ...) included in p x n dataframe                          #
 ################################################################################################
-NmrBucketing <- function(directory,leftBorder = 10.0,rightBorder = 0.5,bucketSize = 0.04,exclusionZones,exclusionZonesBorders=NULL,
-                         graph=c("None","Overlay","One_per_individual"),nomFichier,savLog.txtC = NULL) 
+NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,bucketSize = 0.04,exclusionZones,
+                         exclusionZonesBorders=NULL,graph=c("None","Overlay","One_per_individual"),
+                         nomFichier,savLog.txtC = NULL) 
 {
   ## Option
   ##---------------

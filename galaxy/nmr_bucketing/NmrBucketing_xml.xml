@@ -3,7 +3,6 @@
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
     <requirements>
-        <requirement type="package" version="3.1.2">R</requirement>
 	    <requirement type="package" version="1.1_4">r-batch</requirement>
 	    <requirement type="package" version="1.8.8">r-pracma</requirement>
     </requirements>

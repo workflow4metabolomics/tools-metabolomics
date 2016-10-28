@@ -78,16 +78,22 @@ if(!runExampleL)
 ##-------------------
   # Inputs
 if (!is.null(argLs[["zipfile"]])){
+	fileType="zip"
 	zipfile= argLs[["zipfile"]]
 	directory=unzip(zipfile, list=F)
 	directory=paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
 } else if (!is.null(argLs[["library"]])){
+	fileType="zip"
 	directory=argLs[["library"]]
     	if(!file.exists(directory)){
 		error_message=paste("Cannot access the directory :",directory,".Please verify if the directory exists or not.")
 		print(error_message)
 		stop(error_message)
 	}
+}
+} else if (!is.null(argLs[["tsvfile"]])){
+	fileType="tsv"
+	directory <- read.table(argLs[["tsvfile"]],check.names=FALSE,header=TRUE,sep="\t")
 }
 
 leftBorder <- argLs[["left_border"]]
@@ -111,7 +117,7 @@ nomGraphe <- argLs[["graphOut"]]
 dataMatrixOut <- argLs[["dataMatrixOut"]]
 sampleMetadataOut <- argLs[["sampleOut"]]
 variableMetadataOut <- argLs[["variableOut"]]
-log <- argLs[["logOut"]]
+logFile <- argLs[["logOut"]]
 
 ## Checking arguments
 ##-------------------
@@ -123,7 +129,9 @@ if(length(error.stock) > 1)
   
 ## Computation
 ##------------
-outputs <- NmrBucketing(directory,leftBorder,rightBorder,bucketSize,exclusionZones,exclusionZonesBorders,graphique,nomGraphe,log)
+outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBorder, rightBorder=rightBorder, bucketSize=bucketSize, 
+						exclusionZones=exclusionZones, exclusionZonesBorders=exclusionZonesBorders, graph=graphique, nomFichier=nomGraphe, 
+						savLog.txtC=logFile)
 data_bucket <- outputs[[1]]
 data_sample <- outputs[[2]]
 data_variable <- outputs[[3]]

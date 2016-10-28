@@ -3,6 +3,7 @@
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
     <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
 	    <requirement type="package" version="1.1_4">r-batch</requirement>
 	    <requirement type="package" version="1.8.8">r-pracma</requirement>
     </requirements>
@@ -16,6 +17,8 @@
 
         #if $inputs.input == "lib":
             library $__app__.config.user_library_import_dir/$__user_email__/$inputs.library
+        #elif $inputs.input == "tsv_file":
+            tsvfile $inputs.tsv_file
         #elif $inputs.input == "zip_file":
             zipfile $inputs.zip_file
         #end if
@@ -53,10 +56,14 @@
         <conditional name="inputs">
             <param name="input" type="select" label="Choose your inputs method" >
                 <option value="zip_file" selected="true">Zip file from your history containing your Bruker directories</option>
+                <option value="tsv_file">Tsv file containing preprocessed spectra (from your history)</option>
                 <option value="lib" >Library directory name</option>
             </param>
             <when value="zip_file">
                 <param name="zip_file" type="data" format="no_unzip.zip" label="Zip file" />
+            </when>
+            <when value="tsv_file">
+                <param name="tsv_file" type="data" format="tabular" label="Tsv file" />
             </when>
             <when value="lib">
                 <param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data" >
@@ -102,7 +109,6 @@
             <filter> graphType != "None" </filter>
         </data>
     </outputs>
-
     
     <tests>
         <test>
@@ -146,12 +152,11 @@ Workflow position
 
 **Upstream tools**
 
-========================= ================= ======= =========
-Name                      output file       format  parameter
-========================= ================= ======= =========
-NA                        NA                zip      NA				
-========================= ================= ======= =========
-
+========================= ============================ =======
+Name                      output file                  format 
+========================= ============================ =======
+NMRAlignment              NMR_Alignment_alignedSpectra tsv    
+========================= ============================ =======
 
 **Downstream tools**
 
@@ -177,12 +182,15 @@ Input files
 +===========================+============+
 | 1 : Choose your inputs    |   zip      |
 +---------------------------+------------+
+| 1 : Choose your inputs    |   tsv      |
++---------------------------+------------+
 
 **Choose your inputs**
 
 You have two methods for your inputs:
 
 | Zip file (recommended): You can put a zip file containing your inputs: myinputs.zip (containing all your conditions as sub-directories).
+| Tsv file (recommended): You can put a tsv file containing your inputs: myinputs.tsv (containing all your conditions in columns and chemical shifts in rows).
 | library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories.
 
 .. image:: ./static/images/Mth_Architecture_Repertoire_Bruker.png

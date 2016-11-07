@@ -187,11 +187,11 @@ Input files
 
 **Choose your inputs**
 
-You have two methods for your inputs:
+You have three methods for your inputs:
 
-| Zip file (recommended): You can put a zip file containing your inputs: myinputs.zip (containing all your conditions as sub-directories).
-| Tsv file (recommended): You can put a tsv file containing your inputs: myinputs.tsv (containing all your conditions in columns and chemical shifts in rows).
+| Zip file (recommended): You can put a zip file containing your inputs as raw Bruker files: myinputs.zip (containing all your conditions as sub-directories).
 | library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories.
+| Tsv file: You can put a tsv file containing your inputs as preprocessed spectra: myinputs.tsv (containing all your conditions in columns and chemical shifts in rows).
 
 .. image:: ./static/images/Mth_Architecture_Repertoire_Bruker.png
 :width: 800

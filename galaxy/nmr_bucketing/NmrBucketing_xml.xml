@@ -1,9 +1,8 @@
-<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.2">
+<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.3">
 
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
     <requirements>
-        <requirement type="package" version="3.1.2">R</requirement>
 	    <requirement type="package" version="1.1_4">r-batch</requirement>
 	    <requirement type="package" version="1.8.8">r-pracma</requirement>
     </requirements>
@@ -13,14 +12,14 @@
     </stdio>
 
     <command>
-        Rscript $__tool_directory__/NmrBucketing_wrapper.R
+        Rscript '$__tool_directory__/NmrBucketing_wrapper.R'
 
         #if $inputs.input == "lib":
-            library $__app__.config.user_library_import_dir/$__user_email__/$inputs.library
+            library '$__app__.config.user_library_import_dir/$__user_email__/$inputs.library'
         #elif $inputs.input == "tsv_file":
-            tsvfile $inputs.tsv_file
+            tsvfile '$inputs.tsv_file'
         #elif $inputs.input == "zip_file":
-            zipfile $inputs.zip_file
+            zipfile '$inputs.zip_file'
         #end if
 
 
@@ -46,10 +45,10 @@
 
         ## Outputs
         logOut log.log
-        dataMatrixOut $dataMatrixOut
-        sampleOut $sampleOut
-        variableOut $variableOut
-        graphOut $graphOut; cat log.log
+        dataMatrixOut '$dataMatrixOut'
+        sampleOut '$sampleOut'
+        variableOut '$variableOut'
+        graphOut '$graphOut'; cat log.log
     </command>
 
     <inputs>
@@ -282,6 +281,10 @@ Under construction
 Changelog/News
 --------------
 
+**Version 1.0.3 - 24/10/2016**
+
+- ENHANCEMENT: input files	    
+	    
 **Version 1.0.2 - 12/08/2016**
 
 - ENHANCEMENT: x-axis customization: add chemical shift labels 

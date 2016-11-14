@@ -90,7 +90,6 @@ if (!is.null(argLs[["zipfile"]])){
 		print(error_message)
 		stop(error_message)
 	}
-}
 } else if (!is.null(argLs[["tsvfile"]])){
 	fileType="tsv"
 	directory <- read.table(argLs[["tsvfile"]],check.names=FALSE,header=TRUE,sep="\t")

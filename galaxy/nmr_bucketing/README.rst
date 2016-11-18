@@ -2,6 +2,10 @@
 Changelog/News
 --------------
 
+**Version 1.0.3 - 24/10/2016**
+
+- ENHANCEMENT: add possibility of bucketing processed files (upstream tools)
+
 **Version 1.0.2 - 12/08/2016**
 
 - ENHANCEMENT: x-axis customization: add chemical shift labels 

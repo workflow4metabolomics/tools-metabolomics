@@ -39,7 +39,7 @@ options(stringsAsFactors = FALSE)
 ## Libraries laoding
 ##------------------------------
 # For parseCommandArgs function
-library(batch) 
+library(batch)
 # For cumtrapz function
 library(pracma)
 
@@ -82,14 +82,6 @@ if (!is.null(argLs[["zipfile"]])){
 	zipfile= argLs[["zipfile"]]
 	directory=unzip(zipfile, list=F)
 	directory=paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
-} else if (!is.null(argLs[["library"]])){
-	fileType="zip"
-	directory=argLs[["library"]]
-    	if(!file.exists(directory)){
-		error_message=paste("Cannot access the directory :",directory,".Please verify if the directory exists or not.")
-		print(error_message)
-		stop(error_message)
-	}
 } else if (!is.null(argLs[["tsvfile"]])){
 	fileType="tsv"
 	directory <- read.table(argLs[["tsvfile"]],check.names=FALSE,header=TRUE,sep="\t")
@@ -124,12 +116,12 @@ error.stock <- "\n"
 
 if(length(error.stock) > 1)
   stop(error.stock)
-  
-  
+
+
 ## Computation
 ##------------
-outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBorder, rightBorder=rightBorder, bucketSize=bucketSize, 
-						exclusionZones=exclusionZones, exclusionZonesBorders=exclusionZonesBorders, graph=graphique, nomFichier=nomGraphe, 
+outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBorder, rightBorder=rightBorder, bucketSize=bucketSize,
+						exclusionZones=exclusionZones, exclusionZonesBorders=exclusionZonesBorders, graph=graphique, nomFichier=nomGraphe,
 						savLog.txtC=logFile)
 data_bucket <- outputs[[1]]
 data_sample <- outputs[[2]]

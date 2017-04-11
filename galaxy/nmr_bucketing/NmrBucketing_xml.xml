@@ -14,9 +14,7 @@
     <command>
         Rscript '$__tool_directory__/NmrBucketing_wrapper.R'
 
-        #if $inputs.input == "lib":
-            library '$__app__.config.user_library_import_dir/$__user_email__/$inputs.library'
-        #elif $inputs.input == "tsv_file":
+        #if $inputs.input == "tsv_file":
             tsvfile '$inputs.tsv_file'
         #elif $inputs.input == "zip_file":
             zipfile '$inputs.zip_file'
@@ -56,7 +54,6 @@
             <param name="input" type="select" label="Choose your inputs method" >
                 <option value="zip_file" selected="true">Zip file from your history containing your Bruker directories</option>
                 <option value="tsv_file">Tsv file containing preprocessed spectra (from your history)</option>
-                <option value="lib" >Library directory name</option>
             </param>
             <when value="zip_file">
                 <param name="zip_file" type="data" format="no_unzip.zip" label="Zip file" />
@@ -64,12 +61,6 @@
             <when value="tsv_file">
                 <param name="tsv_file" type="data" format="tabular" label="Tsv file" />
             </when>
-            <when value="lib">
-                <param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data" >
-                    <validator type="empty_field"/> 
-                </param>
-            </when>
-
         </conditional>
 
         <param name="bucket_width" label="Bucket width" type="float" value="0.04" help="Default value is 0.04 ppm"/>
@@ -108,7 +99,7 @@
             <filter> graphType != "None" </filter>
         </data>
     </outputs>
-    
+
     <tests>
         <test>
             <param name="inputs|input" value="zip_file" />
@@ -127,7 +118,7 @@
             <output name="variableOut" file="MTBLS1_variableMetadata.tabular" />
         </test>
     </tests>
-    
+
     <help>
 
 .. class:: infomark
@@ -152,9 +143,9 @@ Workflow position
 **Upstream tools**
 
 ========================= ============================ =======
-Name                      output file                  format 
+Name                      output file                  format
 ========================= ============================ =======
-NMRAlignment              NMR_Alignment_alignedSpectra tsv    
+NMRAlignment              NMR_Alignment_alignedSpectra tsv
 ========================= ============================ =======
 
 **Downstream tools**
@@ -189,7 +180,6 @@ Input files
 You have three methods for your inputs:
 
 | Zip file (recommended): You can put a zip file containing your inputs as raw Bruker files: myinputs.zip (containing all your conditions as sub-directories).
-| library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories.
 | Tsv file: You can put a tsv file containing your inputs as preprocessed spectra: myinputs.tsv (containing all your conditions in columns and chemical shifts in rows).
 
 .. image:: ./static/images/Mth_Architecture_Repertoire_Bruker.png
@@ -225,7 +215,7 @@ Left exclusion zone
 Right exclusion zone
 | Lower boundary of exclusion zone
 
-| *Notes:* 
+| *Notes:*
 | - these parameters can be used several times using the "Add new exclusion zones" button
 |
 
@@ -259,7 +249,7 @@ variableMetadata.tsv
 spectra.pdf
 | pdf output
 | Graphical chart of bucketed and integrated data
-| 
+|
 
 
 ---------------------------------------------------
@@ -283,11 +273,11 @@ Changelog/News
 
 **Version 1.0.3 - 24/10/2016**
 
-- ENHANCEMENT: add possibility of bucketing processed files (upstream tools)	    
-	    
+- ENHANCEMENT: add possibility of bucketing processed files (upstream tools)
+
 **Version 1.0.2 - 12/08/2016**
 
-- ENHANCEMENT: x-axis customization: add chemical shift labels 
+- ENHANCEMENT: x-axis customization: add chemical shift labels
 
 **Version 1.0.1 - 04/04/2016**
 
@@ -301,4 +291,3 @@ Changelog/News
         <citation type="doi">10.1093/bioinformatics/btu813</citation>
     </citations>
 </tool>
-

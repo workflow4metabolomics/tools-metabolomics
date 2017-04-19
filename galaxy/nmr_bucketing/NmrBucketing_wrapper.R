@@ -52,6 +52,7 @@ source_local <- function(fname)
 }
 #Import the different functions
 source_local("NmrBucketing_script.R")
+source_local("DrawSpec.R")
 
 ##------------------------------
 ## Errors ?????????????????????
@@ -70,8 +71,6 @@ flagC <- "\n"
 ##------------------------------
 if(!runExampleL)
     argLs <- parseCommandArgs(evaluate=FALSE)
-
-## sink(argLs[["logOut"]])
 
 
 ## Parameters Loading
@@ -106,9 +105,12 @@ graphique <- argLs[["graphType"]]
   # Outputs
 nomGraphe <- argLs[["graphOut"]]
 dataMatrixOut <- argLs[["dataMatrixOut"]]
-sampleMetadataOut <- argLs[["sampleOut"]]
-variableMetadataOut <- argLs[["variableOut"]]
 logFile <- argLs[["logOut"]]
+if (fileType=="zip")
+{
+  sampleMetadataOut <- argLs[["sampleOut"]]
+  variableMetadataOut <- argLs[["variableOut"]]
+}
 
 ## Checking arguments
 ##-------------------

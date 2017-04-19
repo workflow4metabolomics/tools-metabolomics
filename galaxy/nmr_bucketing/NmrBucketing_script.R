@@ -109,7 +109,25 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
       }
 
       if (exclusion.in)
-        j <- j + 1
+      {
+        # Bucketing
+        {
+          BLB <- BUB - bucketSize
+          bucket <- spectrum[j,]
+          while (j < dim(spectrum)[1] && spectrum[j,1] > BLB)
+          {
+            j <- j + 1
+            if (spectrum[j,1] > BLB)
+              bucket <- rbind(bucket,spectrum[j,])
+          }
+          
+          f.bucket[b,] <- c(round(mean(bucket[,1]),3),0)
+          
+          # Next bucket boundary
+          BUB <- spectrum[j,1]
+          b <- b + 1
+        }
+      }
       
       if (!exclusion.in)
         # Bucketing
@@ -173,6 +191,7 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
       
       # Bucketing
       spectrum.bucket <- NmrBrucker_bucket(truncatedSpectrum)
+      ppm <- spectrum.bucket[,1]
       
       # spectrum Concatenation
       if (i == 1)
@@ -205,6 +224,7 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
       
       # Bucketing
       spectrum.bucket <- NmrBrucker_bucket(truncatedSpectrum)
+      ppm <- spectrum.bucket[,1]
       
       # spectrum Concatenation
       if (i == 1)
@@ -231,38 +251,8 @@ NmrBucketing <- function(fileType,fileName,leftBorder = 10.0,rightBorder = 0.5,b
   rownames(variableMetadata) <- rownames(bucketedSpectra)
   colnames(variableMetadata) <- "VariableOrder"
 
-  # Bucketed spectra graph
-  if (graph != "None")
-  {
-    # Graphic Device opening
-    pdf(nomFichier,onefile=TRUE)
 
-    if (graph == "Overlay")
-    {
-      x <- 1:length(bucketedSpectra[,1])
-      ymax <- max(bucketedSpectra)
-      plot(x,bucketedSpectra[,1],ylim=c(0,ymax),type='l',col=1,xlab="",xaxt="n",ylab="Intensity")
-      # x-axis labels
-      axis(1, at=seq(1,length(x),by=50),labels=gsub("B","",rownames(bucketedSpectra)[seq(1,length(x),by=50)]), las=2)
-      for (i in 2:ncol(bucketedSpectra))
-      {
-        spectre <- bucketedSpectra[,i]
-        lines(spectre,col=i)
-      }
-#      legend(0,ymax,lty=c(1,1),legend=colnames(bucketedSpectra),col=1:ncol(bucketedSpectra))
-    }
-    else
-    {
-      for (i in 1:ncol(bucketedSpectra))
-      {
-        x <- 1:length(bucketedSpectra[,1])
-        plot(x,bucketedSpectra[,i],type='l',col=1,xlab="",xaxt="n",ylab="Intensity")
-        axis(1, at=seq(1,length(x),by=50),labels=gsub("B","",rownames(bucketedSpectra)[seq(1,length(x),by=50)]), las=2)
-      }
-    }
-    dev.off()
-  }
-  return(list(bucketedSpectra,sampleMetadata,variableMetadata)) # ,truncatedSpectrum_matrice
+  return(list(bucketedSpectra,sampleMetadata,variableMetadata,ppm)) # ,truncatedSpectrum_matrice
 }
 
 

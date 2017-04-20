@@ -128,7 +128,145 @@ outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBo
 data_bucket <- outputs[[1]]
 data_sample <- outputs[[2]]
 data_variable <- outputs[[3]]
+ppm <- outputs[[4]]
+ppm <- round(ppm,2)
 
+## Graphical outputs
+##------------------
+if (graphique != "None")
+{
+  excludedZone <- NULL
+  for (c in 1:length(exclusionZonesBorders))
+  {
+    excludedZone <- c(excludedZone,exclusionZonesBorders[[c]])
+    excludedZone <- sort(excludedZone)
+  }
+  nbZones <- length(excludedZone)/2
+  n <- length(excludedZone)
+  
+  # Graphic Device opening
+  pdf(nomGraphe,onefile=TRUE)
+  
+  if (graphique == "Overlay")
+  {
+    # Global spectral window
+    spectra <- data.frame(t(data_bucket))
+    drawSpec(spectra,xlab="", ylab="Intensity", main="")
+    
+    ## Zoomed spectral window depending on exclusion zone(s)
+    if (nbZones != 0)
+    {
+      BInf <- excludedZone[n]
+      if (round(BInf,1) == BInf)
+      {
+        BInf <- BInf+0.01
+      }
+      spectra <- data.frame(t(data_bucket[1:(which(ppm == BInf)[[1]]),]))
+      drawSpec(spectra,xlab="", ylab="Intensity", main="")			
+      n <- n - 1
+      
+      while (n >= nbZones & nbZones > 1)
+      {
+        BInf <- excludedZone[n-1]
+        if (round(BInf,1) > BInf)
+        {
+          BInf <- BInf+0.01
+        }
+        spectra <- data.frame(t(data_bucket[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]]),]))
+        drawSpec(spectra,xlab="", ylab="Intensity", main="")
+        n <- n - 2
+      }
+      
+      BInf <- excludedZone[1]
+      if (round(BInf,1) <= BInf)
+      {
+        BInf <- BInf+0.01
+      }
+      spectra <- data.frame(t(data_bucket[(which(ppm == BInf)[[1]]):nrow(data_bucket),]))
+      drawSpec(spectra,xlab="", ylab="Intensity", main="")
+    }
+  }
+  else
+  {
+    for (i in 1:ncol(data_bucket))
+    {
+      par(mfrow=c((nbZones+2),1))
+      n <- length(excludedZone)
+      spectra <- t(data_bucket[,i])
+	  names(spectra) <- rownames(data_bucket)
+      plot(1:length(spectra), spectra, type='l', xlab="", ylab="Intensity", main=colnames(data_bucket)[i], xaxt = "n")
+	  xPos <- 1
+	  nAxisPos <- 4
+	  startP <- length(nAxisPos) 
+	  endP <- nrow(data_bucket)
+	  GraphRange <- c(startP:endP)
+	  tempVal = trunc(length(GraphRange)/nAxisPos)
+	  xPos = c(0:nAxisPos) * tempVal
+	  axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
+     
+      ## Zoomed spectral window depending on exclusion zone(s)
+      if (nbZones != 0)
+      {
+        BInf <- excludedZone[n]
+        if (round(BInf,1) == BInf)
+        {
+          BInf <- BInf+0.01
+        }
+        spectra <- t(data_bucket[1:(which(ppm == BInf)[[1]]),i])
+		names(spectra) <- rownames(data_bucket)[1:(which(ppm == BInf)[[1]])]
+		plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")			
+		xPos <- 1
+		nAxisPos <- 4
+		startP <- length(nAxisPos) 
+		endP <- length(spectra)
+		GraphRange <- c(startP:endP)
+		tempVal = trunc(length(GraphRange)/nAxisPos)
+		xPos = c(0:nAxisPos) * tempVal
+		axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
+        n <- n - 1
+        
+        while (n >= nbZones & nbZones > 1)
+        {
+          BInf <- excludedZone[n-1]
+          if (round(BInf,1) > BInf)
+          {
+            BInf <- BInf+0.01
+          }
+          spectra <- t(data_bucket[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]]),i])
+		  names(spectra) <- rownames(data_bucket)[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]])]
+          plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")
+		  xPos <- 1
+		  nAxisPos <- 4
+		  startP <- length(nAxisPos) 
+		  endP <- length(spectra)
+		  GraphRange <- c(startP:endP)
+		  tempVal = trunc(length(GraphRange)/nAxisPos)
+		  xPos = c(0:nAxisPos) * tempVal
+		  axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
+          n <- n - 2
+        }
+        
+        BInf <- excludedZone[1]
+        if (round(BInf,1) <= BInf)
+        {
+          BInf <- BInf+0.01
+        }
+        spectra <- t(data_bucket[(which(ppm == BInf)[[1]]):nrow(data_bucket),i])
+		names(spectra) <- rownames(data_bucket)[(which(ppm == BInf)[[1]]):nrow(data_bucket)]
+        plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")
+		xPos <- 1
+		nAxisPos <- 4
+		startP <- length(nAxisPos) 
+		endP <- length(spectra)
+		GraphRange <- c(startP:endP)
+		tempVal = trunc(length(GraphRange)/nAxisPos)
+		xPos = c(0:nAxisPos) * tempVal
+		axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
+      }
+    }
+  }
+  dev.off()
+}
 ## Saving
 ##-------
   # Data

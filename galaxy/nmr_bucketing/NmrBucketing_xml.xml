@@ -1,4 +1,4 @@
-<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.3">
+<tool id="NmrBucketing" name="NMR_Bucketing" version="1.0.4">
 
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
@@ -270,6 +270,10 @@ Under construction
 
 Changelog/News
 --------------
+
+**Version 1.0.4 - 21/04/2017**
+
+- IMPROVEMENT: Add “zoomed” representations of bucketed spectra, depending on exclusion zone borders
 
 **Version 1.0.3 - 24/10/2016**
 

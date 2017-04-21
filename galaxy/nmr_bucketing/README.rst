@@ -2,6 +2,10 @@
 Changelog/News
 --------------
 
+**Version 1.0.4 - 21/04/2017**
+
+- IMPROVEMENT: Add “zoomed” representations of bucketed spectra, depending on exclusion zone borders
+
 **Version 1.0.3 - 24/10/2016**
 
 - ENHANCEMENT: add possibility of bucketing processed files (upstream tools)

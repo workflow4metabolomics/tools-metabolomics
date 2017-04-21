@@ -2,7 +2,7 @@
 Changelog/News
 --------------
 
-**Version 1.0.4 - 21/04/2017**
+**Version 2.0.2 - 21/04/2017**
 
 - IMPROVEMENT: Add “zoomed” representations of bucketed spectra, depending on exclusion zone borders
 

@@ -1,0 +1,4 @@
+variableMetadata	name	ageGroup_kruskal_fdr	ageGroup_kruskal_sig	ageGroup_kruskal_junior.experienced_dif	ageGroup_kruskal_senior.experienced_dif	ageGroup_kruskal_senior.junior_dif	ageGroup_kruskal_junior.experienced_pva	ageGroup_kruskal_senior.experienced_pva	ageGroup_kruskal_senior.junior_pva	ageGroup_kruskal_junior.experienced_sig	ageGroup_kruskal_senior.experienced_sig	ageGroup_kruskal_senior.junior_sig
+HMDB01032	Dehydroepiandrosterone sulfate	0.0117826825222329	1	7211389.71960377	-1703486.11807139	-8914875.83767516	0.204550960009346	0.123124593762726	0.00251932966039092	0	0	1
+HMDB03072	Quinic acid	0.461634758626427	0	-3747468.87812489	1512795.66143568	5260264.53956057	NA	NA	NA	NA	NA	NA
+HMDB00792	Sebacic acid	0.469555338459932	0	1404223.43306179	959174.915801485	-445048.517260305	NA	NA	NA	NA	NA	NA

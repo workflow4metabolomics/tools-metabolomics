@@ -176,11 +176,16 @@ variableMetadata_out.tabular
 	| pvalue of Shapiro normality test of the residuals
 	| pvalues of the main effects and interaction
 	| PostHoc test with difference between levels and pvalues of these difference
-	|
+	| 
+
+mixedmodel_diagResiduals
+	| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical 
+	| representation of differences among levels of factors with a color code for significance and an error bar 
+	| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment. 
 	
 information.txt
 	| File with all messages and warnings generated during the computation
-	|
+	| The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
 
 ---------------------------------------------------
 
@@ -190,7 +195,6 @@ Working example
 
 .. class:: infomark
 
-See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-complete**, **W4M00002_mtbls2**, **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
 
 ---------------------------------------------------
 
@@ -198,127 +202,16 @@ See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-co
 NEWS
 ----
 
-CHANGES IN VERSION 2.1.4
-========================
-
-NEW FEATURE
-
-Level names are now separated by '.' instead of '-' previously in the column names of the output variableMetadata table (e.g., 'jour_ttest_J3.J10_fdr' instead of 'jour_ttest_J3-J10_fdr' previously)
-
-INTERNAL MODIFICATIONS
-
-Minor internal changes for toolshed export
-
-CHANGES IN VERSION 2.1.2
-========================
-
-INTERNAL MODIFICATIONS
-
-Minor internal changes for toolshed export
-
-CHANGES IN VERSION 2.1.1
-========================
-
-INTERNAL MODIFICATIONS
-
-Internal handling of 'NA' p-values (e.g. when intensities are identical in all samples)
-
-CHANGES IN VERSION 2.0.1
-========================
-
-NEW FEATURE
-
-(corrected) p-value threshold can be set to any value between 0 and 1
-
-
-</help>
-
-<citations>
-  <citation type="bibtex">@Manual{,
-  title = {R: A Language and Environment for Statistical Computing},
-  author = {{R Core Team}},
-  organization = {R Foundation for Statistical Computing},
-  address = {Vienna, Austria},
-  year = {2016},
-  url = {https://www.R-project.org/},
-  }</citation>
-  <citation type="bibtex">@Article{Thevenot2015,
-   Title                    = {Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses},
-   Author                   = {Thevenot, Etienne A. and Roux, Aurelie and Xu, Ying and Ezan, Eric and Junot, Christophe},
-   Journal                  = {Journal of Proteome Research},
-   Year                     = {2015},
-   Note                     = {PMID: 26088811},
-   Number                   = {8},
-   Pages                    = {3322-3335},
-   Volume                   = {14},
-   
-   Doi                      = {10.1021/acs.jproteome.5b00354},
-   Url                      = {http://pubs.acs.org/doi/full/10.1021/acs.jproteome.5b00354}
-   }</citation>
-   <citation type="doi">10.1093/bioinformatics/btu813</citation>
- </citations>
-
-
 
 Input files
 ===========
 
-| **To generate the "dataMatrix", "sampleMetadata" and "variableMetadata" files:**
-|   **1) copy/paste the values below in three distinct .txt files**
-|   **2) use the "Get Data" / "Upload File" in the "Tools" (left) panel from the Galaxy / ABiMS page by choosing:**
-|     **a) File Format: 'tabular'**
-|     **b) Convert spaces to tabs: 'Yes'**
-| 
-
 **dataMatrix file**::
-
-	dataMatrix HU_017 HU_021 HU_027 HU_032 HU_041 HU_048 HU_049 HU_050 HU_052 HU_059 HU_060 HU_066 HU_072 HU_077 HU_090 HU_109 HU_110 HU_125 HU_126 HU_131 HU_134 HU_149 HU_150 HU_173 HU_179 HU_180 HU_182 HU_202 HU_204 HU_209
-	HMDB01032 2569204.92420381 6222035.77434915 17070707.9912636 1258838.24348419 13039543.0754619 1909391.77026598 3495.09386434063 2293521.90928998 128503.275117713 81872.5276382213 8103557.56578035 149574887.036181 1544036.41049333 7103429.53933206 14138796.50382 4970265.57952158 263054.73056162 1671332.30008058 88433.1944958815 23602331.2894815 18648126.5206986 1554657.98756878 34152.3646391152 209372.71275317 33187733.370626 202438.591636003 13581070.0886437 354170.810678102 9120781.48986975 43419175.4051586
-	HMDB03072 3628416.30251025 65626.9834353751 112170.118946651 3261804.34422417 42228.2787747563 343254.201250707 1958217.69317664 11983270.0435677 5932111.41638028 5511385.83359531 9154521.47755199 2632133.21209418 9500411.14556502 6551644.51726592 7204319.80891836 1273412.04795188 3260583.81592376 8932005.5351622 8340827.52597275 9256460.69197759 11217839.169041 5919262.81433556 11790077.0657915 9567977.80797097 73717.5811684739 9991787.29074293 4208098.14739633 623970.649925847 10904221.2642849 2171793.93621067
-	HMDB00792 429568.609438384 3887629.50527037 1330692.11658995 1367446.73023821 844197.447472453 2948090.71886592 1614157.90566884 3740009.19379795 3292251.66531919 2310688.79492013 4404239.59008605 3043289.12780863 825736.467181043 2523241.91730649 6030501.02648005 474901.604069803 2885792.42617652 2955990.64049134 1917716.3427982 1767962.67737699 5926203.40397675 1639065.69474684 346810.763557826 1054776.22313737 2390258.27543894 1831346.37315857 1026696.36904362 7079792.50047866 4368341.01359769 3495986.87280275
 
 	
 **sampleMetadata file**::
-
-	sampleMetadata age ageGrp
-	HU_017 41 experienced
-	HU_021 34 junior
-	HU_027 37 experienced
-	HU_032 38 experienced
-	HU_041 28 junior
-	HU_048 39 experienced
-	HU_049 50 senior
-	HU_050 30 junior
-	HU_052 51 senior
-	HU_059 81 senior
-	HU_060 55 senior
-	HU_066 25 junior
-	HU_072 47 experienced
-	HU_077 27 junior
-	HU_090 46 experienced
-	HU_109 32 junior
-	HU_110 50 senior
-	HU_125 58 senior
-	HU_126 45 experienced
-	HU_131 42 experienced
-	HU_134 48 experienced
-	HU_149 35 experienced
-	HU_150 49 experienced
-	HU_173 55 senior
-	HU_179 33 junior
-	HU_180 53 senior
-	HU_182 43 experienced
-	HU_202 42 experienced
-	HU_204 31 junior
-	HU_209 17.5 junior
-
 	
 **variableMetadata file**::
-
-	variableMetadata name
-	HMDB01032        Dehydroepiandrosterone sulfate
-	HMDB03072        Quinic acid
-	HMDB00792        Sebacic acid
 
 	
 Parameters
@@ -339,13 +232,11 @@ Output files
 +------------------------------+------------+
 | File                         |   Format   |
 +==============================+============+
-| 1)  dataMatrix               |   tabular  |
+| 1)  variableMetadata         |   tabular  |
 +------------------------------+------------+
-| 2)  sampleMetadata           |   tabular  |
+| 2)  information              |   tabular  |
 +------------------------------+------------+
-| 3)  variableMetadata         |   tabular  |
-+------------------------------+------------+
-| 4)  information              |    text    |
+| 3)  mixedmodel_diagResiduals |   tabular  |
 +------------------------------+------------+
 
 

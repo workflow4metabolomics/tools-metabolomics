@@ -112,6 +112,19 @@ if (fileType=="zip")
   variableMetadataOut <- argLs[["variableOut"]]
 }
 
+
+## Checking R packages
+##--------------------
+sink(logFile)
+cat("\t PACKAGE INFO \n")
+pkgs=c("batch","pracma")
+for(pkg in pkgs) {
+    suppressPackageStartupMessages( stopifnot( library(pkg, quietly=TRUE, logical.return=TRUE, character.only=TRUE)))
+    cat(pkg,"\t",as.character(packageVersion(pkg)),"\n",sep="")
+}
+cat("\n")
+
+
 ## Checking arguments
 ##-------------------
 error.stock <- "\n"
@@ -288,11 +301,7 @@ write.table(data_variable,file=argLs$variableOut,quote=FALSE,row.names=FALSE,sep
 
 ## Ending
 ##---------------------
-
 cat("\nEnd of 'NMR bucketing' Galaxy module call: ", as.character(Sys.time()), sep = "")
-
-## sink(NULL)
-
+sink()
 options(stringsAsFactors = strAsFacL)
-
 rm(list = ls())

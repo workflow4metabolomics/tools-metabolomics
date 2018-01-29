@@ -1,7 +1,7 @@
 #######  R functions to perform linear mixed model for repeated measures 
 #######  on a multi var dataset using 3 files as used in W4M
 ##############################################################################################################
-lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=colnames(ids)[[ivd]], dffOption="Satterthwaite", 
+lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=colnames(ids)[[ivd]],dffOption, 
                           pvalCutof=0.05, visu , tit = "", least.confounded = FALSE, outlier.limit =3) {
    ### function to perform linear mixed model with 1 Fixed factor + Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
@@ -10,7 +10,7 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
    if (!is.factor(ids[[ifixfact]])) {stop("fixed factor is not a factor")}
    if (!is.factor(ids[[itime]]))    {stop("Repeated factor is not a factor")}
    if (!is.factor(ids[[isubject]])) {stop("Random factor is not a factor")}
-   # a ce stade, il faudrait prévoir des tests sur la validité du plan d'expérience
+   # a ce stade, il faudrait pr?voir des tests sur la validit? du plan d'exp?rience
    
    time <- ids[[itime]]
    fixfact <- ids[[ifixfact]]
@@ -119,7 +119,7 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
 
 ##############################################################################################################
 lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=colnames(ids)[[ivd]], 
-                          dffOption="Satterthwaite",pvalCutof=0.05) 
+                          dffOption,pvalCutof=0.05) 
    {
    ### function to perform linear mixed model with factor Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
@@ -127,7 +127,7 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
    if (!is.numeric(ids[[ivd]]))     {stop("Dependant variable is not numeric")}
    if (!is.factor(ids[[itime]]))    {stop("Repeated factor is not a factor")}
    if (!is.factor(ids[[isubject]])) {stop("Random factor is not a factor")}
-   # a ce stade, il faudrait prévoir des tests sur la validité du plan d'expérience
+   # a ce stade, il faudrait pr?voir des tests sur la validit? du plan d'exp?rience
    
    time <- ids[[itime]]
    subject <- ids[[isubject]]
@@ -249,7 +249,7 @@ lmixedm <- function(datMN,
                     logtr = "none", 
                     pvalCutof = 0.05,
                     pvalcorMeth = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")[7],
-                    dffOption="Satterthwaite",
+                    dffOption,
                     visu = "no",
                     least.confounded = FALSE,
                     outlier.limit = 3,
@@ -259,6 +259,7 @@ lmixedm <- function(datMN,
    sampids <- samDF
    dataMatrix <- datMN
    varids <- varDF
+   cat("dff computation method=",dffOption,"\n")
    ### Function running lmer function on a set of variables described in 
    ### 3 different dataframes as used by W4M
    ### results are merge with the metadata variables varids
@@ -306,7 +307,7 @@ lmixedm <- function(datMN,
       par(mfrow=c(1,3))
    }
    ###############  fin test ecriture dans pdf
-   
+   ## pour test : lastvar <- 15
    for (i in firstvar:lastvar) {
     
      ## NL modif
@@ -316,13 +317,14 @@ lmixedm <- function(datMN,
      subds <- dslm[,c(ifixfact,itime,isubject,i)]
 
       ## NL modif
+     tryCatch({
       if (ifixfact>0)
-        reslmer <- lmRepeated2FF(subds,ifixfact=1,2,3, ivd=4, ndim=ndim, visu = visu,  tit = varids[i-firstvar+1,1], pvalCutof,
+        reslmer <- lmRepeated2FF(subds,ifixfact=1,2,3, ivd=4, ndim=ndim, visu = visu,  tit = varids[i-firstvar+1,1], pvalCutof,dffOption,
                                  least.confounded = least.confounded, outlier.limit = outlier.limit) else 
-        reslmer <- lmRepeated1FF(subds,ifixfact=0,1,2, ivd=3, ndim=ndim, pvalCutof)
+        reslmer <- lmRepeated1FF(subds,ifixfact=0,1,2, ivd=3, ndim=ndim, pvalCutof,dffOption)
       ## end of NL modif
-      
       resLM[i-firstvar+1,] <- reslmer
+     }, error=function(e){cat("ERROR : ",conditionMessage(e), "\n")})
       if (i==firstvar) {colnames(resLM) <- colnames(reslmer)}
    }
    

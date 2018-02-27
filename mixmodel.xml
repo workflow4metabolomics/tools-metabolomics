@@ -2,16 +2,17 @@
   <description>ANOVA for repeated measures statistics</description>
   
   <requirements>
-    <requirement type="package" version="3.2.2">R</requirement>
     <requirement type="package">r-batch</requirement>
-    <requirement type="package">r-PMCMR</requirement>
+    <requirement type="package">r-lme4</requirement>
+    <requirement type="package">r-lmerTest</requirement>
+    <requirement type="package">r-multtest</requirement>
   </requirements>
 
   <stdio>
     <exit_code range="1:" level="fatal" />
   </stdio>
   
-  <command><![CDATA[
+  <command>
   Rscript $__tool_directory__/mixmodel_wrapper.R
 
   dataMatrix_in "$dataMatrix_in"
@@ -29,7 +30,8 @@
   variableMetadata_out "$variableMetadata_out"
   out_graph_pdf "$out_graph_pdf"
   information "$information"
-  ]]></command>
+  
+  </command>
   
   <inputs>
     <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
@@ -56,191 +58,128 @@
     <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
 	<param name="diaR" label="Perform diagnostic of the residuals" type="select" 
 		help=" Used to assess the quality of models considering distribution of residuals ">
-      <option value="no">no</option>
 	  <option value="yes">yes</option>
+      <option value="no"></option>
     </param>    
 
   </inputs>
-  
+
+    
   <outputs>
     <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
     <data name="information" label="${tool.name}_information.txt" format="txt"/>
     <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
 
   </outputs>
-  
- 
-  <help>
+    <help>
+	.. class:: infomark
 
-.. class:: infomark
+	**Tool update: See the 'NEWS' section at the bottom of the page**
 
-| **Tool update: See the 'NEWS' section at the bottom of the page**
+	.. class:: infomark
 
----------------------------------------------------
+	**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
 
-.. class:: infomark
+	.. class:: infomark
 
-**Authors**
+	**Please cite**
 
-| **Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr)** wrote this wrapper of R repeated measure anova statistical tests.
-| MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+	R Core Team (2013). R: A language and Environment for Statistical Computing. http://www.r-project.org
 
----------------------------------------------------
+	.. class:: infomark
 
-.. class:: infomark
+	**References**
 
-**Please cite**
-
-R Core Team (2013). R: A language and Environment for Statistical Computing. http://www.r-project.org
-
----------------------------------------------------
-
-.. class:: infomark
-
-**References**
-
-| Benjamini Y. and Hochberg Y. (1995). Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57:289-300.
-
----------------------------------------------------
-
-=====================
-mixmodel statistics
-=====================
+	Benjamini Y. and Hochberg Y. (1995). Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57:289-300.
+	
+	
+=============
+Mixed models
+=============
 
 -----------
 Description
 -----------
 
-| The module performs analysis of variance for repeated measures using mixed model  
+The module performs analysis of variance for repeated measures using mixed model
 
------------------
-Workflow position
------------------
-
-.. image:: univariate_workflowPositionImage.png
-        :width: 584
 
 -----------
 Input files
 -----------
 
-+------------------------------+------------+
-| File                         |   Format   |
-+==============================+============+
-| 1)  Data matrix              |   tabular  |
-+------------------------------+------------+
-| 2)  Sample metadata          |   tabular  |
-+------------------------------+------------+
-| 3)  Variable metadata        |   tabular  |
-+------------------------------+------------+
++---------------------------+------------+
+| File                      |   Format   |
++===========================+============+
+| 1 : Data matrix           |   tabular  |
++---------------------------+------------+
+| 2 : Sample metadatx       |   tabular  |
++---------------------------+------------+
+| 3 : Variable metadata     |   tabular  |
++---------------------------+------------+
+	
 
 ----------
 Parameters
 ----------
-	  
+		  
 Data matrix file
-	| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
-	|
+		| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+		|
 
 Sample metadata file
-	| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
-	|
-	
+		| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+		|
+		
 Variable metadata file
-	| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
-	|
+		| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+		|
+		
 
 Treatment
-	| Name of the fixed factor in the sample metadata file
+		| Name of the fixed factor in the sample metadata file
+		|
+		
 Time
-	| Name of the repeated (time) factor in the sample metadata	file
+		| Name of the repeated (time) factor in the sample metadata	file
+		|
+		
 Subject
-	| Name of the subject (on which the repeated measurement id done) in the sample metadata file
-	
+		| Name of the subject (on which the repeated measurement id done) in the sample metadata file
+		|
+		
 Method for multiple testing correction
-	| The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
-	| "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
-	|
+		| The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
+		| "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
+		|
 
 (Corrected) p-value significance threshold
-	|
-	|
-
+		|
+		|
 
 ------------
 Output files
 ------------
-	
-variableMetadata_out.tabular
-	| **variableMetadata** file identical to the file given as argument plus
-	| pvalue of Shapiro normality test of the residuals
-	| pvalues of the main effects and interaction
-	| PostHoc test with difference between levels and pvalues of these difference
-	| 
+		
+	variableMetadata_out.tabular
+		| **variableMetadata** file identical to the file given as argument plus
+		| pvalue of Shapiro normality test of the residuals
+		| pvalues of the main effects and interaction
+		| PostHoc test with difference between levels and pvalues of these difference
+		| 
 
-mixedmodel_diagResiduals
-	| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical 
-	| representation of differences among levels of factors with a color code for significance and an error bar 
-	| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment. 
-	
-information.txt
-	| File with all messages and warnings generated during the computation
-	| The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
+	mixedmodel_diagResiduals
+		| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical 
+		| representation of differences among levels of factors with a color code for significance and an error bar 
+		| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment. 
+		
+	information.txt
+		| File with all messages and warnings generated during the computation
+		| The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
 
----------------------------------------------------
+		
+</help>
 
----------------
-Working example
----------------
-
-.. class:: infomark
-
-
----------------------------------------------------
-
-----
-NEWS
-----
-
-
-Input files
-===========
-
-**dataMatrix file**::
-
-	
-**sampleMetadata file**::
-	
-**variableMetadata file**::
-
-	
-Parameters
-==========
-
-**Factor of interest:** "ageGroup"
-
-**Test:** "Kruskal-Wallis rank test (qualitative, > 2 levels)"
- 
-**Method for multiple testing correction:** "fdr"
-
-**(Corrected) p-value significance threshold:** 0.05
-
-
-Output files
-============
-
-+------------------------------+------------+
-| File                         |   Format   |
-+==============================+============+
-| 1)  variableMetadata         |   tabular  |
-+------------------------------+------------+
-| 2)  information              |   tabular  |
-+------------------------------+------------+
-| 3)  mixedmodel_diagResiduals |   tabular  |
-+------------------------------+------------+
-
-
----------------------------------------------------
 
 
 </tool>

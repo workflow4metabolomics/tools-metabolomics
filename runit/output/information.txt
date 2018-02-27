@@ -1,9 +1,0 @@
-
-Start of the 'Univariate' Galaxy module call: Sat 06 Aug 2016 06:22:18 PM
-
-Performing 'kruskal'
-
-The following 1 variable (33%) was found significant at the 0.05 level:
-HMDB01032
-
-End of 'Univariate' Galaxy module call: 2016-08-06 18:22:18

@@ -30,11 +30,6 @@ argVc <- unlist(parseCommandArgs(evaluate=FALSE))
 strAsFacL <- options()$stringsAsFactors
 options(stringsAsFactors = FALSE)
 
-## packages
-##---------
-
-library(PMCMR)
-
 ## constants
 ##----------
 

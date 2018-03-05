@@ -2,10 +2,10 @@
   <description>ANOVA for repeated measures statistics</description>
   
   <requirements>
-    <requirement type="package">r-batch</requirement>
-    <requirement type="package">r-lme4</requirement>
-    <requirement type="package">r-lmerTest</requirement>
-    <requirement type="package">r-multtest</requirement>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.1_13">r-lme4</requirement>
+    <requirement type="package" version="2.0_33">r-lmertest</requirement>
+    <requirement type="package" version="2.34.0">bioconductor-multtest</requirement>
   </requirements>
 
   <stdio>

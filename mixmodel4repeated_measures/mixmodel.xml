@@ -70,6 +70,18 @@
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
     </outputs>
 
+    <tests>
+        <test>
+            <param name="dataMatrix_in" value="demo1_matrix.txt" />
+            <param name="sampleMetadata_in" value="demo1_Samples.txt" />
+            <param name="variableMetadata_in" value="demo1_variables.txt" />
+            <param name="fixfact" value="treatment" />
+            <param name="time" value="time" />
+            <param name="subject" value="idsujet" />
+            <output name="variableMetadata_out" value="mixmodel_demo1_variables.txt" />
+        </test>
+    </tests>
+
     <help><![CDATA[
 .. class:: infomark
 

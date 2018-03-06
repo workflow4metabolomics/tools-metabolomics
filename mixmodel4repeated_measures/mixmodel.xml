@@ -1,98 +1,97 @@
 <tool id="mixmodel" name="mixmodel" version="2.1.4">
-  <description>ANOVA for repeated measures statistics</description>
-  
-  <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
-    <requirement type="package" version="1.1_13">r-lme4</requirement>
-    <requirement type="package" version="2.0_33">r-lmertest</requirement>
-    <requirement type="package" version="2.34.0">bioconductor-multtest</requirement>
-  </requirements>
+    <description>ANOVA for repeated measures statistics</description>
 
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
-  
-  <command>
-  Rscript $__tool_directory__/mixmodel_wrapper.R
+    <requirements>
+        <requirement type="package" version="1.1_4">r-batch</requirement>
+        <requirement type="package" version="1.1_13">r-lme4</requirement>
+        <requirement type="package" version="2.0_33">r-lmertest</requirement>
+        <requirement type="package" version="2.34.0">bioconductor-multtest</requirement>
+    </requirements>
 
-  dataMatrix_in "$dataMatrix_in"
-  sampleMetadata_in "$sampleMetadata_in"
-  variableMetadata_in "$variableMetadata_in"
-  
-  fixfact "$fixfact"
-  time "$time"
-  subject "$subject"
-  adjC "$adjC"
-  trf  "$trf"
-  thrN "$thrN"
-  diaR "$diaR" 
-  
-  variableMetadata_out "$variableMetadata_out"
-  out_graph_pdf "$out_graph_pdf"
-  information "$information"
-  
-  </command>
-  
-  <inputs>
-    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
-    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
-    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
-    <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of the column of the sample metadata table corresponding to the fixed factor"/>
-    <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
-    <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
-    <param name="adjC" label="Method for multiple testing correction" type="select" help="">
-      <option value="fdr">fdr</option>
-      <option value="BH">BH</option>
-      <option value="bonferroni">bonferroni</option>
-      <option value="BY">BY</option>
-      <option value="hochberg">hochberg</option>
-      <option value="holm">holm</option>
-      <option value="hommel">hommel</option>
-      <option value="none">none</option>
-    </param>
-	<param name="trf" label="Log transform of raw data" type="select" help="Transformation of raw data">
-      <option value="none">none</option>
-      <option value="log10">log10</option>
-      <option value="log2">log2</option>
-	</param>	
-    <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
-	<param name="diaR" label="Perform diagnostic of the residuals" type="select" 
-		help=" Used to assess the quality of models considering distribution of residuals ">
-	  <option value="yes">yes</option>
-      <option value="no"></option>
-    </param>    
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
 
-  </inputs>
+    <command><![CDATA[
+        Rscript $__tool_directory__/mixmodel_wrapper.R
 
-    
-  <outputs>
-    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
-    <data name="information" label="${tool.name}_information.txt" format="txt"/>
-    <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
+        dataMatrix_in "$dataMatrix_in"
+        sampleMetadata_in "$sampleMetadata_in"
+        variableMetadata_in "$variableMetadata_in"
 
-  </outputs>
-    <help>
-	.. class:: infomark
+        fixfact "$fixfact"
+        time "$time"
+        subject "$subject"
+        adjC "$adjC"
+        trf  "$trf"
+        thrN "$thrN"
+        diaR "$diaR"
 
-	**Tool update: See the 'NEWS' section at the bottom of the page**
+        variableMetadata_out "$variableMetadata_out"
+        out_graph_pdf "$out_graph_pdf"
+        information "$information"
 
-	.. class:: infomark
+    ]]></command>
 
-	**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+    <inputs>
+        <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
+        <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+        <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
+        <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of the column of the sample metadata table corresponding to the fixed factor"/>
+        <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
+        <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
+        <param name="adjC" label="Method for multiple testing correction" type="select" help="">
+            <option value="fdr">fdr</option>
+            <option value="BH">BH</option>
+            <option value="bonferroni">bonferroni</option>
+            <option value="BY">BY</option>
+            <option value="hochberg">hochberg</option>
+            <option value="holm">holm</option>
+            <option value="hommel">hommel</option>
+            <option value="none">none</option>
+        </param>
+        <param name="trf" label="Log transform of raw data" type="select" help="Transformation of raw data">
+            <option value="none">none</option>
+            <option value="log10">log10</option>
+            <option value="log2">log2</option>
+        </param>
+        <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
+        <param name="diaR" label="Perform diagnostic of the residuals" type="select"
+        help=" Used to assess the quality of models considering distribution of residuals ">
+            <option value="yes">yes</option>
+            <option value="no"></option>
+        </param>
 
-	.. class:: infomark
+    </inputs>
 
-	**Please cite**
+    <outputs>
+        <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular"/>
+        <data name="information" label="${tool.name}_information.txt" format="txt"/>
+        <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
+    </outputs>
 
-	R Core Team (2013). R: A language and Environment for Statistical Computing. http://www.r-project.org
+    <help><![CDATA[
+.. class:: infomark
 
-	.. class:: infomark
+**Tool update: See the 'NEWS' section at the bottom of the page**
 
-	**References**
-	Kuznetsova A. Brockhoff PB. and Christensen RHB (2017). lmerTest Package: Tests in Linear Mixed Effects Models. Journal of Statistical Software, 82(13), pp. 1–26. doi: 10.18637/jss.v082.i13.
-	Benjamini Y. and Hochberg Y. (1995). Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57:289-300.
-	
-	
+.. class:: infomark
+
+**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+
+.. class:: infomark
+
+**Please cite**
+
+R Core Team (2013). R: A language and Environment for Statistical Computing. http://www.r-project.org
+
+.. class:: infomark
+
+**References**
+Kuznetsova A. Brockhoff PB. and Christensen RHB (2017). lmerTest Package: Tests in Linear Mixed Effects Models. Journal of Statistical Software, 82(13), pp. 1–26. doi: 10.18637/jss.v082.i13.
+Benjamini Y. and Hochberg Y. (1995). Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57:289-300.
+
+
 =============
 Mixed models
 =============
@@ -117,69 +116,80 @@ Input files
 +---------------------------+------------+
 | 3 : Variable metadata     |   tabular  |
 +---------------------------+------------+
-	
+
 
 ----------
 Parameters
 ----------
-		  
+
 Data matrix file
-		| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
-		|
+| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+|
 
 Sample metadata file
-		| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
-		|
-		
+| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+|
+
 Variable metadata file
-		| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
-		|
-		
+| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+|
+
 
 Treatment
-		| Name of the fixed factor in the sample metadata file
-		|
-		
+| Name of the fixed factor in the sample metadata file
+|
+
 Time
-		| Name of the repeated (time) factor in the sample metadata	file
-		|
-		
+| Name of the repeated (time) factor in the sample metadata	file
+|
+
 Subject
-		| Name of the subject (on which the repeated measurement id done) in the sample metadata file
-		|
-		
+| Name of the subject (on which the repeated measurement id done) in the sample metadata file
+|
+
 Method for multiple testing correction
-		| The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
-		| "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
-		|
+| The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
+| "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
+
 
 (Corrected) p-value significance threshold
-		|
-		|
+|
+|
 
 ------------
 Output files
 ------------
-		
-	variableMetadata_out.tabular
-		| **variableMetadata** file identical to the file given as argument plus
-		| pvalue of Shapiro normality test of the residuals
-		| pvalues of the main effects and interaction
-		| PostHoc test with difference between levels and pvalues of these difference
-		| 
 
-	mixedmodel_diagResiduals
-		| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical 
-		| representation of differences among levels of factors with a color code for significance and an error bar 
-		| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment. 
-		
-	information.txt
-		| File with all messages and warnings generated during the computation
-		| The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
+variableMetadata_out.tabular
+| **variableMetadata** file identical to the file given as argument plus
+| pvalue of Shapiro normality test of the residuals
+| pvalues of the main effects and interaction
+| PostHoc test with difference between levels and pvalues of these difference
+|
 
-		
-</help>
+mixedmodel_diagResiduals
+| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical
+| representation of differences among levels of factors with a color code for significance and an error bar
+| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment.
+
+information.txt
+| File with all messages and warnings generated during the computation
+| The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
 
 
+    ]]></help>
+
+    <citations>
+        <citation type="doi">10.18637/jss.v082.i13.</citation>
+        <citation type="bibtex">@ARTICLE{fisher,
+           author = {Benjamini Y. and Hochberg Y.,
+           title = {Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society},
+           journal = {Series B (Methodological)},
+           year = {1995},
+           volume = {57},
+           pages = {289-300}
+        }</citation>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
 
 </tool>

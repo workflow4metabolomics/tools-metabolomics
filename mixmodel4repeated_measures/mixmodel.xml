@@ -29,6 +29,7 @@
 
         variableMetadata_out "$variableMetadata_out"
         out_graph_pdf "$out_graph_pdf"
+		out_estim_pdf "$out_estim_pdf"
         information "$information"
 
     ]]></command>
@@ -68,6 +69,8 @@
         <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular"/>
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
+        <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
+		
     </outputs>
 
     <tests>

@@ -129,7 +129,8 @@ varDF <- lmixedm(datMN = datMN,
 					      visu		= argVc["diaR"], 
                      least.confounded = FALSE,
                      outlier.limit = 3,
-					      pdfC     = argVc["out_graph_pdf"]
+					      pdfC     = argVc["out_graph_pdf"],
+						  pdfE	   = argVc["out_estim_pdf"]
 					      )
 
 

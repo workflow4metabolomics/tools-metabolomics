@@ -243,10 +243,10 @@ diagmflF <- function(mfl, title = "",
    mdistVn <-  mdistVn/sum(mdistVn)
    
    
-   
    ## Combine data and results in 2 data frames for easy plotting with ggplot2 -----------------------------
    
    ## long data frame (all observations)
+
    df <- data.frame(df,
                     mar.pred = marpredVn,
                     mar.res = marresVn,
@@ -258,7 +258,6 @@ diagmflF <- function(mfl, title = "",
    if(!("fixfact" %in% colnames(df)))
       df$fixfact <- rep(1, nrow(df))
    df$numTime <- as.numeric(levels(as.factor(df$time)))
-   
    
    
    ## short data frame (1 row per unit)
@@ -282,8 +281,6 @@ diagmflF <- function(mfl, title = "",
    unitDf$lower <- unitDf$eblup-unitDf$se*1.96
    
    
-   
-   
    ## Outliers "annotations"
    df$marres.out <- rep("", nrow(df))
    df$marres.out[abs(df$st.mar.res)>hlimitN] <- 
@@ -299,12 +296,8 @@ diagmflF <- function(mfl, title = "",
             sep = ".")
    df$condres.out <- paste(" ", df$condres.out, sep ="")
    
-   
-   
-   
-   
    ## Diagnostic Plots -------------------------------------------------------------------------------------
-   
+  
    ## Linearity of effect and outlying observations
    p1 <- ggplot(data = df, 
                 aes(x=mar.pred, 
@@ -367,8 +360,7 @@ diagmflF <- function(mfl, title = "",
          theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
       # p3hist <-p2hist
    }
-   
-   
+
    ## Within-units covariance structure
    p4 <- ggplot(data = unitDf, 
                 aes(x=unit, 
@@ -385,18 +377,17 @@ diagmflF <- function(mfl, title = "",
       ggtitle("Within-units covariance matrice")+
       theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
    
+   ## EBLUP modif lmerTest v3 mais plante si pas d'effet aléatoire
+   #pvl <- ranova(model=mfl, reduce.terms = TRUE)
+   #pvrnd <- pvl[[6]][2]
+   #ggtitle(paste("Random effect on intercept (LRT p-value = ",round(pvrnd,digits = 5), ")", sep = ""))+
    
-   
-   ## EBLUP
    p5 <-
       ggplot(aes(x = eblup, y = unit, col = fixfact), data = unitDf)+
       geom_point(size =3)+
       geom_segment(aes(xend = lower, yend = unit)) + 
       geom_segment(aes(xend = upper, yend = unit))+
-      ggtitle(paste("Random effect on intercept (LRT p-value = ",
-                    round(rand(mfl)[[1]][unitC, "p.value"], digit = 3), 
-                    ")",
-                    sep = ""))+
+      ggtitle("Random effect on intercept")+
       theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
       geom_vline(xintercept = 0, linetype = "dashed")+
       ylab(unitC)
@@ -411,8 +402,7 @@ diagmflF <- function(mfl, title = "",
       ylab("Standadized Mahalanobis distance")+
       ggtitle("Normality of random effect")+
       theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
-   
-   
+
    ## Outlying subjects
    p7 <-
       ggplot(aes(y = mal, x= unit, col = fixfact), data = unitDf)+
@@ -426,7 +416,7 @@ diagmflF <- function(mfl, title = "",
                 hjust=1, vjust=0)+
       ggtitle("Outlying subjects")+
       xlab(unitC)
-   
+
    ## "Data" and "modeling" Plots --------------------------------------------------------------------------
    
    ## Individual time-course
@@ -435,29 +425,29 @@ diagmflF <- function(mfl, title = "",
       geom_line() +  ggtitle("Individual time-courses ")+
       theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
 
-   ## Post-hoc estimates
-   ddlsm1  <- difflsmeans(mfl,test.effs=NULL)$diffs.lsmeans.table
-   
-   ddlsm1$name <- sapply(rownames(ddlsm1),
-                         function(nam){
-                            strsplit(nam, split = " ", fixed =TRUE)[[1]][1]
-                         }) 
-   ddlsm1$detail <- sapply(rownames(ddlsm1),
-                           function(nam){
-                              paste(strsplit(nam, split = " ", fixed =TRUE)[[1]][-1],
-                                    collapse= "")
-                           })
-   
-   colnames(ddlsm1)<- make.names(colnames(ddlsm1))
+   ## Post-hoc estimates (modification due to lmerTest v3)
+   ddlsm1  <- data.frame(difflsmeans(mfl,test.effs=NULL))
+   colnames(ddlsm1)[9] <- "pvalue"
+   # ddlsm1$name <- sapply(rownames(ddlsm1),
+   #                       function(nam){
+   #                          strsplit(nam, split = " ", fixed =TRUE)[[1]][1]
+   #                       }) 
+   # ddlsm1$detail <- sapply(rownames(ddlsm1),
+   #                         function(nam){
+   #                            paste(strsplit(nam, split = " ", fixed =TRUE)[[1]][-1],
+   #                                  collapse= "")
+   #                         })
+   # 
+   # colnames(ddlsm1)<- make.names(colnames(ddlsm1))
    ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
    
    ## modif JF pour tenir compte du seuil de pvalues defini par le user  
-   ddlsm1$Significance[which(ddlsm1$p.value<pvalCutof & ddlsm1$p.value>=0.01)] <- "p-value < threshold"
-   ddlsm1$Significance[which(ddlsm1$p.value<0.01 & ddlsm1$p.value>=0.005)] <- "p-value < 0.01"
-   ddlsm1$Significance[which(ddlsm1$p.value<0.005)] <- "p-value < 0.005"
-   
-   phPlot <- ggplot(ddlsm1, aes(x = detail, y = Estimate))+
-      facet_grid(facets = ~name, ddlsm1,scales = "free", space = "free")+
+   ddlsm1$Significance[which(ddlsm1$pvalue <pvalCutof & ddlsm1$pvalue >=0.01)] <- "p-value < threshold"
+   ddlsm1$Significance[which(ddlsm1$pvalue <0.01 & ddlsm1$pvalue >=0.005)] <- "p-value < 0.01"
+   ddlsm1$Significance[which(ddlsm1$pvalue <0.005)] <- "p-value < 0.005"
+
+   phPlot <- ggplot(ddlsm1, aes(x = levels, y = Estimate))+
+      facet_grid(facets = ~term, ddlsm1,scales = "free", space = "free")+
       geom_bar( aes(fill = Significance), stat="identity")+
       theme(axis.text.x = element_text(angle = 90, hjust = 1))+
       scale_fill_manual(
@@ -465,10 +455,10 @@ diagmflF <- function(mfl, title = "",
                     "p-value < threshold"  = "yellow",
                     "p-value < 0.01"  = "orange",
                     "p-value < 0.005" = "red"))+
-      geom_errorbar(aes(ymin = Lower.CI, ymax =Upper.CI ), width=0.25)+
+      geom_errorbar(aes(ymin = lower, ymax =upper ), width=0.25)+
       ggtitle("Post-hoc estimates")+xlab("")+
       theme(plot.title = element_text(size = rel(1.2), face = "bold"))
-   
+
    ## Final plotting
    
    blank<-rectGrob(gp=gpar(col="white"))
@@ -493,7 +483,7 @@ diagmflF <- function(mfl, title = "",
                 widths = c(0.22, 0.04, 0.22,0.04 , 0.22, 0.04, 0.22))
    
    invisible(NULL)
-   
+
 }
 
 #diagmflF(mfl, title = "",  outlier.limit = 3, least.confounded =TRUE)
@@ -520,18 +510,18 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
    ## Post-hoc estimates
    
    ddlsm1  <- mfl
-   
-   ddlsm1$name <- sapply(rownames(ddlsm1),
-                         function(nam){
-                            strsplit(nam, split = " ", fixed =TRUE)[[1]][1]
-                         }) 
-   ddlsm1$detail <- sapply(rownames(ddlsm1),
-                           function(nam){
-                              paste(strsplit(nam, split = " ", fixed =TRUE)[[1]][-1],
-                                    collapse= "")
-                           })
-   
-   colnames(ddlsm1)<- make.names(colnames(ddlsm1))
+   ddlsm1$name <- rownames(ddlsm1)
+   # ddlsm1$name <- sapply(rownames(ddlsm1),
+   #                       function(nam){
+   #                          strsplit(nam, split = " ", fixed =TRUE)[[1]][1]
+   #                       })
+   # ddlsm1$detail <- sapply(rownames(ddlsm1),
+   #                         function(nam){
+   #                            paste(strsplit(nam, split = " ", fixed =TRUE)[[1]][-1],
+   #                                  collapse= "")
+   #                         })
+   # 
+   #colnames(ddlsm1)<- make.names(colnames(ddlsm1))
    ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
    
    ## modif JF pour tenir compte du seuil de pvalues defini par le user 
@@ -555,13 +545,13 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
    ddlsm1$Significance[which(ddlsm1$p.value<bi)] <- lbi
 
    phPlot <- 
-      ggplot(ddlsm1, aes(x = detail, y = Estimate))+
-      facet_grid(facets = ~name, ddlsm1,scales = "free", space = "free")+
+      ggplot(ddlsm1, aes(x = levels, y = Estimate))+
+      facet_grid(facets = ~term, ddlsm1,scales = "free", space = "free")+
       geom_bar( aes(fill = Significance), stat="identity")+
       theme(axis.text.x = element_text(angle = 90, hjust = 1))+
       scale_fill_manual(
          # values = c("NS" = "grey", "p-value < threshold" = "yellow","p-value < 0.01" = "orange","p-value < 0.005" = "red"))+
-         #values = c("NS" = 'grey', "pvalue < 0.05 "= 'yellow',"p-value < 0.01" = 'orange',"p-value < 0.005" = 'red'))+
+         # values = c("NS" = 'grey', "pvalue < 0.05 "= 'yellow',"p-value < 0.01" = 'orange',"p-value < 0.005" = 'red'))+
          # values = c("NS = grey", "p-value < threshold = yellow","p-value < 0.01 = orange","p-value < 0.005 = red"))+
          values = valcol )+ 
       geom_errorbar(aes(ymin = Lower.CI, ymax =Upper.CI ), width=0.25)+

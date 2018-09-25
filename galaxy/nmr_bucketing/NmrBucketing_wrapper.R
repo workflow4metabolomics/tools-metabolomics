@@ -125,7 +125,10 @@ if(length(error.stock) > 1)
 outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBorder, rightBorder=rightBorder, bucketSize=bucketSize,
 						exclusionZones=exclusionZones, exclusionZonesBorders=exclusionZonesBorders, graph=graphique, nomFichier=nomGraphe,
 						savLog.txtC=logFile)
-data_bucket <- outputs[[1]]
+data_bucket1 <- outputs[[1]]
+somme <- apply(data_bucket1, 1, sum)
+data_bucket <- data_bucket1[somme !=0, ]
+
 data_sample <- outputs[[2]]
 data_variable <- outputs[[3]]
 ppm <- outputs[[4]]

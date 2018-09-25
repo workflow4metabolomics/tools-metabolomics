@@ -1,4 +1,4 @@
-<tool id="NmrBucketing" name="NMR_Bucketing" version="2.0.2">
+<tool id="NmrBucketing" name="NMR_Bucketing" version="2.0.3">
 
     <description> Bucketing and integration of NMR Bruker raw data</description>
 
@@ -270,6 +270,10 @@ Under construction
 
 Changelog/News
 --------------
+
+**Version 2.0.3 - 25/09/2018**
+
+- Removal of zero's for normalisation
 
 **Version 2.0.2 - 21/04/2017**
 

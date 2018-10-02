@@ -42,11 +42,11 @@
         #end if
 
         ## Outputs
-        logOut log.log
+        logOut $logOut
         dataMatrixOut '$dataMatrixOut'
         sampleOut '$sampleOut'
         variableOut '$variableOut'
-        graphOut '$graphOut'; cat log.log
+        graphOut '$graphOut'
     </command>
 
     <inputs>
@@ -92,6 +92,7 @@
     </inputs>
 
     <outputs>
+		<data format="txt" name="logOut" label="${tool.name}_log" />
         <data format="tabular" name="sampleOut" label="${tool.name}_sampleMetadata" />
         <data format="tabular" name="variableOut" label="${tool.name}_variableMetadata" />
         <data format="tabular" name="dataMatrixOut" label="${tool.name}_bucketedData" />

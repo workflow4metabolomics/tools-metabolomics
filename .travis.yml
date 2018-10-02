@@ -10,9 +10,9 @@ before_install:
  - virtualenv planemo-venv
  - . planemo-venv/bin/activate
  - pip install --upgrade pip setuptools
- - pip install planemo==0.37.0
+ - pip install planemo==0.47.0
 
 script:
  - planemo lint ${TRAVIS_BUILD_DIR}/galaxy/nmr_bucketing/
- - planemo test --conda_auto_init --conda_auto_install --conda_dependency_resolution --galaxy_branch release_17.01 --no_cache_galaxy ${TRAVIS_BUILD_DIR}/galaxy/nmr_bucketing/
+ - planemo test --conda_auto_init --conda_auto_install --conda_dependency_resolution --galaxy_branch release_17.05 --no_cache_galaxy ${TRAVIS_BUILD_DIR}/galaxy/nmr_bucketing/
 

@@ -1,4 +1,4 @@
-<tool id="mixmodel" name="mixmodel" version="2.1.4">
+<tool id="mixmodel" name="mixmodel" version="1.0.0">
     <description>ANOVA for repeated measures statistics</description>
 
     <requirements>

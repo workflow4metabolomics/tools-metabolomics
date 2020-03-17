@@ -56,7 +56,7 @@
                 <option value="tsv_file">Tsv file containing preprocessed spectra (from your history)</option>
             </param>
             <when value="zip_file">
-                <param name="zip_file" type="data" format="no_unzip.zip" label="Zip file" />
+                <param name="zip_file" type="data" format="no_unzip.zip,zip" label="Zip file" />
             </when>
             <when value="tsv_file">
                 <param name="tsv_file" type="data" format="tabular" label="Tsv file" />
@@ -105,7 +105,7 @@
         <test>
             <param name="inputs|input" value="zip_file" />
             <param name="inputs|zip_file" value="MTBLS1.zip"  ftype="zip" />
-            <param name="bucket_width" value="0.01"  ftype="zip" />
+            <param name="bucket_width" value="0.01" />
             <param name="left_border" value="9.3" />
             <param name="right_border" value="0.8" />
             <param name="zone_exclusion_choices|choice" value="yes" />

@@ -2,7 +2,7 @@
 #######  on a multi var dataset using 3 files as used in W4M
 ##############################################################################################################
 lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=colnames(ids)[[ivd]], 
-                          pvalCutof=0.05,dffOption, visu , tit = "", least.confounded = FALSE, outlier.limit =3) 
+                          pvalCutof=0.05,dffOption, visu=visu , tit = "", least.confounded = FALSE, outlier.limit =3) 
    {
    ### function to perform linear mixed model with 1 Fixed factor + Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
@@ -158,6 +158,10 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
    ### function to perform linear mixed model with factor Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
    
+   
+   ## for debug
+   # ifixfact=0 ;itime=1 ; isubject=2 ; ivd=3 ; ids <- subds
+   
    if (!is.numeric(ids[[ivd]]))     {stop("Dependant variable is not numeric")}
    if (!is.factor(ids[[itime]]))    {stop("Repeated factor is not a factor")}
    if (!is.factor(ids[[isubject]])) {stop("Random factor is not a factor")}
@@ -170,12 +174,12 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
    # ndim <- defColRes(ids,0,itime)
    # nfp : nombre de facteurs principaux + model infos + normality test 
    nfp <- ndim[1]
-   # nct number of comparison of the time factor
+   # nlt number of time levels; nct number of comparisons of the time factor
    nlt <- ndim[4] ; nct <- ndim[5]
    # number of all lmer results
-   nresf <- nct
+   nresT <- nct
    ## initialization of the result vector (1 line)
-   res <- data.frame(array(rep(NA,(nfp+2*nresf))))
+   res <- data.frame(array(rep(NA,(nfp+4*nresT))))
    colnames(res)[1] <- "resultLM"
    
    ### if at least one subject have data for only 1 time, mixed model is not possible and variable must be skip
@@ -195,13 +199,17 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
       ## Test of all differences estimates between levels as SAS proc mixed. 
       ## results are in diffs.lsmeans.table dataframe
       ## test.effs=NULL perform all pairs comparisons including interaction effect
-      dlsm1  <- difflsmeans(mfl,test.effs=NULL)
-      ddlsm1 <- dlsm1$diffs.lsmeans.table
-      
+      dlsm1  <- data.frame(difflsmeans(mfl,test.effs=NULL))
+      ddlsm1 <- dlsm1
+      ## save rownames and factor names
+      rn <- rownames(ddlsm1)
+      fn <- ddlsm1[,c(1,2)]
       ## writing the results on a single line
       namesFactEstim <- paste("estimate ",rownames(ddlsm1)[c(1:(nct))],sep="")
-      namesFactPval <- paste("pvalue ",rownames(ddlsm1)[c(1:(nct))],sep="")
+      namesFactPval  <- paste("pvalue ",rownames(ddlsm1)[c(1:(nct))],sep="")
       namesFactprinc <- "pval_time"
+      namesLowerCI   <- paste("lowerCI ",rownames(ddlsm1)[c(1:(nct))],sep="")
+      namesUpperCI   <- paste("upperCI ",rownames(ddlsm1)[c(1:(nct))],sep="")
       
       ### lmer results on 1 vector
       # pvalue of shapiro Wilks test of the residuals
@@ -209,15 +217,30 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
       res[2,] <- rsum$varcor$subject[1] ;rownames(res)[2] <- "Subject.Variance"
       res[3,] <- rsum$devcomp$cmp[7] ; rownames(res)[3] <- "REML"
       
-      ### principal factor time pvalue results + shapiro test 
+      ###  factor time pvalue results + shapiro test 
       res[nfp,] <- raov[,6]; rownames(res)[nfp] <- namesFactprinc
-      # pvalue of fixed factor comparisons
-      res[(nfp+1):(nfp+nct),] <- ddlsm1[c(1:nct),7]
-      rownames(res)[(nfp+1):(nfp+nct)] <- namesFactPval
       
-      # Estimate of the difference between levels of factors
-      res[(nfp+nresf+1):(nfp+nresf+nct),] <- ddlsm1[c(1:nct),1]
+      # pvalues of time factor levels comparisons
+      res[(nfp+1):(nfp+nct),] <- ddlsm1[c(1:nct),9]
+      rownames(res)[(nfp+1):(nfp+nct)] <- namesFactPval
+            
+      # Estimates of time factor levels
+      nresf <- nresT
+      res[(nfp+nresf+1):(nfp+nresf+nct),] <- ddlsm1[c(1:nct),3]
       rownames(res)[(nfp+nresf+1):(nfp+nresf+nct)] <- namesFactEstim
+      
+      # Lower CI of the difference between levels of factors
+      # nresf is incremeted 
+      nresf <- nresf + nresT
+      res[(nfp+nresf+1):(nfp+nresf+nct),] <- ddlsm1[c(1:nct),7]
+      rownames(res)[(nfp+nresf+1):(nfp+nresf+nct)] <- namesLowerCI
+      # Lower CI of the difference between levels of factors
+      # nresf is incremeted 
+      nresf <- nresf + nresT
+      res[(nfp+nresf+1):(nfp+nresf+nct),] <- ddlsm1[c(1:nct),8]
+      rownames(res)[(nfp+nresf+1):(nfp+nresf+nct)] <- namesUpperCI
+      
+      
    }
    else
       ## one of the subject has only one time, subject can't be a random variable
@@ -226,7 +249,9 @@ lmRepeated1FF <- function(ids, ifixfact=0, itime, isubject, ivd, ndim, nameVar=c
    #cat("traitement impossible\n")
    }
    tres <- data.frame(t(res)); rownames(tres)[1] <- nameVar
-   return(tres)
+   cres <- list(tres,rn, fn)
+   return(cres)
+   
 }
 
 ##############################################################################################################
@@ -302,8 +327,8 @@ lmixedm <- function(datMN,
    ### Function running lmer function on a set of variables described in 
    ### 3 different dataframes as used by W4M
    ### results are merge with the metadata variables varids
-   ### ifixfact, itime, isubject are subscripts of the dependant variables
-   if (fixfact=="none")  ifixfact <-0 else ifixfact <- which(colnames(sampids)==fixfact)
+   ### ifixfact, itime, isubject are subscripts of the dependant variables. if only time factor the ifixfat is set to 0 and no diag is performed (visu="no")
+   if (fixfact=="none")  {ifixfact <-0; visu <- "no"} else ifixfact <- which(colnames(sampids)==fixfact)
    itime    <- which(colnames(sampids)==time)
    isubject <- which(colnames(sampids)==subject)
    
@@ -320,7 +345,7 @@ lmixedm <- function(datMN,
 
    nvar <- ncol(lmmds); firstvar <- ncol(sampids)+1; lastvar <- firstvar+ncol(lmmds)-1
 
-   dslm[[ifixfact]] <- factor(dslm[[ifixfact]])
+   if (ifixfact>0)  dslm[[ifixfact]] <- factor(dslm[[ifixfact]])
    dslm[[itime]]    <- factor(dslm[[itime]])  
    dslm[[isubject]] <- factor(dslm[[isubject]])
    ## call defColres to define the numbers of test and so the number of columns of results
@@ -333,7 +358,7 @@ lmixedm <- function(datMN,
   } else 
    {
       ndim <- defColRes(dslm[,itime],ifixfact=0,itime=1) 
-      nColRes <- ndim[1]+(2*(ndim[5]))
+      nColRes <- ndim[1]+(4*(ndim[5]))
       firstpval <- ndim[1]
       lastpval <- ndim[1]+ndim[5]
    }
@@ -347,11 +372,12 @@ lmixedm <- function(datMN,
       par(mfrow=c(1,3))
    }
    ###############  fin test ecriture dans pdf
-   ## pour test : lastvar <- 15
+
    cat("\n pvalCutof ", pvalCutof)
    
    for (i in firstvar:lastvar) {
       
+      ## i <- firstvar
       ## NL modif
       cat("\n[",colnames(dslm)[i],"] ")
       ## end of NL modif
@@ -366,7 +392,9 @@ lmixedm <- function(datMN,
                                      dffOption=dffOption,least.confounded = least.confounded, 
                                      outlier.limit = outlier.limit) 
          else 
-            reslmer <- lmRepeated1FF(subds,ifixfact=0,1,2, ivd=3, ndim=ndim, pvalCutof=pvalCutof,dffOption)
+            reslmer <- lmRepeated1FF(subds,ifixfact=0,itime=1,isubject=2, ivd=3, ndim=ndim,
+                                     pvalCutof=pvalCutof, dffOption=dffOption)
+         
          ## end of NL modif
          resLM[i-firstvar+1,] <- reslmer[[1]]
       }, error=function(e){cat("ERROR : ",conditionMessage(e), "\n");})
@@ -376,8 +404,9 @@ lmixedm <- function(datMN,
          factorRow <- reslmer[[3]]
       }
    }
-   ## for debug : ifixfact=1;itime=2;isubject=3; ivd=4;tit = colnames(dslm)[i]; ids <- subds
-
+   ## for debug avec facteur fixe : ifixfact=1;itime=2;isubject=3; ivd=4;tit = colnames(dslm)[i]; ids <- subds
+   ## for debug avec facteur time seul : ifixfact=0;itime=1;isubject=2; ivd=3;tit = colnames(dslm)[i]; ids <- subds
+   
    
    ## NL add
    if(visu == "yes") dev.off()
@@ -394,19 +423,20 @@ lmixedm <- function(datMN,
          
       }
    }
-
+   
    ## for each variables, set pvalues to NA and estimates = 0 when pvalue of factor > pvalCutof value define by user
    if (ifixfact>0) {
       ## time effect
       resLM[which(resLM[,firstpval]> pvalCutof),c((lastpval+1):(lastpval+ndim[5]))] <- 0
       resLM[which(resLM[,firstpval]> pvalCutof),c((ndim[1]+1):(ndim[1]+ndim[5]))] <- NA
-   ## treatment effect
+      ## treatment effect
       resLM[which(resLM[,firstpval+1]> pvalCutof),c((lastpval+ndim[5]+1):(lastpval+ndim[5]+ndim[3]))] <- 0
       resLM[which(resLM[,firstpval+1]> pvalCutof),c((ndim[1]+ndim[5]+1):(ndim[1]+ndim[5]+ndim[3]))] <- NA
-   ## interaction effect
+      ## interaction effect
       resLM[which(resLM[,firstpval+2]> pvalCutof),c((lastpval+ndim[5]+ndim[3]+1):(lastpval+ndim[5]+ndim[3]+ndim[7]))] <- 0
       resLM[which(resLM[,firstpval+2]> pvalCutof),c((ndim[1]+ndim[5]+ndim[3]+1):(ndim[1]+ndim[5]+ndim[3]+ndim[7]))] <- NA
-   } else {
+   } else
+      {
       ## time effect only
       resLM[which(resLM[,firstpval]> pvalCutof),c((lastpval+1):(lastpval+ndim[5]))] <- 0
       resLM[which(resLM[,firstpval]> pvalCutof),c((firstpval+1):(firstpval+ndim[5]))] <- NA
@@ -418,32 +448,65 @@ lmixedm <- function(datMN,
    
    ## for each variable (in row)   
    for (i in 1:nrow(resLM)) {
-      #cat("\n",rownames(resLM)[i])
-      ## if any main factor after p-value correction is significant -> plot estimates and time course
-      if (length(which(resLM[i,c(4:6)]<pvalCutof))>0) {
+      cat("\n",rownames(resLM)[i])
+      
+      ## if any fixed factor + time factor 
+      if (ifixfact >0) 
          
-         ## Plot of time course by fixfact : data prep with factors and quantitative var to be plot
-         subv <- dslm[,colnames(dslm)==rownames(resLM)[i]]
-         subds <- data.frame(dslm[[ifixfact]],dslm[[itime]], dslm[[isubject]],subv)
-         #colnames(subds) <- c(colnames(dslm)[ifixfact],colnames(dslm)[itime],colnames(dslm)[isubject],rownames(resLM)[i] <- rownames(resLM)[i] )
-         libvar <- c(fixfact,time,subject)
-         colnames(subds) <- c(libvar,rownames(resLM)[i])
+         ## if any main factor after p-value correction is significant -> plot estimates and time course
+         if (length(which(resLM[i,c(4:6)]<pvalCutof))>0) {
+            
+            ## Plot of time course by fixfact : data prep with factors and quantitative var to be plot
+            subv <- dslm[,colnames(dslm)==rownames(resLM)[i]]
+            subds <- data.frame(dslm[[ifixfact]],dslm[[itime]], dslm[[isubject]],subv)
+            #colnames(subds) <- c(colnames(dslm)[ifixfact],colnames(dslm)[itime],colnames(dslm)[isubject],rownames(resLM)[i] <- rownames(resLM)[i] )
+            libvar <- c(fixfact,time,subject)
+            colnames(subds) <- c(libvar,rownames(resLM)[i])
+            
+            ## Plot of estimates with error bars for all fixed factors and interaction
+            rddlsm1 <- t(resLM[i,])
+            pval <- rddlsm1[substr(rownames(rddlsm1),1,6)=="pvalue"]
+            esti <- rddlsm1[substr(rownames(rddlsm1),1,6)=="estima"]
+            loci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="lowerC"]
+            upci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="UpperC"]
+            rddlsm1 <- data.frame(pval,esti,loci,upci,factorRow)
+            colnames(rddlsm1) <- c("p.value","Estimate","Lower.CI","Upper.CI",colnames(factorRow))
+            rownames(rddlsm1) <- labelRow
+            
+            ## function for plotting these 2 graphs
+            plot.res.Lmixed(rddlsm1, subds, title = rownames(resLM)[i], pvalCutof = pvalCutof)
+            
+         }
+      
+      ## if only a time factor  
+      if (ifixfact ==0)
          
-         ## Plot of estimates with error bars for all fixed factors and interaction
-         rddlsm1 <- t(resLM[i,])
-         pval <- rddlsm1[substr(rownames(rddlsm1),1,6)=="pvalue"]
-         esti <- rddlsm1[substr(rownames(rddlsm1),1,6)=="estima"]
-         loci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="lowerC"]
-         upci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="UpperC"]
-         rddlsm1 <- data.frame(pval,esti,loci,upci,factorRow)
-         colnames(rddlsm1) <- c("p.value","Estimate","Lower.CI","Upper.CI",colnames(factorRow))
-         rownames(rddlsm1) <- labelRow
-
-         ## function for plotting these 2 graphs
-         plot.res.Lmixed(rddlsm1, subds, title = rownames(resLM)[i], pvalCutof = pvalCutof)
-    
-      }
-   }
+         ## if time factor after p-value correction is significant -> plot time course
+         if (length(which(resLM[i,4]<pvalCutof))>0) {
+            
+            ## Plot of time course  : data prep with factors and quantitative var to be plot
+            subv <- dslm[,colnames(dslm)==rownames(resLM)[i]]
+            subds <- data.frame(dslm[[itime]], dslm[[isubject]],subv)
+            #colnames(subds) <- c(colnames(dslm)[ifixfact],colnames(dslm)[itime],colnames(dslm)[isubject],rownames(resLM)[i] <- rownames(resLM)[i] )
+            libvar <- c(time,subject)
+            colnames(subds) <- c(libvar,rownames(resLM)[i])
+            
+            ## Plot of estimates with error bars for all fixed factors and interaction
+            rddlsm1 <- t(resLM[i,])
+            pval <- rddlsm1[substr(rownames(rddlsm1),1,6)=="pvalue"]
+            esti <- rddlsm1[substr(rownames(rddlsm1),1,6)=="estima"]
+            loci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="lowerC"]
+            upci <- rddlsm1[substr(rownames(rddlsm1),1,6)=="upperC"]
+            rddlsm1 <- data.frame(pval,esti,loci,upci,factorRow)
+            colnames(rddlsm1) <- c("p.value","Estimate","Lower.CI","Upper.CI",colnames(factorRow))
+            rownames(rddlsm1) <- labelRow
+            
+            ## function for plotting these 2 graphs
+            plot.res.Lmixed(rddlsm1, subds, title = rownames(resLM)[i], pvalCutof = pvalCutof)
+            
+         }
+   
+   }      
    dev.off()
    
    ## return result file with pvalues and estimates (exclude confidence interval used for plotting)

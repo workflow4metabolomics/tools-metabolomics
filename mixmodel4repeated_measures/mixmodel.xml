@@ -1,12 +1,17 @@
-<tool id="mixmodel" name="mixmodel" version="1.0.0">
+<tool id="mixmodel" name="mixmodel" version="3.0.0">
     <description>ANOVA for repeated measures statistics</description>
 
     <requirements>
-        <requirement type="package" version="1.1_4">r-batch</requirement>
+		<requirement type="package" version="3.6.2">R</requirement>
+        <requirement type="package" version="1.1_5">r-batch</requirement>
         <requirement type="package" version="1.1_13">r-lme4</requirement>
-        <requirement type="package" version="3.0_1">r-lmertest</requirement>
-        <requirement type="package" version="2.34.0">bioconductor-multtest</requirement>
-        <requirement type="package" version="2.3">r-gridextra</requirement>
+        <requirement type="package" version="2.0_33">r-lmertest</requirement>
+		<requirement type="package" version="1.2_18">r-Matrix</requirement>
+        <requirement type="package" version="7.3_51.4">r-MASS</requirement>
+        <requirement type="package" version="3.2_0">r-ggplot2</requirement>
+		<requirement type="package" version="3.6_2">r-grid</requirement>
+        <requirement type="package" version="2.3">r-gridExtra</requirement>
+        <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
 
     <stdio>
@@ -39,7 +44,7 @@
         <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
         <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
         <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
-        <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of the column of the sample metadata table corresponding to the fixed factor"/>
+        <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
         <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
         <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
         <param name="adjC" label="Method for multiple testing correction" type="select" help="">
@@ -71,7 +76,7 @@
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
         <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
-
+		
     </outputs>
 
     <tests>
@@ -152,7 +157,7 @@ Variable metadata file
 
 
 Treatment
-| Name of the fixed factor in the sample metadata file
+| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor 
 |
 
 Time

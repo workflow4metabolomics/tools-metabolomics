@@ -4,9 +4,12 @@ library(batch) ## parseCommandArgs
 
 library(lme4)     ## mixed model computing
 library(Matrix)
+library(MASS)
 library(lmerTest) ## computing pvalue and lsmeans from results of lme4 package 
 library(multtest) ## multiple testing
-
+library(ggplot2)
+library(gridExtra)
+library(grid)
 
 source_local <- function(fname){
     argv <- commandArgs(trailingOnly = FALSE)
@@ -14,7 +17,6 @@ source_local <- function(fname){
     source(paste(base_dir, fname, sep="/"))
 }
 
-#source_local("univariate_script.R")
 source_local("mixmodel_script.R")
 source_local("diagmfl.R")
 
@@ -96,11 +98,11 @@ varDF <- read.table(argVc["variableMetadata_in"],
 flgF("identical(rownames(datMN), rownames(samDF))", txtC = "Column names of the dataMatrix are not identical to the row names of the sampleMetadata; check your data with the 'Check Format' module in the 'Quality Control' section")
 flgF("identical(colnames(datMN), rownames(varDF))", txtC = "Row names of the dataMatrix are not identical to the row names of the variableMetadata; check your data with the 'Check Format' module in the 'Quality Control' section")
 
-flgF("argVc['fixfact'] %in% colnames(samDF)", txtC = paste0("Required fixed factor '"  , argVc['fixfact'], "' could not be found in the column names of the sampleMetadata"))
+#flgF("argVc['fixfact'] %in% colnames(samDF)", txtC = paste0("Required fixed factor '"  , argVc['fixfact'], "' could not be found in the column names of the sampleMetadata"))
 flgF("argVc['time']    %in% colnames(samDF)", txtC = paste0("Required time factor '"   , argVc['time']   , "' could not be found in the column names of the sampleMetadata"))
 flgF("argVc['subject'] %in% colnames(samDF)", txtC = paste0("Required subject factor '", argVc['subject'], "' could not be found in the column names of the sampleMetadata"))
 
-flgF("mode(samDF[, argVc['fixfact']]) %in% c('character', 'numeric')", txtC = paste0("The '", argVc['fixfact'], "' column of the sampleMetadata should contain either number only, or character only"))
+#flgF("mode(samDF[, argVc['fixfact']]) %in% c('character', 'numeric')", txtC = paste0("The '", argVc['fixfact'], "' column of the sampleMetadata should contain either number only, or character only"))
 flgF("mode(samDF[, argVc['time']])    %in% c('character', 'numeric')", txtC = paste0("The '", argVc['time']   , "' column of the sampleMetadata should contain either number only, or character only"))
 flgF("mode(samDF[, argVc['subject']]) %in% c('character', 'numeric')", txtC = paste0("The '", argVc['subject'], "' column of the sampleMetadata should contain either number only, or character only"))
 

@@ -8,7 +8,6 @@
         <requirement type="package" version="1.2_18">r-Matrix</requirement>
         <requirement type="package" version="7.3_51.4">r-MASS</requirement>
         <requirement type="package" version="3.2_0">r-ggplot2</requirement>
-        <requirement type="package" version="3.6_2">r-grid</requirement>
         <requirement type="package" version="2.3">r-gridExtra</requirement>
         <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
@@ -18,24 +17,24 @@
     </stdio>
 
     <command><![CDATA[
-        Rscript $__tool_directory__/mixmodel_wrapper.R
+        Rscript '$__tool_directory__/mixmodel_wrapper.R'
 
-        dataMatrix_in "$dataMatrix_in"
-        sampleMetadata_in "$sampleMetadata_in"
-        variableMetadata_in "$variableMetadata_in"
+        dataMatrix_in '$dataMatrix_in'
+        sampleMetadata_in '$sampleMetadata_in'
+        variableMetadata_in '$variableMetadata_in'
 
-        fixfact "$fixfact"
-        time "$time"
-        subject "$subject"
-        adjC "$adjC"
-        trf  "$trf"
-        thrN "$thrN"
-        diaR "$diaR"
+        fixfact '$fixfact'
+        time '$time'
+        subject '$subject'
+        adjC '$adjC'
+        trf  '$trf'
+        thrN '$thrN'
+        diaR '$diaR'
 
-        variableMetadata_out "$variableMetadata_out"
-        out_graph_pdf "$out_graph_pdf"
-        out_estim_pdf "$out_estim_pdf"
-        information "$information"
+        variableMetadata_out '$variableMetadata_out'
+        out_graph_pdf '$out_graph_pdf'
+        out_estim_pdf '$out_estim_pdf'
+        information '$information'
 
     ]]></command>
 
@@ -43,8 +42,8 @@
         <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
         <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
         <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
-        <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
-        <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
+        <param name="fixfact" label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
+        <param name="time" label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
         <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
         <param name="adjC" label="Method for multiple testing correction" type="select" help="">
             <option value="fdr">fdr</option>

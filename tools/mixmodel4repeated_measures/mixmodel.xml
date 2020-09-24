@@ -1,15 +1,14 @@
-<tool id="mixmodel" name="mixmodel" version="3.0.0">
+<tool id="mixmodel" name="mixmodel" version="3.0.0+galaxy0">
     <description>ANOVA for repeated measures statistics</description>
 
     <requirements>
-		<requirement type="package" version="3.6.2">R</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
         <requirement type="package" version="1.1_13">r-lme4</requirement>
         <requirement type="package" version="2.0_33">r-lmertest</requirement>
-		<requirement type="package" version="1.2_18">r-Matrix</requirement>
+        <requirement type="package" version="1.2_18">r-Matrix</requirement>
         <requirement type="package" version="7.3_51.4">r-MASS</requirement>
         <requirement type="package" version="3.2_0">r-ggplot2</requirement>
-		<requirement type="package" version="3.6_2">r-grid</requirement>
+        <requirement type="package" version="3.6_2">r-grid</requirement>
         <requirement type="package" version="2.3">r-gridExtra</requirement>
         <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
@@ -35,7 +34,7 @@
 
         variableMetadata_out "$variableMetadata_out"
         out_graph_pdf "$out_graph_pdf"
-		out_estim_pdf "$out_estim_pdf"
+        out_estim_pdf "$out_estim_pdf"
         information "$information"
 
     ]]></command>
@@ -76,7 +75,7 @@
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
         <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
-		
+
     </outputs>
 
     <tests>
@@ -98,7 +97,7 @@
 
 .. class:: infomark
 
-**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/home.html)
 
 .. class:: infomark
 
@@ -157,7 +156,7 @@ Variable metadata file
 
 
 Treatment
-| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor 
+| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor
 |
 
 Time

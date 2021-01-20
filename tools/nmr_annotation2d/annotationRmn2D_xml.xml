@@ -1,4 +1,4 @@
-<tool id="2DNmrAnnotation" name="2DNMR_Annotation" version="1.0.0">
+<tool id="2DNmrAnnotation" name="2DNMR_Annotation" version="2.0.0">
 
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
@@ -9,6 +9,8 @@
         <requirement type="package" version="4.0.17">r-openxlsx</requirement>
         <requirement type="package" version="1.4.0">r-stringr</requirement>
         <requirement type="package" version="1.0.2">r-tidyr</requirement>
+        <requirement type="package" version="3.3">r-curl</requirement>
+        <requirement type="package" version="1.6">r-jsonlite</requirement>
     </requirements>
 
     <stdio>
@@ -19,9 +21,13 @@
         ## Wrapper + Libraries of 2D-NMR sequences for reference compounds
         Rscript '$__tool_directory__/annotationRmn2DWrapper.R'
 
-
         ## XLS file
         xlsfile '$zip_xlsfile'
+
+	## Parameters to reduce search
+	pH $pH
+	magneticField $magneticField
+
 
         ## 2D-NMR sequences to annotate
         cosy_2dsequences $cosy_2dsequences
@@ -87,11 +93,10 @@
     <inputs>
         <param name="zip_xlsfile" type="data" format="xlsx" label="File to annotate in xlsx format" />
 
+	<param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
+	<param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
+
         <param name="cosy_2dsequences" type="select" label="2D-NMR COSY sequence">
-            <option value="yes" > yes </option>
-            <option value="no" selected="true"> no </option>
-        </param>
-        <param name="jres_2dsequences" type="select" label="2D-NMR JRES sequence">
             <option value="yes" > yes </option>
             <option value="no" selected="true"> no </option>
         </param>
@@ -100,6 +105,10 @@
             <option value="no" selected="true"> no </option>
         </param>
         <param name="hsqc_2dsequences" type="select" label="2D-NMR HSQC sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+        <param name="jres_2dsequences" type="select" label="2D-NMR JRES sequence">
             <option value="yes" > yes </option>
             <option value="no" selected="true"> no </option>
         </param>

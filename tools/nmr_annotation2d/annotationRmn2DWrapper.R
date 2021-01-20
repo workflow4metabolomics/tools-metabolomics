@@ -41,6 +41,9 @@ library(ggplot2)
 library(openxlsx)
 library(stringr)
 library(tidyr)
+library(curl)
+library(jsonlite)
+## library(tidyverse)
 
 if(!runExampleL)
     argLs <- parseCommandArgs(evaluate=FALSE)
@@ -66,78 +69,161 @@ source_local("viridis.R")
 
 ## Input parameter values
 fileToAnnotate <- argLs[[1]]
+  # Constraints values
+ph <- argLs$pH
+field <- argLs$magneticField
+
   # Chosen sequence(s)
 cosy <- 0
 hmbc <- 0
 hsqc <- 0
 jres <- 0
 tocsy <- 0
-## sequences <- str_split(argLs[[2]], ",")[[1]]
-## for (s in 1:length(sequences))
-## {
-##   argv <- commandArgs(trailingOnly = FALSE)
-##   currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
-##   if (sequences[s]=="cosy"){
-##         cosy <- 1
-##         load(paste(currentDir, "BdDReference_COSY.RData", sep="/"))
-##   }else if(sequences[s]=="hmbc"){
-##         hmbc <- 1
-##         load(paste(currentDir, "BdDReference_HMBC.RData", sep="/"))
-##   }else if(sequences[s]=="hsqc"){
-##         hsqc <- 1
-##         load(paste(currentDir, "BdDReference_HSQC.RData", sep="/"))
-##   }else if(sequences[s]=="jres"){
-##         jres <- 1
-##         load(paste(currentDir, "BdDReference_JRES.RData", sep="/"))
-##   }else if(sequences[s]=="tocsy"){
-##         tocsy <- 1
-##         load(paste(currentDir, "BdDReference_TOCSY.RData", sep="/"))
-##   }else
-##     stop("No chosen sequence", call.=FALSE)
-## }
 
-if (argLs[[2]]=='yes')
+if (argLs$cosy_2dsequences=='yes')
 {
-  argv <- commandArgs(trailingOnly = FALSE)
-  currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
   cosy <- 1
-  load(paste(currentDir, "BdDReference_COSY.RData", sep="/"))
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
+  if (ph != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii==ph, ]
+  if (field != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght==field, ]
+  
+  if (nrow(peakforestSpectra) != 0)
+  {
+    BdDReference_COSY <- peakforestSpectra$peaks
+    names(BdDReference_COSY) <- str_split(peakforestSpectra[, 1], simplify=TRUE, pattern=";")[, 1]
+    for (k in 1:length(BdDReference_COSY))
+    {
+      peakforestSpectra_df <- data.frame(ppm.dim1=BdDReference_COSY[[k]][, 2], ppm.dim2=BdDReference_COSY[[k]][, 1], 
+                                         BdDReference_COSY[[k]][, 3:ncol(BdDReference_COSY[[k]])])
+      BdDReference_COSY[[k]] <- peakforestSpectra_df
+    }
+  }
+  else{
+    stop("No COSY spectra correspond to requested pH and/or magnetic field", call.=FALSE)
+  }
+  rm(peakforestSpectra)
+  rm(peakforestSpectra_df)
 }
 
-if (argLs[[3]]=='yes')
+if (argLs$hmbc_2dsequences=='yes')
 {
-  argv <- commandArgs(trailingOnly = FALSE)
-  currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  jres <- 1
-  load(paste(currentDir, "BdDReference_JRES.RData", sep="/"))
-}
-
-if (argLs[[4]]=='yes')
-{
-  argv <- commandArgs(trailingOnly = FALSE)
-  currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
   hmbc <- 1
-  load(paste(currentDir, "BdDReference_HMBC.RData", sep="/"))
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
+  if (ph != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii==ph, ]
+  if (field != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght==field, ]
+  
+  if (nrow(peakforestSpectra) != 0)
+  {
+    BdDReference_HMBC <- peakforestSpectra$peaks
+    names(BdDReference_HMBC) <- str_split(peakforestSpectra[, 1], simplify=TRUE, pattern=";")[, 1]
+    peakforestSpectra_df <- data.frame()
+    for (k in 1:length(BdDReference_HMBC))
+    {  
+      peakforestSpectra_df <- data.frame(ppm.dim1=BdDReference_HMBC[[k]][, 2], ppm.dim2=BdDReference_HMBC[[k]][, 1], 
+                                         BdDReference_HMBC[[k]][, 3:ncol(BdDReference_HMBC[[k]])])
+      BdDReference_HMBC[[k]] <- peakforestSpectra_df
+    }
+  }
+  else{
+    stop("No HMBC spectra correspond to requested pH and/or magnetic field", call.=FALSE)
+  }
+  rm(peakforestSpectra)
+  rm(peakforestSpectra_df)
 }
 
-if (argLs[[5]]=='yes')
+if (argLs$hsqc_2dsequences=='yes')
 {
-  argv <- commandArgs(trailingOnly = FALSE)
-  currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
   hsqc <- 1
-  load(paste(currentDir, "BdDReference_HSQC.RData", sep="/"))
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
+  if (ph != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii==ph, ]
+  if (field != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght==field, ]
+  
+  if (nrow(peakforestSpectra) != 0)
+  {
+    BdDReference_HSQC <- peakforestSpectra$peaks
+    names(BdDReference_HSQC) <- str_split(peakforestSpectra[, 1], simplify=TRUE, pattern=";")[, 1]
+    for (k in 1:length(BdDReference_HSQC))
+    {
+      peakforestSpectra_df <- data.frame(ppm.dim1=BdDReference_HSQC[[k]][, 2], ppm.dim2=BdDReference_HSQC[[k]][, 1], 
+                                         BdDReference_HSQC[[k]][, 3:ncol(BdDReference_HSQC[[k]])])
+      BdDReference_HSQC[[k]] <- peakforestSpectra_df
+    }
+  }
+  else{
+    stop("No HSQC spectra correspond to requested pH and/or magnetic field", call.=FALSE)
+  }  
+  rm(peakforestSpectra)
+  rm(peakforestSpectra_df)
 }
 
-if (argLs[[6]]=='yes')
+if (argLs$jres_2dsequences=='yes')
 {
-  argv <- commandArgs(trailingOnly = FALSE)
-  currentDir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  tocsy <- 1
-  load(paste(currentDir, "BdDReference_TOCSY.RData", sep="/"))
+  jres <- 1
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
+  if (ph != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii==ph, ]
+  if (field != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght==field, ]
+  
+  if (nrow(peakforestSpectra) != 0)
+  {
+    BdDReference_JRES <- peakforestSpectra$peaks
+    names(BdDReference_JRES) <- str_split(peakforestSpectra[, 1], simplify=TRUE, pattern=";")[, 1]
+    for (k in 1:length(BdDReference_JRES))
+    {
+      peakforestSpectra_df <- data.frame(ppm.dim1=BdDReference_JRES[[k]][, 2], ppm.dim2=BdDReference_JRES[[k]][, 1], 
+                                         BdDReference_JRES[[k]][, 3:ncol(BdDReference_JRES[[k]])])
+      BdDReference_JRES[[k]] <- peakforestSpectra_df
+    }
+  }
+  else{
+    stop("No JRES spectra correspond to requested pH and/or magnetic field", call.=FALSE)
+  }  
+  rm(peakforestSpectra)
+  rm(peakforestSpectra_df)
 }
 
-if (argLs[[2]]=='no' & argLs[[3]]=='no' & argLs[[4]]=='no' & argLs[[5]]=='no' & argLs[[6]]=='no')
-  stop("No chosen sequence", call.=FALSE)
+if (argLs$tocsy_2dsequences=='yes')
+{
+  tocsy <- 1
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
+  if (ph != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii==ph, ]
+  if (field != 0)
+    peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght==field, ]
+  
+  if (nrow(peakforestSpectra) != 0)
+  {
+    BdDReference_TOCSY <- peakforestSpectra$peaks
+    names(BdDReference_TOCSY) <- str_split(peakforestSpectra[, 1], simplify=TRUE, pattern=";")[, 1]
+    for (k in 1:length(BdDReference_TOCSY))
+    {
+      peakforestSpectra_df <- data.frame(ppm.dim1=BdDReference_TOCSY[[k]][, 2], ppm.dim2=BdDReference_TOCSY[[k]][, 1], 
+                                         BdDReference_TOCSY[[k]][, 3:ncol(BdDReference_TOCSY[[k]])])
+      BdDReference_TOCSY[[k]] <- peakforestSpectra_df
+    }
+  }
+  else{
+    stop("No TOCSY spectra correspond to requested pH and/or magnetic field", call.=FALSE)
+  }
+  rm(peakforestSpectra)
+  rm(peakforestSpectra_df)
+}
+
+if (argLs$cosy_2dsequences=='no' & argLs$hmbc_2dsequences=='no' & argLs$hsqc_2dsequences=='no' & argLs$jres_2dsequences=='no' & 
+    argLs$tocsy_2dsequences=='no')
+  stop("No chosen sequence. You have to choose at least 1 sequence", call.=FALSE)
 
 
   # User database

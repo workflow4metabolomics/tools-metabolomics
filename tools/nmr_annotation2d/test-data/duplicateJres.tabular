@@ -1,0 +1,333 @@
+ppm1	ppm2	commonMetabolitesList
+3.4282	-7e-04	 taurine D-Glucose L-Proline carnitine maltose
+4.005	-0.0111	 L-Phenylalanine L-asparagine L-Serine
+4.0051	0.0108	 L-Phenylalanine L-asparagine 2-hydroxybutyric acid
+4.0048	-0.0023	 L-Phenylalanine L-asparagine L- Cysteine 2-hydroxybutyric acid D-Galactose D-(-)-Ribose
+4.0048	0.0021	 L-Phenylalanine L-asparagine L- Cysteine 2-hydroxybutyric acid L-arabinopyranose D-Galactose
+3.7908	-0.0062	 L-alanine Glycerol
+3.7906	-0.0182	 L-alanine Glycerol Raffinose
+3.7908	0.006	 L-alanine Glycerol Raffinose Stachyose
+3.791	0.0184	 L-alanine Glycerol
+4.0139	-0.0098	 L-asparagine L-Phenylalanine L-Histidine
+4.0139	0.0097	 L-asparagine L-Phenylalanine L-Histidine
+4.0139	-0.0025	 L-asparagine L-Phenylalanine L-Histidine D-(-)-Ribose
+4.0139	0.0024	 L-asparagine L-Phenylalanine L-Histidine L-arabinopyranose
+3.2512	-2e-04	 L-Arginine D-Glucose
+3.7815	-0.01	 L-Arginine L-glutamine Glycerol
+3.7811	1e-04	 L-Arginine L-glutamine Glycerol maltose Raffinose Sucrose
+3.7814	0.0099	 L-Arginine L-glutamine Glutamic acid Glycerol
+2.4383	0.0139	 L-glutamine carnitine
+2.4393	-0.0127	 L-glutamine carnitine
+2.4387	0.0262	 L-glutamine carnitine
+2.439	8e-04	 L-glutamine carnitine
+2.4383	-0.0254	 L-glutamine carnitine
+2.459	-0.0056	 L-glutamine carnitine
+2.4587	0.0067	 L-glutamine carnitine
+2.4597	-0.0199	 L-glutamine carnitine
+2.4787	0.0131	 L-glutamine 3-(3-hydroxyphenyl)propanoic acid
+2.4787	-0.0131	 L-glutamine 3-(3-hydroxyphenyl)propanoic acid
+2.4794	0	 L-glutamine 3-(3-hydroxyphenyl)propanoic acid
+3.7826	-0.0099	 L-glutamine L-Arginine Glycerol
+3.7826	2e-04	 L-glutamine L-Arginine Glycerol maltose Raffinose Sucrose
+3.7825	0.0106	 L-glutamine L-Arginine Glutamic acid Glycerol
+1.3329	0.0057	 L-Lactic acid (sodium salt) L-Threonine
+1.3328	-0.0058	 L-Lactic acid (sodium salt) L-Threonine
+4.117	-0.006	 L-Lactic acid (sodium salt) D-(-)-Ribose
+4.1173	0.0058	 L-Lactic acid (sodium salt) D-(-)-Ribose
+3.2554	2e-04	 D-Glucose L-Arginine
+3.4216	0.0159	 D-Glucose carnitine
+3.4218	-0.016	 D-Glucose carnitine
+3.4215	-2e-04	 D-Glucose taurine L-Proline
+3.4748	-2e-04	 D-Glucose Sucrose
+3.4751	0.0146	 D-Glucose Sucrose
+3.5015	-0.0153	 D-Glucose D-Galactose
+3.5017	-1e-04	 D-Glucose Cholic acid D-Galactose
+3.502	0.0153	 D-Glucose D-Galactose
+3.5453	0.0112	 D-Glucose Myo-Inositol
+3.5453	-0.0051	 D-Glucose Myo-Inositol
+3.5452	0.0048	 D-Glucose Myo-Inositol D-(-)-Ribose
+3.5453	-0.0115	 D-Glucose Myo-Inositol
+3.7312	-0.015	 D-Glucose D-Galactose D-Mannose Stachyose
+3.7209	-0.0157	 D-Glucose D-Galactose
+3.7315	0.0149	 D-Glucose D-Galactose D-Mannose Stachyose
+3.7209	0.0158	 D-Glucose D-Galactose
+3.7315	-0.0057	 D-Glucose D-Galactose D-Mannose Stachyose
+3.7315	0.0053	 D-Glucose D-Galactose D-Mannose Stachyose
+3.8434	0.0093	 D-Glucose Raffinose Sucrose
+3.839	0.0108	 D-Glucose Raffinose
+3.844	-0.0097	 D-Glucose ethanolamine Raffinose Sucrose
+3.8393	-0.0111	 D-Glucose Raffinose D-(-)-Ribose
+3.901	-0.0088	 D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose D-(-)-Ribose Sucrose
+3.901	0.0083	 D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose D-(-)-Ribose Sucrose
+3.9017	0.0121	 D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose Raffinose D-(-)-Ribose Stachyose
+3.9007	-0.0124	 D-Glucose L-arabinopyranose D-Mannose Raffinose D-(-)-Ribose Stachyose
+5.2433	-0.0032	 D-Glucose L-arabinopyranose maltose
+5.2433	0.0033	 D-Glucose L-arabinopyranose maltose
+1.3404	0.0051	 L-Threonine L-Lactic acid (sodium salt)
+1.3395	-0.006	 L-Threonine L-Lactic acid (sodium salt)
+3.6026	0.0039	 L-Threonine maltose L-rhamnose
+3.6044	-0.0048	 L-Threonine L-rhamnose
+3.6866	-0.004	 Isoleucine Raffinose D-(-)-Ribose
+3.6831	0.0034	 Isoleucine Raffinose
+0.9979	-0.006	 L-valine Cholic acid
+0.9965	0.0062	 L-valine Cholic acid
+1.0473	-0.0062	 L-valine DL-2-methylbutyric acid
+1.0473	0.006	 L-valine DL-2-methylbutyric acid
+3.6196	-0.0035	 L-valine Glycerophosphocholine L-rhamnose
+3.6196	0.0041	 L-valine Glycerophosphocholine L-rhamnose
+2.0117	-0.0211	 L-Proline 2-Hydroxy-3-methylbutyric acid
+2.0113	-0.0096	 L-Proline 2-Hydroxy-3-methylbutyric acid
+2.0117	0.0095	 L-Proline 2-Hydroxy-3-methylbutyric acid
+2.0117	0.0211	 L-Proline 2-Hydroxy-3-methylbutyric acid
+3.4233	7e-04	 L-Proline taurine D-Glucose
+3.423	-0.0094	 L-Proline carnitine taurine
+3.423	0.0101	 L-Proline taurine carnitine
+4.1413	0.0126	 L-Proline Stachyose
+4.1413	-0.0126	 L-Proline D-(-)-Ribose Stachyose
+4.1403	-0.0023	 L-Proline D-(-)-Ribose
+4.142	0.0015	 L-Proline D-(-)-Ribose Stachyose
+3.2729	2e-04	 glycine betaine taurine
+3.908	1e-04	 glycine betaine Cholic acid Raffinose Stachyose
+3.0319	-1e-04	 L-lysine Cadaverine Indole-3-propionic acid
+3.768	0	 L-lysine Glutamic acid D-Galactose Raffinose Sucrose
+3.768	-0.0102	 L-lysine Glutamic acid D-Galactose
+3.9485	0.002	 L-Tyrosine L-arabinopyranose D-Galactose D-Mannose L-rhamnose
+4.0154	-0.0107	 L-Histidine L-asparagine
+4.0154	0.0105	 L-Histidine L-asparagine
+4.0154	-0.0019	 L-Histidine L-asparagine Raffinose
+4.015	0.0018	 L-Histidine L-asparagine Raffinose
+4.0631	-0.002	 L-Tryptophan Cholic acid Myo-Inositol Raffinose Stachyose Sucrose
+7.204	0.0122	 L-Tryptophan indoxyl sulfate
+7.2039	-0.0125	 L-Tryptophan indoxyl sulfate
+7.204	-2e-04	 L-Tryptophan indoxyl sulfate
+7.2882	-0.0125	 L-Tryptophan indoxyl sulfate
+7.2885	0.0127	 L-Tryptophan indoxyl sulfate
+7.2884	-2e-04	 L-Tryptophan indoxyl sulfate
+7.548	-0.0065	 L-Tryptophan Uracil
+7.5489	0.0066	 L-Tryptophan Uracil
+4.0661	3e-04	 Creatinine L-Tryptophan Cholic acid Choline chloride Myo-Inositol Raffinose Stachyose Sucrose
+1.7189	0.0245	 L-leucine Cadaverine
+1.7189	0	 L-leucine Cadaverine
+1.7188	0.0132	 L-leucine Cadaverine
+3.7393	0	 L-leucine N,N-Dimethylglycine D-Galactose
+2.817	-0.0114	 L-Aspartic acid Phloretic acid
+2.817	0.0112	 L-Aspartic acid Phloretic acid
+3.906	-0.0101	 L-Aspartic acid D-Glucose L-arabinopyranose D-Mannose Raffinose Stachyose
+3.906	0.0103	 L-Aspartic acid D-Glucose L-arabinopyranose D-Mannose Raffinose Stachyose
+3.906	-0.0039	 L-Aspartic acid Stachyose
+3.906	0.0039	 L-Aspartic acid Stachyose
+3.77	-0.0018	 Glutamic acid L-lysine D-Galactose Raffinose Sucrose
+3.7847	0.0102	 Glutamic acid L-Arginine L-glutamine Glycerol
+2.1429	0	 L-methionine L-glutamine
+3.8693	-0.0102	 L-methionine D-Galactose maltose D-Mannose D-(-)-Ribose Stachyose
+3.8704	0.0102	 L-methionine D-Galactose maltose D-Mannose Stachyose
+3.855	-0.008	 L-Serine ethanolamine D-Galactose Inosine maltose Raffinose Stachyose Sucrose
+1.052	-0.006	 DL-2-methylbutyric acid L-valine
+1.052	0.006	 DL-2-methylbutyric acid L-valine
+0.904	-0.013	 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid Butyric acid
+0.904	0	 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid Butyric acid
+0.904	0.013	 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid Butyric acid
+2.477	0.013	 3-(3-hydroxyphenyl)propanoic acid L-glutamine
+2.477	-0.013	 3-(3-hydroxyphenyl)propanoic acid L-glutamine
+2.477	0	 3-(3-hydroxyphenyl)propanoic acid L-glutamine
+0.8986	-0.0123	 3-Methyl-2-oxovaleric acid 2-hydroxybutyric acid Butyric acid Valeric acid
+0.8986	-1e-04	 3-Methyl-2-oxovaleric acid 2-hydroxybutyric acid Butyric acid Valeric acid
+0.8987	0.012	 3-Methyl-2-oxovaleric acid 2-hydroxybutyric acid Butyric acid Valeric acid
+2.452	0	 Phloretic acid carnitine
+2.452	-0.013	 Phloretic acid carnitine
+2.452	0.013	 Phloretic acid carnitine
+2.818	-0.013	 Phloretic acid L-Aspartic acid
+2.818	0.013	 Phloretic acid L-Aspartic acid
+3.016	0.012	 5-aminopentanoic acid Cadaverine 4-aminobutyric acid
+3.016	-0.012	 5-aminopentanoic acid Cadaverine 4-aminobutyric acid
+3.016	0	 5-aminopentanoic acid Cadaverine 4-aminobutyric acid
+3.655	-0.013	 L-arabinopyranose D-Galactose Glycerol maltose D-(-)-Ribose
+3.655	0.013	 L-arabinopyranose D-Galactose Glycerol D-(-)-Ribose
+3.671	-0.005	 L-arabinopyranose D-Mannose D-(-)-Ribose
+3.824	-0.011	 L-arabinopyranose D-(-)-Ribose Stachyose
+3.824	0.005	 L-arabinopyranose D-Mannose D-(-)-Ribose Stachyose
+3.824	-0.005	 L-arabinopyranose D-Mannose D-(-)-Ribose Stachyose
+3.824	0.011	 L-arabinopyranose ethanolamine D-(-)-Ribose Stachyose
+3.905	-0.012	 L-arabinopyranose D-Glucose L-Aspartic acid D-Mannose Raffinose D-(-)-Ribose Stachyose
+3.905	-0.009	 L-arabinopyranose D-Glucose L-Aspartic acid D-Mannose Raffinose D-(-)-Ribose Stachyose Sucrose
+3.905	0.009	 L-arabinopyranose D-Glucose L-Aspartic acid D-Mannose Raffinose D-(-)-Ribose Stachyose Sucrose
+4.013	0.004	 L-arabinopyranose L-Phenylalanine L-asparagine D-(-)-Ribose
+5.248	-0.002	 L-arabinopyranose D-Glucose maltose
+5.248	0.003	 L-arabinopyranose D-Glucose maltose
+0.8977	-0.0121	 Butyric acid 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid Valeric acid
+0.9022	0	 Butyric acid 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid Valeric acid
+0.9067	0.0126	 Butyric acid 2-hydroxybutyric acid 3-Methyl-2-oxovaleric acid
+2.1697	0.0128	 Butyric acid Octanoic acid
+2.1697	-0.0119	 Butyric acid Octanoic acid
+1.7263	0.0253	 Cadaverine L-leucine
+1.7299	-0.0259	 Cadaverine L-lysine
+1.7287	-2e-04	 Cadaverine L-lysine L-leucine
+1.7287	0.0131	 Cadaverine L-lysine L-leucine
+1.7312	-0.0131	 Cadaverine L-lysine
+3.0216	0.0117	 Cadaverine 5-aminopentanoic acid 4-aminobutyric acid
+3.0216	-0.0123	 Cadaverine 5-aminopentanoic acid 4-aminobutyric acid
+3.0244	-3e-04	 Cadaverine L-lysine 5-aminopentanoic acid 4-aminobutyric acid
+2.446	0.013	 carnitine L-glutamine Phloretic acid
+2.446	-0.013	 carnitine L-glutamine Phloretic acid
+2.445	0.027	 carnitine L-glutamine
+2.445	0	 carnitine L-glutamine Phloretic acid
+2.445	-0.027	 carnitine L-glutamine
+2.465	-0.007	 carnitine L-glutamine
+2.465	0.007	 carnitine L-glutamine
+2.465	-0.019	 carnitine L-glutamine
+3.234	0	 carnitine Glycerophosphocholine
+3.422	0.015	 carnitine D-Glucose
+3.422	-0.015	 carnitine D-Glucose
+3.434	0	 carnitine taurine maltose L-rhamnose
+3.422	-0.009	 carnitine L-Proline taurine
+0.991	-0.006	 Cholic acid L-valine
+0.991	0.005	 Cholic acid L-valine
+3.9	0	 Cholic acid glycine betaine Raffinose D-(-)-Ribose Stachyose
+4.064	0	 Cholic acid L-Tryptophan Creatinine Choline chloride Myo-Inositol Raffinose Stachyose Sucrose
+3.5291	0.0082	 Choline chloride D-(-)-Ribose
+3.5291	-0.008	 Choline chloride D-(-)-Ribose
+4.0693	2e-04	 Choline chloride L-Tryptophan Creatinine Cholic acid Myo-Inositol Raffinose Stachyose
+4.0693	0.0088	 Choline chloride L-Tryptophan
+3.937	0	 Créatine D-Mannose D-(-)-Ribose
+3.7408	5e-04	 N,N-Dimethylglycine L-leucine D-Galactose
+3.652	-0.0058	 ethanol D-Galactose Glycerol D-(-)-Ribose Stachyose
+3.6587	0.0062	 ethanol D-Galactose Glycerol D-Mannose D-(-)-Ribose Stachyose
+3.8527	-0.0083	 ethanolamine D-Glucose L-Serine Inosine maltose Raffinose Sucrose
+3.015	0.013	 4-aminobutyric acid 5-aminopentanoic acid Cadaverine
+3.015	-0.013	 4-aminobutyric acid 5-aminopentanoic acid Cadaverine
+3.015	0	 4-aminobutyric acid 5-aminopentanoic acid Cadaverine
+3.5	-0.002	 D-Galactose D-Glucose Cholic acid
+3.498	0.015	 D-Galactose D-Glucose
+3.658	-0.011	 D-Galactose L-arabinopyranose Glycerol
+3.658	-0.005	 D-Galactose ethanol Glycerol D-(-)-Ribose Stachyose
+3.658	0.005	 D-Galactose ethanol Glycerol D-(-)-Ribose Stachyose
+3.658	0.011	 D-Galactose L-arabinopyranose
+3.723	-0.016	 D-Galactose D-Glucose
+3.723	0.016	 D-Galactose D-Glucose
+3.723	-0.004	 D-Galactose D-Glucose
+3.723	0.004	 D-Galactose D-Glucose
+3.736	0	 D-Galactose L-leucine N,N-Dimethylglycine
+3.76	-0.002	 D-Galactose L-lysine Phenylacetylglycine
+3.762	0.008	 D-Galactose maltose Raffinose D-(-)-Ribose
+3.763	-0.009	 D-Galactose L-lysine Raffinose D-(-)-Ribose
+3.812	-0.012	 D-Galactose maltose L-rhamnose D-(-)-Ribose
+3.812	0.005	 D-Galactose maltose L-rhamnose Sucrose
+3.812	-0.006	 D-Galactose maltose L-rhamnose D-(-)-Ribose Sucrose
+3.812	0.012	 D-Galactose maltose L-rhamnose D-(-)-Ribose
+3.863	-0.012	 D-Galactose L-methionine maltose D-Mannose L-rhamnose Stachyose
+3.863	-0.006	 D-Galactose L-Serine maltose D-Mannose Stachyose
+3.863	0.006	 D-Galactose L-Serine maltose D-Mannose D-(-)-Ribose Stachyose
+3.863	0.012	 D-Galactose L-methionine maltose D-Mannose L-rhamnose Stachyose
+3.656	-0.013	 Glycerol L-arabinopyranose D-Galactose maltose D-(-)-Ribose
+3.656	-0.006	 Glycerol L-arabinopyranose ethanol D-Galactose D-(-)-Ribose Stachyose
+3.656	0.006	 Glycerol ethanol D-Galactose D-(-)-Ribose Stachyose
+3.791	-0.011	 Glycerol L-Arginine L-glutamine L-ornithine
+3.791	0	 Glycerol L-Arginine L-glutamine maltose L-ornithine
+3.791	0.01	 Glycerol L-Arginine L-glutamine Glutamic acid L-ornithine
+3.791	-0.007	 Glycerol L-alanine
+3.791	-0.018	 Glycerol L-alanine maltose Raffinose Stachyose
+3.791	0.007	 Glycerol L-alanine
+3.791	0.018	 Glycerol L-alanine Raffinose Stachyose
+3.236	0	 Glycerophosphocholine carnitine
+3.619	-0.005	 Glycerophosphocholine L-valine L-rhamnose
+3.619	0.005	 Glycerophosphocholine L-valine L-rhamnose
+3.969	0	 Hippuric acid maltose Raffinose
+7.166	0	 1H-indole 3-(indol-3-yl)lactic acid Indole-3-propionic acid
+7.21	0.013	 indoxyl sulfate L-Tryptophan
+7.21	-0.013	 indoxyl sulfate L-Tryptophan
+7.21	0	 indoxyl sulfate L-Tryptophan Indole-3-propionic acid
+7.283	-0.013	 indoxyl sulfate L-Tryptophan hydrozimtsaeure
+7.283	0.013	 indoxyl sulfate L-Tryptophan hydrozimtsaeure
+7.283	0	 indoxyl sulfate L-Tryptophan
+3.435	0	 maltose taurine carnitine L-rhamnose
+3.594	0.005	 maltose L-Threonine Raffinose
+3.594	-0.005	 maltose Raffinose
+3.781	-0.001	 maltose L-Arginine L-glutamine D-Galactose Glycerol Raffinose Sucrose
+3.781	0.001	 maltose L-Arginine L-glutamine D-Galactose Glycerol Raffinose Sucrose
+3.813	0.006	 maltose D-Galactose D-Mannose L-rhamnose D-(-)-Ribose Sucrose
+3.813	-0.006	 maltose D-Galactose D-Mannose L-rhamnose D-(-)-Ribose Sucrose
+3.861	-0.011	 maltose L-methionine D-Galactose D-Mannose D-(-)-Ribose Stachyose
+3.861	0.011	 maltose L-methionine D-Galactose D-Mannose Stachyose Sucrose
+5.244	-0.003	 maltose D-Glucose L-arabinopyranose
+5.244	0.003	 maltose D-Glucose L-arabinopyranose
+3.741	-0.005	 D-Mannose D-Glucose L-leucine D-Galactose Raffinose Stachyose
+3.741	-0.015	 D-Mannose D-Glucose D-Galactose Raffinose Stachyose
+3.741	0.005	 D-Mannose D-Glucose L-leucine D-Galactose Raffinose Stachyose
+3.823	0.004	 D-Mannose L-arabinopyranose maltose D-(-)-Ribose Stachyose
+3.823	-0.004	 D-Mannose L-arabinopyranose maltose D-(-)-Ribose Stachyose
+3.856	-0.011	 D-Mannose D-Galactose maltose Raffinose D-(-)-Ribose Stachyose
+3.856	-0.005	 D-Mannose D-Galactose 2-Hydroxy-3-methylbutyric acid Inosine D-(-)-Ribose Stachyose
+3.856	0.005	 D-Mannose D-Galactose 2-Hydroxy-3-methylbutyric acid Inosine D-(-)-Ribose Stachyose
+3.856	0.011	 D-Mannose D-Galactose maltose Raffinose D-(-)-Ribose Stachyose Sucrose
+3.91	-0.012	 D-Mannose D-Glucose L-Aspartic acid L-arabinopyranose maltose Raffinose Stachyose
+3.91	0.009	 D-Mannose D-Glucose L-Aspartic acid L-arabinopyranose maltose Raffinose Stachyose
+3.91	0.012	 D-Mannose D-Glucose L-Aspartic acid L-arabinopyranose maltose Raffinose Stachyose
+3.943	0	 D-Mannose L-Tyrosine L-arabinopyranose Créatine D-(-)-Ribose
+3.956	0	 D-Mannose L-Tyrosine L-arabinopyranose Raffinose
+3.544	0.011	 Myo-Inositol D-Glucose
+3.544	-0.006	 Myo-Inositol D-Glucose D-(-)-Ribose
+3.544	0.006	 Myo-Inositol D-Glucose D-(-)-Ribose
+3.544	-0.011	 Myo-Inositol D-Glucose
+4.073	0	 Myo-Inositol L-Tryptophan Creatinine Cholic acid Choline chloride Raffinose Stachyose
+3.756	0	 Phenylacetylglycine D-Galactose
+3.685	0.003	 Raffinose Isoleucine D-(-)-Ribose Sucrose
+3.755	0.007	 Raffinose D-Galactose D-(-)-Ribose
+3.755	-0.007	 Raffinose D-Galactose D-(-)-Ribose
+3.775	0	 Raffinose L-Arginine L-glutamine L-lysine Glutamic acid maltose Sucrose
+3.783	-0.017	 Raffinose L-alanine D-Galactose Glycerol maltose Stachyose Sucrose
+3.783	0.004	 Raffinose L-alanine D-Galactose maltose Stachyose
+3.847	0.008	 Raffinose D-Glucose L-Serine Inosine Sucrose
+3.847	-0.008	 Raffinose D-Glucose L-Serine ethanolamine Inosine Sucrose
+3.905	-0.011	 Raffinose D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose D-(-)-Ribose Stachyose
+3.905	0.011	 Raffinose D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose D-(-)-Ribose Stachyose
+3.909	0	 Raffinose glycine betaine Cholic acid Stachyose
+3.963	0	 Raffinose Hippuric acid D-Mannose
+4.072	0	 Raffinose L-Tryptophan Creatinine Cholic acid Choline chloride Myo-Inositol Stachyose
+3.612	-0.005	 L-rhamnose L-Threonine L-valine Glycerophosphocholine
+3.612	0.005	 L-rhamnose L-Threonine L-valine Glycerophosphocholine
+3.807	-0.011	 L-rhamnose D-Galactose L-ornithine
+3.807	0.005	 L-rhamnose D-Galactose maltose Sucrose
+3.807	-0.005	 L-rhamnose D-Galactose maltose Sucrose
+3.807	0.011	 L-rhamnose D-Galactose L-ornithine
+3.872	-0.013	 L-rhamnose D-Galactose Glycerophosphocholine D-Mannose Stachyose
+3.654	-0.006	 D-(-)-Ribose L-arabinopyranose ethanol D-Galactose Glycerol Stachyose
+3.654	0.006	 D-(-)-Ribose ethanol D-Galactose Glycerol Stachyose
+3.755	-0.008	 D-(-)-Ribose D-Galactose Raffinose
+3.819	-0.013	 D-(-)-Ribose L-arabinopyranose D-Galactose maltose D-Mannose Stachyose
+3.819	0.013	 D-(-)-Ribose L-arabinopyranose D-Galactose maltose D-Mannose Stachyose
+3.895	-0.009	 D-(-)-Ribose D-Glucose L-arabinopyranose Raffinose Sucrose
+3.895	0.009	 D-(-)-Ribose D-Glucose L-arabinopyranose Raffinose Sucrose
+3.895	-0.002	 D-(-)-Ribose Cholic acid Glycerophosphocholine
+3.935	0	 D-(-)-Ribose Créatine D-Mannose
+4.007	-0.004	 D-(-)-Ribose L-Phenylalanine L-asparagine 2-hydroxybutyric acid L-arabinopyranose D-Galactose
+4.123	-0.008	 D-(-)-Ribose L-Lactic acid (sodium salt)
+4.113	-0.007	 D-(-)-Ribose L-Lactic acid (sodium salt)
+4.113	0.007	 D-(-)-Ribose L-Lactic acid (sodium salt)
+4.142	-0.002	 D-(-)-Ribose L-Proline Stachyose
+4.142	0.003	 D-(-)-Ribose L-Proline Stachyose
+3.658	0.006	 Stachyose ethanol D-Galactose Glycerol D-(-)-Ribose
+3.736	-0.005	 Stachyose D-Glucose L-leucine D-Mannose Raffinose
+3.736	0.005	 Stachyose D-Glucose L-leucine D-Mannose Raffinose
+3.862	-0.011	 Stachyose L-methionine D-Galactose maltose D-Mannose L-rhamnose D-(-)-Ribose
+3.862	-0.006	 Stachyose L-Serine D-Galactose maltose D-Mannose
+3.862	0.006	 Stachyose L-Serine D-Galactose maltose D-Mannose D-(-)-Ribose
+3.862	0.011	 Stachyose L-methionine D-Galactose maltose D-Mannose L-rhamnose
+3.907	-0.011	 Stachyose D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose Raffinose
+3.907	0.011	 Stachyose D-Glucose L-Aspartic acid L-arabinopyranose D-Mannose Raffinose
+3.907	0	 Stachyose glycine betaine Cholic acid Raffinose
+3.907	-0.004	 Stachyose L-Aspartic acid Raffinose
+3.907	0.004	 Stachyose L-Aspartic acid Raffinose
+4.07	0	 Stachyose L-Tryptophan Creatinine Cholic acid Choline chloride Myo-Inositol Raffinose
+3.48	0	 Sucrose D-Glucose 3-hydroxyphenylacetic acid
+3.48	0.016	 Sucrose D-Glucose L-Tryptophan
+3.812	-0.005	 Sucrose D-Galactose maltose L-rhamnose
+3.852	0.009	 Sucrose D-Glucose L-Serine Inosine maltose D-Mannose Raffinose
+3.852	-0.008	 Sucrose D-Glucose L-Serine ethanolamine Inosine maltose Raffinose
+4.059	0	 Sucrose L-Tryptophan Creatinine Cholic acid
+3.275	0	 taurine glycine betaine
+3.43	0	 taurine D-Glucose L-Proline carnitine maltose
+7.5517	-0.0063	 Uracil L-Tryptophan
+7.5517	0.0066	 Uracil L-Tryptophan
+0.893	-0.012	 Valeric acid 3-Methyl-2-oxovaleric acid Butyric acid
+0.893	0	 Valeric acid 3-Methyl-2-oxovaleric acid Butyric acid
+0.893	0.012	 Valeric acid 3-Methyl-2-oxovaleric acid

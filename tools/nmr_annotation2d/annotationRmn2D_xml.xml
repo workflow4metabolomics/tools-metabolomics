@@ -233,22 +233,27 @@
     <tests>
     	<test>
     		<param name="zip_xlsfile" value="Template_melange.xlsm" ftype="xlsx"/>
-    		<param name="cosy_2dsequences" value="no"/>
+    		<param name="cosy_2dsequences" value="yes"/>
     		<param name="jres_2dsequences" value="yes"/>
-    		<param name="hmbc_2dsequences" value="no"/>
+    		<param name="hmbc_2dsequences" value="yes"/>
     		<param name="hsqc_2dsequences" value="yes"/>
-    		<param name="tocsy_2dsequences" value="no"/>
-    		<param name="tocsy_2dsequences" value="no"/>
+    		<param name="tocsy_2dsequences" value="yes"/>
     		<param name="inHouse_DB_choices.choice" value="no"/>
     		<param name="tolppm1" value="0.01"/>
     		<param name="tolppm2" value="0.5"/>
     		<param name="tolppmJRES" value="0.002"/>
-    		<param name="threshold" value="0.3"/>
+    		<param name="threshold" value="0.0"/>
     		<param name="unicity" value="no"/>
-    		<output name="annotationJRES" file="annotationJres.tabular"/>
-    		<output name="ppmCommunJRES" file="duplicateJres.tabular"/>
+    		<output name="annotationCOSY" file="annotationCosy.tabular"/>
+    		<output name="ppmCommunCOSY" file="duplicateCosy.tabular"/>
+    		<output name="annotationHMBC" file="annotationHmbc.tabular"/>
+    		<output name="ppmCommunHMBC" file="duplicateHmbc.tabular"/>
     		<output name="annotationHSQC" file="annotationHsqc.tabular"/>
     		<output name="ppmCommunHSQC" file="duplicateHsqc.tabular"/>
+    		<output name="annotationJRES" file="annotationJres.tabular"/>
+    		<output name="ppmCommunJRES" file="duplicateJres.tabular"/>
+   		<output name="annotationTOCSY" file="annotationTocsy.tabular"/>
+    		<output name="ppmCommunTOCSY" file="duplicateTocsy.tabular"/>
     		<output name="annotationCombination" file="2DNMR_Annotation_annotationCombination.tabular"/>
     	</test>
 	</tests>

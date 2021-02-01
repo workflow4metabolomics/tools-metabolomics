@@ -1,15 +1,17 @@
-<tool id="mixmodel" name="mixmodel" version="3.0.0+galaxy0">
+<tool id="mixmodel" name="mixmodel" version="3.0.0">
     <description>ANOVA for repeated measures statistics</description>
 
     <requirements>
+		<requirement type="package" version="3.6.2">R</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
-        <requirement type="package" version="1.1_23">r-lme4</requirement>
-        <requirement type="package" version="3.1_2">r-lmertest</requirement>
-        <requirement type="package" version="1.2_18">r-Matrix</requirement>
-        <requirement type="package" version="7.3_53">r-MASS</requirement>
-        <requirement type="package" version="3.3.2">r-ggplot2</requirement>
+        <requirement type="package" version="1.1_13">r-lme4</requirement>
+        <requirement type="package" version="3.1_3">r-lmertest</requirement>
+		<requirement type="package" version="1.2_18">r-Matrix</requirement>
+        <requirement type="package" version="7.3_51.4">r-MASS</requirement>
+        <requirement type="package" version="3.2_0">r-ggplot2</requirement>
+		<requirement type="package" version="3.6_2">r-grid</requirement>
         <requirement type="package" version="2.3">r-gridExtra</requirement>
-        <requirement type="package" version="2.42.0">bioconductor-multtest</requirement>
+        <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
 
     <stdio>
@@ -17,24 +19,24 @@
     </stdio>
 
     <command><![CDATA[
-        Rscript '$__tool_directory__/mixmodel_wrapper.R'
+        Rscript $__tool_directory__/mixmodel_wrapper.R
 
-        dataMatrix_in '$dataMatrix_in'
-        sampleMetadata_in '$sampleMetadata_in'
-        variableMetadata_in '$variableMetadata_in'
+        dataMatrix_in "$dataMatrix_in"
+        sampleMetadata_in "$sampleMetadata_in"
+        variableMetadata_in "$variableMetadata_in"
 
-        fixfact '$fixfact'
-        time '$time'
-        subject '$subject'
-        adjC '$adjC'
-        trf  '$trf'
-        thrN '$thrN'
-        diaR '$diaR'
+        fixfact "$fixfact"
+        time "$time"
+        subject "$subject"
+        adjC "$adjC"
+        trf  "$trf"
+        thrN "$thrN"
+        diaR "$diaR"
 
-        variableMetadata_out '$variableMetadata_out'
-        out_graph_pdf '$out_graph_pdf'
-        out_estim_pdf '$out_estim_pdf'
-        information '$information'
+        variableMetadata_out "$variableMetadata_out"
+        out_graph_pdf "$out_graph_pdf"
+		out_estim_pdf "$out_estim_pdf"
+        information "$information"
 
     ]]></command>
 
@@ -42,8 +44,8 @@
         <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
         <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
         <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
-        <param name="fixfact" label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
-        <param name="time" label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
+        <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
+        <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
         <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
         <param name="adjC" label="Method for multiple testing correction" type="select" help="">
             <option value="fdr">fdr</option>
@@ -74,18 +76,21 @@
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
         <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
-
+		
     </outputs>
 
     <tests>
         <test>
-            <param name="dataMatrix_in" value="demo1_matrix.txt" />
-            <param name="sampleMetadata_in" value="demo1_Samples.txt" />
-            <param name="variableMetadata_in" value="demo1_variables.txt" />
-            <param name="fixfact" value="treatment" />
+            <param name="dataMatrix_in" value="TwoFactor_dataMatrix.txt" />
+            <param name="sampleMetadata_in" value="TwoFactor_sampleMetadata.txt" />
+            <param name="variableMetadata_in" value="TwoFactor_variableMetadata.txt" />
+            <param name="fixfact" value="phenotype" />
             <param name="time" value="time" />
-            <param name="subject" value="idsujet" />
-            <output name="variableMetadata_out" value="mixmodel_demo1_variables.txt" />
+            <param name="subject" value="sujet" />
+			<param name="pvalcorMeth" value = "none"/>
+			<param name="logtr" value = "log10"/>
+			<param name="pvalCutof" value = "0.01"/>
+            <output name="variableMetadata_out" value="mixmodel_TwoFactor_variableMetadata.txt" />
         </test>
     </tests>
 
@@ -96,7 +101,7 @@
 
 .. class:: infomark
 
-**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/home.html)
+**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
 
 .. class:: infomark
 
@@ -155,7 +160,7 @@ Variable metadata file
 
 
 Treatment
-| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor
+| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor 
 |
 
 Time

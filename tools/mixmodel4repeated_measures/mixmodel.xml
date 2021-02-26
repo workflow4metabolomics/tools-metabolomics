@@ -76,7 +76,7 @@
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
         <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
         <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
-		
+
     </outputs>
 
     <tests>
@@ -87,9 +87,11 @@
             <param name="fixfact" value="phenotype" />
             <param name="time" value="time" />
             <param name="subject" value="sujet" />
-			<param name="pvalcorMeth" value = "none"/>
-			<param name="logtr" value = "log10"/>
-			<param name="pvalCutof" value = "0.01"/>
+			      <param name="pvalcorMeth" value = "none"/>
+			      <param name="logtr" value = "log10"/>
+			      <param name="pvalCutof" value = 0.01/>
+            <param name="dffoption" value = "Satterthwaite"/>
+            <param name="outlier.limit" value = 3/>
             <output name="variableMetadata_out" value="mixmodel_TwoFactor_variableMetadata.txt" />
         </test>
     </tests>
@@ -160,7 +162,7 @@ Variable metadata file
 
 
 Treatment
-| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor 
+| Name of the fixed factor in the sample metadata file. Use "none" if you have only a time factor
 |
 
 Time

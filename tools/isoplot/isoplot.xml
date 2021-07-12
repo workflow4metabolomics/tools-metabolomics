@@ -1,6 +1,6 @@
 <tool id='isoplot' name='Isoplot: Generate plots from isocor output' version='0.1.0'>
     <requirements>
-        <requirement type='package' version='1.2.4'>isoplot</requirement>
+        <requirement type='package' version='1.3.0'>isoplot</requirement>
     </requirements>
     <command><![CDATA[
          isoplot '$datafile' 'galaxy' '$format' --value '$value' --template '$template_file'

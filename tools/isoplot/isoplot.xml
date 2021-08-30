@@ -17,8 +17,8 @@
 -g -z '$plots_output' > $data_output 2> '$log_output'
     ]]></command>
     <inputs>
-        <param name='datafile' type='data' format='csv, tabular' multiple='true' label='Upload data file' />
-        <param name='template_file' type='data' format='csv, xlsx' multiple='true' label='Template file' argument='--template'/>
+        <param name='datafile' type='data' format='csv, tabular' multiple='true' label='Upload data that has been corrected by Isocor (.tsv format)' />
+        <param name='template_file' type='data' format='csv, xlsx' multiple='true' label='Upload template file containing plot metadata (.xlsx format)' argument='--template'/>
         <!--param name='run_name' type='text' label='Run name' /-->
         <param name='format' type='select' label='Plot format'>
             <option value='pdf'>pdf</option>
@@ -85,6 +85,10 @@
     </tests>  
     
     <help><![CDATA[
+
+.. class:: warningmark
+
+ We strongly encourage you to read the `documentation <https://isoplot.readthedocs.io/en/latest/>`_ before using Isoplot.
 
 Isoplot2: Plotting isotopic labelling MS data
 =============================================

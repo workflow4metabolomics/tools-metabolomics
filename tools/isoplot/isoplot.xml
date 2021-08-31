@@ -65,10 +65,10 @@
     	  <param name='format' value='pdf' />
     	  <param name='value' value='isotopologue_fraction' />
     	  <section name='SP' >
-    	   <param name='generate_barplot' value='-bp' />
+    	   <param name='barplot' value='true' />
     	  </section>
     	  <section name='IP' >
-    	   <param name='generate_barplot' value='-IB' />
+    	   <param name='interactive_barplot' value='true' />
     	  </section>
           <output name='data_output' file='data_out.csv'/>
           <output name='plots_output'>

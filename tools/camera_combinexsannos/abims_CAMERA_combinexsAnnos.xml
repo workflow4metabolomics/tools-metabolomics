@@ -1,4 +1,4 @@
-<tool id="abims_CAMERA_combinexsAnnos" name="CAMERA.combinexsAnnos" version="2.2.6+camera@TOOL_VERSION@-galaxy0" profile="20.09">
+<tool id="abims_CAMERA_combinexsAnnos" name="CAMERA.combinexsAnnos" version="2.2.6+camera@TOOL_VERSION@+galaxy1" profile="20.09">
     <description>Wrapper function for the combinexsAnnos CAMERA function. Returns a dataframe with recalculated annotations</description>
     <macros>
         <import>macros.xml</import>

@@ -1,57 +1,51 @@
-<tool id="abims_CAMERA_combinexsAnnos" name="CAMERA.combinexsAnnos" version="2.2.6+camera@TOOL_VERSION@-galaxy0">
-
-    <description>Wrapper function for the combinexsAnnos CAMERA function. Returns a dataframe with recalculated annotations.</description>
-
+<tool id="abims_CAMERA_combinexsAnnos" name="CAMERA.combinexsAnnos" version="2.2.6+camera@TOOL_VERSION@-galaxy0" profile="20.09">
+    <description>Wrapper function for the combinexsAnnos CAMERA function. Returns a dataframe with recalculated annotations</description>
     <macros>
         <import>macros.xml</import>
     </macros>
-
     <expand macro="requirements"/>
     <expand macro="stdio"/>
-
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/CAMERA_combinexsAnnos.r
+        LC_ALL=C Rscript '$__tool_directory__/CAMERA_combinexsAnnos.r'
         image_pos '$image_pos'
         image_neg '$image_neg'
 
-        pos $pos tol
-        $tol ruleset
-        $ruleset keep_meta
-        $keep_meta
+        pos $pos
+        tol $tol
+        ruleset '$ruleset'
+        keep_meta $keep_meta
 
         convertRTMinute $export.convertRTMinute
         numDigitsMZ $export.numDigitsMZ
         numDigitsRT $export.numDigitsRT
 
-    ]]></command>
-
+    ]]>    </command>
+    <required_files>
+        <include path="lib.r" />
+        <include path="CAMERA_combinexsAnnos.r" />
+    </required_files>
     <inputs>
-        <param name="image_pos" type="data" label="Positive RData ion mode" format="rdata.camera.positive,rdata" help="output file from CAMERA.annotate using a positive polarity mode" />
-        <param name="image_neg" type="data" label="Negative RData ion mode" format="rdata.camera.negative,rdata" help="output file from CAMERA.annotate using a positive negative mode" />
-
-        <param name="pos" type="select" label="Returned peaklist polarity mode">
+        <param name="image_pos" type="data" label="Positive RData ion mode" format="rdata.camera.positive,rdata" help="output file from CAMERA.annotate using a positive polarity mode"/>
+        <param name="image_neg" type="data" label="Negative RData ion mode" format="rdata.camera.negative,rdata" help="output file from CAMERA.annotate using a positive negative mode"/>
+        <param argument="pos" type="select" label="Returned peaklist polarity mode">
             <option value="TRUE" selected="true">positive</option>
-            <option value="FALSE" >negative</option>
+            <option value="FALSE">negative</option>
         </param>
-
-        <param name="tol" type="integer" value="2" label="Retention time window in seconds" help="[pos] As first step it searches for pseudospectra from the positive and the negative sample within a retention time window" />
-        <param name="ruleset" type="text" value="1,1" label="Matrix of matching rules" help="[ruleset] Matrix of matching rules. By default, the matrix (1,1) would create the M+H/M-H rule, since the first rule of xsa.pos@ruleset and xsa.neg@ruleset is M+H respectively M-H. Only rules with identical charge can be combined!" />
-        <param name="keep_meta" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Keep only the metabolites which match a difference "/>
-
+        <param argument="tol" type="integer" value="2" label="Retention time window in seconds" help="As first step it searches for pseudospectra from the positive and the negative sample within a retention time window"/>
+        <param argument="ruleset" type="text" value="1,1" label="Matrix of matching rules" help="Matrix of matching rules. By default, the matrix (1,1) would create the M+H/M-H rule, since the first rule of xsa.pos@ruleset and xsa.neg@ruleset is M+H respectively M-H. Only rules with identical charge can be combined!"/>
+        <param argument="keep_meta" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Keep only the metabolites which match a difference "/>
         <section name="export" title="Export options">
-            <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert retention time (seconds) into minutes" help="Convert the columns rtmed, rtmin and rtmax into minutes"/>
-            <param name="numDigitsMZ" type="integer" value="4" label="Number of decimal places for mass values reported in ions' identifiers." help="A minimum of 4 decimal places is recommended. Useful to avoid duplicates within identifiers" />
-            <param name="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers" />
+            <param argument="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert retention time (seconds) into minutes" help="Convert the columns rtmed, rtmin and rtmax into minutes"/>
+            <param argument="numDigitsMZ" type="integer" value="4" label="Number of decimal places for mass values reported in ions' identifiers." help="A minimum of 4 decimal places is recommended. Useful to avoid duplicates within identifiers"/>
+            <param argument="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers"/>
         </section>
     </inputs>
-
     <outputs>
-        <data name="variableMetadata" format="tabular" label="${image_pos.name[:-6]}.combinexsAnnos.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="variableMetadata" format="tabular" label="${image_pos.name[:-6]}.combinexsAnnos.variableMetadata.tsv" from_work_dir="variableMetadata.tsv"/>
         <!--
         <data name="rdata" format="rdata" label="${image_pos.name[:-6]}.combinexsAnnos.Rdata" from_work_dir="combinexsAnnos.RData" />
         -->
     </outputs>
-
     <tests>
         <test>
             <!-- TODO: generer des vrais dataset pos et neg-->
@@ -62,14 +56,12 @@
             <param name="ruleset" value="1,1"/>
             <section name="export">
                 <param name="convertRTMinute" value="True"/>
-                <param name="numDigitsMZ" value="4" />
-                <param name="numDigitsRT" value="1" />
+                <param name="numDigitsMZ" value="4"/>
+                <param name="numDigitsRT" value="1"/>
             </section>
-            <output name="variableMetadata" file="faahOK.xset.group.retcor.group.fillPeaks.annotate.positive.combinexsAnnos.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahOK.xset.group.retcor.group.fillPeaks.annotate.positive.combinexsAnnos.variableMetadata.tsv"/>
         </test>
     </tests>
-
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -100,7 +92,6 @@ to the rule(s). With ruleset=NULL the function only looks for M+H/M-H pairs. The
 a two column matrix with includes rule indices from the rule table of both xsAnnotate objects.
 A ruleset (1,1) would create the M+H/M-H rule, since the first rule of xsa.pos@ruleset and
 xsa.neg@ruleset is M+H respectively M-H. Only rules with identical charge can be combined!
-
 
 
 -----------------
@@ -211,63 +202,6 @@ Changelog/News
 
 .. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
 
-@HELP_CAMERA_NEWVERSION_1480@
-
-@HELP_CAMERA_NEWVERSION_1460@
-
-@HELP_CAMERA_NEWVERSION_1420@
-
-**Version 2.2.5 - 09/04/2019**
-
-- UPGRADE: upgrade the CAMERA version from 1.34.0 to 1.38.1 (see CAMERA News_)
-
-- UPGRADE: refactoring of internal code
-
-**Version 2.2.2 - 01/03/2018**
-
-- UPGRADE: upgrate the CAMERA version from 1.26.0 to 1.32.0
-
-**Version 2.0.7 - 29/11/2017**
-
-- BUGFIX: To avoid issues with accented letter in the parentFile tag of the mzXML files, we changed a hidden mechanim to LC_ALL=C
-
-
-**Version 2.0.6 - 10/02/2017**
-
-- IMPROVEMENT: Synchronize the variableMetadata export option with the other tools (xcms.group, xcms.fillpeaks, camera.annotate)
-
-
-**Version 2.0.5 - 22/12/2016**
-
-- IMPROVEMENT: add the possibility to add a personal Matrix of matching rules (ruleset)
-
-**Version 2.0.4 - 21/04/2016**
-
-- UPGRADE: upgrate the CAMERA version from 1.22.0 to 1.26.0
-
-
-**Version 2.0.3 - 10/02/2016**
-
-- BUGFIX: better management of errors. Datasets remained green although the process failed
-
-- UPDATE: refactoring of internal management of inputs/outputs
-
-
-**Version 2.0.1 - 07/06/2015**
-
-- IMPROVEMENT: new datatype/dataset formats (rdata.camera.positive, rdata.camera.negative, rdata.camera.quick ...) will facilitate the sequence of tools and so avoid incompatibility errors.
-
-- IMPROVEMENT: parameter labels have changed to facilitate their reading.
-
-
-**Version 2.0.0 - 09/06/2015**
-
-- NEW: combinexsAnnos Check CAMERA ion species annotation due to matching with opposite ion mode
-
-
-    ]]></help>
-
-    <expand macro="citation" />
-
-
+    ]]>    </help>
+    <expand macro="citation"/>
 </tool>

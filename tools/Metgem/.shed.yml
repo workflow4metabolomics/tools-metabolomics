@@ -1,0 +1,7 @@
+categories: [Metabolomics]
+description: '[Metabolomics][W4M][MSMS] Metgem Molecular Networking tools
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org Metgem:A library for molecular networking based on MS/MS spectra.
+ https://github.com/metgem/libmetgem'
+name: metgem_fileimport
+owner: yguitton

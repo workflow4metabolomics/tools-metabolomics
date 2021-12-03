@@ -2,12 +2,12 @@
 # ANNOTATION SPECTRE 2D MATRICE COMPLEXE BASEE SUR UNE SEQUENCE RMN                                                                       #
 # matriceComplexe : data.frame liste couples ppm de la matrice a annoter                                                                  #
 # BdDStandards : objet contenant la base de donnees des composes standards                                                                #
-# nom_séquence : nom sequence 2D a utiliser pour annotation ("JRES","COSY","TOCSY","HMBC","HSQC")                                         #
+# nom_sÃ©quence : nom sequence 2D a utiliser pour annotation ("JRES","COSY","TOCSY","HMBC","HSQC")                                         #
 # ppm1Tol : tolerance ppm axe abscisses                                                                                                   #
 # ppm2Tol : tolerance ppm axe ordonnees                                                                                                   #
-# nb_ligne_template : préciser le nombre total de ligne de la feuille de calcul à annoter                                                 #
+# nb_ligne_template : prÃ©ciser le nombre total de ligne de la feuille de calcul Ã  annoter                                                 #
 ###########################################################################################################################################
-annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol=0.01, ppm2Tol=0.01, 
+annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol=0.01, ppm2Tol=0.01,
                             seuil=0, unicite="NO")
 {
   ## Longueur de la peak-list de la matrice a annoter
@@ -18,13 +18,13 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   matrixAnnotation <- data.frame()
   allMetabolitesList <- data.frame()
   seuil_score <- seuil
-  
+
   ## Boucle sur les metabolites inclus dans BdD
   for (i in 1:nbMetabolitesBdD)
   {
     ## Infos metabolite en cours
     iMetabolite <- BdDStandards[[i]]
-    ppm1M <- iMetabolite[,1] 
+    ppm1M <- iMetabolite[,1]
     ppm2M <- iMetabolite[,2]
     nbPeakMetabolite <- length(ppm1M)
     MetaboliteName <- names(BdDStandards[i])
@@ -37,10 +37,10 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     annotatedPeakLength <- 0
     metabolites <- data.frame()
     metabolitesList <- data.frame()
-  
+
     ## Boucle sur les couples de pics de la matrice a annoter
     for (p in 1:PeakListLength)
-    { 
+    {
       ppmAnnotationF1 <- as.numeric(matriceComplexe[p, 3])
       ppmAnnotationF2 <- as.numeric(matriceComplexe[p, 2])
       e <- simpleMessage("end of file")
@@ -50,7 +50,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
           matrixAnnotation <- unique.data.frame(rbind.data.frame(matrixAnnotation, matriceComplexe[p, ]))
         }
         # Recherche du couple de pics de la matrice la liste des couples du metabolite standard
-        metaboliteIn <- (ppm1M >= (ppmAnnotationF2-ppm1Tol) & ppm1M <= (ppmAnnotationF2+ppm1Tol) & 
+        metaboliteIn <- (ppm1M >= (ppmAnnotationF2-ppm1Tol) & ppm1M <= (ppmAnnotationF2+ppm1Tol) &
                      ppm2M >= (ppmAnnotationF1-ppm2Tol) & ppm2M <= (ppmAnnotationF1+ppm2Tol))
         WhichMetaboliteIn <- which(metaboliteIn)
         # Si au moins un couple de la matrice a annoter dans liste couples metabolite standard
@@ -70,7 +70,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     {
       ## Nombre couples annotes
       annotatedPeakLength <- nrow(annotatedPpmRef)
-      
+
       ## Recherche doublons
       annotatedDoublons <- duplicated(annotatedPpmRef)
       if (sum(duplicated(annotatedPpmRef)) > 0)
@@ -80,16 +80,16 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
       }
       presenceScore <- annotatedPeakLength/nbPeakMetabolite
     }
-    
+
     ## Conservation metabolites dont score > seuil
     if (presenceScore > seuil_score)
     {
       metabolites <- data.frame(Metabolite=MetaboliteName, score=presenceScore)
-      metabolitesList <- cbind.data.frame(annotatedPpmRef, metabolites) 
+      metabolitesList <- cbind.data.frame(annotatedPpmRef, metabolites)
       allMetabolitesList <- rbind.data.frame(allMetabolitesList, metabolitesList)
     }
   }
-  
+
   # Initialisation
   commonPpm <- data.frame()
   commonPpmList <- data.frame()
@@ -103,7 +103,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   listeTotale_2D_unicite <- allMetabolitesList[, 1:4]
   allMetabolitesList <- allMetabolitesList[, -3]
   metabolitesAllUnicite <- data.frame()
-  
+
   ## Boucle sur tous couples annotes
   for (j in 1:length(allMetabolitesList$ppm1))
   {
@@ -111,13 +111,13 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     for (i in 1:nbMetabolitesBdD)
     {
       ppmMetaboliteBdD <- BdDStandards[[i]]
-      ppm1M <- ppmMetaboliteBdD[,1] 
+      ppm1M <- ppmMetaboliteBdD[,1]
       ppm2M <- ppmMetaboliteBdD[,2]
       # Nombre de couples metabolite
       nbPeakMetabolite <- length(ppm1M)
       MetaboliteName <- names(BdDStandards[i])
 
-      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j,1]-ppm1Tol) & ppm1M <= (allMetabolitesList[j,1]+ppm1Tol) & 
+      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j,1]-ppm1Tol) & ppm1M <= (allMetabolitesList[j,1]+ppm1Tol) &
                             ppm2M >= (allMetabolitesList[j,2]-ppm2Tol) & ppm2M <= (allMetabolitesList[j,2]+ppm2Tol))
       WhichMetabolitesInAll <- which(metabolitesInAll)
 
@@ -138,7 +138,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     }
     commonMetabolitesPpmAllList <- rbind.data.frame(commonMetabolitesPpmAllList, commonMetabolitesPpmAllList1)
     commonMetabolitesPpmAllList <- unique.data.frame(commonMetabolitesPpmAllList)
-    
+
     #initialisation des data.frame
     commonPpm <- data.frame()
     metaboliteAdd <- data.frame()
@@ -163,7 +163,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   }
   names(unicitynbCouplesRectif) <- "NbCouplesAnnotes"
   unicityAllList <- cbind.data.frame(unicityAllList, unicitynbCouplesRectif)
-  
+
   unicityAllList <- cbind.data.frame(unicityAllList, score_unicite=unicityAllList$NbCouplesAnnotes/unicityAllList$theoricalLength)
   unicityAllList <- unicityAllList[, -3]
   unicityAllList <- unicityAllList[, -4]
@@ -177,8 +177,8 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     for (o in 1:length(commonPpmList[, 1]))
     {
       tf6 <- (commonMetabolitesPpmAllList$ppm1 == commonPpmList[o,1] & commonMetabolitesPpmAllList$ppm2 == commonPpmList[o,2])
-      w6 <- which(tf6) 
-      
+      w6 <- which(tf6)
+
       for (s in 1:length(w6))
       {
         metaboliteAdd <- data.frame(nom_metabolite=commonMetabolitesPpmAllList[w6[s],3])
@@ -201,19 +201,19 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     indice_positif <- 0.5
     indice_negatif <- -0.5
   }
-  
+
   matriceComplexe <- matrixAnnotation
   ppm1 <- as.numeric(matriceComplexe[,2])
   ppm2 <- as.numeric(matriceComplexe[,3])
-  
+
   if (unicite == "NO")
   {
     listeTotale_2D_a_utiliser <- allMetabolitesList
-    d1.ppm <- allMetabolitesList$ppm1 
+    d1.ppm <- allMetabolitesList$ppm1
     d2.ppm <- allMetabolitesList$ppm2
   }else{
     listeTotale_2D_a_utiliser <- unicityAllList
-    d1.ppm <- listeTotale_2D_a_utiliser$ppm1 
+    d1.ppm <- listeTotale_2D_a_utiliser$ppm1
     d2.ppm <- listeTotale_2D_a_utiliser$ppm2
   }
 
@@ -226,17 +226,17 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     probability.score <- as.factor(round(listeTotale_2D_a_utiliser[,4],2))
     lgr <- length(unique(probability.score))
     sp <- ggplot(matriceComplexe, aes(x=ppm1, y=ppm2))
-    sp <- sp + geom_point(size=2) + scale_x_reverse(breaks=seq(maxX, 0, -0.5)) + 
-      scale_y_reverse(breaks=seq(maxY, 0, indice_negatif)) + 
+    sp <- sp + geom_point(size=2) + scale_x_reverse(breaks=seq(maxX, 0, -0.5)) +
+      scale_y_reverse(breaks=seq(maxY, 0, indice_negatif)) +
       xlab("1H chemical shift (ppm)") + ylab(paste(atome, " chemical shift (ppm)")) + ggtitle(nom_sequence) +
-      geom_text(data=listeTotale_2D_a_utiliser, aes(d1.ppm, d2.ppm, label=str_to_lower(substr(listeTotale_2D_a_utiliser[,3],1,3)), 
-                                                    col=probability.score), 
+      geom_text(data=listeTotale_2D_a_utiliser, aes(d1.ppm, d2.ppm, label=str_to_lower(substr(listeTotale_2D_a_utiliser[,3],1,3)),
+                                                    col=probability.score),
                 size=4, hjust=0, nudge_x=0.02, vjust=0, nudge_y=0.2) + scale_colour_manual(values=viridis(lgr))
 ##      scale_color_colormap('Annotation', discrete=T, reverse=T)
     print(sp)
   }
-  
-  # Liste des résultats (couples pmm / metabolite / score) + liste ppms metabolites communs
+
+  # Liste des rÃ©sultats (couples pmm / metabolite / score) + liste ppms metabolites communs
   if (unicite == "NO")
   {
     return(list(liste_resultat=allMetabolitesList, listing_ppm_commun=listeTotale_metabo))

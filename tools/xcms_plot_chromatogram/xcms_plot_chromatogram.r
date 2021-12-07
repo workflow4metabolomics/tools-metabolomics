@@ -5,18 +5,20 @@
 cat("\tSESSION INFO\n")
 
 #Import the different functions
-source_local <- function(fname){ argv <- commandArgs(trailingOnly=FALSE); base_dir <- dirname(substring(argv[grep("--file=", argv)], 8)); source(paste(base_dir, fname, sep="/")) }
+source_local <- function(fname) {
+  argv <- commandArgs(trailingOnly = FALSE); base_dir <- dirname(substring(argv[grep("--file=", argv)], 8)); source(paste(base_dir, fname, sep = "/"))
+}
 source_local("lib.r")
 
-pkgs <- c("xcms","batch","RColorBrewer")
+pkgs <- c("xcms", "batch", "RColorBrewer")
 loadAndDisplayPackages(pkgs)
 cat("\n\n");
 
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-args = parseCommandArgs(evaluate=FALSE) #interpretation of arguments given in command line as an R list of objects
-write.table(as.matrix(args), col.names=F, quote=F, sep='\t')
+args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+write.table(as.matrix(args), col.names = F, quote = F, sep = "\t")
 
 cat("\n\n")
 
@@ -49,14 +51,18 @@ cat("\tMAIN PROCESSING INFO\n")
 cat("\t\tDRAW GRAPHICS\n")
 
 register(SerialParam())
-if (!exists("chromTIC") || is.null(chromTIC)) { cat("\t\t\tCompute TIC\n"); chromTIC <- chromatogram(xdata, aggregationFun = "sum") }
-if (!exists("chromBPI") || is.null(chromBPI)) { cat("\t\t\tCompute BPI\n"); chromBPI <- chromatogram(xdata, aggregationFun = "max") }
+if (!exists("chromTIC") || is.null(chromTIC)) {
+  cat("\t\t\tCompute TIC\n"); chromTIC <- chromatogram(xdata, aggregationFun = "sum")
+}
+if (!exists("chromBPI") || is.null(chromBPI)) {
+  cat("\t\t\tCompute BPI\n"); chromBPI <- chromatogram(xdata, aggregationFun = "max")
+}
 
 if (!is.null(chromTIC_adjusted)) chromTIC <- chromTIC_adjusted
 if (!is.null(chromBPI_adjusted)) chromBPI <- chromBPI_adjusted
 
-getPlotChromatogram(chromTIC, xdata, pdfname="TICs.pdf", aggregationFun = "sum")
-getPlotChromatogram(chromBPI, xdata, pdfname="BPIs.pdf", aggregationFun = "max")
+getPlotChromatogram(chromTIC, xdata, pdfname = "TICs.pdf", aggregationFun = "sum")
+getPlotChromatogram(chromBPI, xdata, pdfname = "BPIs.pdf", aggregationFun = "max")
 
 cat("\n\n")
 
@@ -65,13 +71,6 @@ cat("\n\n")
 cat("\tXCMSnExp OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
-
-# 2020-01-17 - disable because xcms 3.4.4 raises an error with xdata build with xcms 3.6.1
-#cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-#xset <- getxcmsSetObject(xdata)
-#print(xset)
-#cat("\n\n")
 
 
 cat("\tDONE\n")

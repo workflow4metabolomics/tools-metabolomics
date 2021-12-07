@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <macros>
 
-    <token name="@TOOL_VERSION@">3.6.1</token>
+    <token name="@TOOL_VERSION@">3.12.0</token>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
@@ -243,6 +243,7 @@ For details and explanations concerning all the parameters and workflow of xcms_
 .. _xcms: https://bioconductor.org/packages/release/bioc/html/xcms.html
 .. _manual: http://www.bioconductor.org/packages/release/bioc/manuals/xcms/man/xcms.pdf
 .. _example: https://bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms.html
+.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
     </token>
 
@@ -255,6 +256,11 @@ For details and explanations concerning all the parameters and workflow of xcms_
 **Version 3.6.1+galaxy* - 03/09/2019**
 
 - UPGRADE: upgrade the xcms version from 3.4.4 to 3.6.1 (see XCMS News_)
+    </token>
+    <token name="@HELP_XCMS_NEWVERSION_31200@">
+**Version 3.12.0+galaxy* - 03/03/2020**
+
+- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS News_)
     </token>
 
     <xml name="citation">

@@ -1,4 +1,4 @@
-<tool id="xcms_plot_chromatogram" name="xcms plot chromatogram" version="@TOOL_VERSION@+galaxy2">
+<tool id="xcms_plot_chromatogram" name="xcms plot chromatogram" version="@TOOL_VERSION@+galaxy0">
     <description>Plots base peak intensity chromatogram (BPI) and total ion current chromatogram (TIC) from MSnbase or xcms experiment(s)</description>
 
     <macros>
@@ -34,7 +34,7 @@
 
     <tests>
         <test>
-            <param name="images" value="faahKO-single.xset.merged.group.retcor.RData" ftype="rdata"/>
+            <param name="images" value="faahKO-single-class.xset.merged.group.retcor.RData" ftype="rdata"/>
             <expand macro="test_file_load_single"/>
             <param name="sampleMetadata" value="sampleMetadata.tab" ftype="tabular"/>
             <output name="ticsPdf" value="TICs.pdf" ftype="pdf" compare="sim_size" delta="5000" />
@@ -102,11 +102,11 @@ Output files
 Changelog/News
 --------------
 
+@HELP_XCMS_NEWVERSION_31200@
+
 **Galaxy Version 3.6.1+galaxy2 - 23/09/2020**
 
 - BUGFIX: sample group colours did not match group labels.
-
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
 @HELP_XCMS_NEWVERSION_3610@
 

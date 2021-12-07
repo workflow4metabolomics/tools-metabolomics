@@ -1,4 +1,4 @@
-<tool id="abims_xcms_summary" name="xcms process history" version="@TOOL_VERSION@+galaxy2">
+<tool id="abims_xcms_summary" name="xcms process history" version="@TOOL_VERSION@+galaxy0">
 
     <description>Create a summary of XCMS analysis</description>
 
@@ -8,8 +8,8 @@
     </macros>
 
     <requirements>
-	<requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>    
-	<requirement type="package" version="1.40.0">bioconductor-camera</requirement>
+        <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
+        <requirement type="package" version="1.46.0">bioconductor-camera</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
     </requirements>
 
@@ -87,11 +87,11 @@ CAMERA.annotate           ``*``.annotate.*.RData      rdata.camera.``*``
 Changelog/News
 --------------
 
+@HELP_XCMS_NEWVERSION_31200@
+
 **Version 3.6.1+galaxy2 - 23/09/2020**
 
 - BUGFIX: "Error: object 'sampleNamesList' not found" in case of .RData input from CAMERA
-
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
 **Version 3.6.1+galaxy1 - 05/04/2020**
 

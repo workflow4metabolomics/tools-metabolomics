@@ -22,10 +22,6 @@ The [Workflow4Metabolomics](http://workflow4metabolomics.org), W4M in short, is 
 
 [Conda](http://conda.pydata.org/) is a package, dependency and environment management for any language—Python, R, Ruby, Lua, Scala, Java, JavaScript, C/ C++, FORTRAN, and more.
 
-### Travis
-[![Build Status](https://travis-ci.org/workflow4metabolomics/tools-metabolomics.svg?branch=master)](https://travis-ci.org/workflow4metabolomics/tools-metabolomics)
-
-Test and Deploy with Confidence. Easily sync your GitHub projects with Travis CI and you'll be testing your code in minutes!
 
 ### Planemo
 [Planemo](https://planemo.readthedocs.io/en/latest/readme.html) is a command-line utilities to assist in developing Galaxy

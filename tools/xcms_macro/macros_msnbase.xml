@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <macros>
-    <token name="@WRAPPER_VERSION@">2.8.2</token>
+    <token name="@WRAPPER_VERSION@">2.16.1</token>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@WRAPPER_VERSION@">bioconductor-msnbase</requirement>
-            <requirement type="package" version="1.1_4">r-batch</requirement>
+            <requirement type="package" version="1.1_5">r-batch</requirement>
             <requirement type="package" version="6.0">unzip</requirement>
             <yield />
         </requirements>

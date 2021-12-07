@@ -4,6 +4,10 @@ Changelog/News
 
 .. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
+**Version 3.12.0+galaxy* - 03/03/2020**
+
+- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS News_)
+
 **Version 3.6.1+galaxy1 - 05/04/2020**
 
 - UPGRADE: upgrade the CAMERA version from 1.38.0 to 1.42.0

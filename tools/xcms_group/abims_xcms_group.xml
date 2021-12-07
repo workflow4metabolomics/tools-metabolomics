@@ -1,4 +1,4 @@
-<tool id="abims_xcms_group" name="xcms groupChromPeaks (group)" version="@TOOL_VERSION@+galaxy2">
+<tool id="abims_xcms_group" name="xcms groupChromPeaks (group)" version="@TOOL_VERSION@+galaxy0">
 
     <description>Perform the correspondence, the grouping of chromatographic peaks within and between samples.</description>
 
@@ -85,7 +85,8 @@
     </outputs>
 
     <tests>
-        <!-- from xcmsSet
+        <!-- from merge -->
+        <!-- DISABLE FOR TRAVIS but useful in order to REFRESH TEST-DATA
         <test>
             <param name="image" value="faahKO-single-class.xset.merged.RData" ftype="rdata"/>
             <conditional name="methods">
@@ -203,7 +204,7 @@
         -->
         <!-- from retcor -->
         <test>
-            <param name="image" value="faahKO-single.xset.merged.group.retcor.RData" ftype="rdata"/>
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="PeakDensity"/>
                 <param name="bw" value="5"/>
@@ -220,10 +221,10 @@
                 <has_text text="binSize: 0.01"/>
                 <has_text text="maxFeatures: 50" />
                 <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2506.1-4477.9 seconds (41.8-74.6 minutes)" />
+                <has_text text="Time range: 2509.2-4480.3 seconds (41.8-74.7 minutes)" />
                 <has_text text="Mass range: 200.1-600 m/z" />
                 <has_text text="Peaks: 9251 (about 2313 per sample)" />
-                <has_text text="Peak Groups: 8372" />
+                <has_text text="Peak Groups: 8209" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
         </test>
@@ -355,7 +356,7 @@ xset.groupChromPeaks.plotChromPeakDensity.pdf
 Changelog/News
 --------------
 
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+@HELP_XCMS_NEWVERSION_31200@
 
 **Version 3.6.1+galaxy1 - 22/04/2020**
 

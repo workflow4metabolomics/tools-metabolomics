@@ -117,7 +117,9 @@ Blanc09                     blank
 Changelog/News
 --------------
 
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+@HELP_XCMS_NEWVERSION_31200@
+
+@HELP_XCMS_NEWVERSION_3610@
 
 @HELP_XCMS_NEWVERSION_3610@
 

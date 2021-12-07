@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@.2">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy0">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>
@@ -47,7 +47,7 @@
                 <has_text text="rowNames: faahKO_reduce/KO/ko15.CDF faahKO_reduce/KO/ko16.CDF" />
                 <has_text text="faahKO_reduce/WT/wt15.CDF faahKO_reduce/WT/wt16.CDF" />
                 <has_text text="featureNames: F1.S0001 F1.S0002 ... F4.S1278 (5112 total)" />
-                <has_text text="fvarLabels: fileIdx spIdx ... spectrum (28 total)" />
+                <has_text text="fvarLabels: fileIdx spIdx ... spectrum (33 total)" />
                 <has_text text="faahKO_reduce/KO/ko15.CDF        ko15           KO" />
                 <has_text text="faahKO_reduce/KO/ko16.CDF        ko16           KO" />
                 <has_text text="faahKO_reduce/WT/wt15.CDF        wt15           WT" />
@@ -61,7 +61,7 @@
                 <has_text text="rowNames: ko15.CDF" />
                 <has_text text="ko15.CDF" />
                 <has_text text="featureNames: F1.S0001 F1.S0002 ... F1.S1278 (1278 total)" />
-                <has_text text="fvarLabels: fileIdx spIdx ... spectrum (28 total)" />
+                <has_text text="fvarLabels: fileIdx spIdx ... spectrum (33 total)" />
                 <has_text text="ko15.CDF        ko15            ." />
             </assert_stdout>
         </test>
@@ -234,7 +234,11 @@ sampleMetadata.tsv (only when a zip is used)
 Changelog/News
 --------------
 
-.. _News: https://bioconductor.org/packages/release/bioc/news/MSnbase/NEWS
+.. _News: https://lgatto.github.io/MSnbase/news/index.html
+
+**Version 2.16.1+galaxy0 - 08/04/2019**
+
+- UPGRADE: upgrade the MSnbase version from 2.8.2 to 2.16.1 (see MSnbase News_). Almost all the new features may not concern our usage of MSnbase.
 
 **Version 2.8.2.1 - 30/04/2019**
 

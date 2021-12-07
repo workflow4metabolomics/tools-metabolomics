@@ -1,4 +1,4 @@
-<tool id="abims_CAMERA_annotateDiffreport" name="CAMERA.annotate" version="2.2.6+camera@TOOL_VERSION@-galaxy1">
+<tool id="abims_CAMERA_annotateDiffreport" name="CAMERA.annotate" version="2.2.6+camera@TOOL_VERSION@-galaxy0">
 
     <description>CAMERA annotate function. Returns annotation results (isotope peaks, adducts and fragments) and a diffreport if more than one condition.</description>
 
@@ -205,29 +205,15 @@
     </outputs>
 
     <tests>
-        <!--<test>
-            <param name="image" value="faahKO.xset.group.retcor.group.fillpeaks.RData"/>
-            <expand macro="test_annotate_diffreport"/>
-            <expand macro="test_annotate_quick_true"/>
-            <expand macro="test_file_load_zip"/>
-            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.annotate.variableMetadata.tsv" />
-        </test>-->
         <test>
-            <param name="image" value="faahKO-single.xset.merged.group.retcor.group.fillpeaks.RData"/>
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.RData"/>
             <expand macro="test_annotate_diffreport"/>
             <expand macro="test_annotate_quick_true"/>
             <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.annotate.variableMetadata.tsv" lines_diff="2" />
         </test>
         <test>
-            <param name="image" value="faahKO-single.xset.merged.group.retcor.group.fillpeaks-xcms3.RData"/>
-            <expand macro="test_annotate_diffreport"/>
-            <expand macro="test_annotate_quick_true"/>
-            <expand macro="test_file_load_single"/>
-            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.annotate.variableMetadata-xcms3.tsv" lines_diff="2" />
-        </test>
-        <test>
-            <param name="image" value="faahKO-single.xset.merged.group.retcor.group.fillpeaks.RData"/>
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.RData"/>
             <expand macro="test_annotate_diffreport"/>
             <conditional name="quick_block">
                 <expand macro="test_annotate_quick_false" />
@@ -435,6 +421,10 @@ Changelog/News
 --------------
 
 .. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
+
+@HELP_CAMERA_NEWVERSION_1480@
+
+@HELP_CAMERA_NEWVERSION_1460@
 
 **Version 2.2.6+camera1.42.0-galaxy1 - 09/03/2020**
 

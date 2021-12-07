@@ -236,7 +236,8 @@ jobs:
     - name: lintr
       run: |
         library(lintr)
-        linters <- with_defaults(line_length_linter = NULL, cyclocomp_linter = NULL, object_usage_linter = NULL)
+        linters <- with_defaults(line_length_linter = NULL, cyclocomp_linter = NULL, object_usage_linter = NULL,
+          object_name_linter = NULL, object_usage_linter=NULL)
         con <- file("../workflow_artifacts/repository_list.txt", "r")
         status <- 0
         while (TRUE) {

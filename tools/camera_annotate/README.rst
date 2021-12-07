@@ -2,6 +2,14 @@
 Changelog/News
 --------------
 
+**Version 2.2.6+camera1.48.0 - 11/06/2021**
+
+- UPGRADE: upgrade the CAMERA version from 1.46.0 to 1.48.0 (see CAMERA News_)
+
+**Version 2.2.6+camera1.46.0 - 12/04/2021**
+
+- UPGRADE: upgrade the CAMERA version from 1.42.0 to 1.46.0 (see CAMERA News_)
+
 **Version 2.2.6+camera1.42.0+galaxy1 - 09/03/2020**
 
 - BUGFIX: Fix the zip export of the pictures (eic and boxplot)

@@ -4,6 +4,10 @@ Changelog/News
 
 .. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
+**Version 3.12.0+galaxy* - 03/03/2020**
+
+- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS News_)
+
 **Version 3.6.1+galaxy1 - 13/02/2020**
 
 - NEW: if a retention time ajustment have already been applied to your data. The function applyAdjustedRtime will replace raw retention times with adjusted retention times and so alloww to cumulate the ajustments.

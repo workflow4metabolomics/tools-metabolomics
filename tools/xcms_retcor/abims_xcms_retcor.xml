@@ -1,4 +1,4 @@
-<tool id="abims_xcms_retcor" name="xcms adjustRtime (retcor)" version="@TOOL_VERSION@+galaxy1">
+<tool id="abims_xcms_retcor" name="xcms adjustRtime (retcor)" version="@TOOL_VERSION@+galaxy0">
 
     <description>Retention Time Correction</description>
 
@@ -133,7 +133,7 @@
 
     <tests>
         <test>
-            <param name="image" value="faahKO-single-class.xset.group.RData" ftype="rdata"/>
+            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="PeakGroups"/>
                 <param name="extraPeaks" value="1"/>
@@ -309,7 +309,7 @@ xset.groupChromPeaks.adjustRtime.RData: rdata.xcms.retcor format
 Changelog/News
 --------------
 
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+@HELP_XCMS_NEWVERSION_31200@
 
 **Version 3.6.1+galaxy1 - 13/02/2020**
 

@@ -24,6 +24,10 @@ Changelog/News
 
 .. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
+**Version 3.12.0+galaxy* - 03/03/2020**
+
+- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS News_)
+
 **Version 3.6.1.0 - 03/09/2019**
 
 - UPGRADE: upgrade the xcms version from 3.4.4 to 3.6.1 (see XCMS News_)

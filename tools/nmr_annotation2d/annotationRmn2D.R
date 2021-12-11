@@ -1,12 +1,12 @@
-###########################################################################################################################################
-# ANNOTATION SPECTRE 2D MATRICE COMPLEXE BASEE SUR UNE SEQUENCE RMN                                                                       #
-# matriceComplexe : data.frame liste couples ppm de la matrice a annoter                                                                  #
-# BdDStandards : objet contenant la base de donnees des composes standards                                                                #
-# nom_séquence : nom sequence 2D a utiliser pour annotation ("JRES", "COSY", "TOCSY", "HMBC", "HSQC")                                         #
-# ppm1Tol : tolerance ppm axe abscisses                                                                                                   #
-# ppm2Tol : tolerance ppm axe ordonnees                                                                                                   #
-# nb_ligne_template : préciser le nombre total de ligne de la feuille de calcul à annoter                                                 #
-###########################################################################################################################################
+##########################################################################
+# ANNOTATION SPECTRE 2D MATRICE COMPLEXE BASEE SUR UNE SEQUENCE RMN      #
+# matriceComplexe : data.frame liste couples ppm de la matrice a annoter #
+# BdDStandards : objet contenant la base de donnees des composes standards #
+# nom_sequence : nom sequence 2D a utiliser pour annotation ("JRES", "COSY", "TOCSY", "HMBC", "HSQC") #
+# ppm1Tol : tolerance ppm axe abscisses                                                               #
+# ppm2Tol : tolerance ppm axe ordonnees                                                               #
+# nb_ligne_template : preciser le nombre total de ligne de la feuille de calcul a annoter             #
+#######################################################################################################
 annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol = 0.01, ppm2Tol = 0.01,
                             seuil = 0, unicite = "NO") {
   ## Longueur de la peak-list de la matrice a annoter
@@ -19,14 +19,13 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   seuil_score <- seuil
 
   ## Boucle sur les metabolites inclus dans BdD
-  for (i in 1:nbMetabolitesBdD) {
+  for (i in seq_len(nbMetabolitesBdD)) {
     ## Infos metabolite en cours
     iMetabolite <- BdDStandards[[i]]
     ppm1M <- iMetabolite[, 1]
     ppm2M <- iMetabolite[, 2]
     nbPeakMetabolite <- length(ppm1M)
     MetaboliteName <- names(BdDStandards[i])
-    # print(MetaboliteName)
 
     ## Initialisation
     k <- 0
@@ -38,7 +37,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     metabolitesList <- data.frame()
 
     ## Boucle sur les couples de pics de la matrice a annoter
-    for (p in 1:PeakListLength) {
+    for (p in seq_len(PeakListLength)) {
       ppmAnnotationF1 <- as.numeric(matriceComplexe[p, 3])
       ppmAnnotationF2 <- as.numeric(matriceComplexe[p, 2])
       e <- simpleMessage("end of file")
@@ -89,7 +88,6 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   commonPpmList <- data.frame()
   metaboliteAdd <- data.frame()
   metaboliteAddList <- data.frame()
-  #  metabolite_ref <- data.frame()
   commonMetabolitesList <- data.frame()
   commonMetabolitesPpmList <- data.frame()
   commonMetabolitesPpmAllList1 <- data.frame()
@@ -99,9 +97,9 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   metabolitesAllUnicite <- data.frame()
 
   ## Boucle sur tous couples annotes
-  for (j in 1:length(allMetabolitesList$ppm1)) {
+  for (j in seq_len(length(allMetabolitesList$ppm1))) {
     ## Boucle sur metabolites dans BdD composes standards
-    for (i in 1:nbMetabolitesBdD) {
+    for (i in seq_len(nbMetabolitesBdD)) {
       ppmMetaboliteBdD <- BdDStandards[[i]]
       ppm1M <- ppmMetaboliteBdD[, 1]
       ppm2M <- ppmMetaboliteBdD[, 2]
@@ -120,7 +118,6 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
         commonPpmList <- unique(commonPpmList)
         metaboliteAdd <- data.frame(nom_metabolite = MetaboliteName)
         metaboliteAddList <- rbind.data.frame(metaboliteAddList, metaboliteAdd)
-        # metabolite_ref <- data.frame(nom_metabolite = allMetabolitesList[j, 3])
         commonMetabolitesList <- rbind.data.frame(data.frame(nom_metabolite = allMetabolitesList[j, 3]), metaboliteAddList)
         commonMetabolitesPpmList <- cbind.data.frame(commonPpm, commonMetabolitesList)
         commonMetabolitesPpmAllList1 <- rbind.data.frame(commonMetabolitesPpmAllList1, commonMetabolitesPpmList)
@@ -145,7 +142,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     unicityAllList <- setdiff(listeTotale_2D_unicite, metabolitesAllUnicite)
 
   unicitynbCouplesRectif <- data.frame()
-  for (g in 1:nrow(unicityAllList)) {
+  for (g in seq_len(nrow(unicityAllList))) {
     metaboliteUnicity <- (unicityAllList$Metabolite == unicityAllList$Metabolite[g])
     WhichMetaboliteUnicity <- which(metaboliteUnicity)
     nb_occurence <- length(WhichMetaboliteUnicity)
@@ -154,20 +151,19 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   names(unicitynbCouplesRectif) <- "NbCouplesAnnotes"
   unicityAllList <- cbind.data.frame(unicityAllList, unicitynbCouplesRectif)
 
-  unicityAllList <- cbind.data.frame(unicityAllList, score_unicite = unicityAllList$NbCouplesAnnotes/unicityAllList$theoricalLength)
+  unicityAllList <- cbind.data.frame(unicityAllList, score_unicite = unicityAllList$NbCouplesAnnotes / unicityAllList$theoricalLength)
   unicityAllList <- unicityAllList[, -3]
   unicityAllList <- unicityAllList[, -4]
 
-  # unicityAllList <- filter(unicityAllList, unicityAllList$score_unicite > seuil_score)
   unicityAllList <- unicityAllList[unicityAllList$score_unicite > seuil_score, ]
 
   listeTotale_metabo <- data.frame()
   if (nrow(commonPpmList) != 0) {
-    for (o in 1:length(commonPpmList[, 1])) {
+    for (o in seq_len(length(commonPpmList[, 1]))) {
       tf6 <- (commonMetabolitesPpmAllList$ppm1 == commonPpmList[o, 1] & commonMetabolitesPpmAllList$ppm2 == commonPpmList[o, 2])
       w6 <- which(tf6)
 
-      for (s in 1:length(w6)) {
+      for (s in seq_len(length(w6))) {
         metaboliteAdd <- data.frame(nom_metabolite = commonMetabolitesPpmAllList[w6[s], 3])
         commonMetabolitesList <- paste(commonMetabolitesList, metaboliteAdd[1, ], sep = " ")
       }
@@ -213,10 +209,8 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     sp <- sp + geom_point(size = 2) + scale_x_reverse(breaks = seq(maxX, 0, -0.5)) +
       scale_y_reverse(breaks = seq(maxY, 0, indice_negatif)) +
       xlab("1H chemical shift (ppm)") + ylab(paste(atome, " chemical shift (ppm)")) + ggtitle(nom_sequence) +
-      geom_text(data = listeTotale_2D_a_utiliser, aes(d1.ppm, d2.ppm, label = str_to_lower(substr(listeTotale_2D_a_utiliser[, 3], 1, 3)),
-                                                    col = probability.score),
+      geom_text(data = listeTotale_2D_a_utiliser, aes(d1.ppm, d2.ppm, label = str_to_lower(substr(listeTotale_2D_a_utiliser[, 3], 1, 3)), col = probability.score),
                 size = 4, hjust = 0, nudge_x = 0.02, vjust = 0, nudge_y = 0.2) + scale_colour_manual(values = viridis(lgr))
-                # scale_color_colormap('Annotation', discrete = T, reverse = T)
     print(sp)
   }
 

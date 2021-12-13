@@ -75,7 +75,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
     dataTOCSY <- unique.data.frame(dataTOCSY)
   }
 
-  sequencesCombinationAverageScoreSeuil <- data.frame()
+  seqCombiMeanScoreSeuil <- data.frame()
   seqCombiMeanScoreSeuilFiltre <- data.frame()
 
   ## CONCATENATION RESULTATS DIFFERENTES SEQUENCES

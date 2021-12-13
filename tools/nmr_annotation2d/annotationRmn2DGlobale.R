@@ -62,7 +62,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (jres == 1) {
     matrice.jres <- read.xlsx(template, sheet = "JRES", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.jres <- matrice.jres[matrice.jres$peak.index != "x", ]
-    annotationJRES <- annotationRmn2D(matrice.jres, BdDReference_JRES, "JRES", ppm1Tol = tolPpm1, ppm2Tol = tolPpm2HJRes, seuil = seuilPls2D,unicite = unicite)
+    annotationJRES <- annotationRmn2D(matrice.jres, BdDReference_JRES, "JRES", ppm1Tol = tolPpm1, ppm2Tol = tolPpm2HJRes, seuil = seuilPls2D, unicite = unicite)
     dataJRES <- data.frame(Metabolite = str_to_lower(annotationJRES$liste_resultat$Metabolite), score.JRES = annotationJRES$liste_resultat$score)
     dataJRES <- unique.data.frame(dataJRES)
   }
@@ -76,14 +76,14 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   }
 
   sequencesCombinationAverageScoreSeuil <- data.frame()
-  sequencesCombinationAverageScoreSeuilFiltre <- data.frame()
+  seqCombiMeanScoreSeuilFiltre <- data.frame()
 
   ## CONCATENATION RESULTATS DIFFERENTES SEQUENCES
   data2D <- list(dataCOSY, dataHMBC, dataHSQC, dataJRES, dataTOCSY)
   whichSequenceNaN <- which((data2D != "NA"))
   data2D <- data2D[whichSequenceNaN]
   sequencesCombination <- data.frame(data2D[1])
-  sequencesCombinationAverageScore <- sequencesCombination
+  seqCombiMeanScore <- sequencesCombination
 
     ## Si une seule sequence et seuil sur score = filtre applique dans la fonction annotationRmn2D
   if (length(data2D) >= 2) {
@@ -93,10 +93,10 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
 
     ## SCORE MOYEN (sans prise en compte valeurs manquantes)
     meanScore <- apply(sequencesCombination[, -1], 1, FUN = mean.rmNa)
-    sequencesCombinationAverageScore <- cbind.data.frame(sequencesCombination, averageScore = meanScore)
+    seqCombiMeanScore <- cbind.data.frame(sequencesCombination, averageScore = meanScore)
         ## SUPPRESSION METABOLITE AVEC SCORE MOYEN < SEUIL
-    sequencesCombinationAverageScoreSeuilFiltre <- sequencesCombinationAverageScore[sequencesCombinationAverageScore$averageScore > seuil, ]
+    seqCombiMeanScoreSeuilFiltre <- seqCombiMeanScore[seqCombiMeanScore$averageScore > seuil, ]
   }
 
-  return(list(COSY = annotationCOSY, HMBC = annotationHMBC, HSQC = annotationHSQC, JRES = annotationJRES, TOCSY = annotationTOCSY, combination = sequencesCombinationAverageScoreSeuilFiltre))
+  return(list(COSY = annotationCOSY, HMBC = annotationHMBC, HSQC = annotationHSQC, JRES = annotationJRES, TOCSY = annotationTOCSY, combination = seqCombiMeanScoreSeuilFiltre))
 }

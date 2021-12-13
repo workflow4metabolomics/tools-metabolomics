@@ -3,8 +3,7 @@
 ## 201919016 2DNmrAnnotation_1.0.0.R
 ## Marie Tremblay-Franco
 ## MetaboHUB: The French Infrastructure for Metabolomics and Fluxomics
-## www.metabohub.fr/en
-## marie.tremblay-franco@toulouse.inra.fr
+## marie.tremblay-franco@inrae.fr
 
 runExampleL <- FALSE
 

@@ -51,7 +51,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
         WhichMetaboliteIn <- which(metaboliteIn)
         # Si au moins un couple de la matrice a annoter dans liste couples metabolite standard
         if (length(WhichMetaboliteIn) > 0) {
-          for (a in 1:length(WhichMetaboliteIn)) {
+          for (a in seq_len(length(WhichMetaboliteIn))) {
             annotatedPpmList <- data.frame(ppm1 = ppm1M[WhichMetaboliteIn[a]], ppm2 = ppm2M[WhichMetaboliteIn[a]], theoricalLength = nbPeakMetabolite)
             annotatedPpmRef <- rbind(annotatedPpmRef, annotatedPpmList)
           }

@@ -19,6 +19,7 @@ if (runExampleL) {
 ##------------------------------
 strAsFacL <- options()$stringsAsFactors
 options(stringsAsFactors = FALSE)
+options(digits=8, scipen=3)
 
 ##------------------------------
 ## Constants

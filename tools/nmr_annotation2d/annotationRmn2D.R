@@ -214,7 +214,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     print(sp)
   }
 
-  # Liste des résultats (couples pmm / metabolite / score) + liste ppms metabolites communs
+  # Liste des resultats (couples pmm / metabolite / score) + liste ppms metabolites communs
   if (unicite == "NO") {
     return(list(liste_resultat = allMetabolitesList, listing_ppm_commun = listeTotale_metabo))
   } else {

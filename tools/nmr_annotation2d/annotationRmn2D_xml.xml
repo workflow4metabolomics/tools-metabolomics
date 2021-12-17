@@ -192,38 +192,38 @@
 
     <outputs>
         <data format="txt" name="logOut" label="${tool.name}_log" />
-        <data format="tabular" name="annotationCOSY" label="${tool.name}_annotationCosy" >
+        <data format="tabular" name="annotationCOSY" label="${tool.name}_annotationCOSY" >
             <filter> cosy_2dsequences != "no" </filter>
         </data>
-        <data format="tabular" name="ppmCommunCOSY" label="${tool.name}_uplicateCosy" >
+        <data format="tabular" name="ppmCommunCOSY" label="${tool.name}_uplicateCOSY" >
             <filter> cosy_2dsequences != "no" </filter>
         </data>
 
-        <data format="tabular" name="annotationJRES" label="${tool.name}_annotationJres" >
+        <data format="tabular" name="annotationJRES" label="${tool.name}_annotationJRES" >
             <filter> jres_2dsequences != "no" </filter>
         </data>
-        <data format="tabular" name="ppmCommunJRES" label="${tool.name}_duplicateJres" >
+        <data format="tabular" name="ppmCommunJRES" label="${tool.name}_duplicateJRES" >
             <filter> jres_2dsequences != "no" </filter>
         </data>
 
-        <data format="tabular" name="annotationHMBC" label="${tool.name}_annotationHmbc" >
+        <data format="tabular" name="annotationHMBC" label="${tool.name}_annotationHMBC" >
             <filter> hmbc_2dsequences != "no" </filter>
         </data>
-        <data format="tabular" name="ppmCommunHMBC" label="${tool.name}_duplicateHmbc" >
+        <data format="tabular" name="ppmCommunHMBC" label="${tool.name}_duplicateHMBC" >
             <filter> hmbc_2dsequences != "no" </filter>
         </data>
 
-        <data format="tabular" name="annotationHSQC" label="${tool.name}_annotationHsqc" >
+        <data format="tabular" name="annotationHSQC" label="${tool.name}_annotationHSQC" >
             <filter> hsqc_2dsequences != "no" </filter>
         </data>
-        <data format="tabular" name="ppmCommunHSQC" label="${tool.name}_duplicateHsqc" >
+        <data format="tabular" name="ppmCommunHSQC" label="${tool.name}_duplicateHSQC" >
             <filter> hsqc_2dsequences != "no" </filter>
         </data>
 
-        <data format="tabular" name="annotationTOCSY" label="${tool.name}_annotationTocsy" >
+        <data format="tabular" name="annotationTOCSY" label="${tool.name}_annotationTOCSY" >
             <filter> tocsy_2dsequences != "no" </filter>
         </data>
-        <data format="tabular" name="ppmCommunTOCSY" label="${tool.name}_duplicateTocsy" >
+        <data format="tabular" name="ppmCommunTOCSY" label="${tool.name}_duplicateTOCSY" >
             <filter> tocsy_2dsequences != "no" </filter>
         </data>
 
@@ -244,16 +244,16 @@
     		<param name="tolppmJRES" value="0.002"/>
     		<param name="threshold" value="0.3"/>
     		<param name="unicity" value="no"/>
-    		<output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
+   		<output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
     		<output name="ppmCommunCOSY" file="2DNMRAnnotation_duplicateCOSY.tabular"/>
-    		<output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
+   		<output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
     		<output name="ppmCommunHMBC" file="2DNMRAnnotation_duplicateHMBC.tabular"/>
-    		<output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
+   		<output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
     		<output name="ppmCommunHSQC" file="2DNMRAnnotation_duplicateHSQC.tabular"/>
-    		<output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
+   		<output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
     		<output name="ppmCommunJRES" file="2DNMRAnnotation_duplicateJRES.tabular"/>
-   		<output name="annotationTOCSY" file="2DNMRAnnotation_annotationTocsy.tabular"/>
-    		<output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTocsy.tabular"/>
+   		<output name="annotationTOCSY" file="2DNMRAnnotation_annotationTOCSY.tabular"/>
+    		<output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTOCSY.tabular"/>
     		<output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
     	</test>
 	</tests>

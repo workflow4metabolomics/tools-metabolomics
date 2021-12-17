@@ -3,7 +3,7 @@ ppm1	ppm2	commonMetabolitesList
 1.3395	-0.006	 L-Threonine L-Lactic acid (sodium salt)
 3.6026	0.0039	 L-Threonine maltose L-rhamnose
 3.6044	-0.0048	 L-Threonine L-rhamnose
-4.0661	3e-04	 Creatinine Sucrose Cholic acid Raffinose Stachyose L-Tryptophan Myo-Inositol Choline chloride
+4.0661	0.0003	 Creatinine Sucrose Cholic acid Raffinose Stachyose L-Tryptophan Myo-Inositol Choline chloride
 2.452	0	 Phloretic acid carnitine
 2.452	-0.013	 Phloretic acid carnitine
 2.452	0.013	 Phloretic acid carnitine
@@ -34,14 +34,14 @@ ppm1	ppm2	commonMetabolitesList
 3.7906	-0.0182	 L-alanine Glycerol Raffinose
 3.7908	0.006	 L-alanine Glycerol Raffinose Stachyose
 3.791	0.0184	 L-alanine Glycerol
-3.2554	2e-04	 D-Glucose L-Arginine
+3.2554	0.0002	 D-Glucose L-Arginine
 3.4216	0.0159	 D-Glucose carnitine
 3.4218	-0.016	 D-Glucose carnitine
-3.4215	-2e-04	 D-Glucose taurine L-Proline
-3.4748	-2e-04	 D-Glucose Sucrose
+3.4215	-0.0002	 D-Glucose taurine L-Proline
+3.4748	-0.0002	 D-Glucose Sucrose
 3.4751	0.0146	 D-Glucose Sucrose
 3.5015	-0.0153	 D-Glucose D-Galactose
-3.5017	-1e-04	 D-Glucose Cholic acid D-Galactose
+3.5017	-0.0001	 D-Glucose Cholic acid D-Galactose
 3.502	0.0153	 D-Glucose D-Galactose
 3.5453	0.0112	 D-Glucose Myo-Inositol
 3.5453	-0.0051	 D-Glucose Myo-Inositol
@@ -102,16 +102,16 @@ ppm1	ppm2	commonMetabolitesList
 2.1697	-0.0119	 Butyric acid Octanoic acid
 1.7263	0.0253	 Cadaverine L-leucine
 1.7299	-0.0259	 Cadaverine L-lysine
-1.7287	-2e-04	 Cadaverine L-lysine L-leucine
+1.7287	-0.0002	 Cadaverine L-lysine L-leucine
 1.7287	0.0131	 Cadaverine L-lysine L-leucine
 1.7312	-0.0131	 Cadaverine L-lysine
 3.0216	0.0117	 Cadaverine 4-aminobutyric acid 5-aminopentanoic acid
 3.0216	-0.0123	 Cadaverine 4-aminobutyric acid 5-aminopentanoic acid
-3.0244	-3e-04	 Cadaverine L-lysine 4-aminobutyric acid 5-aminopentanoic acid
+3.0244	-0.0003	 Cadaverine L-lysine 4-aminobutyric acid 5-aminopentanoic acid
 2.4383	0.0139	 L-glutamine carnitine
 2.4393	-0.0127	 L-glutamine carnitine
 2.4387	0.0262	 L-glutamine carnitine
-2.439	8e-04	 L-glutamine carnitine
+2.439	0.0008	 L-glutamine carnitine
 2.4383	-0.0254	 L-glutamine carnitine
 2.459	-0.0056	 L-glutamine carnitine
 2.4587	0.0067	 L-glutamine carnitine
@@ -120,13 +120,13 @@ ppm1	ppm2	commonMetabolitesList
 2.4787	-0.0131	 L-glutamine 3-(3-hydroxyphenyl)propanoic acid
 2.4794	0	 L-glutamine 3-(3-hydroxyphenyl)propanoic acid
 3.7826	-0.0099	 L-glutamine Glycerol L-Arginine
-3.7826	2e-04	 L-glutamine maltose Sucrose Glycerol Raffinose L-Arginine
+3.7826	0.0002	 L-glutamine maltose Sucrose Glycerol Raffinose L-Arginine
 3.7825	0.0106	 L-glutamine Glycerol Glutamic acid L-Arginine
 2.0117	-0.0211	 L-Proline 2-Hydroxy-3-methylbutyric acid
 2.0113	-0.0096	 L-Proline 2-Hydroxy-3-methylbutyric acid
 2.0117	0.0095	 L-Proline 2-Hydroxy-3-methylbutyric acid
 2.0117	0.0211	 L-Proline 2-Hydroxy-3-methylbutyric acid
-3.4233	7e-04	 L-Proline taurine D-Glucose
+3.4233	0.0007	 L-Proline taurine D-Glucose
 3.423	-0.0094	 L-Proline taurine carnitine
 3.423	0.0101	 L-Proline taurine carnitine
 4.1413	0.0126	 L-Proline Stachyose
@@ -166,10 +166,10 @@ ppm1	ppm2	commonMetabolitesList
 4.0631	-0.002	 L-Tryptophan Sucrose Cholic acid Raffinose Stachyose Myo-Inositol
 7.204	0.0122	 L-Tryptophan indoxyl sulfate
 7.2039	-0.0125	 L-Tryptophan indoxyl sulfate
-7.204	-2e-04	 L-Tryptophan indoxyl sulfate N(tele)-methyl-L-histidine
+7.204	-0.0002	 L-Tryptophan indoxyl sulfate N(tele)-methyl-L-histidine
 7.2882	-0.0125	 L-Tryptophan indoxyl sulfate
 7.2885	0.0127	 L-Tryptophan indoxyl sulfate
-7.2884	-2e-04	 L-Tryptophan indoxyl sulfate
+7.2884	-0.0002	 L-Tryptophan indoxyl sulfate
 7.548	-0.0065	 L-Tryptophan Uracil
 7.5489	0.0066	 L-Tryptophan Uracil
 3.544	0.011	 Myo-Inositol D-Glucose
@@ -192,11 +192,11 @@ ppm1	ppm2	commonMetabolitesList
 7.283	0	 indoxyl sulfate L-Tryptophan
 3.5291	0.0082	 Choline chloride D-(-)-Ribose
 3.5291	-0.008	 Choline chloride D-(-)-Ribose
-4.0693	2e-04	 Choline chloride Creatinine Cholic acid Raffinose Stachyose L-Tryptophan Myo-Inositol
+4.0693	0.0002	 Choline chloride Creatinine Cholic acid Raffinose Stachyose L-Tryptophan Myo-Inositol
 4.0693	0.0088	 Choline chloride L-Tryptophan
-3.2729	2e-04	 glycine betaine taurine
-3.908	1e-04	 glycine betaine Cholic acid Raffinose Stachyose
-3.7408	5e-04	 N,N-Dimethylglycine L-leucine D-Galactose 3-Methyl-L-Histidine
+3.2729	0.0002	 glycine betaine taurine
+3.908	0.0001	 glycine betaine Cholic acid Raffinose Stachyose
+3.7408	0.0005	 N,N-Dimethylglycine L-leucine D-Galactose 3-Methyl-L-Histidine
 3.655	-0.013	 L-arabinopyranose maltose Glycerol D-Galactose D-(-)-Ribose Phenylacetyl-L-glutamine
 3.655	0.013	 L-arabinopyranose Glycerol D-Galactose D-(-)-Ribose Phenylacetyl-L-glutamine
 3.671	-0.005	 L-arabinopyranose D-Mannose D-(-)-Ribose

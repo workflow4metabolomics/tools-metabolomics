@@ -201,30 +201,29 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
 ##  if (nrow(listeTotale_2D_a_utiliser) > 0) {
     ## Taches de correlations
 	## Labels
-##    CorrelationSpots <- listeTotale_2D_a_utiliser[, 3]
-##    CorrelationSpots <- stri_trans_general(listeTotale_2D_a_utiliser[, 3], "Latin-ASCII")
-##    CorrelationSpots <- gsub("é", "e", CorrelationSpots)
-##    CorrelationSpots <- gsub(" ", "", CorrelationSpots)
-##    CorrelationSpots <- gsub("-", "", CorrelationSpots)
-##    CorrelationSpots <- gsub(",", ".", CorrelationSpots)
-##    CorrelationSpots <- data.frame(Metabolite = str_to_lower(substr(CorrelationSpots, 1, 3)))
+    CorrelationSpots <- listeTotale_2D_a_utiliser[, 3]
+    CorrelationSpots <- gsub("é", "e", CorrelationSpots)
+    CorrelationSpots <- gsub(" ", "", CorrelationSpots)
+    CorrelationSpots <- gsub("-", "", CorrelationSpots)
+    CorrelationSpots <- gsub(",", ".", CorrelationSpots)
+    CorrelationSpots <- data.frame(Metabolite = str_to_lower(substr(CorrelationSpots, 1, 3)))
 
     # Matrice biologique + Annotations
-##    maxX <- max(round(max(as.numeric(matriceComplexe[, 2]))) + 0.5, round(max(as.numeric(matriceComplexe[, 2]))))
-##    maxY <- max(round(max(as.numeric(matriceComplexe[, 3]))) + indice_positif, round(max(as.numeric(matriceComplexe[, 3]))))
-##    probability.score <- as.factor(round(listeTotale_2D_a_utiliser[, 4], 2))
-##    lgr <- length(unique(probability.score))
-##    sp <- ggplot(matriceComplexe, aes(x = ppm1, y = ppm2))
-##    sp <- sp + geom_point(size = 2) + scale_x_reverse(breaks = seq(maxX, 0, -0.5)) +
-##      scale_y_reverse(breaks = seq(maxY, 0, indice_negatif)) +
-##      xlab("1H chemical shift (ppm)") + ylab(paste(atome, " chemical shift (ppm)")) + ggtitle(nom_sequence) +
-##      geom_text(data = CorrelationSpots, 
-##                aes(d1.ppm, d2.ppm, label = CorrelationSpots[, 1],  
-##                    col = probability.score),
-##                size = 4, hjust = 0, nudge_x = 0.02, vjust = 0, nudge_y = 0.2) + 
-##      scale_colour_manual(values=viridis(lgr))
-##    print(sp)
-##  }
+    maxX <- max(round(max(as.numeric(matriceComplexe[, 2]))) + 0.5, round(max(as.numeric(matriceComplexe[, 2]))))
+    maxY <- max(round(max(as.numeric(matriceComplexe[, 3]))) + indice_positif, round(max(as.numeric(matriceComplexe[, 3]))))
+    probability.score <- as.factor(round(listeTotale_2D_a_utiliser[, 4], 2))
+    lgr <- length(unique(probability.score))
+    sp <- ggplot(matriceComplexe, aes(x = ppm1, y = ppm2))
+    sp <- sp + geom_point(size = 2) + scale_x_reverse(breaks = seq(maxX, 0, -0.5)) +
+      scale_y_reverse(breaks = seq(maxY, 0, indice_negatif)) +
+      xlab("1H chemical shift (ppm)") + ylab(paste(atome, " chemical shift (ppm)")) + ggtitle(nom_sequence) +
+      geom_text(data = CorrelationSpots,
+                aes(d1.ppm, d2.ppm, label = CorrelationSpots[, 1],
+                    col = probability.score),
+                size = 4, hjust = 0, nudge_x = 0.02, vjust = 0, nudge_y = 0.2) +
+      scale_colour_manual(values=viridis(lgr))
+    print(sp)
+  }
 
   # Liste des resultats (couples pmm / metabolite / score) + liste ppms metabolites communs
   if (unicite == "NO") {

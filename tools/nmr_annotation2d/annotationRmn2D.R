@@ -200,6 +200,14 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
 
   if (nrow(listeTotale_2D_a_utiliser) > 0) {
     ## Taches de correlations
+	## Labels
+    CorrelationSpots <- listeTotale_2D_a_utiliser[, 3]
+    CorrelationSpots <- gsub("é", "e", CorrelationSpots)
+    CorrelationSpots <- gsub(" ", "", CorrelationSpots)
+    CorrelationSpots <- gsub("-", "", CorrelationSpots)
+    CorrelationSpots <- gsub(",", ".", CorrelationSpots)
+    CorrelationSpots <- data.frame(Metabolite = str_to_lower(substr(CorrelationSpots, 1, 3)))
+
     # Matrice biologique + Annotations
     maxX <- max(round(max(as.numeric(matriceComplexe[, 2]))) + 0.5, round(max(as.numeric(matriceComplexe[, 2]))))
     maxY <- max(round(max(as.numeric(matriceComplexe[, 3]))) + indice_positif, round(max(as.numeric(matriceComplexe[, 3]))))
@@ -209,8 +217,11 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     sp <- sp + geom_point(size = 2) + scale_x_reverse(breaks = seq(maxX, 0, -0.5)) +
       scale_y_reverse(breaks = seq(maxY, 0, indice_negatif)) +
       xlab("1H chemical shift (ppm)") + ylab(paste(atome, " chemical shift (ppm)")) + ggtitle(nom_sequence) +
-      geom_text(data = listeTotale_2D_a_utiliser, aes(d1.ppm, d2.ppm, label = str_to_lower(substr(listeTotale_2D_a_utiliser[, 3], 1, 3)), col = probability.score),
-                size = 4, hjust = 0, nudge_x = 0.02, vjust = 0, nudge_y = 0.2) + scale_colour_manual(values = viridis(lgr))
+      geom_text(data = CorrelationSpots, 
+                aes(d1.ppm, d2.ppm, label = CorrelationSpots[, 1],  
+                    col = probability.score),
+                size = 4, hjust = 0, nudge_x = 0.02, vjust = 0, nudge_y = 0.2) + 
+      scale_colour_manual(values=viridis(lgr))
     print(sp)
   }
 

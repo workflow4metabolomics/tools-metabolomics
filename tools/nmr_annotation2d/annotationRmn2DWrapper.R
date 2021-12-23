@@ -223,11 +223,17 @@ print(argLs)
 
 ## ANNOTATION
 st0 <- Sys.time()
+<<<<<<< HEAD
 ##pdf(AnnotationGraph, onefile = TRUE)
 annotationMelange <- annotationRmn2DGlobale(fileToAnnotate, tolPpm1 = tolPpm1, tolPpm2HJRes = tolPpm2HJRes,
                                              tolPpm2C = tolPpm2C, cosy = cosy, hmbc = hmbc, hsqc = hsqc,
                                              jres = jres, tocsy = tocsy, seuil = seuil, unicite = unicite)
 ##dev.off()
+=======
+annotationMelange <- annotationRmn2DGlobale(fileToAnnotate, tolPpm1 = tolPpm1, tolPpm2HJRes = tolPpm2HJRes,
+                                             tolPpm2C = tolPpm2C, cosy = cosy, hmbc = hmbc, hsqc = hsqc,
+                                             jres = jres, tocsy = tocsy, seuil = seuil, unicite = unicite)
+>>>>>>> 7749881 (Removal of graph outputs to check encoding errors)
 
 if (cosy == 1) {
   write.table(annotationMelange$COSY$liste_resultat, file = argLs[["annotationCOSY"]], quote = FALSE,

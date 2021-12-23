@@ -11,8 +11,12 @@
         <requirement type="package" version="1.0.2">r-tidyr</requirement>
         <requirement type="package" version="3.3">r-curl</requirement>
         <requirement type="package" version="1.6">r-jsonlite</requirement>
+<<<<<<< HEAD
         <requirement type="package">r-stringi</requirement>
     </requirements>
+=======
+        <requirement type="package">r-stringi</requirement>    </requirements>
+>>>>>>> 7749881 (Removal of graph outputs to check encoding errors)
 
     <stdio>
         <exit_code range="1:" level="fatal" />
@@ -87,7 +91,10 @@
         annotationTOCSY '$annotationTOCSY'
         ppmCommunTOCSY '$ppmCommunTOCSY'
         annotationCombination '$annotationCombination'
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7749881 (Removal of graph outputs to check encoding errors)
     </command>
 
     <inputs>

@@ -11,6 +11,7 @@
         <requirement type="package" version="1.0.2">r-tidyr</requirement>
         <requirement type="package" version="3.3">r-curl</requirement>
         <requirement type="package" version="1.6">r-jsonlite</requirement>
+        <requirement type="package">r-stringi</requirement>
     </requirements>
 
     <stdio>
@@ -86,7 +87,6 @@
         annotationTOCSY '$annotationTOCSY'
         ppmCommunTOCSY '$ppmCommunTOCSY'
         annotationCombination '$annotationCombination'
-        AnnotationGraph '$AnnotationGraph'
 
     </command>
 
@@ -228,7 +228,6 @@
         </data>
 
         <data format="tabular" name="annotationCombination" label="${tool.name}_annotationCombination" />
-        <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
     <tests>
     	<test>

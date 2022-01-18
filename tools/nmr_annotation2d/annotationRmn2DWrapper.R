@@ -81,7 +81,7 @@ tocsy <- 0
 
 if (argLs$cosy_2dsequences == "yes") {
   cosy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "Latin1")
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "UTF-8")
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -105,7 +105,7 @@ if (argLs$cosy_2dsequences == "yes") {
 
 if (argLs$hmbc_2dsequences == "yes") {
   hmbc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "Latin1")
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "UTF-8")
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -130,7 +130,7 @@ if (argLs$hmbc_2dsequences == "yes") {
 
 if (argLs$hsqc_2dsequences == "yes") {
   hsqc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "Latin1")
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "UTF-8")
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -154,7 +154,7 @@ if (argLs$hsqc_2dsequences == "yes") {
 
 if (argLs$jres_2dsequences == "yes") {
   jres <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "Latin1")
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "UTF-8")
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -178,7 +178,7 @@ if (argLs$jres_2dsequences == "yes") {
 
 if (argLs$tocsy_2dsequences == "yes") {
   tocsy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "Latin1")
+  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"), encoding = "UTF-8")
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]

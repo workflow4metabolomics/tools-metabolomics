@@ -86,6 +86,7 @@
         annotationTOCSY '$annotationTOCSY'
         ppmCommunTOCSY '$ppmCommunTOCSY'
         annotationCombination '$annotationCombination'
+        AnnotationGraph '$AnnotationGraph'
     </command>
 
     <inputs>
@@ -226,6 +227,7 @@
         </data>
 
         <data format="tabular" name="annotationCombination" label="${tool.name}_annotationCombination" />
+        <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
 
     <tests>

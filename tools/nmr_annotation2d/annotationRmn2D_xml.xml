@@ -91,10 +91,7 @@
         annotationTOCSY '$annotationTOCSY'
         ppmCommunTOCSY '$ppmCommunTOCSY'
         annotationCombination '$annotationCombination'
-<<<<<<< HEAD
-
-=======
->>>>>>> 7749881 (Removal of graph outputs to check encoding errors)
+        AnnotationGraph '$AnnotationGraph'
     </command>
 
     <inputs>
@@ -235,6 +232,7 @@
         </data>
 
         <data format="tabular" name="annotationCombination" label="${tool.name}_annotationCombination" />
+        <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
     <tests>
     	<test>

@@ -83,7 +83,6 @@ if (argLs$cosy_2dsequences == "yes") {
   cosy <- 1
   peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
-  peakforestSpectra <- iconv(peakforestSpectra, from = "UTF-8", to = "LATIN1")
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
   if (field != 0)
@@ -92,6 +91,9 @@ if (argLs$cosy_2dsequences == "yes") {
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_COSY <- peakforestSpectra$peaks
     names(BdDReference_COSY) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_COSY) <- enc2utf8(names(BdDReference_COSY))
+    names(BdDReference_COSY) <- str_replace_all(names(BdDReference_COSY), "\u00e9", "e")
+
     for (k in seq_len(length(BdDReference_COSY))) {
       peakforestSpectra_df <- data.frame(ppm.dim1 = BdDReference_COSY[[k]][, 2], ppm.dim2 = BdDReference_COSY[[k]][, 1],
                                          BdDReference_COSY[[k]][, 3:ncol(BdDReference_COSY[[k]])])
@@ -108,15 +110,18 @@ if (argLs$hmbc_2dsequences == "yes") {
   hmbc <- 1
   peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
-  peakforestSpectra <- iconv(peakforestSpectra, from = "UTF-8", to = "LATIN1")
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
   if (field != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$analyzerNMRSpectrometerDevice$magneticFieldStrenght == field, ]
 
   if (nrow(peakforestSpectra) != 0) {
+
     BdDReference_HMBC <- peakforestSpectra$peaks
     names(BdDReference_HMBC) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_HMBC) <- enc2utf8(names(BdDReference_HMBC))
+    names(BdDReference_HMBC) <- str_replace_all(names(BdDReference_HMBC), "\u00e9", "e")
+
     peakforestSpectra_df <- data.frame()
     for (k in seq_len(length(BdDReference_HMBC))) {
       peakforestSpectra_df <- data.frame(ppm.dim1 = BdDReference_HMBC[[k]][, 2], ppm.dim2 = BdDReference_HMBC[[k]][, 1],
@@ -134,7 +139,7 @@ if (argLs$hsqc_2dsequences == "yes") {
   hsqc <- 1
   peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
-  peakforestSpectra <- iconv(peakforestSpectra, from = "UTF-8", to = "LATIN1")
+
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
   if (field != 0)
@@ -143,6 +148,9 @@ if (argLs$hsqc_2dsequences == "yes") {
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_HSQC <- peakforestSpectra$peaks
     names(BdDReference_HSQC) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_HSQC) <- enc2utf8(names(BdDReference_HSQC))
+    names(BdDReference_HSQC) <- str_replace_all(names(BdDReference_HSQC), "\u00e9", "e")
+
     for (k in seq_len(length(BdDReference_HSQC))) {
       peakforestSpectra_df <- data.frame(ppm.dim1 = BdDReference_HSQC[[k]][, 2], ppm.dim2 = BdDReference_HSQC[[k]][, 1],
                                          BdDReference_HSQC[[k]][, 3:ncol(BdDReference_HSQC[[k]])])
@@ -159,7 +167,7 @@ if (argLs$jres_2dsequences == "yes") {
   jres <- 1
   peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
-  peakforestSpectra <- iconv(peakforestSpectra, from = "UTF-8", to = "LATIN1")
+
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
   if (field != 0)
@@ -168,6 +176,9 @@ if (argLs$jres_2dsequences == "yes") {
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_JRES <- peakforestSpectra$peaks
     names(BdDReference_JRES) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_JRES) <- enc2utf8(names(BdDReference_JRES))
+    names(BdDReference_JRES) <- str_replace_all(names(BdDReference_JRES), "\u00e9", "e")
+
     for (k in seq_len(length(BdDReference_JRES))) {
       peakforestSpectra_df <- data.frame(ppm.dim1 = BdDReference_JRES[[k]][, 2], ppm.dim2 = BdDReference_JRES[[k]][, 1],
                                          BdDReference_JRES[[k]][, 3:ncol(BdDReference_JRES[[k]])])
@@ -184,7 +195,7 @@ if (argLs$tocsy_2dsequences == "yes") {
   tocsy <- 1
   peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
-  peakforestSpectra <- iconv(peakforestSpectra, from = "UTF-8", to = "LATIN1")
+
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
   if (field != 0)
@@ -193,6 +204,9 @@ if (argLs$tocsy_2dsequences == "yes") {
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_TOCSY <- peakforestSpectra$peaks
     names(BdDReference_TOCSY) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_TOCSY) <- enc2utf8(names(BdDReference_TOCSY))
+    names(BdDReference_TOCSY) <- str_replace_all(names(BdDReference_TOCSY), "\u00e9", "e")
+
     for (k in seq_len(length(BdDReference_TOCSY))) {
       peakforestSpectra_df <- data.frame(ppm.dim1 = BdDReference_TOCSY[[k]][, 2], ppm.dim2 = BdDReference_TOCSY[[k]][, 1],
                                          BdDReference_TOCSY[[k]][, 3:ncol(BdDReference_TOCSY[[k]])])

@@ -19,7 +19,7 @@ ppm1	ppm2	commonMetabolitesList
 1.0473	0.006	 L-valine DL-2-methylbutyric acid
 3.6196	-0.0035	 L-valine L-rhamnose Glycerophosphocholine
 3.6196	0.0041	 L-valine L-rhamnose Glycerophosphocholine
-3.937	0	 Créatine D-Mannose D-(-)-Ribose
+3.937	0	 Creatine D-Mannose D-(-)-Ribose
 3.656	-0.013	 Glycerol maltose D-Galactose D-(-)-Ribose L-arabinopyranose
 3.656	-0.006	 Glycerol ethanol Stachyose D-Galactose D-(-)-Ribose L-arabinopyranose
 3.656	0.006	 Glycerol ethanol Stachyose D-Galactose D-(-)-Ribose
@@ -91,7 +91,7 @@ ppm1	ppm2	commonMetabolitesList
 3.91	-0.012	 D-Mannose maltose D-Glucose Raffinose Stachyose D-Fructose L-Aspartic acid L-arabinopyranose
 3.91	0.009	 D-Mannose maltose D-Glucose Raffinose Stachyose L-Aspartic acid L-arabinopyranose
 3.91	0.012	 D-Mannose maltose D-Glucose Raffinose Stachyose D-Fructose L-Aspartic acid L-arabinopyranose
-3.943	0	 D-Mannose Créatine L-Tyrosine D-(-)-Ribose L-arabinopyranose
+3.943	0	 D-Mannose Creatine L-Tyrosine D-(-)-Ribose L-arabinopyranose
 3.956	0	 D-Mannose Raffinose L-Tyrosine L-arabinopyranose
 3.6866	-0.004	 Isoleucine Raffinose D-Fructose D-(-)-Ribose
 3.6831	0.0034	 Isoleucine Raffinose D-Fructose

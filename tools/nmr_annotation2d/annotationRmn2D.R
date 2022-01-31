@@ -72,7 +72,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
         annotatedPeakLength <- nrow(annotatedPpmRef) - sum(duplicated(annotatedPpmRef))
         annotatedPpmRef <- annotatedPpmRef[-duplicated(annotatedPpmRef), ]
       }
-      presenceScore <- annotatedPeakLength / nbPeakMetabolite
+      presenceScore <- round(annotatedPeakLength / nbPeakMetabolite, 2)
     }
 
     ## Conservation metabolites dont score > seuil

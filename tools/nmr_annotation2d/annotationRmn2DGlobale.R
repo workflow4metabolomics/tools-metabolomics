@@ -88,12 +88,57 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
     ## Si une seule sequence et seuil sur score = filtre applique dans la fonction annotationRmn2D
   if (length(data2D) >= 2) {
     ## CONCATENATION SCORE PAR SEQUENCE
-    for (l in seq_len(length(data2D)))
+    for (l in 2:length(data2D))
         sequencesCombination <- merge.data.frame(sequencesCombination, data2D[l], by = "Metabolite", all.x = TRUE, all.y = TRUE)
 
+  ## Replacement of NA values due to mis annotation
+  for (m in 1:nrow(sequencesCombination)){
+    COSYcompound <- sort(names(BdDReference_COSY))
+    HMBCcompound <- sort(names(BdDReference_HMBC))
+    HSQCcompound <- sort(names(BdDReference_HSQC))
+    JREScompound <- sort(names(BdDReference_JRES))
+    TOCSYcompound <- sort(names(BdDReference_TOCSY))
+    
+    if (is.na(sequencesCombination[m, 2])){
+      compound <- as.character(sequencesCombination[m, 1])
+      for (c in 1:length(COSYcompound))
+        if (str_to_lower(compound) == str_to_lower(COSYcompound[c]))
+          sequencesCombination[m, 2] <- 0
+    }
+    
+    if (is.na(sequencesCombination[m, 3])){
+      compound <- as.character(sequencesCombination[m, 1])
+      for (c in 1:length(HMBCcompound))
+        if (str_to_lower(compound) == str_to_lower(HMBCcompound[c]))
+          sequencesCombination[m, 3] <- 0
+    }
+    
+    if (is.na(sequencesCombination[m, 4])){
+      compound <- as.character(sequencesCombination[m, 1])
+      for (c in 1:length(HSQCcompound))
+        if (str_to_lower(compound) == str_to_lower(HSQCcompound[c]))
+          sequencesCombination[m, 4] <- 0
+    }
+    
+    if (is.na(sequencesCombination[m, 5])){
+      compound <- as.character(sequencesCombination[m, 1])
+      for (c in 1:length(JREScompound))
+        if (str_to_lower(compound) == str_to_lower(JREScompound[c]))
+          sequencesCombination[m, 5] <- 0
+    }
+    
+    if (is.na(sequencesCombination[m, 6])){
+      compound <- as.character(sequencesCombination[m, 1])
+      for (c in 1:length(TOCSYcompound))
+        if (str_to_lower(compound) == str_to_lower(TOCSYcompound[c]))
+          sequencesCombination[m, 6] <- 0
+    }
+  }
+
     ## SCORE MOYEN (sans prise en compte valeurs manquantes)
-    meanScore <- apply(sequencesCombination[, -1], 1, FUN = mean.rmNa)
+    meanScore <- round(apply(sequencesCombination[, -1], 1, FUN = mean.rmNa), 2)
     seqCombiMeanScore <- cbind.data.frame(sequencesCombination, averageScore = meanScore)
+
         ## SUPPRESSION METABOLITE AVEC SCORE MOYEN < SEUIL
     seqCombiMeanScoreSeuilFiltre <- seqCombiMeanScore[seqCombiMeanScore$averageScore > seuil, ]
   }

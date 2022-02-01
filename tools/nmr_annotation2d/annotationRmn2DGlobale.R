@@ -92,44 +92,44 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
         sequencesCombination <- merge.data.frame(sequencesCombination, data2D[l], by = "Metabolite", all.x = TRUE, all.y = TRUE)
 
   ## Replacement of NA values due to mis annotation
-  for (m in 1:nrow(sequencesCombination)){
+  for (m in seq_len(nrow(sequencesCombination))) {
     COSYcompound <- sort(names(BdDReference_COSY))
     HMBCcompound <- sort(names(BdDReference_HMBC))
     HSQCcompound <- sort(names(BdDReference_HSQC))
     JREScompound <- sort(names(BdDReference_JRES))
     TOCSYcompound <- sort(names(BdDReference_TOCSY))
-    
-    if (is.na(sequencesCombination[m, 2])){
+
+    if (is.na(sequencesCombination[m, 2])) {
       compound <- as.character(sequencesCombination[m, 1])
-      for (c in 1:length(COSYcompound))
+      for (c in seq_len(length(COSYcompound)))
         if (str_to_lower(compound) == str_to_lower(COSYcompound[c]))
           sequencesCombination[m, 2] <- 0
     }
-    
-    if (is.na(sequencesCombination[m, 3])){
+
+    if (is.na(sequencesCombination[m, 3])) {
       compound <- as.character(sequencesCombination[m, 1])
-      for (c in 1:length(HMBCcompound))
+      for (c in seq_len(length(HMBCcompound)))
         if (str_to_lower(compound) == str_to_lower(HMBCcompound[c]))
           sequencesCombination[m, 3] <- 0
     }
-    
-    if (is.na(sequencesCombination[m, 4])){
+
+    if (is.na(sequencesCombination[m, 4])) {
       compound <- as.character(sequencesCombination[m, 1])
-      for (c in 1:length(HSQCcompound))
+      for (c in seq_len(length(HSQCcompound)))
         if (str_to_lower(compound) == str_to_lower(HSQCcompound[c]))
           sequencesCombination[m, 4] <- 0
     }
-    
-    if (is.na(sequencesCombination[m, 5])){
+
+    if (is.na(sequencesCombination[m, 5])) {
       compound <- as.character(sequencesCombination[m, 1])
-      for (c in 1:length(JREScompound))
+      for (c in seq_len(length(JREScompound)))
         if (str_to_lower(compound) == str_to_lower(JREScompound[c]))
           sequencesCombination[m, 5] <- 0
     }
-    
-    if (is.na(sequencesCombination[m, 6])){
+ 
+    if (is.na(sequencesCombination[m, 6])) {
       compound <- as.character(sequencesCombination[m, 1])
-      for (c in 1:length(TOCSYcompound))
+      for (c in seq_len(length(TOCSYcompound)))
         if (str_to_lower(compound) == str_to_lower(TOCSYcompound[c]))
           sequencesCombination[m, 6] <- 0
     }

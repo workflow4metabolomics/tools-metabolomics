@@ -1,4 +1,4 @@
-<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0">
+<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0" profile="20.09">
 
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
@@ -11,12 +11,8 @@
         <requirement type="package" version="1.0.2">r-tidyr</requirement>
         <requirement type="package" version="3.3">r-curl</requirement>
         <requirement type="package" version="1.6">r-jsonlite</requirement>
-<<<<<<< HEAD
         <requirement type="package">r-stringi</requirement>
     </requirements>
-=======
-        <requirement type="package">r-stringi</requirement>    </requirements>
->>>>>>> 7749881 (Removal of graph outputs to check encoding errors)
 
     <stdio>
         <exit_code range="1:" level="fatal" />
@@ -29,10 +25,9 @@
         ## XLS file
         xlsfile '$zip_xlsfile'
 
-	## Parameters to reduce search
-	pH $pH
-	magneticField $magneticField
-
+        ## Parameters to reduce search
+        pH $pH
+        magneticField $magneticField
 
         ## 2D-NMR sequences to annotate
         cosy_2dsequences $cosy_2dsequences
@@ -71,7 +66,6 @@
         tolppm2 $tolppm2
         tolppmJRES $tolppmJRES
 
-
         ## Treshold (probability score)
         threshold $threshold
 
@@ -97,8 +91,8 @@
     <inputs>
         <param name="zip_xlsfile" type="data" format="xlsx" label="File to annotate in xlsx format" />
 
-	<param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
-	<param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
+        <param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
+        <param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
 
         <param name="cosy_2dsequences" type="select" label="2D-NMR COSY sequence">
             <option value="yes" > yes </option>
@@ -196,6 +190,7 @@
 
     <outputs>
         <data format="txt" name="logOut" label="${tool.name}_log" />
+
         <data format="tabular" name="annotationCOSY" label="${tool.name}_annotationCOSY" >
             <filter> cosy_2dsequences != "no" </filter>
         </data>
@@ -235,33 +230,33 @@
         <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
     <tests>
-    	<test>
-    		<param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
-    		<param name="cosy_2dsequences" value="yes"/>
-    		<param name="jres_2dsequences" value="yes"/>
-    		<param name="hmbc_2dsequences" value="yes"/>
-    		<param name="hsqc_2dsequences" value="yes"/>
-    		<param name="tocsy_2dsequences" value="yes"/>
-    		<param name="inHouse_DB_choices.choice" value="no"/>
-    		<param name="tolppm1" value="0.01"/>
-    		<param name="tolppm2" value="0.5"/>
-    		<param name="tolppmJRES" value="0.002"/>
-    		<param name="threshold" value="0.3"/>
-    		<param name="unicity" value="no"/>
-   		<output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
-    		<output name="ppmCommunCOSY" file="2DNMRAnnotation_duplicateCOSY.tabular"/>
-   		<output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
-    		<output name="ppmCommunHMBC" file="2DNMRAnnotation_duplicateHMBC.tabular"/>
-   		<output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
-    		<output name="ppmCommunHSQC" file="2DNMRAnnotation_duplicateHSQC.tabular"/>
-   		<output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
-    		<output name="ppmCommunJRES" file="2DNMRAnnotation_duplicateJRES.tabular"/>
-   		<output name="annotationTOCSY" file="2DNMRAnnotation_annotationTOCSY.tabular"/>
-    		<output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTOCSY.tabular"/>
-    		<output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
-    	</test>
-	</tests>
-<help>
+        <test expect_num_outputs="13">
+            <param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
+            <param name="cosy_2dsequences" value="yes"/>
+            <param name="jres_2dsequences" value="yes"/>
+            <param name="hmbc_2dsequences" value="yes"/>
+            <param name="hsqc_2dsequences" value="yes"/>
+            <param name="tocsy_2dsequences" value="yes"/>
+            <param name="inHouse_DB_choices.choice" value="no"/>
+            <param name="tolppm1" value="0.01"/>
+            <param name="tolppm2" value="0.5"/>
+            <param name="tolppmJRES" value="0.002"/>
+            <param name="threshold" value="0.3"/>
+            <param name="unicity" value="no"/>
+            <output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
+            <output name="ppmCommunCOSY" file="2DNMRAnnotation_duplicateCOSY.tabular"/>
+            <output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
+            <output name="ppmCommunHMBC" file="2DNMRAnnotation_duplicateHMBC.tabular"/>
+            <output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
+            <output name="ppmCommunHSQC" file="2DNMRAnnotation_duplicateHSQC.tabular"/>
+            <output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
+            <output name="ppmCommunJRES" file="2DNMRAnnotation_duplicateJRES.tabular"/>
+            <output name="annotationTOCSY" file="2DNMRAnnotation_annotationTOCSY.tabular"/>
+            <output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTOCSY.tabular"/>
+            <output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
+        </test>
+    </tests>
+    <help>
 
 .. class:: infomark
 

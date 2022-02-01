@@ -126,7 +126,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
         if (str_to_lower(compound) == str_to_lower(JREScompound[c]))
           sequencesCombination[m, 5] <- 0
     }
- 
+
     if (is.na(sequencesCombination[m, 6])) {
       compound <- as.character(sequencesCombination[m, 1])
       for (c in seq_len(length(TOCSYcompound)))

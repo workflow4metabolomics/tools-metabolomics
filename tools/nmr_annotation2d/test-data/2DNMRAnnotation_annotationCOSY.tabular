@@ -14,9 +14,9 @@ ppm1	ppm2	Metabolite	score
 2.8825	2.9639	L-asparagine	0.8
 2.9617	2.8831	L-asparagine	0.8
 4.0137	2.9132	L-asparagine	0.8
-3.3187	4.0587	L-Tryptophan	0.307692307692308
-4.0638	3.4884	L-Tryptophan	0.307692307692308
-7.2048	7.2841	L-Tryptophan	0.307692307692308
-7.7385	7.2038	L-Tryptophan	0.307692307692308
-7.21	7.281	indoxyl sulfate	0.333333333333333
-7.283	7.205	indoxyl sulfate	0.333333333333333
+3.3187	4.0587	L-Tryptophan	0.31
+4.0638	3.4884	L-Tryptophan	0.31
+7.2048	7.2841	L-Tryptophan	0.31
+7.7385	7.2038	L-Tryptophan	0.31
+7.21	7.281	indoxyl sulfate	0.33
+7.283	7.205	indoxyl sulfate	0.33

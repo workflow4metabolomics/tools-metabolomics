@@ -175,11 +175,11 @@
             <when value="no" />
         </conditional>
 
-        <param name="tolppm1" type="float" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
-        <param name="tolppm2" type="float" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
-        <param name="tolppmJRES" type="float" value="0.002" help="Tolerance on chemical shift for the y-axis for the JRES sequence. Default value is 0.002 (Hz)" />
+        <param name="tolppm1" type="float" min="0" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
+        <param name="tolppm2" type="float" min="0" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
+        <param name="tolppmJRES" type="float" min="0" value="0.002" help="Tolerance on chemical shift for the y-axis for the JRES sequence. Default value is 0.002 (Hz)" />
 
-        <param name="threshold" type="float" value="0" help="Treshold on score of presence. Default value is 0" />
+        <param name="threshold" type="float" min="0" max="1" value="0" help="Treshold on score of presence. Default value is 0" />
 
         <param name="unicity" label="Unicity of annotation" type="select" display="radio" help="Select only chemical shifts corresponding to one one metabolite">
             <option value="no">No</option>

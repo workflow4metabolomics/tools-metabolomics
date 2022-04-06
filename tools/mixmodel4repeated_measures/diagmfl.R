@@ -23,7 +23,7 @@ lmer.computeDiag <- function(mfl) {
 
   ## Check arguments ---------------------------------------------------------
 
-  if(length(mfl@flist)>1)
+  if(length(mfl@flist) > 1)
     stop("Several 'grouping level' for random effect not implemented yet.")
 
 
@@ -46,30 +46,30 @@ lmer.computeDiag <- function(mfl) {
   # Estimated covariance matrix of random effects (Gam)
   aux <- VarCorr(mfl)[[1]] ## assuming only one level of grouping
   aux2 <- attr(aux, "stddev")
-  gMN <- attr(aux, "correlation")*(aux2%*%t(aux2))
+  gMN <- attr(aux, "correlation") * (aux2 %*% t(aux2))
   gammaMN <- as.matrix(kronecker(diag(nunitN), gMN))
   q <- dim(gMN)[1]
   # Estimated covariance matrix of conditonal error (homoskedastic conditional independance model)
   sigsqN <- attr(VarCorr(mfl), "sc")^2
-  rMN <- sigsqN*diag(nobsN)
+  rMN <- sigsqN * diag(nobsN)
   # Estimated covariance matrix of Y
-  vMN <- (zMN%*%gammaMN%*%t(zMN)) + rMN
+  vMN <- (zMN %*% gammaMN %*% t(zMN)) + rMN
   invvMN <- MASS::ginv(vMN)
   # H and Q matrix
-  hMN <- MASS::ginv(t(xMN)%*%invvMN%*%xMN)
-  qMN <- invvMN - invvMN%*%xMN%*%(hMN)%*%t(xMN)%*%invvMN
+  hMN <- MASS::ginv(t(xMN) %*% invvMN %*% xMN)
+  qMN <- invvMN - invvMN %*% xMN %*% (hMN) %*% t(xMN) %*% invvMN
   # eblue and eblup
   eblueVn<-mfl@beta
-  eblupVn<-gammaMN%*%t(zMN)%*%invvMN%*%(yVn-xMN%*%eblueVn) ## equivalent de ranef(mfl)
+  eblupVn<-gammaMN %*% t(zMN) %*% invvMN %*% (yVn-xMN %*% eblueVn) ## equivalent de ranef(mfl)
   rownames(eblupVn) <- colnames(zMN)
   ##  Calculs of matrices and vectors used in graph diagnosics ---------------------------------------------
   ## Marginal and individual predictions, residuals and variances
-  marpredVn <- xMN%*%eblueVn
+  marpredVn <- xMN %*% eblueVn
   marresVn <- yVn - marpredVn
-  marvarMN <- vMN - xMN%*%hMN%*%t(xMN)
-  condpredVn <- marpredVn + zMN%*%eblupVn
+  marvarMN <- vMN - xMN %*% hMN %*% t(xMN)
+  condpredVn <- marpredVn + zMN %*% eblupVn
   condresVn <- yVn - condpredVn
-  condvarMN <- rMN%*%qMN%*%rMN
+  condvarMN <- rMN %*% qMN %*% rMN
   ## Analysis of marginal and conditional residuals
   stmarresVn <-stcondresVn <- rep(0,nobsN)
   lesverVn <- rep(0, nunitN)
@@ -78,17 +78,17 @@ lmer.computeDiag <- function(mfl) {
       idxiVn <- which(df[, unitC] == idunitVc[i]) ## position des observations du sujet i
     miN <- length(idxiVn)
       ## standardization of marginal residual
-    stmarresVn[idxiVn] <- as.vector(solve(sqrtmF(marvarMN[idxiVn,idxiVn]))%*%marresVn[idxiVn])
+    stmarresVn[idxiVn] <- as.vector(solve(sqrtmF(marvarMN[idxiVn,idxiVn])) %*% marresVn[idxiVn])
       ##Standardized Lessafre and Verbeke's measure
-    auxMN <- diag(1, ncol = miN, nrow =miN)- stmarresVn[idxiVn]%*%t(stmarresVn[idxiVn])
-    lesverVn[i] <- sum(diag(auxMN%*%t(auxMN)))
+    auxMN <- diag(1, ncol = miN, nrow =miN)- stmarresVn[idxiVn] %*% t(stmarresVn[idxiVn])
+    lesverVn[i] <- sum(diag(auxMN %*% t(auxMN)))
       ## standardization of conditional residual
-    stcondresVn[idxiVn] <- as.vector(solve(sqrtmF(condvarMN[idxiVn,idxiVn]))%*%condresVn[idxiVn])
+    stcondresVn[idxiVn] <- as.vector(solve(sqrtmF(condvarMN[idxiVn,idxiVn])) %*% condresVn[idxiVn])
   }
   lesverVn <- lesverVn/sum(lesverVn)
   ## Least confounded conditional residuals
   ## EBLUP analysis (Mahalanobis' distance)
-  varbMN <- gammaMN%*%t(zMN)%*%qMN%*%zMN%*%gammaMN
+  varbMN <- gammaMN %*% t(zMN) %*% qMN %*% zMN %*% gammaMN
   mdistVn <- rep(0, nunitN)
   # Initial coding: works only for 1 single random effect
   # for(i in 1:nunitN){
@@ -97,9 +97,9 @@ lmer.computeDiag <- function(mfl) {
   # mdistVn <-  mdistVn/sum(mdistVn)
   qm <- q-1
   for(j in 1:nunitN){
-    gbi <- varbMN[(q*j-qm):(q*j), (q*j-qm):(q*j)]
-    eblupi <- eblupVn[(q*j-qm):(q*j)]
-    mdistVn[j] <- t(eblupi)%*%ginv(gbi)%*%eblupi
+    gbi <- varbMN[(q * j - qm):(q * j), (q * j - qm):(q * j)]
+    eblupi <- eblupVn[(q * j - qm):(q * j)]
+    mdistVn[j] <- t(eblupi) %*% ginv(gbi) %*% eblupi
   }
   #pmdistVn <-  mdistVn/sum(mdistVn)
   names(mdistVn) <- levels(mfl@flist[[1]])
@@ -433,8 +433,8 @@ plot_randomEffect <- function(mfl, plotL = TRUE){
     DF$condVar[which(DF$randomEffect == rafC)] <- se
     }
   DF$se <- sqrt(DF$condVar)
-  DF$lower <- DF$estimate-1.96*DF$se
-  DF$upper <- DF$estimate+1.96*DF$se
+  DF$lower <- DF$estimate-1.96 * DF$se
+  DF$upper <- DF$estimate+1.96 * DF$se
   ## Plot
   plotLs <-vector("list", length(randomEffect))
   names(plotLs) <- names(randomEffect)
@@ -483,13 +483,13 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL){
                          standardized.marginal.residuals = diagLs$std.marginal.residuals)
   # outlier annotation
   df$outliers <- rep("", nrow(df))
-  outidx <- which(abs(df$standardized.marginal.residuals)>hlimitN)
+  outidx <- which(abs(df$standardized.marginal.residuals) > hlimitN)
   df[outidx, "outliers"] <- (1:nrow(df))[outidx]
-  if(length(label_factor) >=1){
+  if(length(label_factor) >= 1){
     df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                     df[outidx, label_factor[1]],
                                     sep = "_")
-    if(length(label_factor) >1){
+    if(length(label_factor) > 1){
       for(li in 2:length(label_factor)){
         df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                         df[outidx, label_factor[li]],
@@ -515,7 +515,7 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL){
     xlab("Marginal predictions")+
     ylab("Standardized marginal residuals")+
     theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = c(-1,1)*hlimitN, linetype = "dashed")+
+    geom_hline(yintercept = c(-1,1) * hlimitN, linetype = "dashed")+
     geom_text(aes(label = outliers), hjust=0, vjust=0)
   if(plotL) plot(p)
   invisible(p)
@@ -550,9 +550,9 @@ plot_mahalanobis <- function(diagLs,  plotL = TRUE){
     ylab("Standardized Mahalanobis distance")+
     geom_vline(xintercept = 0, linetype = "dashed")+
     theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = 2*mean(unitDf$mal), linetype = "dashed")+
+    geom_hline(yintercept = 2 * mean(unitDf$mal), linetype = "dashed")+
     geom_text(aes(label = unit),
-              data = unitDf[unitDf$mal>2*mean(unitDf$mal), ],
+              data = unitDf[unitDf$mal > 2 * mean(unitDf$mal), ],
               hjust=1, vjust=0)+
     ggtitle("Outlying unit")+
     xlab("unit")
@@ -627,13 +627,13 @@ plot_conditionalResiduals <-  function(diagLs, hlimitN, plotL = TRUE, label_fact
                          standardized.conditional.residuals = diagLs$std.conditional.residuals)
   # outlier annotation
   df$outliers <- rep("", nrow(df))
-  outidx <- which(abs(df$standardized.conditional.residuals)>hlimitN)
+  outidx <- which(abs(df$standardized.conditional.residuals) > hlimitN)
   df[outidx, "outliers"] <- (1:nrow(df))[outidx]
-  if(length(label_factor) >=1){
+  if(length(label_factor) >= 1){
     df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                     df[outidx, label_factor[1]],
                                     sep = "_")
-    if(length(label_factor) >1){
+    if(length(label_factor) > 1){
       for(li in 2:length(label_factor)){
         df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                         df[outidx, label_factor[li]],
@@ -653,7 +653,7 @@ plot_conditionalResiduals <-  function(diagLs, hlimitN, plotL = TRUE, label_fact
     xlab("Individual predictions")+
     ylab("Standardized conditional residuals")+
     theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = c(-1,1)*hlimitN, linetype = "dashed")+
+    geom_hline(yintercept = c(-1,1) * hlimitN, linetype = "dashed")+
     geom_text(aes(label = outliers), hjust=0, vjust=0)
   if(plotL) plot(p)
   invisible(p)
@@ -723,9 +723,9 @@ plot_lesaffreVeerbeke <- function(diagLs,  plotL = TRUE){
     theme(legend.position="none")+
     xlab("units")+
     ylab("Standardized Lesaffre-Verbeke measure")+
-    geom_hline(yintercept = 2*mean(unitDf$lvm), linetype = "dashed")+
+    geom_hline(yintercept = 2 * mean(unitDf$lvm), linetype = "dashed")+
     geom_text(aes(label = unit),
-              data = unitDf[unitDf$lvm>2*mean(unitDf$lvm), ],
+              data = unitDf[unitDf$lvm > 2 * mean(unitDf$lvm), ],
               hjust=0, vjust=0)+
     ggtitle("Within-units covariance matrice")+
     theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
@@ -759,7 +759,7 @@ sqrt.matrix <- function(mat) {
   U<-singular_dec$u
   V<-singular_dec$v
   D<-diag(singular_dec$d)
-  sqrtmatrix<-U%*%sqrt(D)%*%t(V)
+  sqrtmatrix<-U %*% sqrt(D) %*% t(V)
   #  return(list(sqrt=sqrtmatrix))
 }
 
@@ -784,7 +784,7 @@ sqrtmF<-function(matMN){
   # if(!all(t(matMN==matMN)))
   #   stop("matMN must be symetric.")
   svd_dec <- svd(matMN)
-  invisible(svd_dec$u%*%sqrt(diag(svd_dec$d))%*%t(svd_dec$v))
+  invisible(svd_dec$u %*% sqrt(diag(svd_dec$d)) %*% t(svd_dec$v))
 }
 
 
@@ -843,13 +843,13 @@ histF <- function(x, sd_x = NULL, breaks = "scott"){
     k <- switch(breaks,
                 sqrt = sqrt(length(x)),
                 sturges = floor(log2(x))+1,
-                rice = floor(2*length(x)^(1/3))
+                rice = floor(2 * length(x)^(1/3))
     )
     bw <- diff(range(x))/k
   }else{
     bw <- switch(breaks,
-                 scott = 3.5*sd_x/length(x)^(1/3),
-                 fd = diff(range(x))/(2*IQR(x)/length(x)^(1/3))
+                 scott = 3.5 * sd_x/length(x)^(1/3),
+                 fd = diff(range(x))/(2 * IQR(x)/length(x)^(1/3))
     )
   }
 
@@ -873,7 +873,7 @@ histF <- function(x, sd_x = NULL, breaks = "scott"){
 
 plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   ## define subscript of the different columns depending if we have only time (ncol(df)=3) or not
-  if (ncol(df) >3) {
+  if (ncol(df) > 3) {
     varidx <- 4
     ffidx <- 1
     timidx <- 2
@@ -920,8 +920,8 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   options("scipen"=100, "digits"=5)
   pvalCutof <- as.numeric(pvalCutof)
   bs=0.05; bm=0.01; bi=0.005
-  if (pvalCutof >bm) {bs <- pvalCutof} else
-    if (pvalCutof <bm & pvalCutof >bi) {bm <- pvalCutof; bs <- pvalCutof} else
+  if (pvalCutof > bm) {bs <- pvalCutof} else
+    if (pvalCutof <bm & pvalCutof > bi) {bm <- pvalCutof; bs <- pvalCutof} else
       if (pvalCutof < bi) {bi <- pvalCutof; bm <- pvalCutof; bs <- pvalCutof}
   lbs <- paste("p-value < ",bs, sep="")
   lbm <- paste("p-value < ",bm, sep="")
@@ -931,7 +931,7 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   coli <- paste("p-value < ",bi, sep="")
   valcol <- c("grey","yellow","orange","red")
   names (valcol) <- c("NS",lbs,lbm,lbi)
-  ddlsm1$Significance[which(ddlsm1$p.value<= bs)] <- lbs    ddlsm1$Significance[which(ddlsm1$p.value<bs & ddlsm1$p.value>= bm)] <- lbm
+  ddlsm1$Significance[which(ddlsm1$p.value<= bs)] <- lbs    ddlsm1$Significance[which(ddlsm1$p.value<bs & ddlsm1$p.value >= bm)] <- lbm
   ddlsm1$Significance[which(ddlsm1$p.value<bi)] <- lbi
   ddlsm1$levels <- rownames(ddlsm1)
   ddlsm1$term <- sapply(rownames(ddlsm1),function(namC){

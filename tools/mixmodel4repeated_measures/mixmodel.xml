@@ -63,10 +63,9 @@
             <option value="log2">log2</option>
         </param>
         <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
-        <param name="diaR" label="Perform diagnostic of the residuals" type="select"
-        help=" Used to assess the quality of models considering distribution of residuals ">
+        <param name="diaR" label="Perform diagnostic of the residuals" type="select" help=" Used to assess the quality of models considering distribution of residuals ">
             <option value="yes">yes</option>
-            <option value="no"></option>
+            <option value="no">no</option>
         </param>
 
     </inputs>
@@ -102,7 +101,7 @@
 
 .. class:: infomark
 
-**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+**Authors** Natacha Lenuzza (natacha.lenuzza@cea.fr) and Jean-Francois Martin (jean-francois.martin@inra.fr) wrote this wrapper of R repeated measure anova statistical tests. MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (https://www.metabohub.fr/home.html)
 
 .. class:: infomark
 

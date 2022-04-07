@@ -90,18 +90,12 @@ lmer.computeDiag <- function(mfl) {
   ## EBLUP analysis (Mahalanobis' distance)
   varbMN <- gammaMN %*% t(zMN) %*% qMN %*% zMN %*% gammaMN
   mdistVn <- rep(0, nunitN)
-  # Initial coding: works only for 1 single random effect
-  # for (i in 1:nunitN) {
-  #   mdistVn[i] <- eblupVn[i]^2 / varbMN[i, i]
-  # }
-  # mdistVn <-  mdistVn / sum(mdistVn)
   qm <- q - 1
   for (j in 1:nunitN) {
     gbi <- varbMN[(q * j - qm):(q * j), (q * j - qm):(q * j)]
     eblupi <- eblupVn[(q * j - qm):(q * j)]
     mdistVn[j] <- t(eblupi) %*% ginv(gbi) %*% eblupi
   }
-  #pmdistVn <-  mdistVn / sum(mdistVn)
   names(mdistVn) <- levels(mfl@flist[[1]])
   ## output ----------------------------------------------
   return(list(
@@ -155,22 +149,6 @@ diagmflF <- function(mfl,
   blank <- rectGrob(gp = gpar(col = "white"))
   rectspacer <- rectGrob(height = unit(0.1, "npc"), gp = gpar(col = "grey"))
   grid.arrange(blank,
-               # plot_timeCourse(mfl,
-               #                 responseC = resC,
-               #                 timeC = timC,
-               #                 subjectC = uniC,
-               #                 fixfactC = fixC,
-               #                 offset_subject = FALSE,
-               #                 plotL = FALSE,
-               #                 colorType = "FIXFACT",
-               #                 shapeType = "none",
-               #                 lineType = "FIXFACT"),
-               # blank,
-               # plot_posthoc(mfl,
-               #              pvalCutof = pvalCutof,
-               #              plotL = FALSE,
-               #              titC = "Post-hoc estimates (uncorrected p-value)"),
-               # rectspacer,
                plot_linearity(diagLs, hlimitN = outlier.limit, plotL = FALSE,
                               label_factor = c(uniC, fixC, timC)),
                blank,
@@ -363,7 +341,6 @@ plot_timeCourse <- function (mfl,
 #'
 #' @export plot_posthoc
 plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL = TRUE, titC = "Post-hoc estimates") {
-  #ddlsm1 <- data.frame(difflsmeans(mfl, test.effs=NULL)$diffs.lsmeans.table) ## OLD versions
   ddlsm1 <- as.data.frame(difflsmeans(mfl, test.effs = NULL))
   colnames(ddlsm1)[ncol(ddlsm1)] <- "pvalue"
   ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
@@ -385,10 +362,8 @@ plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL = TRUE, titC = "Post-hoc e
     geom_bar(aes(fill = Significance), stat = "identity")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))+
     scale_fill_manual(values = colValue)+
-    #geom_errorbar(aes(ymin = Lower.CI, ymax =Upper.CI), width=0.25)+ ## OLD versions
     geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.25)+
     ggtitle(titC)+xlab("")+
-    #theme(plot.title = element_text(size = rel(1.2), face = "bold"))+
     NULL
   if (plotL) plot(p)
   invisible(p)
@@ -496,13 +471,6 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL) {
       }
     }
     }
-  # if (!is.null(label_factor)) {
-  #   df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
-  #                                   ifelse(length(label_factor) == 1,
-  #                                          df[outidx, label_factor],
-  #                                          apply(df[outidx, label_factor], 1, paste, collapse = ".")),
-  #                                   sep = "_")
-  # }
   p <- ggplot(data = df,
               aes(x = marginal.prediction,
                   y = standardized.marginal.residuals)) +
@@ -779,9 +747,7 @@ sqrt.matrix <- function(mat) {
 
 sqrtmF <- function(matMN) {
   matMN <- as.matrix(matMN)
-  # ## check that matMN is symetric
-  # if (!all(t(matMN == matMN)))
-  #   stop("matMN must be symetric.")
+  ## check that matMN is symetric: if (!all(t(matMN == matMN))) stop("matMN must be symetric.")
   svd_dec <- svd(matMN)
   invisible(svd_dec$u %*% sqrt(diag(svd_dec$d)) %*% t(svd_dec$v))
 }
@@ -823,12 +789,9 @@ qqplotF <- function(x,
     geom_abline(intercept = coef[1], slope = coef[2], col = "red") +
     geom_line(aes(x = z, y = lower), daf,  col = "red", linetype = "dashed") +
     geom_line(aes(x = z, y = upper), daf,  col = "red", linetype = "dashed") +
-    #geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2)+
     xlab("")+ylab("")
   if (!is.null(labels)) p <- p + geom_text(aes(label = label))
   return(p)
-  #print(p)
-  #coef
 }
 
 
@@ -903,17 +866,6 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   ## Post-hoc estimates
   ddlsm1  <- mfl
   ddlsm1$name <- rownames(ddlsm1)
-  # ddlsm1$name <- sapply(rownames(ddlsm1),
-  #                       function(nam) {
-  #                          strsplit(nam, split = " ", fixed = TRUE)[[1]][1]
-  #                       })
-  # ddlsm1$detail <- sapply(rownames(ddlsm1),
-  #                         function(nam) {
-  #                            paste(strsplit(nam, split = " ", fixed = TRUE)[[1]][-1],
-  #                                  collapse = "")
-  #                         })
-  # 
-  #colnames(ddlsm1) <- make.names(colnames(ddlsm1))
   ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
   ## modif JF pour tenir compte du seuil de pvalues defini par le user
   options("scipen" = 100, "digits" = 5)
@@ -937,19 +889,14 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
     strsplit(namC, split = " ", fixed = TRUE)[[1]][1]
   })
 
-
   phPlot <- 
     ggplot(ddlsm1, aes(x = levels, y = Estimate))+
     facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free")+
     geom_bar(aes(fill = Significance), stat = "identity")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))+
     scale_fill_manual(
-      # values = c("NS" = "grey", "p-value < threshold" = "yellow", "p-value < 0.01" = "orange", "p-value < 0.005" = "red"))+
-      # values = c("NS" = 'grey', "pvalue < 0.05 "= 'yellow', "p-value < 0.01" = 'orange', "p-value < 0.005" = 'red'))+
-      # values = c("NS = grey", "p-value < threshold = yellow", "p-value < 0.01 = orange", "p-value < 0.005 = red"))+
       values = valcol)+ 
     geom_errorbar(aes(ymin = Lower.CI, ymax = Upper.CI), width = 0.25)+
-    # ggtitle(paste("Post-hoc estimates with p-value threshold = ", pvalCutof, sep = ""))+xlab("")+
     ggtitle("Post-hoc estimates ")+xlab("")+
     theme(plot.title = element_text(size = rel(1.2), face = "bold"))
 

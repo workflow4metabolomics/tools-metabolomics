@@ -45,11 +45,6 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       
       mfl <- lmer( vd ~ time + fixfact + time:fixfact + (1| subject), ids) # lmer remix
       
-      # ## NL add   
-      # ###  DEPLACE APRES CALCUL PVALUES AJUSTEES ET NE FAIRE QUE SI AU MOINS 1 FACTEUR SIGNIFICATIF
-      #  if(visu) diagmflF(mfl, title = tit, least.confounded = least.confounded, outlier.limit = outlier.limit)
-      # ## end of NL add
-      
       rsum <- summary(mfl,ddf = dffOption)
       ## test Shapiro Wilks on the residus of the model 
       rShapiro <- shapiro.test(rsum$residuals)

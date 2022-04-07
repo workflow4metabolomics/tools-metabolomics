@@ -193,10 +193,15 @@ variableMetadata_out.tabular
 | PostHoc test with difference between levels and pvalues of these difference
 |
 
+mixedmodel_Estimates
+| A pdf file is created with a graphical representation of differences among levels of factors with a color code for significance and an error bar.
+| Plots are only provided for features with at least one significant factor. 
+
+
 mixedmodel_diagResiduals
-| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a graphical
-| representation of differences among levels of factors with a color code for significance and an error bar
-| Then a serie of graphics are output in order to assess the distribution of residuals to check the adjustment.
+| if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a a serie of
+| graphics outputed in order to assess the distribution of residuals to check the adjustment.
+| Plots are only provided for features with at least one factor being significant based on the non-corrected p-values. 
 
 information.txt
 | File with all messages and warnings generated during the computation

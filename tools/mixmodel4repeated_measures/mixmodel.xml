@@ -203,6 +203,18 @@ information.txt
 | The list of variables with name and a tag if it is significant for at least fixed or repeated factor.
 
 
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+**Version 3.1.0 - April 2022**
+
+- NEW FEATURE: the tool now can be used without fixed factor by specify "none" in the concerned parameter field.
+
+
+
     ]]></help>
 
     <citations>

@@ -58,7 +58,6 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       namesFactEstim <- paste("estimate ",rownames(ddlsm1)[c(1:(nct+ncff))], sep="")
       namesFactPval <- paste("pvalue ",rownames(ddlsm1)[c(1:(nct+ncff))], sep="")
       namesInter <- rownames(ddlsm1)[-c(1:(nct+ncff))]
-      #ncI <- nchar(namesInter)
       namesEstimate <- paste("estimate ", namesInter)
       namespvalues <- paste("pvalue ", namesInter)
       namesFactprinc <- c("pval_time","pval_trt","pval_inter")
@@ -83,13 +82,9 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       ####################  Residuals diagnostics for significants variables #########################
       ### Il at least 1 factor is significant and visu=TRUE NL graphics add to pdf
       ## ajout JF du passage de la valeur de p-value cutoff
-       if (length(which(raov[,6]<=pvalCutof))>0 & visu == 'yes')  {
+       if (length(which(raov[,6]<=pvalCutof))>0 & visu == 'yes') {
           diagmflF(mfl, title = tit, pvalCutof = pvalCutof, least.confounded = least.confounded, 
                    outlier.limit = outlier.limit)
-          
-          cat(" Signif ",pvalCutof)
-          
-          
        }
       
       # pvalue of fixed factor comparisons
@@ -119,15 +114,13 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       rownames(res)[(nfp+nresf+1):(nfp+nresf+nct+ncff)] <- namesFactUpperCI
       res[(nfp+nresf+nct+ncff+1):(nfp+nresf+(nresT)),] <- ddlsm1[(nct+ncff+1):(nresT),8]
       rownames(res)[(nfp+nresf+nct+ncff+1):(nfp+nresf+(nresT))] <- namesUpperCI
-      
 
    }
    else
       ## one of the subject has only one time, subject can't be a random variable
-      ## A repeated measure could be run instead function lme of package nlme, next version
+      ## A repeated measure could be run instead function lme of package nlme, in next version?
    {   res[1,] <- NA
-      #cat("impossible computing\n")
-   
+      cat("\n Computing impossible for feature ", tit, ": at least one subject has only one time.\n")
    }
    tres <- data.frame(t(res))
    rownames(tres)[1] <- nameVar
@@ -141,14 +134,13 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
    {
    ### function to perform linear mixed model with factor Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
-   
-   ## for debug
-   # ifixfact=0 ;itime=1 ; isubject=2 ; ivd=3 ; ids <- subds
-   
+
+
    if (!is.numeric(ids[[ivd]]))     {stop("Dependant variable is not numeric")}
    if (!is.factor(ids[[itime]]))    {stop("Repeated factor is not a factor")}
    if (!is.factor(ids[[isubject]])) {stop("Random factor is not a factor")}
-   # a ce stade, il faudrait pr?voir des tests sur la validit? du plan d'exp?rience
+   # Could be interesting here to add an experience plan check to give back a specific error message
+   # in case time points are missing for some individuals
    
    time <- ids[[itime]]
    subject <- ids[[isubject]]
@@ -231,7 +223,7 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
       ## one of the subject has only one time, subject can't be a random variable
       ## A repeated measure could be run instead function lme of package nlme, next version
    {   res[1,] <- NA
-   #cat("traitement impossible\n")
+       cat("\n Computing impossible for feature ", colnames(ids)[4], ": at least one subject has only one time.\n")
    }
    tres <- data.frame(t(res))
    rownames(tres)[1] <- nameVar
@@ -252,8 +244,8 @@ defColRes <- function(ids, ifixfact, itime) {
       time <- ids[[itime]]
       fixfact <- ids[[ifixfact]]
       
-      cat("\n levels fixfact",levels(fixfact))
-      cat("\n levels time",levels(time))
+      cat("\n Levels fixfact: ",levels(fixfact))
+      cat("\n Levels time: ",levels(time))
       
       # ncff number of comparisons of the fixed factor (nlff number of levels of fixed factor)
       nlff <- length(levels(fixfact))
@@ -318,19 +310,15 @@ lmixedm <- function(datMN,
    ### 3 different dataframes as used by W4M
    ### results are merge with the metadata variables varids
    ### ifixfact, itime, isubject are subscripts of the dependant variables. if only time factor the ifixfat is set to 0 and no diag is performed (visu="no")
-   if (fixfact == "none")  {ifixfact <- 0 ; visu <- "no"} else ifixfact <- which(colnames(sampids) == fixfact)
+   if (fixfact == "none") {ifixfact <- 0 ; visu <- "no"} else ifixfact <- which(colnames(sampids) == fixfact)
    itime    <- which(colnames(sampids) == time)
    isubject <- which(colnames(sampids) == subject)
-   
-    #lmmds <- dataMatrix[,-1]
    
    lmmds <- dataMatrix
    if (logtr!="log10" & logtr!="log2") logtr <- "none"
    if (logtr=="log10") lmmds <- log10(lmmds+1)
    if (logtr== "log2") lmmds <- log2(lmmds+1)
    
-   #idsamp <- dataMatrix[,1]
-   #lmmds <- t(lmmds)
    dslm <- cbind(sampids , lmmds)
 
    nvar <- ncol(lmmds)
@@ -358,22 +346,17 @@ lmixedm <- function(datMN,
    resLM <- data.frame(array(rep(NA,nvar*nColRes) , dim = c(nvar,nColRes)))
    rownames(resLM) <- rownames(varids)
 
-   ###############  test ecriture dans pdf
+   ## PDF initialisation
    if(visu == "yes") {
       pdf(pdfC, onefile = TRUE, height = 15, width = 30)
       par(mfrow = c(1,3))
    }
-   ###############  fin test ecriture dans pdf
 
-   cat("\n pvalCutof ", pvalCutof)
-   
+
    for (i in firstvar:lastvar) {
-      
-      cat("\n[",colnames(dslm)[i],"] ")
 
       subds <- dslm[ , c(ifixfact, itime, isubject, i)]
       
-      ## NL modif
       tryCatch({
          if (ifixfact>0)
             reslmer <- lmRepeated2FF(subds, ifixfact = 1, itime = 2, isubject = 3, ivd = 4, ndim = ndim, visu = visu, 
@@ -383,8 +366,7 @@ lmixedm <- function(datMN,
          else 
             reslmer <- lmRepeated1FF(subds, ifixfact = 0, itime = 1, isubject = 2, ivd = 3, ndim = ndim,
                                      pvalCutof = pvalCutof, dffOption = dffOption)
-         
-         ## end of NL modif
+
          resLM[i - firstvar + 1,] <- reslmer[[1]]
       }, error = function(e){cat("ERROR : ",conditionMessage(e), "\n");})
       if (i == firstvar) {
@@ -393,13 +375,9 @@ lmixedm <- function(datMN,
          factorRow <- reslmer[[3]]
       }
    }
-   ## for debug avec facteur fixe : ifixfact=1;itime=2;isubject=3; ivd=4;tit = colnames(dslm)[i]; ids <- subds
-   ## for debug avec facteur time seul : ifixfact=0;itime=1;isubject=2; ivd=3;tit = colnames(dslm)[i]; ids <- subds
-   
-   
-   ## NL add
+
    if(visu == "yes") dev.off()
-   ## end of NL add
+
    
    ## pvalue correction with p.adjust library multtest
    ## Possible methods of pvalue correction
@@ -433,7 +411,6 @@ lmixedm <- function(datMN,
    
    ## for each variable, estimates plots are performed if at least one factor is significant after p-value correction
    pdf(pdfE, onefile = TRUE, height = 15, width = 30)
-   #par(mfrow=c(2,2))
    
    ## for each variable (in row)   
    for (i in 1:nrow(resLM)) {
@@ -476,7 +453,6 @@ lmixedm <- function(datMN,
             ## Plot of time course  : data prep with factors and quantitative var to be plot
             subv <- dslm[,colnames(dslm) == rownames(resLM)[i]]
             subds <- data.frame(dslm[[itime]], dslm[[isubject]], subv)
-            #colnames(subds) <- c(colnames(dslm)[ifixfact],colnames(dslm)[itime],colnames(dslm)[isubject],rownames(resLM)[i] <- rownames(resLM)[i] )
             libvar <- c(time, subject)
             colnames(subds) <- c(libvar, rownames(resLM)[i])
             

@@ -206,7 +206,7 @@ diagmflF <- function(mfl,
 
 
 
-plot_timeCourse <- function (mfl,
+plot_timeCourse <- function(mfl,
                              responseC,
                              timeC,
                              subjectC,
@@ -223,7 +223,7 @@ plot_timeCourse <- function (mfl,
   } else if (class(mfl) == "data.frame") {
     DF <- mfl
   } else {
-    stop ("'mfl' argument must be a linear mixed effect model or a data frame.")
+    stop("'mfl' argument must be a linear mixed effect model or a data frame.")
   }
   ## Format data -----
   if (is.null(fixfactC)) {
@@ -311,13 +311,13 @@ plot_timeCourse <- function (mfl,
                       colTxt, linTxt,  ")", sep = "")
   ## plot and output
   p <- ggplot(data = DF, mapping = eval(parse(text = txtMap))) +
-    ggtitle(titC)+
-    xlab(xlabC)+ylab(ylabC) +
+    ggtitle(titC) +
+    xlab(xlabC) +ylab(ylabC) +
     theme(legend.position = "left",
-          plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_point()+
-    geom_line(eval(parse(text = txtLineMap)), data = meanDF)+
-    theme_bw()+
+          plot.title = element_text(size = rel(1.2), face = "bold")) +
+    geom_point() +
+    geom_line(eval(parse(text = txtLineMap)), data = meanDF) +
+    theme_bw() +
     NULL
   if (plotL) plot(p)
   invisible(p)
@@ -357,13 +357,13 @@ plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL = TRUE, titC = "Post-hoc e
                        paste("p-value < ", pvalCutof, sep = ""),
                        paste("p-value < ", pvalCutof / 5, sep = ""),
                        paste("p-value < ", pvalCutof / 10, sep = ""))
-  p <- ggplot(ddlsm1, aes(x = levels, y = Estimate))+
-    facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free")+
-    geom_bar(aes(fill = Significance), stat = "identity")+
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-    scale_fill_manual(values = colValue)+
-    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.25)+
-    ggtitle(titC)+xlab("")+
+  p <- ggplot(ddlsm1, aes(x = levels, y = Estimate)) +
+    facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free") +
+    geom_bar(aes(fill = Significance), stat = "identity") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    scale_fill_manual(values = colValue) +
+    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.25) +
+    ggtitle(titC) +xlab("") +
     NULL
   if (plotL) plot(p)
   invisible(p)
@@ -390,8 +390,9 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
   ## Estimation et format des effets aléatoires
   randomEffect <- ranef(mfl, condVar = TRUE)
   DF <- data.frame(randomEffect = rep(names(randomEffect),
-                                      times = sapply(1:length(randomEffect),
-                                                      function(lsi) {return(length(unlist(randomEffect[[lsi]])))})))
+                                      times = sapply(seq_len(length(randomEffect)),
+                                                      function(lsi) {
+													    return(length(unlist(randomEffect[[lsi]])))})))
   DF$condVar <- DF$estimate <- DF$x2 <- DF$x1 <- rep(NA, nrow(DF))
   for (rafC in names(randomEffect)) {
       eff <- randomEffect[[rafC]]
@@ -400,33 +401,34 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
     DF$estimate[which(DF$randomEffect == rafC)] <- unlist(eff)
       condvar <- attr(randomEffect[[rafC]], "postVar")
       se <- NULL
-    for (coli in 1:ncol(eff)) {
+    for (coli in seq_len(ncol(eff))) {
       se <- c(se,
-              sapply(1:nrow(eff),
-                     function(i) {return(condvar[coli, coli, i])}))
+              sapply(seq_len(nrow(eff)),
+                     function(i) {
+					   return(condvar[coli, coli, i])}))
     }
     DF$condVar[which(DF$randomEffect == rafC)] <- se
     }
   DF$se <- sqrt(DF$condVar)
-  DF$lower <- DF$estimate-1.96 * DF$se
-  DF$upper <- DF$estimate+1.96 * DF$se
+  DF$lower <- DF$estimate - 1.96 * DF$se
+  DF$upper <- DF$estimate + 1.96 * DF$se
   ## Plot
   plotLs <- vector("list", length(randomEffect))
   names(plotLs) <- names(randomEffect)
-  for (pi in 1:length(plotLs)) {
-      subDF <- DF[DF$randomEffect == names(plotLs)[pi],]
-      subDF <- subDF[order(subDF$x1, subDF$estimate, decreasing = FALSE),]
+  for (pi in seq_len(length(plotLs))) {
+      subDF <- DF[DF$randomEffect == names(plotLs)[pi], ]
+      subDF <- subDF[order(subDF$x1, subDF$estimate, decreasing = FALSE), ]
         p <- ggplot(data = subDF,
                 mapping = aes(x = estimate, y = reorder(x2, estimate))
-    )+
-      geom_point(size = 3)+
+    ) +
+      geom_point(size = 3) +
       geom_segment(aes(xend = lower, yend = x2)) +
-      geom_segment(aes(xend = upper, yend = x2))+
-      facet_wrap(~x1, ncol = length(unique(subDF$x1)))+
-      ylab("")+xlab("")+
-      ggtitle(paste("Random effect - ", names(plotLs)[pi], sep = ""))+
-      theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-      geom_vline(xintercept = 0, linetype = "dashed")+
+      geom_segment(aes(xend = upper, yend = x2)) +
+      facet_wrap(~x1, ncol = length(unique(subDF$x1))) +
+      ylab("") + xlab("") +
+      ggtitle(paste("Random effect - ", names(plotLs)[pi], sep = "")) +
+      theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold")) +
+      geom_vline(xintercept = 0, linetype = "dashed") +
       theme_bw()
         plotLs[[pi]] <- p
       if (plotL) plot(p)
@@ -458,7 +460,7 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL) {
   # outlier annotation
   df$outliers <- rep("", nrow(df))
   outidx <- which(abs(df$standardized.marginal.residuals) > hlimitN)
-  df[outidx, "outliers"] <- (1:nrow(df))[outidx]
+  df[outidx, "outliers"] <- (seq_len(nrow(df)))[outidx]
   if (length(label_factor) >= 1) {
     df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                     df[outidx, label_factor[1]],
@@ -475,14 +477,14 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL) {
               aes(x = marginal.prediction,
                   y = standardized.marginal.residuals)) +
     geom_point(size = 2) +
-    geom_hline(yintercept = 0, col = "grey")+
+    geom_hline(yintercept = 0, col = "grey") +
     geom_smooth(aes(x = marginal.prediction,
-                    y = standardized.marginal.residuals), data = df,  se = FALSE, col = "blue", method = "loess")+
-    ggtitle("Linearity of effects/outlying obervations")+
-    xlab("Marginal predictions")+
-    ylab("Standardized marginal residuals")+
-    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed")+
+                    y = standardized.marginal.residuals), data = df,  se = FALSE, col = "blue", method = "loess") +
+    ggtitle("Linearity of effects/outlying obervations") +
+    xlab("Marginal predictions") +
+    ylab("Standardized marginal residuals") +
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold")) +
+    geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed") +
     geom_text(aes(label = outliers), hjust = 0, vjust = 0)
   if (plotL) plot(p)
   invisible(p)
@@ -512,16 +514,16 @@ plot_mahalanobis <- function(diagLs,  plotL = TRUE) {
                        mal = diagLs$std.mahalanobis.distance)
   ## Outlying subjects
   p <- 
-    ggplot(aes(y = mal, x = unit), data = unitDf)+
-    geom_point(size = 3)+
-    ylab("Standardized Mahalanobis distance")+
-    geom_vline(xintercept = 0, linetype = "dashed")+
-    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = 2 * mean(unitDf$mal), linetype = "dashed")+
+    ggplot(aes(y = mal, x = unit), data = unitDf) +
+    geom_point(size = 3) +
+    ylab("Standardized Mahalanobis distance") +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold")) +
+    geom_hline(yintercept = 2 * mean(unitDf$mal), linetype = "dashed") +
     geom_text(aes(label = unit),
               data = unitDf[unitDf$mal > 2 * mean(unitDf$mal), ],
-              hjust = 1, vjust = 0)+
-    ggtitle("Outlying unit")+
+              hjust = 1, vjust = 0) +
+    ggtitle("Outlying unit") +
     xlab("unit")
   if (plotL) plot(p)
   invisible(p)
@@ -552,10 +554,10 @@ plot_mahalanobisKhi2 <- function(diagLs,  plotL = TRUE) {
               distribution = "chisq",
               df = diagLs$q,
               line.estimate = NULL,
-              conf = 0.95)+
-    xlab("Chi-squared quantiles")+
-    ylab("Mahalanobis distance")+
-    ggtitle("Normality of random effect")+
+              conf = 0.95) +
+    xlab("Chi-squared quantiles") +
+    ylab("Mahalanobis distance") +
+    ggtitle("Normality of random effect") +
     theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
@@ -595,7 +597,7 @@ plot_conditionalResiduals <-  function(diagLs, hlimitN, plotL = TRUE, label_fact
   # outlier annotation
   df$outliers <- rep("", nrow(df))
   outidx <- which(abs(df$standardized.conditional.residuals) > hlimitN)
-  df[outidx, "outliers"] <- (1:nrow(df))[outidx]
+  df[outidx, "outliers"] <- (seq_len(nrow(df)))[outidx]
   if (length(label_factor) >= 1) {
     df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
                                     df[outidx, label_factor[1]],
@@ -612,15 +614,15 @@ plot_conditionalResiduals <-  function(diagLs, hlimitN, plotL = TRUE, label_fact
               aes(x = conditional.prediction,
                   y = standardized.conditional.residuals)) +
     geom_point(size = 2) +
-    geom_hline(yintercept = 0, col = "grey")+
+    geom_hline(yintercept = 0, col = "grey") +
     geom_smooth(aes(x = conditional.prediction,
                     y = standardized.conditional.residuals),
-                data = df,  se = FALSE, col = "blue", method = "loess")+
-    ggtitle("Homoscedasticity of conditional residuals/outlying observations")+
-    xlab("Individual predictions")+
-    ylab("Standardized conditional residuals")+
-    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
-    geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed")+
+                data = df,  se = FALSE, col = "blue", method = "loess") +
+    ggtitle("Homoscedasticity of conditional residuals/outlying observations") +
+    xlab("Individual predictions") +
+    ylab("Standardized conditional residuals") +
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold")) +
+    geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed") +
     geom_text(aes(label = outliers), hjust = 0, vjust = 0)
   if (plotL) plot(p)
   invisible(p)
@@ -649,10 +651,10 @@ plot_condresQQplot <-  function(diagLs, plotL = TRUE) {
   p <- qqplotF(x = df$standardized.conditional.residuals,
               distribution = "norm",
               line.estimate = NULL,
-              conf = 0.95)+
-    xlab("Standard normal quantiles")+
-    ylab("Standardized conditional residual quantiles")+
-    ggtitle("Normality of conditional error")+
+              conf = 0.95) +
+    xlab("Standard normal quantiles") +
+    ylab("Standardized conditional residual quantiles") +
+    ggtitle("Normality of conditional error") +
     theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
@@ -687,14 +689,14 @@ plot_lesaffreVeerbeke <- function(diagLs,  plotL = TRUE) {
               aes(x = unit,
                   y = lvm)) +
     geom_point(size = 2) +
-    theme(legend.position = "none")+
-    xlab("units")+
-    ylab("Standardized Lesaffre-Verbeke measure")+
-    geom_hline(yintercept = 2 * mean(unitDf$lvm), linetype = "dashed")+
+    theme(legend.position = "none") +
+    xlab("units") +
+    ylab("Standardized Lesaffre-Verbeke measure") +
+    geom_hline(yintercept = 2 * mean(unitDf$lvm), linetype = "dashed") +
     geom_text(aes(label = unit),
               data = unitDf[unitDf$lvm > 2 * mean(unitDf$lvm), ],
-              hjust = 0, vjust = 0)+
-    ggtitle("Within-units covariance matrice")+
+              hjust = 0, vjust = 0) +
+    ggtitle("Within-units covariance matrice") +
     theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
@@ -727,7 +729,6 @@ sqrt.matrix <- function(mat) {
   V <- singular_dec$v
   D <- diag(singular_dec$d)
   sqrtmatrix <- U %*% sqrt(D) %*% t(V)
-  #  return(list(sqrt = sqrtmatrix))
 }
 
 
@@ -789,7 +790,7 @@ qqplotF <- function(x,
     geom_abline(intercept = coef[1], slope = coef[2], col = "red") +
     geom_line(aes(x = z, y = lower), daf,  col = "red", linetype = "dashed") +
     geom_line(aes(x = z, y = upper), daf,  col = "red", linetype = "dashed") +
-    xlab("")+ylab("")
+    xlab("") +ylab("")
   if (!is.null(labels)) p <- p + geom_text(aes(label = label))
   return(p)
 }
@@ -797,7 +798,8 @@ qqplotF <- function(x,
 
 ## histogramm
 histF <- function(x, sd_x = NULL, breaks = "scott") {
-  if (is.null(sd_x)) { sd_x <- sd(x)}
+  if (is.null(sd_x)) 
+    sd_x <- sd(x)
   ## Bandwith estimation (default is Scott)
   if (!breaks %in% c("sqrt", "sturges", "rice", "scott", "fd"))
     breaks <- "scott"
@@ -820,15 +822,15 @@ histF <- function(x, sd_x = NULL, breaks = "scott") {
   ## graph
   return(ggplot(data = daf, aes(x)) +
            geom_histogram(aes(y = ..density..),
-                          col = "black", fill = "grey", binwidth = bw)+
+                          col = "black", fill = "grey", binwidth = bw) +
            geom_density(size = 1.2,
                         col = "blue",
                         linetype = "blank",
-                        fill = rgb(0, 0, 1, 0.1))+
+                        fill = rgb(0, 0, 1, 0.1)) +
            stat_function(fun = dnorm,
                          args = list(mean = 0, sd = sd_x),
-                         col = "blue", size = 1.2)+
-           theme(legend.position = "none")+
+                         col = "blue", size = 1.2) +
+           theme(legend.position = "none") +
            xlab(""))
 }
 
@@ -852,16 +854,16 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   ## Individual time-course
   rawPlot <- 
     ggplot(data = df, aes(x = df[[timidx]], y = df[[varidx]], colour = df[[ffidx]], group = df[[individx]])) +
-    geom_point()+
-    geom_line() +  ggtitle("Individual time-courses (raw data)")+ 
+    geom_point() +
+    geom_line() +  ggtitle("Individual time-courses (raw data)") + 
     ylab(nameVar) +
-    xlab(label = colnames(df)[2])+
+    xlab(label = colnames(df)[2]) +
     theme(legend.title = element_blank() , legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Boxplot of fixed factor
   bPlot <- 
-    ggplot(data = df, aes(y = df[[varidx]], x = df[[ffidx]], color = df[[ffidx]]))+
-    geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 4)+
-    ggtitle(paste("Boxplot by ", fflab, sep = ""))+xlab("")+ylab("")+
+    ggplot(data = df, aes(y = df[[varidx]], x = df[[ffidx]], color = df[[ffidx]])) +
+    geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 4) +
+    ggtitle(paste("Boxplot by ", fflab, sep = "")) +xlab("") +ylab("") +
     theme(legend.title = element_blank(), plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Post-hoc estimates
   ddlsm1  <- mfl
@@ -890,14 +892,14 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   })
 
   phPlot <- 
-    ggplot(ddlsm1, aes(x = levels, y = Estimate))+
-    facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free")+
-    geom_bar(aes(fill = Significance), stat = "identity")+
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    ggplot(ddlsm1, aes(x = levels, y = Estimate)) +
+    facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free") +
+    geom_bar(aes(fill = Significance), stat = "identity") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_fill_manual(
-      values = valcol)+ 
-    geom_errorbar(aes(ymin = Lower.CI, ymax = Upper.CI), width = 0.25)+
-    ggtitle("Post-hoc estimates ")+xlab("")+
+      values = valcol) + 
+    geom_errorbar(aes(ymin = Lower.CI, ymax = Upper.CI), width = 0.25) +
+    ggtitle("Post-hoc estimates ") +xlab("") +
     theme(plot.title = element_text(size = rel(1.2), face = "bold"))
 
   ## Final plotting

@@ -312,7 +312,7 @@ plot_timeCourse <- function(mfl,
   ## plot and output
   p <- ggplot(data = DF, mapping = eval(parse(text = txtMap))) +
     ggtitle(titC) +
-    xlab(xlabC) +ylab(ylabC) +
+    xlab(xlabC) + ylab(ylabC) +
     theme(legend.position = "left",
           plot.title = element_text(size = rel(1.2), face = "bold")) +
     geom_point() +
@@ -363,7 +363,7 @@ plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL = TRUE, titC = "Post-hoc e
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_fill_manual(values = colValue) +
     geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.25) +
-    ggtitle(titC) +xlab("") +
+    ggtitle(titC) + xlab("") +
     NULL
   if (plotL) plot(p)
   invisible(p)
@@ -392,7 +392,7 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
   DF <- data.frame(randomEffect = rep(names(randomEffect),
                                       times = sapply(seq_len(length(randomEffect)),
                                                       function(lsi) {
-													    return(length(unlist(randomEffect[[lsi]])))})))
+                                                        return(length(unlist(randomEffect[[lsi]])))})))
   DF$condVar <- DF$estimate <- DF$x2 <- DF$x1 <- rep(NA, nrow(DF))
   for (rafC in names(randomEffect)) {
       eff <- randomEffect[[rafC]]
@@ -405,7 +405,7 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
       se <- c(se,
               sapply(seq_len(nrow(eff)),
                      function(i) {
-					   return(condvar[coli, coli, i])}))
+                       return(condvar[coli, coli, i])}))
     }
     DF$condVar[which(DF$randomEffect == rafC)] <- se
     }
@@ -513,7 +513,7 @@ plot_mahalanobis <- function(diagLs,  plotL = TRUE) {
   unitDf <- data.frame(unit = names(diagLs$std.mahalanobis.distance),
                        mal = diagLs$std.mahalanobis.distance)
   ## Outlying subjects
-  p <- 
+  p <-
     ggplot(aes(y = mal, x = unit), data = unitDf) +
     geom_point(size = 3) +
     ylab("Standardized Mahalanobis distance") +
@@ -790,7 +790,7 @@ qqplotF <- function(x,
     geom_abline(intercept = coef[1], slope = coef[2], col = "red") +
     geom_line(aes(x = z, y = lower), daf,  col = "red", linetype = "dashed") +
     geom_line(aes(x = z, y = upper), daf,  col = "red", linetype = "dashed") +
-    xlab("") +ylab("")
+    xlab("") + ylab("")
   if (!is.null(labels)) p <- p + geom_text(aes(label = label))
   return(p)
 }
@@ -798,7 +798,7 @@ qqplotF <- function(x,
 
 ## histogramm
 histF <- function(x, sd_x = NULL, breaks = "scott") {
-  if (is.null(sd_x)) 
+  if (is.null(sd_x))
     sd_x <- sd(x)
   ## Bandwith estimation (default is Scott)
   if (!breaks %in% c("sqrt", "sturges", "rice", "scott", "fd"))
@@ -842,8 +842,7 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
     ffidx <- 1
     timidx <- 2
     individx <- 3
-    } else 
-  {
+    } else {
     varidx <- 3
     ffidx <- 1
     timidx <- 1
@@ -858,12 +857,12 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
     geom_line() +  ggtitle("Individual time-courses (raw data)") + 
     ylab(nameVar) +
     xlab(label = colnames(df)[2]) +
-    theme(legend.title = element_blank() , legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
+    theme(legend.title = element_blank(), legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Boxplot of fixed factor
-  bPlot <- 
+  bPlot <-
     ggplot(data = df, aes(y = df[[varidx]], x = df[[ffidx]], color = df[[ffidx]])) +
     geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 4) +
-    ggtitle(paste("Boxplot by ", fflab, sep = "")) +xlab("") +ylab("") +
+    ggtitle(paste("Boxplot by ", fflab, sep = "")) + xlab("") + ylab("") +
     theme(legend.title = element_blank(), plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Post-hoc estimates
   ddlsm1  <- mfl
@@ -872,8 +871,10 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   ## modif JF pour tenir compte du seuil de pvalues defini par le user
   options("scipen" = 100, "digits" = 5)
   pvalCutof <- as.numeric(pvalCutof)
-  bs = 0.05; bm = 0.01; bi = 0.005
-  if (pvalCutof > bm) {bs <- pvalCutof} else
+  bs <- 0.05; bm <- 0.01; bi <- 0.005
+  if (pvalCutof > bm) {
+    bs <- pvalCutof
+  } else
     if (pvalCutof <bm & pvalCutof > bi) {bm <- pvalCutof; bs <- pvalCutof} else
       if (pvalCutof < bi) {bi <- pvalCutof; bm <- pvalCutof; bs <- pvalCutof}
   lbs <- paste("p-value < ", bs, sep = "")

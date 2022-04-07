@@ -75,13 +75,13 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       res[2, ] <- rsum$varcor$subject[1] ;rownames(res)[2] <- "Subject.Variance"
       res[3, ] <- rsum$devcomp$cmp[7] ; rownames(res)[3] <- "REML"
       ### 3 principal factors pvalues results + shapiro test =>  nfp <- 4
-      res[c((nfp-2):nfp), ] <- raov[, 6]
-      rownames(res)[c((nfp-2):nfp)] <- namesFactprinc
+      res[c((nfp - 2):nfp), ] <- raov[, 6]
+      rownames(res)[c((nfp - 2):nfp)] <- namesFactprinc
 
       ####################  Residuals diagnostics for significants variables #########################
       ### Il at least 1 factor is significant and visu=TRUE NL graphics add to pdf
       ## ajout JF du passage de la valeur de p-value cutoff
-       if (length(which(raov[, 6]<=pvalCutof))>0 & visu == "yes") {
+       if (length(which(raov[, 6] <= pvalCutof)) > 0 & visu == "yes") {
           diagmflF(mfl, title = tit, pvalCutof = pvalCutof, least.confounded = least.confounded,
                    outlier.limit = outlier.limit)
        }
@@ -186,11 +186,11 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
 
       ### lmer results on 1 vector
       # pvalue of shapiro Wilks test of the residuals
-      res[1, ] <- rShapiro$p.value; rownames(res)[1] <- "Shapiro.pvalue.residuals" 
+      res[1, ] <- rShapiro$p.value; rownames(res)[1] <- "Shapiro.pvalue.residuals"
       res[2, ] <- rsum$varcor$subject[1] ;rownames(res)[2] <- "Subject.Variance"
       res[3, ] <- rsum$devcomp$cmp[7] ; rownames(res)[3] <- "REML"
 
-      ###  factor time pvalue results + shapiro test 
+      ###  factor time pvalue results + shapiro test
       res[nfp, ] <- raov[, 6]
       rownames(res)[nfp] <- namesFactprinc
 
@@ -204,12 +204,12 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
       rownames(res)[(nfp + nresf + 1):(nfp + nresf + nct)] <- namesFactEstim
 
       # Lower CI of the difference between levels of factors
-      # nresf is incremeted 
+      # nresf is incremeted
       nresf <- nresf + nresT
       res[(nfp + nresf + 1):(nfp + nresf + nct), ] <- ddlsm1[c(1:nct), 7]
       rownames(res)[(nfp + nresf + 1):(nfp + nresf + nct)] <- namesLowerCI
       # Lower CI of the difference between levels of factors
-      # nresf is incremeted 
+      # nresf is incremeted
       nresf <- nresf + nresT
       res[(nfp + nresf + 1):(nfp + nresf + nct), ] <- ddlsm1[c(1:nct), 8]
       rownames(res)[(nfp + nresf + 1):(nfp + nresf + nct)] <- namesUpperCI
@@ -245,13 +245,13 @@ defColRes <- function(ids, ifixfact, itime) {
 
       # ncff number of comparisons of the fixed factor (nlff number of levels of fixed factor)
       nlff <- length(levels(fixfact))
-      ncff <- (nlff * (nlff-1)) / 2
+      ncff <- (nlff * (nlff - 1)) / 2
       # nct number of comparison of the time factor (nlt number of levels of time factor)
       nlt <- length(levels(time))
-      nct <- (nlt * (nlt-1)) / 2
+      nct <- (nlt * (nlt - 1)) / 2
       # nci number of comparison of the interaction
       nli <- nlff * nlt
-      nci <- (nli * (nli-1)) / 2
+      nci <- (nli * (nli - 1)) / 2
       ndim <- c(NA, NA, NA, NA, NA, NA, NA)
 
       ndim[1] <- nfp   # pvalues of fixed factor, time factor and interaction (3columns) and shapiro test pvalue
@@ -268,7 +268,7 @@ defColRes <- function(ids, ifixfact, itime) {
       time <- ids[[itime]]
       # nct number of comparison of the time factor
       nlt <- length(levels(time))
-      nct <- (nlt * (nlt-1)) / 2
+      nct <- (nlt * (nlt - 1)) / 2
       ndim <- c(NA, NA, NA, NA, NA, NA, NA)
 
       ndim[1] <- nfp   # pvalues of shapiro test + subject variance + REML + time factor
@@ -290,10 +290,9 @@ lmixedm <- function(datMN,
                     visu = "no",
                     least.confounded = FALSE,
                     outlier.limit = 3,
-					     pdfC,
-					     pdfE
-                   )
-   {
+                         pdfC,
+                         pdfE
+                   ) {
    sampids <- samDF
    dataMatrix <- datMN
    varids <- varDF
@@ -306,12 +305,14 @@ lmixedm <- function(datMN,
    ### 3 different dataframes as used by W4M
    ### results are merge with the metadata variables varids
    ### ifixfact, itime, isubject are subscripts of the dependant variables. if only time factor the ifixfat is set to 0 and no diag is performed (visu="no")
-   if (fixfact == "none") {ifixfact <- 0 ; visu <- "no"} else ifixfact <- which(colnames(sampids) == fixfact)
+   if (fixfact == "none") {
+     ifixfact <- 0 ; visu <- "no"
+   } else ifixfact <- which(colnames(sampids) == fixfact)
    itime    <- which(colnames(sampids) == time)
    isubject <- which(colnames(sampids) == subject)
 
    lmmds <- dataMatrix
-   if (logtr!="log10" & logtr!="log2") logtr <- "none"
+   if (logtr != "log10" & logtr != "log2") logtr <- "none"
    if (logtr == "log10") lmmds <- log10(lmmds + 1)
    if (logtr == "log2") lmmds <- log2(lmmds + 1)
 
@@ -321,7 +322,7 @@ lmixedm <- function(datMN,
    firstvar <- ncol(sampids) + 1
    lastvar <- firstvar + ncol(lmmds) - 1
 
-   if (ifixfact>0)  dslm[[ifixfact]] <- factor(dslm[[ifixfact]])
+   if (ifixfact > 0)  dslm[[ifixfact]] <- factor(dslm[[ifixfact]])
    dslm[[itime]]    <- factor(dslm[[itime]])
    dslm[[isubject]] <- factor(dslm[[isubject]])
    ## call defColres to define the numbers of test and so the number of columns of results
@@ -332,7 +333,7 @@ lmixedm <- function(datMN,
       firstpval <- ndim[1] - 2
       lastpval  <- ndim[1] + ndim[3] + ndim[5] + ndim[7]
   } else {
-      ndim <- defColRes(dslm[, itime], ifixfact = 0, itime = 1) 
+      ndim <- defColRes(dslm[, itime], ifixfact = 0, itime = 1)
       nColRes <- ndim[1] + (4 * (ndim[5]))
       firstpval <- ndim[1]
       lastpval <- ndim[1] + ndim[5]
@@ -342,7 +343,7 @@ lmixedm <- function(datMN,
    rownames(resLM) <- rownames(varids)
 
    ## PDF initialisation
-   if(visu == "yes") {
+   if (visu == "yes") {
       pdf(pdfC, onefile = TRUE, height = 15, width = 30)
       par(mfrow = c(1, 3))
    }
@@ -353,17 +354,17 @@ lmixedm <- function(datMN,
       subds <- dslm[, c(ifixfact, itime, isubject, i)]
 
       tryCatch({
-         if (ifixfact>0)
+         if (ifixfact > 0)
             reslmer <- lmRepeated2FF(subds, ifixfact = 1, itime = 2, isubject = 3, ivd = 4, ndim = ndim, visu = visu,
                                      tit = colnames(dslm)[i], pvalCutof = pvalCutof,
                                      dffOption = dffOption, least.confounded = least.confounded,
                                      outlier.limit = outlier.limit)
-         else 
+         else
             reslmer <- lmRepeated1FF(subds, ifixfact = 0, itime = 1, isubject = 2, ivd = 3, ndim = ndim,
                                      pvalCutof = pvalCutof, dffOption = dffOption)
 
          resLM[i - firstvar + 1, ] <- reslmer[[1]]
-      }, error = function(e){cat("ERROR: ", conditionMessage(e), "\n");})
+      }, error = function(e) {cat("ERROR: ", conditionMessage(e), "\n");})
       if (i == firstvar) {
          colnames(resLM) <- colnames(reslmer[[1]])
          labelRow <- reslmer[[2]]
@@ -371,7 +372,7 @@ lmixedm <- function(datMN,
       }
    }
 
-   if(visu == "yes") dev.off()
+   if (visu == "yes") dev.off()
 
 
    ## pvalue correction with p.adjust library multtest
@@ -380,8 +381,8 @@ lmixedm <- function(datMN,
    if (length(which(pvalcorMeth == AdjustMeth)) == 0) pvalcorMeth <- "none"
 
    if (pvalcorMeth != "none") {
-      for (k in firstpval:lastpval){
-         resLM[[k]] = p.adjust(resLM[[k]], method = pvalcorMeth, n = dim(resLM[k])[[1]])
+      for (k in firstpval:lastpval) {
+         resLM[[k]] <- p.adjust(resLM[[k]], method = pvalcorMeth, n = dim(resLM[k])[[1]])
 
       }
    }
@@ -390,13 +391,13 @@ lmixedm <- function(datMN,
    if (ifixfact > 0) {
       ## time effect
       resLM[which(resLM[, firstpval] > pvalCutof), c((lastpval + 1):(lastpval + ndim[5]))] <- 0
-      resLM[which(resLM[, firstpval] > pvalCutof), c((ndim[1]  + 1):(ndim[1] + ndim[5]))] <- NA
+      resLM[which(resLM[, firstpval] > pvalCutof), c((ndim[1] + 1):(ndim[1] + ndim[5]))] <- NA
       ## treatment effect
-      resLM[which(resLM[, firstpval + 1]> pvalCutof), c((lastpval + ndim[5] + 1):(lastpval + ndim[5] + ndim[3]))] <- 0
-      resLM[which(resLM[, firstpval + 1]> pvalCutof), c((ndim[1]  + ndim[5] + 1):(ndim[1]  + ndim[5] + ndim[3]))] <- NA
+      resLM[which(resLM[, firstpval + 1] > pvalCutof), c((lastpval + ndim[5] + 1):(lastpval + ndim[5] + ndim[3]))] <- 0
+      resLM[which(resLM[, firstpval + 1] > pvalCutof), c((ndim[1]  + ndim[5] + 1):(ndim[1] + ndim[5] + ndim[3]))] <- NA
       ## interaction effect
-      resLM[which(resLM[, firstpval + 2]> pvalCutof), c((lastpval + ndim[5] + ndim[3] + 1):(lastpval + ndim[5] + ndim[3] + ndim[7]))] <- 0
-      resLM[which(resLM[, firstpval + 2]> pvalCutof), c((ndim[1]  + ndim[5] + ndim[3] + 1):(ndim[1]  + ndim[5] + ndim[3] + ndim[7]))] <- NA
+      resLM[which(resLM[, firstpval + 2] > pvalCutof), c((lastpval + ndim[5] + ndim[3] + 1):(lastpval + ndim[5] + ndim[3] + ndim[7]))] <- 0
+      resLM[which(resLM[, firstpval + 2] > pvalCutof), c((ndim[1]  + ndim[5] + ndim[3] + 1):(ndim[1]  + ndim[5] + ndim[3] + ndim[7]))] <- NA
    } else {
       ## time effect only
       resLM[which(resLM[, firstpval] > pvalCutof), c((lastpval  + 1):(lastpval  + ndim[5]))] <- 0

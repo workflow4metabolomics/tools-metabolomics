@@ -876,7 +876,7 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   if (pvalCutof > bm) {
     bs <- pvalCutof
   } else
-    if (pvalCutof <bm & pvalCutof > bi) {
+    if (pvalCutof < bm & pvalCutof > bi) {
       bm <- pvalCutof; bs <- pvalCutof
     } else
       if (pvalCutof < bi) {
@@ -898,15 +898,15 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
     strsplit(namC, split = " ", fixed = TRUE)[[1]][1]
   })
 
-  phPlot <- 
+  phPlot <-
     ggplot(ddlsm1, aes(x = levels, y = Estimate)) +
     facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free") +
     geom_bar(aes(fill = Significance), stat = "identity") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_fill_manual(
-      values = valcol) + 
+      values = valcol) +
     geom_errorbar(aes(ymin = Lower.CI, ymax = Upper.CI), width = 0.25) +
-    ggtitle("Post-hoc estimates ") +xlab("") +
+    ggtitle("Post-hoc estimates ") + xlab("") +
     theme(plot.title = element_text(size = rel(1.2), face = "bold"))
 
   ## Final plotting
@@ -915,4 +915,4 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
                top = textGrob(title, gp = gpar(fontsize = 32, font = 4))
   )
 
-} 
+}

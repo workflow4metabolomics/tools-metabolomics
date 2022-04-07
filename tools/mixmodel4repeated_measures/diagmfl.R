@@ -36,7 +36,7 @@ lmer.computeDiag <- function(mfl) {
   yVn <- df[, responseC]
   nobsN <- length(yVn)
   # units
-  idunitVc <- levels(mfl@flist[[1]])#unique(df[, unitC])
+  idunitVc <- levels(mfl@flist[[1]])
   nunitN <- length(unique(idunitVc))
   #X
   xMN <- mfl@pp$X
@@ -80,28 +80,28 @@ lmer.computeDiag <- function(mfl) {
       ## standardization of marginal residual
     stmarresVn[idxiVn] <- as.vector(solve(sqrtmF(marvarMN[idxiVn, idxiVn])) %*% marresVn[idxiVn])
       ##Standardized Lessafre and Verbeke's measure
-    auxMN <- diag(1, ncol = miN, nrow =miN)- stmarresVn[idxiVn] %*% t(stmarresVn[idxiVn])
+    auxMN <- diag(1, ncol = miN, nrow = miN) - stmarresVn[idxiVn] %*% t(stmarresVn[idxiVn])
     lesverVn[i] <- sum(diag(auxMN %*% t(auxMN)))
       ## standardization of conditional residual
     stcondresVn[idxiVn] <- as.vector(solve(sqrtmF(condvarMN[idxiVn, idxiVn])) %*% condresVn[idxiVn])
   }
-  lesverVn <- lesverVn/sum(lesverVn)
+  lesverVn <- lesverVn / sum(lesverVn)
   ## Least confounded conditional residuals
   ## EBLUP analysis (Mahalanobis' distance)
   varbMN <- gammaMN %*% t(zMN) %*% qMN %*% zMN %*% gammaMN
   mdistVn <- rep(0, nunitN)
   # Initial coding: works only for 1 single random effect
   # for (i in 1:nunitN) {
-  #   mdistVn[i] <- eblupVn[i]^2/varbMN[i, i]
+  #   mdistVn[i] <- eblupVn[i]^2 / varbMN[i, i]
   # }
-  # mdistVn <-  mdistVn/sum(mdistVn)
-  qm <- q-1
+  # mdistVn <-  mdistVn / sum(mdistVn)
+  qm <- q - 1
   for (j in 1:nunitN) {
     gbi <- varbMN[(q * j - qm):(q * j), (q * j - qm):(q * j)]
     eblupi <- eblupVn[(q * j - qm):(q * j)]
     mdistVn[j] <- t(eblupi) %*% ginv(gbi) %*% eblupi
   }
-  #pmdistVn <-  mdistVn/sum(mdistVn)
+  #pmdistVn <-  mdistVn / sum(mdistVn)
   names(mdistVn) <- levels(mfl@flist[[1]])
   ## output ----------------------------------------------
   return(list(
@@ -114,7 +114,7 @@ lmer.computeDiag <- function(mfl) {
     std.marginal.residuals = stmarresVn,
     std.conditional.residuals = stcondresVn,
     mahalanobis.distance = mdistVn,
-    std.mahalanobis.distance = mdistVn/sum(mdistVn),
+    std.mahalanobis.distance = mdistVn / sum(mdistVn),
     std.lesaffreverbeke.measure = lesverVn
   ))
 }
@@ -152,14 +152,14 @@ diagmflF <- function(mfl,
   ## diagnostics
   diagLs <- lmer.computeDiag(mfl)
   ## plots
-  blank <- rectGrob(gp=gpar(col="white"))
-  rectspacer <- rectGrob(height = unit(0.1, "npc"), gp=gpar(col="grey"))
+  blank <- rectGrob(gp = gpar(col = "white"))
+  rectspacer <- rectGrob(height = unit(0.1, "npc"), gp = gpar(col = "grey"))
   grid.arrange(blank,
                # plot_timeCourse(mfl,
                #                 responseC = resC,
                #                 timeC = timC,
                #                 subjectC = uniC,
-               #                 fixfactC =fixC,
+               #                 fixfactC = fixC,
                #                 offset_subject = FALSE,
                #                 plotL = FALSE,
                #                 colorType = "FIXFACT",
@@ -168,13 +168,13 @@ diagmflF <- function(mfl,
                # blank,
                # plot_posthoc(mfl,
                #              pvalCutof = pvalCutof,
-               #              plotL =FALSE,
+               #              plotL = FALSE,
                #              titC = "Post-hoc estimates (uncorrected p-value)"),
                # rectspacer,
-               plot_linearity(diagLs, hlimitN =outlier.limit, plotL = FALSE,
+               plot_linearity(diagLs, hlimitN = outlier.limit, plotL = FALSE,
                               label_factor = c(uniC, fixC, timC)),
                blank,
-               plot_conditionalResiduals(diagLs, hlimitN =outlier.limit, plotL = FALSE,
+               plot_conditionalResiduals(diagLs, hlimitN = outlier.limit, plotL = FALSE,
                                          label_factor = c(uniC, fixC, timC)),
                blank,
                plot_condresQQplot(diagLs,  plotL = FALSE),
@@ -189,16 +189,16 @@ diagmflF <- function(mfl,
                blank,
                blank,
                blank,
-               top = textGrob(title, gp=gpar(fontsize=40, font=4)),
+               top = textGrob(title, gp = gpar(fontsize = 40, font = 4)),
                layout_matrix = matrix(c(rep(1, 7),
                                         2, 3, rep(4, 3), 20, 21,
                                         rep(5, 7),
                                         6:12,
                                         rep(13, 7),
                                         14:18, rep(19, 2)),
-                                      ncol=7, nrow=6, byrow=TRUE),
-               heights= c(0.1/3, 0.3, 0.1/3, 0.3, 0.1/3, 0.3),
-               widths = c(0.22, 0.04, 0.22, 0.04 , 0.22, 0.04, 0.22))
+                                      ncol = 7, nrow = 6, byrow = TRUE),
+               heights = c(0.1 / 3, 0.3, 0.1 / 3, 0.3, 0.1 / 3, 0.3),
+               widths = c(0.22, 0.04, 0.22, 0.04, 0.22, 0.04, 0.22))
 }
 
 #######################################################################################################
@@ -232,7 +232,7 @@ plot_timeCourse <- function (mfl,
                              responseC,
                              timeC,
                              subjectC,
-                             fixfactC =NULL,
+                             fixfactC = NULL,
                              offset_subject = FALSE,
                              plotL = TRUE,
                              colorType = NA, ## subject, fixfact, none or NA
@@ -242,7 +242,7 @@ plot_timeCourse <- function (mfl,
   ## Data -----
   if (class(mfl) %in% c("merModLmerTest", "lmerMod", "lmerModLmerTest")) {
     DF <- mfl@frame
-  } else if (class(mfl) =="data.frame") {
+  } else if (class(mfl) == "data.frame") {
     DF <- mfl
   } else {
     stop ("'mfl' argument must be a linear mixed effect model or a data frame.")
@@ -335,7 +335,7 @@ plot_timeCourse <- function (mfl,
   p <- ggplot(data = DF, mapping = eval(parse(text = txtMap))) +
     ggtitle(titC)+
     xlab(xlabC)+ylab(ylabC) +
-    theme(legend.position="left",
+    theme(legend.position = "left",
           plot.title = element_text(size = rel(1.2), face = "bold"))+
     geom_point()+
     geom_line(eval(parse(text = txtLineMap)), data = meanDF)+
@@ -362,15 +362,15 @@ plot_timeCourse <- function (mfl,
 #' print("hello !")
 #'
 #' @export plot_posthoc
-plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL =TRUE, titC = "Post-hoc estimates") {
+plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL = TRUE, titC = "Post-hoc estimates") {
   #ddlsm1 <- data.frame(difflsmeans(mfl, test.effs=NULL)$diffs.lsmeans.table) ## OLD versions
-  ddlsm1 <- as.data.frame(difflsmeans(mfl, test.effs=NULL))
+  ddlsm1 <- as.data.frame(difflsmeans(mfl, test.effs = NULL))
   colnames(ddlsm1)[ncol(ddlsm1)] <- "pvalue"
   ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
   ## modif JF pour tenir compte du seuil de pvalues defini par le user
-  ddlsm1$Significance[which(ddlsm1$pvalue <pvalCutof)] <- paste("p-value < ", pvalCutof, sep = "")
-  ddlsm1$Significance[which(ddlsm1$pvalue <pvalCutof/5)] <- paste("p-value < ", pvalCutof/5, sep = "")
-  ddlsm1$Significance[which(ddlsm1$pvalue <pvalCutof/10)] <- paste("p-value < ", pvalCutof/10, sep = "")
+  ddlsm1$Significance[which(ddlsm1$pvalue < pvalCutof)] <- paste("p-value < ", pvalCutof, sep = "")
+  ddlsm1$Significance[which(ddlsm1$pvalue < pvalCutof / 5)] <- paste("p-value < ", pvalCutof / 5, sep = "")
+  ddlsm1$Significance[which(ddlsm1$pvalue < pvalCutof / 10)] <- paste("p-value < ", pvalCutof / 10, sep = "")
   ddlsm1$levels <- rownames(ddlsm1)
   ddlsm1$term <- sapply(rownames(ddlsm1), function(namC) {
     strsplit(namC, split = " ", fixed = TRUE)[[1]][1]
@@ -378,15 +378,15 @@ plot_posthoc <- function(mfl, pvalCutof = 0.05, plotL =TRUE, titC = "Post-hoc es
   colValue <- c("grey", "yellow", "orange", "red")
   names(colValue) <- c("NS",
                        paste("p-value < ", pvalCutof, sep = ""),
-                       paste("p-value < ", pvalCutof/5, sep = ""),
-                       paste("p-value < ", pvalCutof/10, sep = ""))
+                       paste("p-value < ", pvalCutof / 5, sep = ""),
+                       paste("p-value < ", pvalCutof / 10, sep = ""))
   p <- ggplot(ddlsm1, aes(x = levels, y = Estimate))+
     facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free")+
-    geom_bar(aes(fill = Significance), stat="identity")+
+    geom_bar(aes(fill = Significance), stat = "identity")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))+
     scale_fill_manual(values = colValue)+
     #geom_errorbar(aes(ymin = Lower.CI, ymax =Upper.CI), width=0.25)+ ## OLD versions
-    geom_errorbar(aes(ymin = lower, ymax =upper), width=0.25)+
+    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.25)+
     ggtitle(titC)+xlab("")+
     #theme(plot.title = element_text(size = rel(1.2), face = "bold"))+
     NULL
@@ -415,7 +415,7 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
   ## Estimation et format des effets aléatoires
   randomEffect <- ranef(mfl, condVar = TRUE)
   DF <- data.frame(randomEffect = rep(names(randomEffect),
-                                      times  = sapply(1:length(randomEffect),
+                                      times = sapply(1:length(randomEffect),
                                                       function(lsi) {return(length(unlist(randomEffect[[lsi]])))})))
   DF$condVar <- DF$estimate <- DF$x2 <- DF$x1 <- rep(NA, nrow(DF))
   for (rafC in names(randomEffect)) {
@@ -440,18 +440,17 @@ plot_randomEffect <- function(mfl, plotL = TRUE) {
   names(plotLs) <- names(randomEffect)
   for (pi in 1:length(plotLs)) {
       subDF <- DF[DF$randomEffect == names(plotLs)[pi],]
-    subDF <- subDF[order(subDF$x1, subDF$estimate, decreasing = FALSE),]
-    #subDF$x2 <- factor(subDF$x2, levels=subDF$x2)
+      subDF <- subDF[order(subDF$x1, subDF$estimate, decreasing = FALSE),]
         p <- ggplot(data = subDF,
                 mapping = aes(x = estimate, y = reorder(x2, estimate))
     )+
-      geom_point(size =3)+
+      geom_point(size = 3)+
       geom_segment(aes(xend = lower, yend = x2)) +
       geom_segment(aes(xend = upper, yend = x2))+
       facet_wrap(~x1, ncol = length(unique(subDF$x1)))+
       ylab("")+xlab("")+
       ggtitle(paste("Random effect - ", names(plotLs)[pi], sep = ""))+
-      theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
+      theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
       geom_vline(xintercept = 0, linetype = "dashed")+
       theme_bw()
         plotLs[[pi]] <- p
@@ -499,24 +498,24 @@ plot_linearity <- function(diagLs, hlimitN, plotL = TRUE, label_factor = NULL) {
     }
   # if (!is.null(label_factor)) {
   #   df[outidx, "outliers"] <- paste(df[outidx, "outliers"],
-  #                                   ifelse(length(label_factor)==1,
+  #                                   ifelse(length(label_factor) == 1,
   #                                          df[outidx, label_factor],
   #                                          apply(df[outidx, label_factor], 1, paste, collapse = ".")),
   #                                   sep = "_")
   # }
   p <- ggplot(data = df,
-              aes(x=marginal.prediction,
-                  y=standardized.marginal.residuals)) +
-    geom_point(size =2) +
+              aes(x = marginal.prediction,
+                  y = standardized.marginal.residuals)) +
+    geom_point(size = 2) +
     geom_hline(yintercept = 0, col = "grey")+
-    geom_smooth(aes(x=marginal.prediction,
-                    y=standardized.marginal.residuals), data = df,  se = FALSE, col = "blue", method = "loess")+
+    geom_smooth(aes(x = marginal.prediction,
+                    y = standardized.marginal.residuals), data = df,  se = FALSE, col = "blue", method = "loess")+
     ggtitle("Linearity of effects/outlying obervations")+
     xlab("Marginal predictions")+
     ylab("Standardized marginal residuals")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
     geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed")+
-    geom_text(aes(label = outliers), hjust=0, vjust=0)
+    geom_text(aes(label = outliers), hjust = 0, vjust = 0)
   if (plotL) plot(p)
   invisible(p)
 }
@@ -545,15 +544,15 @@ plot_mahalanobis <- function(diagLs,  plotL = TRUE) {
                        mal = diagLs$std.mahalanobis.distance)
   ## Outlying subjects
   p <- 
-    ggplot(aes(y = mal, x= unit), data = unitDf)+
-    geom_point(size =3)+
+    ggplot(aes(y = mal, x = unit), data = unitDf)+
+    geom_point(size = 3)+
     ylab("Standardized Mahalanobis distance")+
     geom_vline(xintercept = 0, linetype = "dashed")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
     geom_hline(yintercept = 2 * mean(unitDf$mal), linetype = "dashed")+
     geom_text(aes(label = unit),
               data = unitDf[unitDf$mal > 2 * mean(unitDf$mal), ],
-              hjust=1, vjust=0)+
+              hjust = 1, vjust = 0)+
     ggtitle("Outlying unit")+
     xlab("unit")
   if (plotL) plot(p)
@@ -583,13 +582,13 @@ plot_mahalanobisKhi2 <- function(diagLs,  plotL = TRUE) {
                        mal = diagLs$mahalanobis.distance)
   p <- qqplotF(x = unitDf$mal,
               distribution = "chisq",
-              df= diagLs$q,
+              df = diagLs$q,
               line.estimate = NULL,
               conf = 0.95)+
     xlab("Chi-squared quantiles")+
     ylab("Mahalanobis distance")+
     ggtitle("Normality of random effect")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
 }
@@ -642,19 +641,19 @@ plot_conditionalResiduals <-  function(diagLs, hlimitN, plotL = TRUE, label_fact
     }
     }
   p <- ggplot(data = df,
-              aes(x=conditional.prediction,
-                  y=standardized.conditional.residuals)) +
-    geom_point(size =2) +
+              aes(x = conditional.prediction,
+                  y = standardized.conditional.residuals)) +
+    geom_point(size = 2) +
     geom_hline(yintercept = 0, col = "grey")+
-    geom_smooth(aes(x=conditional.prediction,
-                    y=standardized.conditional.residuals),
+    geom_smooth(aes(x = conditional.prediction,
+                    y = standardized.conditional.residuals),
                 data = df,  se = FALSE, col = "blue", method = "loess")+
     ggtitle("Homoscedasticity of conditional residuals/outlying observations")+
     xlab("Individual predictions")+
     ylab("Standardized conditional residuals")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))+
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))+
     geom_hline(yintercept = c(-1, 1) * hlimitN, linetype = "dashed")+
-    geom_text(aes(label = outliers), hjust=0, vjust=0)
+    geom_text(aes(label = outliers), hjust = 0, vjust = 0)
   if (plotL) plot(p)
   invisible(p)
 }
@@ -686,7 +685,7 @@ plot_condresQQplot <-  function(diagLs, plotL = TRUE) {
     xlab("Standard normal quantiles")+
     ylab("Standardized conditional residual quantiles")+
     ggtitle("Normality of conditional error")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
 }
@@ -717,18 +716,18 @@ plot_lesaffreVeerbeke <- function(diagLs,  plotL = TRUE) {
   unitDf <- data.frame(unit = names(diagLs$std.lesaffreverbeke.measure),
                        lvm = diagLs$std.lesaffreverbeke.measure)
   p <- ggplot(data = unitDf,
-              aes(x=unit,
-                  y=lvm)) +
-    geom_point(size =2) +
-    theme(legend.position="none")+
+              aes(x = unit,
+                  y = lvm)) +
+    geom_point(size = 2) +
+    theme(legend.position = "none")+
     xlab("units")+
     ylab("Standardized Lesaffre-Verbeke measure")+
     geom_hline(yintercept = 2 * mean(unitDf$lvm), linetype = "dashed")+
     geom_text(aes(label = unit),
               data = unitDf[unitDf$lvm > 2 * mean(unitDf$lvm), ],
-              hjust=0, vjust=0)+
+              hjust = 0, vjust = 0)+
     ggtitle("Within-units covariance matrice")+
-    theme(legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
+    theme(legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   if (plotL) plot(p)
   invisible(p)
 }
@@ -755,12 +754,12 @@ plot_lesaffreVeerbeke <- function(diagLs,  plotL = TRUE) {
 
 sqrt.matrix <- function(mat) {
   mat <- as.matrix(mat)  # new line of code
-  singular_dec <- svd(mat, LINPACK=F)
+  singular_dec <- svd(mat, LINPACK = F)
   U <- singular_dec$u
   V <- singular_dec$v
   D <- diag(singular_dec$d)
   sqrtmatrix <- U %*% sqrt(D) %*% t(V)
-  #  return(list(sqrt=sqrtmatrix))
+  #  return(list(sqrt = sqrtmatrix))
 }
 
 
@@ -781,7 +780,7 @@ sqrt.matrix <- function(mat) {
 sqrtmF <- function(matMN) {
   matMN <- as.matrix(matMN)
   # ## check that matMN is symetric
-  # if (!all(t(matMN==matMN)))
+  # if (!all(t(matMN == matMN)))
   #   stop("matMN must be symetric.")
   svd_dec <- svd(matMN)
   invisible(svd_dec$u %*% sqrt(diag(svd_dec$d)) %*% t(svd_dec$v))
@@ -806,25 +805,25 @@ qqplotF <- function(x,
   if (is.null(line.estimate)) {
     Q.x <- quantile(daf$ord.x, c(0.25, 0.75))
     Q.z <- q.function(c(0.25, 0.75), ...)
-    b <- diff(Q.x)/diff(Q.z)
+    b <- diff(Q.x) / diff(Q.z)
     coef <- c(Q.x[1] - b * Q.z[1], b)
   } else {
     coef <- coef(line.estimate(ord.x ~ z))
   }
-  zz <- qnorm(1 - (1 - conf)/2)
-  SE <- (coef[2]/d.function(daf$z, ...)) * sqrt(P * (1 - P)/n)
+  zz <- qnorm(1 - (1 - conf) / 2)
+  SE <- (coef[2] / d.function(daf$z, ...)) * sqrt(P * (1 - P) / n)
   fit.value <- coef[1] + coef[2] * daf$z
   daf$upper <- fit.value + zz * SE
   daf$lower <- fit.value - zz * SE
   if (!is.null(labels)) {
     daf$label <- ifelse(daf$ord.x > daf$upper | daf$ord.x < daf$lower, labels[ord], "")
   }
-  p <- ggplot(daf, aes(x=z, y=ord.x)) +
+  p <- ggplot(daf, aes(x = z, y = ord.x)) +
     geom_point() +
     geom_abline(intercept = coef[1], slope = coef[2], col = "red") +
-    geom_line(aes(x=z, y = lower), daf,  col = "red", linetype = "dashed") +
-    geom_line(aes(x=z, y = upper), daf,  col = "red", linetype = "dashed") +
-    #geom_ribbon(aes(ymin = lower, ymax = upper), alpha=0.2)+
+    geom_line(aes(x = z, y = lower), daf,  col = "red", linetype = "dashed") +
+    geom_line(aes(x = z, y = upper), daf,  col = "red", linetype = "dashed") +
+    #geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2)+
     xlab("")+ylab("")
   if (!is.null(labels)) p <- p + geom_text(aes(label = label))
   return(p)
@@ -842,23 +841,23 @@ histF <- function(x, sd_x = NULL, breaks = "scott") {
   if (breaks %in% c("sqrt", "sturges", "rice")) {
     k <- switch(breaks,
                 sqrt = sqrt(length(x)),
-                sturges = floor(log2(x))+1,
-                rice = floor(2 * length(x)^(1/3))
+                sturges = floor(log2(x)) + 1,
+                rice = floor(2 * length(x)^(1 / 3))
     )
-    bw <- diff(range(x))/k
+    bw <- diff(range(x)) / k
   }else{
     bw <- switch(breaks,
-                 scott = 3.5 * sd_x/length(x)^(1/3),
-                 fd = diff(range(x))/(2 * IQR(x)/length(x)^(1/3))
+                 scott = 3.5 * sd_x / length(x)^(1 / 3),
+                 fd = diff(range(x)) / (2 * IQR(x) / length(x)^(1 / 3))
     )
   }
 
 
-  daf <- data.frame(x=x)
+  daf <- data.frame(x = x)
   ## graph
-  return(ggplot(data=daf, aes(x)) +
+  return(ggplot(data = daf, aes(x)) +
            geom_histogram(aes(y = ..density..),
-                          col="black", fill = "grey", binwidth = bw)+
+                          col = "black", fill = "grey", binwidth = bw)+
            geom_density(size = 1.2,
                         col = "blue",
                         linetype = "blank",
@@ -866,7 +865,7 @@ histF <- function(x, sd_x = NULL, breaks = "scott") {
            stat_function(fun = dnorm,
                          args = list(mean = 0, sd = sd_x),
                          col = "blue", size = 1.2)+
-           theme(legend.position="none")+
+           theme(legend.position = "none")+
            xlab(""))
 }
 
@@ -889,50 +888,50 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   fflab <- colnames(df)[ffidx]
   ## Individual time-course
   rawPlot <- 
-    ggplot(data = df, aes(x=df[[timidx]], y=df[[varidx]], colour=df[[ffidx]], group=df[[individx]])) +
+    ggplot(data = df, aes(x = df[[timidx]], y = df[[varidx]], colour = df[[ffidx]], group = df[[individx]])) +
     geom_point()+
     geom_line() +  ggtitle("Individual time-courses (raw data)")+ 
     ylab(nameVar) +
     xlab(label = colnames(df)[2])+
-    theme(legend.title = element_blank() , legend.position="none", plot.title = element_text(size = rel(1.2), face = "bold"))
+    theme(legend.title = element_blank() , legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Boxplot of fixed factor
   bPlot <- 
-    ggplot(data = df, aes(y=df[[varidx]], x=df[[ffidx]], color=df[[ffidx]]))+
-    geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4)+
-    ggtitle(paste("Boxplot by ", fflab, sep=""))+xlab("")+ylab("")+
+    ggplot(data = df, aes(y = df[[varidx]], x = df[[ffidx]], color = df[[ffidx]]))+
+    geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 4)+
+    ggtitle(paste("Boxplot by ", fflab, sep = ""))+xlab("")+ylab("")+
     theme(legend.title = element_blank(), plot.title = element_text(size = rel(1.2), face = "bold"))
   ## Post-hoc estimates
   ddlsm1  <- mfl
   ddlsm1$name <- rownames(ddlsm1)
   # ddlsm1$name <- sapply(rownames(ddlsm1),
   #                       function(nam) {
-  #                          strsplit(nam, split = " ", fixed =TRUE)[[1]][1]
+  #                          strsplit(nam, split = " ", fixed = TRUE)[[1]][1]
   #                       })
   # ddlsm1$detail <- sapply(rownames(ddlsm1),
   #                         function(nam) {
-  #                            paste(strsplit(nam, split = " ", fixed =TRUE)[[1]][-1],
-  #                                  collapse= "")
+  #                            paste(strsplit(nam, split = " ", fixed = TRUE)[[1]][-1],
+  #                                  collapse = "")
   #                         })
   # 
   #colnames(ddlsm1) <- make.names(colnames(ddlsm1))
   ddlsm1$Significance <- rep("NS", nrow(ddlsm1))
   ## modif JF pour tenir compte du seuil de pvalues defini par le user
-  options("scipen"=100, "digits"=5)
+  options("scipen" = 100, "digits" = 5)
   pvalCutof <- as.numeric(pvalCutof)
-  bs=0.05; bm=0.01; bi=0.005
+  bs = 0.05; bm = 0.01; bi = 0.005
   if (pvalCutof > bm) {bs <- pvalCutof} else
     if (pvalCutof <bm & pvalCutof > bi) {bm <- pvalCutof; bs <- pvalCutof} else
       if (pvalCutof < bi) {bi <- pvalCutof; bm <- pvalCutof; bs <- pvalCutof}
-  lbs <- paste("p-value < ", bs, sep="")
-  lbm <- paste("p-value < ", bm, sep="")
-  lbi <- paste("p-value < ", bi, sep="")
-  cols <- paste("p-value < ", bs, sep="")
-  colm <- paste("p-value < ", bm, sep="")
-  coli <- paste("p-value < ", bi, sep="")
+  lbs <- paste("p-value < ", bs, sep = "")
+  lbm <- paste("p-value < ", bm, sep = "")
+  lbi <- paste("p-value < ", bi, sep = "")
+  cols <- paste("p-value < ", bs, sep = "")
+  colm <- paste("p-value < ", bm, sep = "")
+  coli <- paste("p-value < ", bi, sep = "")
   valcol <- c("grey", "yellow", "orange", "red")
   names (valcol) <- c("NS", lbs, lbm, lbi)
-  ddlsm1$Significance[which(ddlsm1$p.value<= bs)] <- lbs    ddlsm1$Significance[which(ddlsm1$p.value<bs & ddlsm1$p.value >= bm)] <- lbm
-  ddlsm1$Significance[which(ddlsm1$p.value<bi)] <- lbi
+  ddlsm1$Significance[which(ddlsm1$p.value <= bs)] <- lbs    ddlsm1$Significance[which(ddlsm1$p.value < bs & ddlsm1$p.value >= bm)] <- lbm
+  ddlsm1$Significance[which(ddlsm1$p.value < bi)] <- lbi
   ddlsm1$levels <- rownames(ddlsm1)
   ddlsm1$term <- sapply(rownames(ddlsm1), function(namC) {
     strsplit(namC, split = " ", fixed = TRUE)[[1]][1]
@@ -942,22 +941,22 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   phPlot <- 
     ggplot(ddlsm1, aes(x = levels, y = Estimate))+
     facet_grid(facets = ~term, ddlsm1, scales = "free", space = "free")+
-    geom_bar(aes(fill = Significance), stat="identity")+
+    geom_bar(aes(fill = Significance), stat = "identity")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))+
     scale_fill_manual(
       # values = c("NS" = "grey", "p-value < threshold" = "yellow", "p-value < 0.01" = "orange", "p-value < 0.005" = "red"))+
       # values = c("NS" = 'grey', "pvalue < 0.05 "= 'yellow', "p-value < 0.01" = 'orange', "p-value < 0.005" = 'red'))+
       # values = c("NS = grey", "p-value < threshold = yellow", "p-value < 0.01 = orange", "p-value < 0.005 = red"))+
       values = valcol)+ 
-    geom_errorbar(aes(ymin = Lower.CI, ymax =Upper.CI), width=0.25)+
-    # ggtitle(paste("Post-hoc estimates with p-value threshold = ", pvalCutof, sep=""))+xlab("")+
+    geom_errorbar(aes(ymin = Lower.CI, ymax = Upper.CI), width = 0.25)+
+    # ggtitle(paste("Post-hoc estimates with p-value threshold = ", pvalCutof, sep = ""))+xlab("")+
     ggtitle("Post-hoc estimates ")+xlab("")+
     theme(plot.title = element_text(size = rel(1.2), face = "bold"))
 
   ## Final plotting
-  grid.arrange(arrangeGrob(rawPlot, bPlot, ncol=2),
-               phPlot, nrow=2,
-               top = textGrob(title, gp=gpar(fontsize=32, font=4))
+  grid.arrange(arrangeGrob(rawPlot, bPlot, ncol = 2),
+               phPlot, nrow = 2,
+               top = textGrob(title, gp = gpar(fontsize = 32, font = 4))
   )
 
 } 

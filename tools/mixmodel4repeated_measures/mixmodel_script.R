@@ -42,31 +42,31 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
 
    if (skip == 0) {
 
-      mfl <- lmer(vd ~ time + fixfact + time:fixfact + (1| subject), ids) # lmer remix
+      mfl <- lmer(vd ~ time + fixfact + time:fixfact + (1 | subject), ids) # lmer remix
 
       rsum <- summary(mfl, ddf = dffOption)
       ## test Shapiro Wilks on the residus of the model
       rShapiro <- shapiro.test(rsum$residuals)
       raov <- anova(mfl, ddf = dffOption)
-      dlsm1  <- data.frame(difflsmeans(mfl, test.effs=NULL))
+      dlsm1  <- data.frame(difflsmeans(mfl, test.effs = NULL))
       ddlsm1 <- dlsm1
       ## save rownames and factor names
       rn <- rownames(ddlsm1)
       fn <- ddlsm1[, c(1, 2)]
       ## writing the results on a single line
-      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct + ncff))], sep="")
-      namesFactPval <- paste("pvalue ", rownames(ddlsm1)[c(1:(nct + ncff))], sep="")
+      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct + ncff))], sep = "")
+      namesFactPval <- paste("pvalue ", rownames(ddlsm1)[c(1:(nct + ncff))], sep = "")
       namesInter <- rownames(ddlsm1)[-c(1:(nct + ncff))]
       namesEstimate <- paste("estimate ", namesInter)
       namespvalues <- paste("pvalue ", namesInter)
       namesFactprinc <- c("pval_time", "pval_trt", "pval_inter")
-      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct + ncff))], sep="")
+      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct + ncff))], sep = "")
 
-      namesFactLowerCI <- paste("lowerCI ", rownames(ddlsm1)[c(1:(nct + ncff))], sep="")
-      namesLowerCI <- paste("lowerCI ", namesInter, sep="")
+      namesFactLowerCI <- paste("lowerCI ", rownames(ddlsm1)[c(1:(nct + ncff))], sep = "")
+      namesLowerCI <- paste("lowerCI ", namesInter, sep = "")
 
-      namesFactUpperCI <- paste("UpperCI ", rownames(ddlsm1)[c(1:(nct + ncff))], sep="")
-      namesUpperCI <- paste("UpperCI ", namesInter, sep="")
+      namesFactUpperCI <- paste("UpperCI ", rownames(ddlsm1)[c(1:(nct + ncff))], sep = "")
+      namesUpperCI <- paste("UpperCI ", namesInter, sep = "")
 
 
       ### lmer results on 1 vector row
@@ -105,7 +105,7 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       res[(nfp + nresf + nct + 1):(nfp + nresf + nct + ncff), ] <- ddlsm1[(nct + 1):(nct + ncff), 7]
       rownames(res)[(nfp + nresf + 1):(nfp + nresf + nct + ncff)] <- namesFactLowerCI
       res[(nfp + nresf + nct + ncff + 1):(nfp + 2 * nresf), ] <- ddlsm1[(nct + ncff + 1):(nresf), 7]
-      rownames(res)[(nfp + nresf + nct + ncff + 1):(nfp + nresf + (nresf/2))] <- namesLowerCI
+      rownames(res)[(nfp + nresf + nct + ncff + 1):(nfp + nresf + (nresf / 2))] <- namesLowerCI
       # Upper CI of the difference between levels of factors
       nresf <- nresf + nresT
       res[(nfp + nresf + 1):(nfp + nresf + nct), ] <- ddlsm1[c(1:nct), 8]
@@ -114,11 +114,10 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
       res[(nfp + nresf + nct + ncff + 1):(nfp + nresf + (nresT)), ] <- ddlsm1[(nct + ncff + 1):(nresT), 8]
       rownames(res)[(nfp + nresf + nct + ncff + 1):(nfp + nresf + (nresT))] <- namesUpperCI
 
-   }
-   else
+   } else {
       ## one of the subject has only one time, subject can't be a random variable
       ## A repeated measure could be run instead function lme of package nlme, in next version?
-   {   res[1, ] <- NA
+      res[1, ] <- NA
       cat("\n Computing impossible for feature ", tit, ": at least one subject has only one time.\n")
    }
    tres <- data.frame(t(res))
@@ -129,15 +128,14 @@ lmRepeated2FF <- function(ids, ifixfact, itime, isubject, ivd, ndim, nameVar=col
 
 ##############################################################################################################
 lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar = colnames(ids)[[ivd]],
-                          dffOption, pvalCutof = 0.05)
-   {
+                          dffOption, pvalCutof = 0.05) {
    ### function to perform linear mixed model with factor Time + random factor subject
    ### based on lmerTest package providing functions giving the same results as SAS proc mixed
 
 
-   if (!is.numeric(ids[[ivd]]))     {stop("Dependant variable is not numeric")}
-   if (!is.factor(ids[[itime]]))    {stop("Repeated factor is not a factor")}
-   if (!is.factor(ids[[isubject]])) {stop("Random factor is not a factor")}
+   if (!is.numeric(ids[[ivd]]))     stop("Dependant variable is not numeric")
+   if (!is.factor(ids[[itime]]))    stop("Repeated factor is not a factor")
+   if (!is.factor(ids[[isubject]])) stop("Random factor is not a factor")
    # Could be interesting here to add an experience plan check to give back a specific error message
    # in case time points are missing for some individuals
 
@@ -164,27 +162,27 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
 
    if (skip == 0) {
 
-      mfl <- lmer(vd ~ time + (1| subject), ids) # lmer remix
+      mfl <- lmer(vd ~ time + (1 | subject), ids) # lmer remix
       rsum <- summary(mfl, ddf = dffOption)
-      ## test Shapiro Wilks on the residus of the model 
+      ## test Shapiro Wilks on the residus of the model
       rShapiro <- shapiro.test(rsum$residuals)
       raov <- anova(mfl, ddf = dffOption)
       ## Sum of square : aov$'Sum Sq', Mean square : aov$`Mean Sq`, proba : aov$`Pr(>F)`
 
-      ## Test of all differences estimates between levels as SAS proc mixed. 
+      ## Test of all differences estimates between levels as SAS proc mixed.
       ## results are in diffs.lsmeans.table dataframe
       ## test.effs=NULL perform all pairs comparisons including interaction effect
-      dlsm1  <- data.frame(difflsmeans(mfl, test.effs=NULL))
+      dlsm1  <- data.frame(difflsmeans(mfl, test.effs = NULL))
       ddlsm1 <- dlsm1
       ## save rownames and factor names
       rn <- rownames(ddlsm1)
       fn <- ddlsm1[, c(1, 2)]
       ## writing the results on a single line
-      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct))], sep="")
-      namesFactPval  <- paste("pvalue ", rownames(ddlsm1)[c(1:(nct))], sep="")
+      namesFactEstim <- paste("estimate ", rownames(ddlsm1)[c(1:(nct))], sep = "")
+      namesFactPval  <- paste("pvalue ", rownames(ddlsm1)[c(1:(nct))], sep = "")
       namesFactprinc <- "pval_time"
-      namesLowerCI   <- paste("lowerCI ", rownames(ddlsm1)[c(1:(nct))], sep="")
-      namesUpperCI   <- paste("upperCI ", rownames(ddlsm1)[c(1:(nct))], sep="")
+      namesLowerCI   <- paste("lowerCI ", rownames(ddlsm1)[c(1:(nct))], sep = "")
+      namesUpperCI   <- paste("upperCI ", rownames(ddlsm1)[c(1:(nct))], sep = "")
 
       ### lmer results on 1 vector
       # pvalue of shapiro Wilks test of the residuals
@@ -217,11 +215,10 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
       rownames(res)[(nfp + nresf + 1):(nfp + nresf + nct)] <- namesUpperCI
 
 
-   }
-   else
+   } else {
       ## one of the subject has only one time, subject can't be a random variable
       ## A repeated measure could be run instead function lme of package nlme, next version
-   {   res[1, ] <- NA
+       res[1, ] <- NA
        cat("\n Computing impossible for feature ", colnames(ids)[4], ": at least one subject has only one time.\n")
    }
    tres <- data.frame(t(res))
@@ -236,7 +233,7 @@ defColRes <- function(ids, ifixfact, itime) {
    ## define the size of the result file depending on the numbers of levels of the fixed and time factor.
    ## Numbers of levels define the numbers of comparisons with pvalue and estimate of the difference.
    ## The result file also contains the pvalue of the fixed factor, time factor and interaction
-   ## plus Shapiro normality test. This is define by nfp 
+   ## plus Shapiro normality test. This is define by nfp
    ## subscript of fixed factor=0 means no other fixed factor than "time"
    if (ifixfact > 0) {
       nfp <- 6 # shapiro + subject variance + REML + time + fixfact + interaction
@@ -334,8 +331,7 @@ lmixedm <- function(datMN,
       nColRes <- ndim[1] + (4 * (ndim[3] + ndim[5] + ndim[7]))
       firstpval <- ndim[1] - 2
       lastpval  <- ndim[1] + ndim[3] + ndim[5] + ndim[7]
-  } else 
-   {
+  } else {
       ndim <- defColRes(dslm[, itime], ifixfact = 0, itime = 1) 
       nColRes <- ndim[1] + (4 * (ndim[5]))
       firstpval <- ndim[1]
@@ -367,7 +363,7 @@ lmixedm <- function(datMN,
                                      pvalCutof = pvalCutof, dffOption = dffOption)
 
          resLM[i - firstvar + 1, ] <- reslmer[[1]]
-      }, error = function(e){cat("ERROR : ", conditionMessage(e), "\n");})
+      }, error = function(e){cat("ERROR: ", conditionMessage(e), "\n");})
       if (i == firstvar) {
          colnames(resLM) <- colnames(reslmer[[1]])
          labelRow <- reslmer[[2]]
@@ -401,8 +397,7 @@ lmixedm <- function(datMN,
       ## interaction effect
       resLM[which(resLM[, firstpval + 2]> pvalCutof), c((lastpval + ndim[5] + ndim[3] + 1):(lastpval + ndim[5] + ndim[3] + ndim[7]))] <- 0
       resLM[which(resLM[, firstpval + 2]> pvalCutof), c((ndim[1]  + ndim[5] + ndim[3] + 1):(ndim[1]  + ndim[5] + ndim[3] + ndim[7]))] <- NA
-   } else
-      {
+   } else {
       ## time effect only
       resLM[which(resLM[, firstpval] > pvalCutof), c((lastpval  + 1):(lastpval  + ndim[5]))] <- 0
       resLM[which(resLM[, firstpval] > pvalCutof), c((firstpval + 1):(firstpval + ndim[5]))] <- NA
@@ -412,11 +407,11 @@ lmixedm <- function(datMN,
    pdf(pdfE, onefile = TRUE, height = 15, width = 30)
 
    ## for each variable (in row)
-   for (i in 1:nrow(resLM)) {
+   for (i in seq_len(nrow(resLM))) {
       cat("\n", rownames(resLM)[i])
 
       ## if any fixed factor + time factor
-      if (ifixfact > 0) 
+      if (ifixfact > 0)
 
          ## if any main factor after p-value correction is significant -> plot estimates and time course
          if (length(which(resLM[i, c(4:6)] < pvalCutof)) > 0) {
@@ -443,7 +438,7 @@ lmixedm <- function(datMN,
 
          }
 
-      ## if only a time factor  
+      ## if only a time factor
       if (ifixfact == 0)
 
          ## if time factor after p-value correction is significant -> plot time course
@@ -475,9 +470,7 @@ lmixedm <- function(datMN,
 
    ## return result file with pvalues and estimates (exclude confidence interval used for plotting)
    iCI <- which(substr(colnames(resLM), 4, 7) == "erCI")
-   resLM <- resLM[, - iCI] 
+   resLM <- resLM[, - iCI]
    resLM <- cbind(varids, resLM)
    return(resLM)
 }
-
-

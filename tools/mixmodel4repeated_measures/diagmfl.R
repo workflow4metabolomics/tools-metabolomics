@@ -836,6 +836,7 @@ histF <- function(x, sd_x = NULL, breaks = "scott") {
 
 
 plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
+
   ## define subscript of the different columns depending if we have only time (ncol(df)=3) or not
   if (ncol(df) > 3) {
     varidx <- 4
@@ -851,10 +852,10 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   nameVar <- colnames(df)[varidx]
   fflab <- colnames(df)[ffidx]
   ## Individual time-course
-  rawPlot <- 
+  rawPlot <-
     ggplot(data = df, aes(x = df[[timidx]], y = df[[varidx]], colour = df[[ffidx]], group = df[[individx]])) +
     geom_point() +
-    geom_line() +  ggtitle("Individual time-courses (raw data)") + 
+    geom_line() +  ggtitle("Individual time-courses (raw data)") +
     ylab(nameVar) +
     xlab(label = colnames(df)[2]) +
     theme(legend.title = element_blank(), legend.position = "none", plot.title = element_text(size = rel(1.2), face = "bold"))
@@ -875,8 +876,12 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   if (pvalCutof > bm) {
     bs <- pvalCutof
   } else
-    if (pvalCutof <bm & pvalCutof > bi) {bm <- pvalCutof; bs <- pvalCutof} else
-      if (pvalCutof < bi) {bi <- pvalCutof; bm <- pvalCutof; bs <- pvalCutof}
+    if (pvalCutof <bm & pvalCutof > bi) {
+      bm <- pvalCutof; bs <- pvalCutof
+    } else
+      if (pvalCutof < bi) {
+        bi <- pvalCutof; bm <- pvalCutof; bs <- pvalCutof
+      }
   lbs <- paste("p-value < ", bs, sep = "")
   lbm <- paste("p-value < ", bm, sep = "")
   lbi <- paste("p-value < ", bi, sep = "")
@@ -884,8 +889,9 @@ plot.res.Lmixed <- function(mfl, df, title = "", pvalCutof = 0.05) {
   colm <- paste("p-value < ", bm, sep = "")
   coli <- paste("p-value < ", bi, sep = "")
   valcol <- c("grey", "yellow", "orange", "red")
-  names (valcol) <- c("NS", lbs, lbm, lbi)
-  ddlsm1$Significance[which(ddlsm1$p.value <= bs)] <- lbs    ddlsm1$Significance[which(ddlsm1$p.value < bs & ddlsm1$p.value >= bm)] <- lbm
+  names(valcol) <- c("NS", lbs, lbm, lbi)
+  ddlsm1$Significance[which(ddlsm1$p.value <= bs)] <- lbs
+  ddlsm1$Significance[which(ddlsm1$p.value < bs & ddlsm1$p.value >= bm)] <- lbm
   ddlsm1$Significance[which(ddlsm1$p.value < bi)] <- lbi
   ddlsm1$levels <- rownames(ddlsm1)
   ddlsm1$term <- sapply(rownames(ddlsm1), function(namC) {

@@ -807,13 +807,13 @@ histF <- function(x, sd_x = NULL, breaks = "scott") {
     k <- switch(breaks,
                 sqrt = sqrt(length(x)),
                 sturges = floor(log2(x)) + 1,
-                rice = floor(2 * length(x)^(1 / 3))
+                rice = floor(2 * length(x) ^ (1 / 3))
     )
     bw <- diff(range(x)) / k
   }else{
     bw <- switch(breaks,
-                 scott = 3.5 * sd_x / length(x)^(1 / 3),
-                 fd = diff(range(x)) / (2 * IQR(x) / length(x)^(1 / 3))
+                 scott = 3.5 * sd_x / length(x) ^ (1 / 3),
+                 fd = diff(range(x)) / (2 * IQR(x) / length(x) ^ (1 / 3))
     )
   }
 

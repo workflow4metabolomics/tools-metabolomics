@@ -143,7 +143,6 @@ lmRepeated1FF <- function(ids, ifixfact = 0, itime, isubject, ivd, ndim, nameVar
    subject <- ids[[isubject]]
    vd <- ids[[ivd]] ## dependant variables (quatitative)
 
-   # ndim <- defColRes(ids, 0, itime)
    # nfp : nombre de facteurs principaux + model infos + normality test
    nfp <- ndim[1]
    # nlt number of time levels; nct number of comparisons of the time factor
@@ -264,7 +263,7 @@ defColRes <- function(ids, ifixfact, itime) {
 
    }
    else {
-      nfp <- 4 # shapiro + time
+      nfp <- 4 # Mandatory columns: shapiro + subject variance + REML + time
       time <- ids[[itime]]
       # nct number of comparison of the time factor
       nlt <- length(levels(time))
@@ -364,7 +363,10 @@ lmixedm <- function(datMN,
                                      pvalCutof = pvalCutof, dffOption = dffOption)
 
          resLM[i - firstvar + 1, ] <- reslmer[[1]]
-      }, error = function(e) {cat("ERROR: ", conditionMessage(e), "\n");})
+      }, error = function(e) {
+        cat("ERROR: ", conditionMessage(e), "\n")
+       }
+      )
       if (i == firstvar) {
          colnames(resLM) <- colnames(reslmer[[1]])
          labelRow <- reslmer[[2]]
@@ -420,7 +422,6 @@ lmixedm <- function(datMN,
             ## Plot of time course by fixfact : data prep with factors and quantitative var to be plot
             subv <- dslm[, colnames(dslm) == rownames(resLM)[i]]
             subds <- data.frame(dslm[[ifixfact]], dslm[[itime]], dslm[[isubject]], subv)
-            #colnames(subds) <- c(colnames(dslm)[ifixfact], colnames(dslm)[itime], colnames(dslm)[isubject], rownames(resLM)[i] <- rownames(resLM)[i])
             libvar <- c(fixfact, time, subject)
             colnames(subds) <- c(libvar, rownames(resLM)[i])
 
@@ -466,7 +467,7 @@ lmixedm <- function(datMN,
 
          }
 
-   }      
+   }
    dev.off()
 
    ## return result file with pvalues and estimates (exclude confidence interval used for plotting)

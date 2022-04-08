@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-library(batch) ## parseCommandArgs
-
 library(lme4)     ## mixed model computing
 library(Matrix)
 library(MASS)
@@ -9,7 +7,6 @@ library(lmerTest) ## computing pvalue and lsmeans from results of lme4 package
 library(multtest) ## multiple testing
 library(ggplot2)
 library(gridExtra)
-library(grid)
 
 source_local <- function(fname) {
     argv <- commandArgs(trailingOnly = FALSE)
@@ -17,10 +14,137 @@ source_local <- function(fname) {
     source(paste(base_dir, fname, sep = "/"))
 }
 
+create_parser <- function() {
+  parser <- optparse::OptionParser()
+
+  parser <- optparse::add_option(
+    parser,
+    c("--information"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--dataMatrix_in"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--sampleMetadata_in"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--variableMetadata_in"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--time"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--subject"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--thrN"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--dff"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--fixfact"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--trf"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--adjC"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--diaR"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--out_graph_pdf"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--out_estim_pdf"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--variableMetadata_out"),
+    type = "character", ## This must be changed
+    action = "store",
+    # default = It would be good to have default values
+    help = "Not redacted yet"
+  )
+  return(parser)
+}
+
+args <- optparse::parse_args(create_parser())
+
 source_local("mixmodel_script.R")
 source_local("diagmfl.R")
 
-argVc <- unlist(parseCommandArgs(evaluate = FALSE))
 
 ##------------------------------
 ## Initializing
@@ -66,29 +190,29 @@ flgF <- function(tesC,
 ## log file
 ##---------
 
-sink(argVc["information"])
+sink(args$information)
 
 cat("\nStart of the '", modNamC, "' Galaxy module call: ", format(Sys.time(), "%a %d %b %Y %X"), "\n", sep = "")
 cat("\nParameters used:\n\n")
-print(argVc)
+print(args)
 cat("\n\n")
 
 ## loading
 ##--------
 
-datMN <- t(as.matrix(read.table(argVc["dataMatrix_in"],
+datMN <- t(as.matrix(read.table(args$dataMatrix_in,
                                 check.names = FALSE,
                                 header = TRUE,
                                 row.names = 1,
                                 sep = "\t")))
 
-samDF <- read.table(argVc["sampleMetadata_in"],
+samDF <- read.table(args$sampleMetadata_in,
                     check.names = FALSE,
                     header = TRUE,
                     row.names = 1,
                     sep = "\t")
 
-varDF <- read.table(argVc["variableMetadata_in"],
+varDF <- read.table(args$variableMetadata_in,
                     check.names = FALSE,
                     header = TRUE,
                     row.names = 1,
@@ -101,24 +225,24 @@ varDF <- read.table(argVc["variableMetadata_in"],
 flgF("identical(rownames(datMN), rownames(samDF))", txtC = "Column names of the dataMatrix are not identical to the row names of the sampleMetadata; check your data with the 'Check Format' module in the 'Quality Control' section")
 flgF("identical(colnames(datMN), rownames(varDF))", txtC = "Row names of the dataMatrix are not identical to the row names of the variableMetadata; check your data with the 'Check Format' module in the 'Quality Control' section")
 
-flgF("argVc['time']    %in% colnames(samDF)", txtC = paste0("Required time factor '", argVc["time"], "' could not be found in the column names of the sampleMetadata"))
-flgF("argVc['subject'] %in% colnames(samDF)", txtC = paste0("Required subject factor '", argVc["subject"], "' could not be found in the column names of the sampleMetadata"))
+flgF("args$time    %in% colnames(samDF)", txtC = paste0("Required time factor '", args$time, "' could not be found in the column names of the sampleMetadata"))
+flgF("args$subject %in% colnames(samDF)", txtC = paste0("Required subject factor '", args$subject, "' could not be found in the column names of the sampleMetadata"))
 
-flgF("mode(samDF[, argVc['time']])    %in% c('character', 'numeric')", txtC = paste0("The '", argVc["time"], "' column of the sampleMetadata should contain either number only, or character only"))
-flgF("mode(samDF[, argVc['subject']]) %in% c('character', 'numeric')", txtC = paste0("The '", argVc["subject"], "' column of the sampleMetadata should contain either number only, or character only"))
+flgF("mode(samDF[, args$time])    %in% c('character', 'numeric')", txtC = paste0("The '", args$time, "' column of the sampleMetadata should contain either number only, or character only"))
+flgF("mode(samDF[, args$subject]) %in% c('character', 'numeric')", txtC = paste0("The '", args$subject, "' column of the sampleMetadata should contain either number only, or character only"))
 
-flgF("argVc['adjC'] %in% c('holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr', 'none')")
-flgF("argVc['trf'] %in% c('none', 'log10', 'log2')")
+flgF("args$adjC %in% c('holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr', 'none')")
+flgF("args$trf %in% c('none', 'log10', 'log2')")
 
-flgF("0 <= as.numeric(argVc['thrN']) && as.numeric(argVc['thrN']) <= 1", txtC = "(corrected) p-value threshold must be between 0 and 1")
-flgF("argVc['diaR'] %in% c('no', 'yes')")
+flgF("0 <= as.numeric(args$thrN) && as.numeric(args$thrN) <= 1", txtC = "(corrected) p-value threshold must be between 0 and 1")
+flgF("args$diaR %in% c('no', 'yes')")
 
 
 ##------------------------------
 ## Formating
 ##------------------------------
 
-if (argVc["dff"] == "Satt") {
+if (args$dff == "Satt") {
   dffmeth <- "Satterthwaite"
 } else {
   dffmeth <- "Kenward-Roger"
@@ -133,18 +257,18 @@ if (argVc["dff"] == "Satt") {
 varDF <- lmixedm(datMN = datMN,
                      samDF = samDF,
                      varDF = varDF,
-                     fixfact     = argVc["fixfact"],
-                     time        = argVc["time"],
-                     subject     = argVc["subject"],
-                     logtr       = argVc["trf"],
-                     pvalCutof   = argVc["thrN"],
-                     pvalcorMeth = argVc["adjC"],
+                     fixfact     = args$fixfact,
+                     time        = args$time,
+                     subject     = args$subject,
+                     logtr       = args$trf,
+                     pvalCutof   = args$thrN,
+                     pvalcorMeth = args$adjC,
                      dffOption   = dffmeth,
-                     visu        = argVc["diaR"],
+                     visu        = args$diaR,
                      least.confounded = FALSE,
                      outlier.limit = 3,
-                     pdfC        = argVc["out_graph_pdf"],
-                     pdfE        = argVc["out_estim_pdf"]
+                     pdfC        = args$out_graph_pdf,
+                     pdfE        = args$out_estim_pdf
                      )
 
 
@@ -160,7 +284,7 @@ varDF <- cbind.data.frame(variableMetadata = rownames(varDF),
                           varDF)
 
 write.table(varDF,
-            file = argVc["variableMetadata_out"],
+            file = args$variableMetadata_out,
             quote = FALSE,
             row.names = FALSE,
             sep = "\t")

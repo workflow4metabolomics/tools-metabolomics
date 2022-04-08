@@ -352,7 +352,7 @@ lmixedm <- function(datMN,
 
       subds <- dslm[, c(ifixfact, itime, isubject, i)]
 
-      tryCatch({
+      # tryCatch({
          if (ifixfact > 0)
             reslmer <- lmRepeated2FF(subds, ifixfact = 1, itime = 2, isubject = 3, ivd = 4, ndim = ndim, visu = visu,
                                      tit = colnames(dslm)[i], pvalCutof = pvalCutof,
@@ -363,10 +363,10 @@ lmixedm <- function(datMN,
                                      pvalCutof = pvalCutof, dffOption = dffOption)
 
          resLM[i - firstvar + 1, ] <- reslmer[[1]]
-      }, error = function(e) {
-        cat("ERROR: ", conditionMessage(e), "\n")
-       }
-      )
+      # }, error = function(e) {
+      #   cat("ERROR: ", conditionMessage(e), "\n")
+      #  }
+      # )
       if (i == firstvar) {
          colnames(resLM) <- colnames(reslmer[[1]])
          labelRow <- reslmer[[2]]

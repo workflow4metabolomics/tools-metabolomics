@@ -112,6 +112,17 @@ flgF("argVc['diaR'] %in% c('no', 'yes')")
 
 
 ##------------------------------
+## Formating
+##------------------------------
+
+if (argVc["dff"] == "Satt") {
+  dffmeth <- "Satterthwaite"
+} else {
+  dffmeth <- "Kenward-Roger"
+}
+
+
+##------------------------------
 ## Computation
 ##------------------------------
 
@@ -125,7 +136,7 @@ varDF <- lmixedm(datMN = datMN,
                      logtr       = argVc["trf"],
                      pvalCutof   = argVc["thrN"],
                      pvalcorMeth = argVc["adjC"],
-                     dffOption   = "Satterthwaite",
+                     dffOption   = dffmeth,
                      visu        = argVc["diaR"],
                      least.confounded = FALSE,
                      outlier.limit = 3,

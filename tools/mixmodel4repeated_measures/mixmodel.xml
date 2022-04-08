@@ -32,6 +32,7 @@
         trf  "$trf"
         thrN "$thrN"
         diaR "$diaR"
+        dff "$dff"
 
         variableMetadata_out "$variableMetadata_out"
         out_graph_pdf "$out_graph_pdf"
@@ -47,6 +48,10 @@
         <param name="fixfact"  label="Fixed Factor of interest" type="text" help="Name of sample metadata column corresponding to the fixed factor (use none if only time factor"/>
         <param name="time"    label="Repeated factor (time)" type="text" help="Name of the column of the sample metadata table corresponding to the repeated factor"/>
         <param name="subject" label="Subject factor" type="text" help="Name of the column of the sample metadata table corresponding to the subject factor"/>
+        <param name="dff" label="Degrees of freedom method for the F-tests" type="select" help="">
+            <option value="Satt">Satterthwaite</option>
+            <option value="KenR">Kenward-Roger</option>
+        </param>
         <param name="adjC" label="Method for multiple testing correction" type="select" help="">
             <option value="fdr">fdr</option>
             <option value="BH">BH</option>
@@ -89,7 +94,7 @@
 			<param name="adjC" value = "none"/>
 			<param name="trf" value = "log10"/>
 			<param name="thrN" value = "0.01"/>
-<!--            <param name="dffoption" value = "Satterthwaite"/> -->
+            <param name="dff" value = "Satt"/> 
             <output name="variableMetadata_out" value="mixmodel_TwoFactor_variableMetadata.txt" />
         </test>
     </tests>
@@ -102,7 +107,8 @@
 .. class:: infomark
 
 **Authors** Natacha Lenuzza and Jean-Francois Martin wrote this wrapper of R repeated measure anova statistical tests. 
-**Maintainers** Melanie Petera and Marie Tremblay-Franco (INRAE-MetaboHUB)
+**Maintainers** Melanie Petera and Marie Tremblay-Franco (INRAE-MetaboHUB)
+
 MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (https://www.metabohub.fr/home.html)
 
 .. class:: infomark
@@ -173,6 +179,10 @@ Subject
 | Name of the subject (on which the repeated measurement id done) in the sample metadata file
 |
 
+Degrees of freedom
+| Method to use for degrees of freedom computation 
+|
+
 Method for multiple testing correction
 | The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
 | "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
@@ -217,6 +227,8 @@ Changelog/News
 **Version 3.1.0 - April 2022**
 
 - NEW FEATURE: the tool now can be used without fixed factor by specify "none" in the concerned parameter field.
+
+- NEW FEATURE: addition of the possibility to choose the degrees of freedom computation method (previously using only the Satterthwaite method).
 
 
 

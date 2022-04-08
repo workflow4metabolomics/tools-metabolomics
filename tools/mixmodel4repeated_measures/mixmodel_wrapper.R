@@ -69,6 +69,9 @@ flgF <- function(tesC,
 sink(argVc["information"])
 
 cat("\nStart of the '", modNamC, "' Galaxy module call: ", format(Sys.time(), "%a %d %b %Y %X"), "\n", sep = "")
+cat("\nParameters used:\n\n")
+print(argVc)
+cat("\n\n")
 
 ## loading
 ##--------
@@ -167,6 +170,8 @@ write.table(varDF,
 
 cat("\nEnd of '", modNamC, "' Galaxy module call: ",
     as.character(Sys.time()), "\n", sep = "")
+cat("\nInformation about R (version, Operating System, attached or loaded packages):\n\n")
+sessionInfo()
 
 sink()
 

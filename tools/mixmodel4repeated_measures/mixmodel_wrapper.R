@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-library(batch) ## parseCommandArgs
-
 library(lme4)     ## mixed model computing
 library(Matrix)
 library(MASS)
@@ -20,7 +18,19 @@ source_local <- function(fname) {
 source_local("mixmodel_script.R")
 source_local("diagmfl.R")
 
-argVc <- unlist(parseCommandArgs(evaluate = FALSE))
+parse_args <- function() {
+  args <- commandArgs()
+  start <- which(args == "--args")[1] + 1
+  if (is.na(start)) {
+    return(list())
+  }
+  seq_by2 <- seq(start, length(args), by = 2)
+  result <- as.list(args[seq_by2 + 1])
+  names(result) <- args[seq_by2]
+  return(result)
+}
+
+argVc <- unlist(parse_args())
 
 ##------------------------------
 ## Initializing

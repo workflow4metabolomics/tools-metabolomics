@@ -6,8 +6,8 @@
         <requirement type="package" version="1.1_5">r-batch</requirement>
         <requirement type="package" version="1.1_13">r-lme4</requirement>
         <requirement type="package" version="3.1_3">r-lmertest</requirement>
-		<requirement type="package" version="1.2_18">r-Matrix</requirement>
-        <requirement type="package" version="7.3_51.4">r-MASS</requirement>
+<!--		<requirement type="package" version="1.2_18">r-Matrix</requirement> -->
+<!--        <requirement type="package" version="7.3_51.4">r-MASS</requirement> -->
         <requirement type="package" version="3.2_0">r-ggplot2</requirement>
 <!--		<requirement type="package" version="3.6_2">r-grid</requirement> -->
         <requirement type="package" version="2.3">r-gridExtra</requirement>

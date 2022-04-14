@@ -364,7 +364,7 @@ lmixedm <- function(datMN,
 
          resLM[i - firstvar + 1, ] <- reslmer[[1]]
       }, error = function(e) {
-        cat("ERROR: ", conditionMessage(e), "\n")
+        cat("\nERROR with ", rownames(resLM)[i - firstvar + 1], ": ", conditionMessage(e), "\n")
        }
       )
 
@@ -415,7 +415,6 @@ lmixedm <- function(datMN,
 
    ## for each variable (in row)
    for (i in seq_len(nrow(resLM))) {
-      cat("\n", rownames(resLM)[i])
 
       ## if any fixed factor + time factor
       if (ifixfact > 0)

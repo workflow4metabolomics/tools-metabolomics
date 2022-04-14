@@ -178,7 +178,7 @@ write.table(varDF,
 ## closing
 ##--------
 
-cat("\nEnd of '", modNamC, "' Galaxy module call: ",
+cat("\n\nEnd of '", modNamC, "' Galaxy module call: ",
     as.character(Sys.time()), "\n", sep = "")
 cat("\nInformation about R (version, Operating System, attached or loaded packages):\n\n")
 sessionInfo()

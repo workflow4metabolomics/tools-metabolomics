@@ -367,11 +367,15 @@ lmixedm <- function(datMN,
         cat("ERROR: ", conditionMessage(e), "\n")
        }
       )
-      if (i == firstvar) {
-         colnames(resLM) <- colnames(reslmer[[1]])
-         labelRow <- reslmer[[2]]
-         factorRow <- reslmer[[3]]
-      }
+
+   }
+
+   if (exists("reslmer")) {
+      colnames(resLM) <- colnames(reslmer[[1]])
+      labelRow <- reslmer[[2]]
+      factorRow <- reslmer[[3]]
+   } else {
+      stop("\n- - - - -\nModel computation impossible for every single variables in the dataset: no result returned.\n- - - - -\n")
    }
 
    if (visu == "yes") dev.off()

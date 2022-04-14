@@ -73,9 +73,10 @@
     <outputs>
         <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular"/>
         <data name="information" label="${tool.name}_information.txt" format="txt"/>
-        <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf"/>
         <data name="out_estim_pdf" label="${tool.name}_Estimates" format="pdf"/>
-
+        <data name="out_graph_pdf" label="${tool.name}_diagResiduals" format="pdf">
+            <filter>diaR == 'yes'</filter>
+        </data>
     </outputs>
 
     <tests>

@@ -1,0 +1,33 @@
+Compounds	mz	rt
+2-diethylamino-6-methyl pyrimidin-4-ol one	182.12879	5.75
+5-hydroxy-thiabendazole	218.03826	5.25
+acetamiprid-N-desmethyl	209.05885	8.77
+Acetochlor	270.12554	19.31
+Avermectin B1a (Abamectin)	895.49221	27.73
+Benzophenone-3 (Oxybenzone)	229.08592	19.64
+Butocarboxim	191.0849	21.13
+Carbendazim	192.07676	5.65
+Cefoperazone	646.1497	29.25
+Chlorfenvinphos	358.97681	20.93
+Chlormequat	122.0737	0.9
+Desisopropylatrazine	174.0541	6.65
+Dichlorvos	220.9532	12.72
+Dimethyldithiophosphate	158.96979	10.25
+Emamectin B1a	886.5311	27.73
+Fluopyram	397.05369	19.35
+Hydroxy-tebuconazole	324.14733	18.31
+Isoproturon	207.14919	15.6
+Ivermectin B1a 	897.4971	27.5
+Malathion dicarboxilic acid	274.98075	9.58
+Methamidophos	142.0086	2.32
+Metolachlor	284.14119	19.3
+N,N-diethyl-m-toluamide ou DEET	192.13829	15.75
+Nigericin	747.4654	27.73
+Omethoate	214.02975	3.95
+Prochloraz	376.03809	21.19
+p-Toluenesulfonamide	172.04323	6.55
+Rifaximin	786.3596	19.72
+Spinosad A (Spinosyn A)	732.4681	20.2
+TCMTB	238.9766	17.2
+Trichlorfon (Dylox)	256.9299	7.4
+Tylosin	916.5264	15.15

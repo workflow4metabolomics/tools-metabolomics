@@ -4,7 +4,6 @@
     </description>
 
     <requirements>
-        <requirement type="package">r-base</requirement>
         <requirement type="package">r-optparse</requirement>
     </requirements>
 
@@ -26,26 +25,27 @@ Rscript '$__tool_directory__/MS2snoop.R'
     <inputs>
         <param
             type="data"
-            format="tsv"
+            format="tabular"
             name="compound_txt"
             label="compounds_pos.txt"
         />
         <param
             type="data"
-            format="tsv"
+            format="tabular"
             name="peaklist_frag_tsv"
             label="peaklist_fragments.tsv"
         />
         <param
             type="data"
-            format="tsv"
+            format="tabular"
             name="peaklist_preco_tsv"
             label="peaklist_precursors.tsv"
         />
         <param
             name="tolmz"
             type="float"
-            min="0"
+            min="0.0001"
+            max="10"
             value="0.01"
             label="MZ Tolerence"
         />
@@ -53,13 +53,15 @@ Rscript '$__tool_directory__/MS2snoop.R'
             name="tolrt"
             type="integer"
             min="0"
+            max="30"
             value="20"
-            label="RT Telerence"
+            label="RT Tolerence"
         />
         <param
             name="seuil_ra"
             type="float"
             min="0"
+            max="1"
             value="0.05"
             label="r pearson correlation threshold between precursor and fragment absolute intensity"
         />
@@ -67,6 +69,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             name="mzdecimal"
             type="integer"
             min="0"
+            max="5"
             value="0"
             label="nb decimal for mz"
         />
@@ -77,9 +80,10 @@ Rscript '$__tool_directory__/MS2snoop.R'
             value="0.85" label="fragment absolute intensity"
         />
         <param
-            min="0"
             name="min_number_scan"
             type="integer"
+            min="0"
+            max="25"
             value="8"
             label="Present in at least X scan"
             help="fragments are kept if they are found in a minimum number of scans"
@@ -88,7 +92,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
     <outputs>
         <data
             name="frag_result_txt"
-            format="tsv"
+            format="tabular"
             label="compound_fragments_result.txt"
         />
     </outputs>

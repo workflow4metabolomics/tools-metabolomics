@@ -517,7 +517,7 @@ main <- function(args) {
       precursors = precursors,
       fragments = fragments,
       mzref = compounds[[2]][i],
-      rtref = compounds[[3]][i] * 60,
+      rtref = compounds[[3]][i],
       c_name = compounds[[1]][i],
       min_number_scan = min_number_scan,
       mzdecimal = mzdecimal,

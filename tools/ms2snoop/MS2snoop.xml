@@ -4,7 +4,7 @@
     </description>
 
     <requirements>
-        <requirement type="package">r-optparse</requirement>
+        <requirement type="package" version="1.7.1">r-optparse</requirement>
     </requirements>
 
     <command><![CDATA[

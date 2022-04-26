@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 
+library(grid)
 library(lme4)     ## mixed model computing
 library(Matrix)
 library(MASS)

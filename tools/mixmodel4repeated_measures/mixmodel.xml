@@ -4,11 +4,9 @@
     <requirements>
         <requirement type="package">r-optparse</requirement>
         <requirement type="package">r-lme4</requirement>
-        <requirement type="package" version="3.1_3">r-lmertest</requirement>
-        <requirement type="package" version="1.2_18">r-Matrix</requirement>
-        <requirement type="package">r-MASS</requirement>
-        <requirement type="package" version="3.2_0">r-ggplot2</requirement>
         <requirement type="package" version="2.3">r-gridExtra</requirement>
+        <requirement type="package" version="3.1_3">r-lmertest</requirement>
+        <requirement type="package" version="3.2_0">r-ggplot2</requirement>
         <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
 

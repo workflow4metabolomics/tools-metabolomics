@@ -140,7 +140,7 @@ if (argVc["dff"] == "Satt") {
 ##------------------------------
 
 
-varDF <- lmixedm(datMN = datMN,
+varDFout <- lmixedm(datMN = datMN,
                      samDF = samDF,
                      varDF = varDF,
                      fixfact     = argVc["fixfact"],
@@ -158,6 +158,16 @@ varDF <- lmixedm(datMN = datMN,
                      )
 
 
+
+
+##------------------------------
+## Rounding
+##------------------------------
+
+if (argVc["rounding"] == "yes") {
+  varDFout[, which(!(colnames(varDFout) %in% colnames(varDF)))] <- apply(varDFout[, which(!(colnames(varDFout) %in% colnames(varDF)))], 2, round, digits = as.numeric(argVc["decplaces"]))
+}
+
 ##------------------------------
 ## Ending
 ##------------------------------
@@ -166,10 +176,10 @@ varDF <- lmixedm(datMN = datMN,
 ## saving
 ##--------
 
-varDF <- cbind.data.frame(variableMetadata = rownames(varDF),
-                          varDF)
+varDFout <- cbind.data.frame(variableMetadata = rownames(varDFout),
+                          varDFout)
 
-write.table(varDF,
+write.table(varDFout,
             file = argVc["variableMetadata_out"],
             quote = FALSE,
             row.names = FALSE,

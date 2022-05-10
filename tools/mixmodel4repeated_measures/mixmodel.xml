@@ -94,7 +94,7 @@
     </outputs>
 
     <tests>
-        <test expect_num_outputs=4>
+        <test expect_num_outputs="4">
             <param name="dataMatrix_in" value="TwoFactor_dataMatrix.txt" />
             <param name="sampleMetadata_in" value="TwoFactor_sampleMetadata.txt" />
             <param name="variableMetadata_in" value="TwoFactor_variableMetadata.txt" />

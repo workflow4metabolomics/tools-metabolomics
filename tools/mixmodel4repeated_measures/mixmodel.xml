@@ -9,11 +9,7 @@
         <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
 
-    <stdio>
-        <exit_code range="1:" level="fatal" />
-    </stdio>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         Rscript '$__tool_directory__/mixmodel_wrapper.R'
 
         dataMatrix_in '$dataMatrix_in'

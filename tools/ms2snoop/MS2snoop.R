@@ -13,8 +13,10 @@
 #'
 #' @import optparse
 #'
-NULL
 
+
+assign("MS2SNOOP_VERSION", "1.0.1")
+lockBinding("MS2SNOOP_VERSION", globalenv())
 
 assign("DEFAULT_PRECURSOR_PATH", "peaklist_precursors.tsv")
 assign("DEFAULT_FRAGMENTS_PATH", "peaklist_fragments.tsv")
@@ -380,6 +382,13 @@ create_parser <- function() {
   )
   parser <- optparse::add_option(
     parser,
+    c("-V", "--version"),
+    action = "store_true",
+    default = FALSE,
+    help = "Prints version and exits"
+  )
+  parser <- optparse::add_option(
+    parser,
     c("-o", "--output"),
     type = "character",
     default = DEFAULT_OUTPUT_PATH,
@@ -472,6 +481,11 @@ create_parser <- function() {
 }
 
 main <- function(args) {
+  if (args$version) {
+    cat(sprintf("%s\n", MS2SNOOP_VERSION))
+    base::quit(status = 0)
+  }
+  sessionInfo()
   ## FOLDER AND FILES
   ## MSpurity precursors file
   precursors <- read.table(
@@ -510,6 +524,7 @@ main <- function(args) {
   ## fragments are kept if there are found in a minimum number of scans
   min_number_scan <- args$min_number_scan
 
+  res_all <- NULL
   for (i in seq_len(nrow(compounds))) {
     ## loop execution for all compounds in the compounds file
     res_cor <- NULL
@@ -526,10 +541,12 @@ main <- function(args) {
       tolmz = tolmz,
       tolrt = tolrt
     )
-    if (i == 1 & !is.null(res_cor)) {
-      res_all <- res_cor
-    } else if (!is.null(res_cor)) {
-      res_all <- rbind(res_all, res_cor)
+    if (!is.null(res_cor)) {
+      if (is.null(res_all)) {
+        res_all <- res_cor
+      } else {
+        res_all <- rbind(res_all, res_cor)
+      }
     }
   }
 
@@ -545,7 +562,6 @@ main <- function(args) {
 }
 
 args <- optparse::parse_args(create_parser())
-sessionInfo()
 main(args)
 
 warnings()

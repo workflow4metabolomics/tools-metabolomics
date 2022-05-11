@@ -9,6 +9,16 @@
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
 
+    <edam_topics>
+        <edam_topic>topic_0091</edam_topic>
+        <edam_topic>topic_3370</edam_topic>
+    </edam_topics>
+
+    <edam_operations>
+        <edam_operation>operation_3803</edam_operation>
+        <edam_operation>operation_3860</edam_operation>
+    </edam_operations>
+
     <requirements>
         <requirement type="package" version="1.7.1">r-optparse</requirement>
     </requirements>

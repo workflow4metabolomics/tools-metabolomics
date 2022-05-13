@@ -2,7 +2,7 @@
 
     <macros>
         <token name="@TOOL_VERSION@">1.0.1</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
 
     <description>
@@ -20,100 +20,158 @@
     </edam_operations>
 
     <requirements>
+        <requirement type="package" version="4.1.3">r-base</requirement>
         <requirement type="package" version="1.7.1">r-optparse</requirement>
     </requirements>
 
     <stdio>
-        <exit_code range="1:" />
+        <exit_code range="1" level="fatal" description="Missing parameter error" />
+        <exit_code range="2" level="fatal" description="Bad parameter's value" />
+        <exit_code range="3" level="fatal" description="Missing input file" />
+        <exit_code range="4:254" level="fatal" description="Unknown error" />
+        <exit_code range="255" level="fatal" description="No any result to output" />
         <regex match="Error in\s+.*:\s+.*" />
     </stdio>
 
     <version_command>
-        Rscript $__tool_directory__/MS2snoop.R --version | head -n 1
+        Rscript '$__tool_directory__/MS2snoop.R' --version | head -n 1
     </version_command>
 
-    <command><![CDATA[
+    <command>
+        <![CDATA[
+
 Rscript '$__tool_directory__/MS2snoop.R'
-    -o '$frag_result_txt'
-    -c '$compound_txt'
-    -f '$peaklist_frag_tsv'
-    -p '$peaklist_preco_tsv'
-    --tolmz '$tolmz'
-    --tolrt '$tolrt'
-    --seuil_ra '$seuil_ra'
-    --mzdecimal '$mzdecimal'
-    --r_threshold '$r_threshold'
-    --min_number_scan '$min_number_scan'
-;
-    ]]></command>
+
+    #if $param.version:
+
+        --version
+
+    #else
+
+        --output '$frag_result_txt'
+        --compounds '$compound_txt'
+        --fragments '$peaklist_frag_tsv'
+        --precursors '$peaklist_preco_tsv'
+        --tolmz '$param.tolmz'
+        --tolrt '$param.tolrt'
+        --seuil_ra '$param.seuil_ra'
+        --mzdecimal '$param.mzdecimal'
+        --r_threshold '$param.r_threshold'
+        --min_number_scan '$param.min_number_scan'
+
+        #if $param.debug:
+            --debug
+        #end if
+
+        #if $param.verbose:
+            --verbose
+        #end if
+
+    #end if
+
+        ]]>
+    </command>
 
     <inputs>
-        <param
-            type="data"
-            format="tabular"
-            name="compound_txt"
-            label="compounds_pos.txt"
-        />
-        <param
-            type="data"
-            format="tabular"
-            name="peaklist_frag_tsv"
-            label="peaklist_fragments.tsv"
-        />
-        <param
-            type="data"
-            format="tabular"
-            name="peaklist_preco_tsv"
-            label="peaklist_precursors.tsv"
-        />
-        <param
-            name="tolmz"
-            type="float"
-            min="0.0001"
-            max="10"
-            value="0.01"
-            label="MZ Tolerence"
-        />
-        <param
-            name="tolrt"
-            type="integer"
-            min="0"
-            max="30"
-            value="20"
-            label="RT Tolerence"
-        />
-        <param
-            name="seuil_ra"
-            type="float"
-            min="0"
-            max="1"
-            value="0.05"
-            label="r pearson correlation threshold between precursor and fragment absolute intensity"
-        />
-        <param
-            name="mzdecimal"
-            type="integer"
-            min="0"
-            max="5"
-            value="0"
-            label="nb decimal for mz"
-        />
-        <param
-            name="r_threshold"
-            type="float"
-            min="0"
-            value="0.85" label="fragment absolute intensity"
-        />
-        <param
-            name="min_number_scan"
-            type="integer"
-            min="0"
-            max="25"
-            value="8"
-            label="Present in at least X scan"
-            help="fragments are kept if they are found in a minimum number of scans"
-        />
+
+        <conditional name="param">
+
+            <param
+                type="boolean"
+                value="false"
+                label="Prints version"
+                argument="--version"
+                help="The tool prints its version and then exits"
+            />
+
+            <when value="false">
+
+                <param
+                    type="data"
+                    format="tabular"
+                    name="compound_txt"
+                    label="compounds_pos.txt"
+                />
+                <param
+                    type="data"
+                    format="tabular"
+                    name="peaklist_frag_tsv"
+                    label="peaklist_fragments.tsv"
+                />
+                <param
+                    type="data"
+                    format="tabular"
+                    name="peaklist_preco_tsv"
+                    label="peaklist_precursors.tsv"
+                />
+                <param
+                    type="float"
+                    min="0.0001"
+                    max="10"
+                    value="0.01"
+                    label="MZ Tolerence"
+                    argument="--tolmz"
+                />
+                <param
+                    type="integer"
+                    min="0"
+                    max="30"
+                    value="20"
+                    label="RT Tolerence"
+                    argument="--tolrt"
+                />
+                <param
+                    type="float"
+                    min="0"
+                    max="1"
+                    value="0.05"
+                    label="r pearson correlation threshold between precursor and fragment absolute intensity"
+                    argument="--seuil_ra"
+                />
+                <param
+                    type="integer"
+                    min="0"
+                    max="5"
+                    value="0"
+                    label="nb decimal for mz"
+                    argument="--mzdecimal"
+                />
+                <param
+                    type="float"
+                    min="0"
+                    value="0.85"
+                    label="fragment absolute intensity"
+                    argument="--r_threshold"
+                />
+                <param
+                    type="integer"
+                    min="0"
+                    max="25"
+                    value="8"
+                    label="Present in at least X scan"
+                    argument="--min_number_scan"
+                    help="fragments are kept if they are found in a minimum number of scans"
+                />
+                <param
+                    type="boolean"
+                    value="false"
+                    label="Verbose logs"
+                    argument="--verbose"
+                    help="The tool will print more logs"
+                />
+                <param
+                    type="boolean"
+                    value="false"
+                    label="Debug statements"
+                    argument="--debug"
+                    help="The tool will print debug statements"
+                />
+
+            </when>
+        </conditional>
+
     </inputs>
+
     <outputs>
         <data
             name="frag_result_txt"
@@ -121,13 +179,23 @@ Rscript '$__tool_directory__/MS2snoop.R'
             label="compound_fragments_result.txt"
         />
     </outputs>
+
     <tests>
+
         <test>
-            <param name="compound_txt" value="compounds_pos.txt"/>
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv"/>
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv"/>
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <output name="frag_result_txt" file="compound_fragments_result.txt" />
         </test>
+
+        <test>
+            <param name="version" value="true" />
+            <assert_stdout>
+                <has_text text="@TOOL_VERSION@" />
+            </assert_stdout>
+        </test>
+
     </tests>
 
     <help><![CDATA[

@@ -18,6 +18,18 @@
 assign("MS2SNOOP_VERSION", "1.0.1")
 lockBinding("MS2SNOOP_VERSION", globalenv())
 
+assign("MISSING_PARAMETER_ERROR", 1)
+lockBinding("MISSING_PARAMETER_ERROR", globalenv())
+
+assign("BAD_PARAMETER_VALUE_ERROR", 2)
+lockBinding("BAD_PARAMETER_VALUE_ERROR", globalenv())
+
+assign("MISSING_INPUT_FILE_ERROR", 3)
+lockBinding("MISSING_INPUT_FILE_ERROR", globalenv())
+
+assign("NO_ANY_RESULT_ERROR", 255)
+lockBinding("NO_ANY_RESULT_ERROR", globalenv())
+
 assign("DEFAULT_PRECURSOR_PATH", "peaklist_precursors.tsv")
 assign("DEFAULT_FRAGMENTS_PATH", "peaklist_fragments.tsv")
 assign("DEFAULT_COMPOUNDS_PATH", "compounds_pos.txt")
@@ -47,9 +59,6 @@ lockBinding("DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD", globalenv())
 lockBinding("DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA", globalenv())
 lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLMZ", globalenv())
 lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", globalenv())
-
-
-debug <- FALSE
 
 
 ########################################################################
@@ -215,7 +224,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     ## files (collision energy)
     ## this lead to a processing for each fileid
     mf <- levels(as.factor(sprecini$fileid))
-    if (length(mf) > 1) {
+    if (length(mf) > 1 && global_verbose) {
       cat(" several files detected for this compounds :\n")
     }
 
@@ -241,7 +250,9 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       ## creation of cross table row=scan col=mz X=ra
       vmz <- levels(as.factor(sfrgtfil$mznominal))
 
-      cat(" fragments :", vmz)
+      if (global_verbose) {
+        cat(" fragments :", vmz)
+      }
 
       ## mz of precursor in data precursor to check correlation with
       mz_prec <- paste0("mz", round(mean(sprec$mz), mzdecimal))
@@ -273,7 +284,8 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           )
         }
       }
-      if (debug) {
+      if (global_debug) {
+        print(ds_abs_int)
         write.table(
           x = ds_abs_int,
           file = paste0(c_name, "ds_abs_int.txt"),
@@ -360,7 +372,9 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       if (!is.null(res_comp_by_file)) {
         res_comp <- rbind(res_comp, res_comp_by_file)
       }
-      cat("\n")
+      if (global_verbose) {
+        cat("\n")
+      }
       dev.off()
     }
   } else {
@@ -370,6 +384,25 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   return(res_comp)
 }
 
+set_global <- function(var, value) {
+  assign(var, value, envir = globalenv())
+}
+
+set_debug <- function() {
+  set_global("global_debug", TRUE)
+}
+
+unset_debug <- function() {
+  set_global("global_debug", FALSE)
+}
+
+set_verbose <- function() {
+  set_global("global_verbose", TRUE)
+}
+
+unset_verbose <- function() {
+  set_global("global_verbose", FALSE)
+}
 
 create_parser <- function() {
   parser <- optparse::OptionParser()
@@ -378,7 +411,10 @@ create_parser <- function() {
     c("-v", "--verbose"),
     action = "store_true",
     default = FALSE,
-    help = "Print extra output [default %default]"
+    help = paste(
+      "[default %default]",
+      "Print extra output"
+    )
   )
   parser <- optparse::add_option(
     parser,
@@ -386,6 +422,16 @@ create_parser <- function() {
     action = "store_true",
     default = FALSE,
     help = "Prints version and exits"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("-d", "--debug"),
+    action = "store_true",
+    default = FALSE,
+    help = paste(
+      "[default %default]",
+      "Print debug outputs"
+    )
   )
   parser <- optparse::add_option(
     parser,
@@ -425,7 +471,11 @@ create_parser <- function() {
     type = "numeric",
     action = "store",
     default = DEFAULT_TOLMZ,
-    metavar = "number"
+    metavar = "number",
+    help = paste(
+      "[default %default]",
+      "Tolerance for MZ (in Dalton) to match the standard in the compounds"
+    )
   )
   parser <- optparse::add_option(
     parser,
@@ -433,16 +483,23 @@ create_parser <- function() {
     type = "integer",
     action = "store",
     default = DEFAULT_TOLRT,
-    metavar = "number"
+    metavar = "number",
+    help = paste(
+      "[default %default]",
+      "RT (in seconds) to match the standard in the compounds"
+    )
   )
   parser <- optparse::add_option(
     parser,
     c("--seuil_ra"),
     type = "numeric",
     action = "store",
-    help = "relative intensity threshold",
     default = DEFAULT_SEUIL_RA,
-    metavar = "number"
+    metavar = "number",
+    help = paste(
+      "[default %default]",
+      "relative intensity threshold"
+    ),
   )
   parser <- optparse::add_option(
     parser,
@@ -450,7 +507,10 @@ create_parser <- function() {
     type = "integer",
     default = DEFAULT_MZDECIMAL,
     action = "store",
-    help = "nb decimal for mz",
+    help = paste(
+      "[default %default]",
+      "Number of decimal to write for MZ"
+    ),
     metavar = "number"
   )
   parser <- optparse::add_option(
@@ -459,8 +519,9 @@ create_parser <- function() {
     type = "integer",
     default = DEFAULT_R_THRESHOLD,
     action = "store",
-    help = paste0(
-      "r pearson correlation threshold between precursor and fragment ",
+    help = paste(
+      "[default %default]",
+      "R-Pearson correlation threshold between precursor and fragment",
       "absolute intensity"
     ),
     metavar = "number"
@@ -471,13 +532,97 @@ create_parser <- function() {
     type = "numeric",
     action = "store",
     default = DEFAULT_MINNUMBERSCAN,
-    help = paste0(
-      "fragments are kept if there are found in a minimum number ",
-      "of scans"
+    help = paste(
+      "[default %default]",
+      "Fragments are kept if there are found in a minimum number",
+      "of min_number_scan scans"
     ),
     metavar = "number"
   )
   return(parser)
+}
+
+stop_with_status <- function(msg, status) {
+  message(sprintf("Error: %s", msg))
+  message(sprintf("Error code: %s", status))
+  base::quit(status = status)
+}
+
+check_args_validity <- function(args) { ## nolint cyclocomp_linter
+  sysvars <- Sys.getenv()
+  sysvarnames <- names(sysvars)
+  if (length(args$output) == 0 || nchar(args$output[1]) == 0) {
+    stop_with_status(
+      "Missing output parameters. Please set it with --output.",
+      MISSING_PARAMETER_ERROR
+    )
+  }
+  if (length(args$precursors) == 0 || nchar(args$precursors[1]) == 0) {
+    stop_with_status(
+      "Missing precursors parameters. Please set it with --precursors.",
+      MISSING_PARAMETER_ERROR
+    )
+  }
+  if (length(args$fragments) == 0 || nchar(args$fragments[1]) == 0) {
+    stop_with_status(
+      "Missing fragments parameters. Please set it with --fragments.",
+      MISSING_PARAMETER_ERROR
+    )
+  }
+  if (length(args$compounds) == 0 || nchar(args$compounds[1]) == 0) {
+    stop_with_status(
+      "Missing compounds parameters. Please set it with --compounds.",
+      MISSING_PARAMETER_ERROR
+    )
+  }
+  if (!file.exists(args$precursors)) {
+    stop_with_status(
+      sprintf(
+        "Precursors file %s does not exist or cannot be accessed.",
+        args$precursors
+      ),
+      MISSING_INPUT_FILE_ERROR
+    )
+  }
+  if (!file.exists(args$fragments)) {
+    stop_with_status(
+      sprintf(
+        "Fragments file %s does not exist or cannot be accessed.",
+        args$fragments
+      ),
+      MISSING_INPUT_FILE_ERROR
+    )
+  }
+  if (!file.exists(args$compounds)) {
+    stop_with_status(
+      sprintf(
+        "Compounds file %s does not exist or cannot be accessed.",
+        args$compounds
+      ),
+      MISSING_INPUT_FILE_ERROR
+    )
+  }
+  if (
+    "_GALAXY_JOB_HOME_DIR" %in% sysvarnames
+    || "_GALAXY_JOB_TMP_DIR" %in% sysvarnames
+    || "GALAXY_MEMORY_MB" %in% sysvarnames
+    || "GALAXY_MEMORY_MB_PER_SLOT" %in% sysvarnames
+    || "GALAXY_SLOTS" %in% sysvarnames
+  ) {
+    check_galaxy_args_validity(args)
+  }
+}
+
+check_galaxy_args_validity <- function(args) {
+  if (!file.exists(args$output)) {
+    stop_with_status(
+      sprintf(
+        "Output file %s does not exist or cannot be accessed.",
+        args$output
+      ),
+      MISSING_INPUT_FILE_ERROR
+    )
+  }
 }
 
 main <- function(args) {
@@ -486,7 +631,13 @@ main <- function(args) {
     base::quit(status = 0)
   }
   sessionInfo()
-  ## FOLDER AND FILES
+  check_args_validity(args)
+  if (args$debug) {
+    set_debug()
+  }
+  if (args$verbose) {
+    set_verbose()
+  }
   ## MSpurity precursors file
   precursors <- read.table(
     file = args$precursors,
@@ -508,21 +659,6 @@ main <- function(args) {
     quote = "\"",
     header = TRUE
   )
-  ## PARAMETERS
-  ## tolerance for mz(dalton) rt(seconds) to match the standard in the compounds
-  ## list with the precursor MSpurity file
-  tolmz <- args$tolmz
-  tolrt <- args$tolrt
-
-  ##  relative intensity threshold
-  seuil_ra <- args$seuil_ra
-  ## nb decimal for mz
-  mzdecimal <- args$mzdecimal
-  ## r pearson correlation threshold between precursor and
-  # #fragment absolute intensity
-  r_threshold <- args$r_threshold
-  ## fragments are kept if there are found in a minimum number of scans
-  min_number_scan <- args$min_number_scan
 
   res_all <- NULL
   for (i in seq_len(nrow(compounds))) {
@@ -534,12 +670,12 @@ main <- function(args) {
       mzref = compounds[[2]][i],
       rtref = compounds[[3]][i],
       c_name = compounds[[1]][i],
-      min_number_scan = min_number_scan,
-      mzdecimal = mzdecimal,
-      r_threshold = r_threshold,
-      seuil_ra = seuil_ra,
-      tolmz = tolmz,
-      tolrt = tolrt
+      min_number_scan = args$min_number_scan,
+      mzdecimal = args$mzdecimal,
+      r_threshold = args$r_threshold,
+      seuil_ra = args$seuil_ra,
+      tolmz = args$tolmz,
+      tolrt = args$tolrt
     )
     if (!is.null(res_cor)) {
       if (is.null(res_all)) {
@@ -551,7 +687,7 @@ main <- function(args) {
   }
 
   if (is.null(res_all)) {
-    stop("No result at all!")
+    stop_with_status("No result at all!", NO_ANY_RESULT_ERROR)
   }
   write.table(
     x = res_all,
@@ -561,6 +697,14 @@ main <- function(args) {
   )
 }
 
+# base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+# source(sprintf(
+#   "%s/%s",
+#   base_dir,
+# ))
+
+unset_debug()
+unset_verbose()
 args <- optparse::parse_args(create_parser())
 main(args)
 

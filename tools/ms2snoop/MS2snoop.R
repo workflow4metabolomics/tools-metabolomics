@@ -697,12 +697,6 @@ main <- function(args) {
   )
 }
 
-# base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-# source(sprintf(
-#   "%s/%s",
-#   base_dir,
-# ))
-
 unset_debug()
 unset_verbose()
 args <- optparse::parse_args(create_parser())

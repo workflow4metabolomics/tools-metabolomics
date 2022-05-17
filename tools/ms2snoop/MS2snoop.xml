@@ -1,29 +1,23 @@
 <tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="22.01">
-
     <macros>
         <token name="@TOOL_VERSION@">1.0.1</token>
         <token name="@VERSION_SUFFIX@">0</token>
     </macros>
-
     <description>
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
-
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
         <edam_topic>topic_3370</edam_topic>
     </edam_topics>
-
     <edam_operations>
         <edam_operation>operation_3803</edam_operation>
         <edam_operation>operation_3860</edam_operation>
     </edam_operations>
-
     <requirements>
         <requirement type="package" version="4.1.3">r-base</requirement>
         <requirement type="package" version="1.7.1">r-optparse</requirement>
     </requirements>
-
     <stdio>
         <exit_code range="1" level="fatal" description="Missing parameter error" />
         <exit_code range="2" level="fatal" description="Bad parameter's value" />
@@ -32,146 +26,123 @@
         <exit_code range="255" level="fatal" description="No any result to output" />
         <regex match="Error in\s+.*:\s+.*" />
     </stdio>
-
     <version_command>
         Rscript '$__tool_directory__/MS2snoop.R' --version | head -n 1
     </version_command>
-
     <command>
         <![CDATA[
-
 Rscript '$__tool_directory__/MS2snoop.R'
-
-    #if $param.version:
-
-        --version
-
-    #else
-
-        --output '$frag_result_txt'
-        --compounds '$compound_txt'
-        --fragments '$peaklist_frag_tsv'
-        --precursors '$peaklist_preco_tsv'
-        --tolmz '$param.tolmz'
-        --tolrt '$param.tolrt'
-        --seuil_ra '$param.seuil_ra'
-        --mzdecimal '$param.mzdecimal'
-        --r_threshold '$param.r_threshold'
-        --min_number_scan '$param.min_number_scan'
-
-        #if $param.debug:
-            --debug
-        #end if
-
-        #if $param.verbose:
-            --verbose
-        #end if
-
+    --output '$frag_result_txt'
+    --compounds '$compound_txt'
+    --fragments '$peaklist_frag_tsv'
+    --precursors '$peaklist_preco_tsv'
+    --tolmz '$tolmz'
+    --tolrt '$tolrt'
+    --seuil_ra '$seuil_ra'
+    --mzdecimal '$mzdecimal'
+    --r_threshold '$r_threshold'
+    --min_number_scan '$min_number_scan'
+    #if $advenced.adv:
+    $advenced.debug
+    $advenced.verbose
     #end if
-
         ]]>
     </command>
-
     <inputs>
-
-        <conditional name="param">
-
-            <param
-                type="boolean"
-                value="false"
-                label="Prints version"
-                argument="--version"
-                help="The tool prints its version and then exits"
-            />
-
-            <when value="false">
-
-                <param
-                    type="data"
-                    format="tabular"
-                    name="compound_txt"
-                    label="compounds_pos.txt"
-                />
-                <param
-                    type="data"
-                    format="tabular"
-                    name="peaklist_frag_tsv"
-                    label="peaklist_fragments.tsv"
-                />
-                <param
-                    type="data"
-                    format="tabular"
-                    name="peaklist_preco_tsv"
-                    label="peaklist_precursors.tsv"
-                />
-                <param
-                    type="float"
-                    min="0.0001"
-                    max="10"
-                    value="0.01"
-                    label="MZ Tolerence"
-                    argument="--tolmz"
-                />
-                <param
-                    type="integer"
-                    min="0"
-                    max="30"
-                    value="20"
-                    label="RT Tolerence"
-                    argument="--tolrt"
-                />
-                <param
-                    type="float"
-                    min="0"
-                    max="1"
-                    value="0.05"
-                    label="r pearson correlation threshold between precursor and fragment absolute intensity"
-                    argument="--seuil_ra"
-                />
-                <param
-                    type="integer"
-                    min="0"
-                    max="5"
-                    value="0"
-                    label="nb decimal for mz"
-                    argument="--mzdecimal"
-                />
-                <param
-                    type="float"
-                    min="0"
-                    value="0.85"
-                    label="fragment absolute intensity"
-                    argument="--r_threshold"
-                />
-                <param
-                    type="integer"
-                    min="0"
-                    max="25"
-                    value="8"
-                    label="Present in at least X scan"
-                    argument="--min_number_scan"
-                    help="fragments are kept if they are found in a minimum number of scans"
-                />
+        <param
+            type="data"
+            format="tabular"
+            argument="--compound_txt"
+            label="list of compounds : col1=Name of molecule, col2=m/z, col3=retention time"
+        />
+        <param
+            type="data"
+            format="tabular"
+            argument="--peaklist_frag_tsv"
+            label="MSpurity fragments file"
+        />
+        <param
+            type="data"
+            format="tabular"
+            argument="--peaklist_preco_tsv"
+            label="MSpurity precursors file"
+        />
+        <param
+            type="float"
+            min="0.0001"
+            max="10"
+            value="0.01"
+            label="MZ Tolerence"
+            argument="--tolmz"
+        />
+        <param
+            type="integer"
+            min="0"
+            max="30"
+            value="20"
+            label="RT Tolerence"
+            argument="--tolrt"
+        />
+        <param
+            type="float"
+            min="0"
+            max="1"
+            value="0.05"
+            label="r pearson correlation threshold between precursor and fragment absolute intensity"
+            argument="--seuil_ra"
+        />
+        <param
+            type="integer"
+            min="0"
+            max="5"
+            value="0"
+            label="nb decimal for mz"
+            argument="--mzdecimal"
+        />
+        <param
+            type="float"
+            min="0"
+            value="0.85"
+            label="fragment absolute intensity"
+            argument="--r_threshold"
+        />
+        <param
+            type="integer"
+            min="0"
+            max="25"
+            value="8"
+            label="Present in at least X scan"
+            argument="--min_number_scan"
+            help="fragments are kept if they are found in a minimum number of scans"
+        />
+        <conditional name="advenced">
+            <param name="adv" type="boolean" truevalue="yes" falsevalue="no" label="advenced" />
+            <when value="no">
+            </when>
+            <when value="yes">
                 <param
                     type="boolean"
-                    value="false"
+                    value=""
                     label="Verbose logs"
                     argument="--verbose"
+                    truevalue="--verbose"
+                    falsevalue=""
                     help="The tool will print more logs"
+                    optional="true"
                 />
                 <param
                     type="boolean"
-                    value="false"
+                    value=""
                     label="Debug statements"
                     argument="--debug"
+                    truevalue="--debug"
+                    falsevalue=""
                     help="The tool will print debug statements"
+                    optional="true"
                 />
-
             </when>
         </conditional>
-
     </inputs>
-
     <outputs>
         <data
             name="frag_result_txt"
@@ -179,28 +150,15 @@ Rscript '$__tool_directory__/MS2snoop.R'
             label="compound_fragments_result.txt"
         />
     </outputs>
-
     <tests>
-
         <test>
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <output name="frag_result_txt" file="compound_fragments_result.txt" />
         </test>
-
-        <test>
-            <param name="version" value="true" />
-            <assert_stdout>
-                <has_text text="@TOOL_VERSION@" />
-            </assert_stdout>
-        </test>
-
     </tests>
-
     <help><![CDATA[
-
-
 .. class:: infomark
 
 **Authors** Jean-Francois Martin (jean-francois.martin@inrae.fr), Lain Pavot (lain.pavot@inrae.fr), Kevin Wagner (kevin.wagner@inrae.fr) 
@@ -308,5 +266,4 @@ processing_file.pdf
   | For each compound of the compounds file, Graph of the all fragments with parents (or most intense peak if parent is not detected in the fragments. At the end the pdf file a graph of the spectra with validated fragments.
 
    ]]></help>
-
 </tool>

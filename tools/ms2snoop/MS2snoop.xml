@@ -42,10 +42,8 @@ Rscript '$__tool_directory__/MS2snoop.R'
     --mzdecimal '$mzdecimal'
     --r_threshold '$r_threshold'
     --min_number_scan '$min_number_scan'
-    #if $advenced.adv:
     $advenced.debug
     $advenced.verbose
-    #end if
         ]]>
     </command>
     <inputs>
@@ -115,33 +113,28 @@ Rscript '$__tool_directory__/MS2snoop.R'
             argument="--min_number_scan"
             help="fragments are kept if they are found in a minimum number of scans"
         />
-        <conditional name="advenced">
-            <param name="adv" type="boolean" truevalue="yes" falsevalue="no" label="advenced" />
-            <when value="no">
-            </when>
-            <when value="yes">
-                <param
-                    type="boolean"
-                    value=""
-                    label="Verbose logs"
-                    argument="--verbose"
-                    truevalue="--verbose"
-                    falsevalue=""
-                    help="The tool will print more logs"
-                    optional="true"
-                />
-                <param
-                    type="boolean"
-                    value=""
-                    label="Debug statements"
-                    argument="--debug"
-                    truevalue="--debug"
-                    falsevalue=""
-                    help="The tool will print debug statements"
-                    optional="true"
-                />
-            </when>
-        </conditional>
+        <section title="Advenced Options" name="advenced">
+            <param
+                type="boolean"
+                value=""
+                label="Verbose logs"
+                argument="--verbose"
+                truevalue="--verbose"
+                falsevalue=""
+                help="The tool will print more logs"
+                optional="true"
+            />
+            <param
+                type="boolean"
+                value=""
+                label="Debug statements"
+                argument="--debug"
+                truevalue="--debug"
+                falsevalue=""
+                help="The tool will print debug statements"
+                optional="true"
+            />
+        </section>
     </inputs>
     <outputs>
         <data
@@ -264,6 +257,5 @@ compound_fragments_result.tsv
 processing_file.pdf
   | pdf output 
   | For each compound of the compounds file, Graph of the all fragments with parents (or most intense peak if parent is not detected in the fragments. At the end the pdf file a graph of the spectra with validated fragments.
-
    ]]></help>
 </tool>

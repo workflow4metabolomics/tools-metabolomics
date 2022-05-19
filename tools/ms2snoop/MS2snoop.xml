@@ -51,19 +51,19 @@ Rscript '$__tool_directory__/MS2snoop.R'
     <inputs>
         <param
             type="data"
-            format="tabular"
+            format="tabular,csv"
             argument="--compound_txt"
             label="list of compounds : col1=Name of molecule, col2=m/z, col3=retention time"
         />
         <param
             type="data"
-            format="tabular"
+            format="tabular,csv"
             argument="--peaklist_frag_tsv"
             label="MSpurity fragments file"
         />
         <param
             type="data"
-            format="tabular"
+            format="tabular,csv"
             argument="--peaklist_preco_tsv"
             label="MSpurity precursors file"
         />

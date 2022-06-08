@@ -1,11 +1,11 @@
-<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="22.01">
-    <macros>
-        <token name="@TOOL_VERSION@">1.0.1</token>
-        <token name="@VERSION_SUFFIX@">0</token>
-    </macros>
+<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
     <description>
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.0.1</token>
+        <token name="@VERSION_SUFFIX@">1</token>
+    </macros>
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
         <edam_topic>topic_3370</edam_topic>
@@ -48,91 +48,92 @@ Rscript '$__tool_directory__/MS2snoop.R'
     </command>
     <inputs>
         <param
+            argument="--compound_txt"
             type="data"
             format="tabular,csv"
-            argument="--compound_txt"
-            label="list of compounds : col1=Name of molecule, col2=m/z, col3=retention time"
+            label="list of compounds"
+            help="The table must fit the format: col1=Name of molecule, col2=m/z, col3=retention time"
         />
         <param
+            argument="--peaklist_frag_tsv"
             type="data"
             format="tabular,csv"
-            argument="--peaklist_frag_tsv"
             label="MSpurity fragments file"
         />
         <param
+            argument="--peaklist_preco_tsv"
             type="data"
             format="tabular,csv"
-            argument="--peaklist_preco_tsv"
             label="MSpurity precursors file"
         />
         <param
+            argument="--tolmz"
             type="float"
             min="0.0001"
             max="10"
             value="0.01"
             label="MZ Tolerence"
-            argument="--tolmz"
         />
         <param
+            argument="--tolrt"
             type="integer"
             min="0"
             max="30"
             value="20"
             label="RT Tolerence"
-            argument="--tolrt"
         />
         <param
+            argument="--seuil_ra"
             type="float"
             min="0"
             max="1"
             value="0.05"
             label="r pearson correlation threshold between precursor and fragment absolute intensity"
-            argument="--seuil_ra"
         />
         <param
+            argument="--mzdecimal"
             type="integer"
             min="0"
             max="5"
             value="0"
             label="nb decimal for mz"
-            argument="--mzdecimal"
         />
         <param
+            argument="--r_threshold"
             type="float"
             min="0"
             value="0.85"
             label="fragment absolute intensity"
-            argument="--r_threshold"
         />
         <param
+            argument="--min_number_scan"
             type="integer"
             min="0"
             max="25"
             value="8"
             label="Present in at least X scan"
-            argument="--min_number_scan"
             help="fragments are kept if they are found in a minimum number of scans"
         />
         <section title="Advenced Options" name="advenced">
             <param
+                argument="--verbose"
                 type="boolean"
                 value=""
+                optional="true"
                 label="Verbose logs"
-                argument="--verbose"
+                help="The tool will print more logs"
                 truevalue="--verbose"
                 falsevalue=""
-                help="The tool will print more logs"
-                optional="true"
             />
             <param
+                argument="--debug"
                 type="boolean"
                 value=""
+                optional="true"
                 label="Debug statements"
-                argument="--debug"
+                help="The tool will print debug statements"
                 truevalue="--debug"
                 falsevalue=""
-                help="The tool will print debug statements"
-                optional="true"
             />
         </section>
     </inputs>

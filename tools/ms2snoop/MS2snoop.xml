@@ -3,8 +3,9 @@
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
     <macros>
-        <token name="@TOOL_VERSION@">1.0.1</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <import>macros.xml</import>
+        <token name="@TOOL_VERSION@">1.1.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
@@ -50,20 +51,20 @@ Rscript '$__tool_directory__/MS2snoop.R'
         <param
             argument="--compound_txt"
             type="data"
-            format="tabular,csv"
+            format="tabular,csv,tsv"
             label="list of compounds"
             help="The table must fit the format: col1=Name of molecule, col2=m/z, col3=retention time"
         />
         <param
             argument="--peaklist_frag_tsv"
             type="data"
-            format="tabular,csv"
+            format="tabular,csv,tsv"
             label="MSpurity fragments file"
         />
         <param
             argument="--peaklist_preco_tsv"
             type="data"
-            format="tabular,csv"
+            format="tabular,csv,tsv"
             label="MSpurity precursors file"
         />
         <param
@@ -150,6 +151,48 @@ Rscript '$__tool_directory__/MS2snoop.R'
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="debug" value="--debug" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="debug" value="--debug" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_smol_verbose_stdout"/>
+            </assert_stdout>
         </test>
     </tests>
     <help><![CDATA[
@@ -163,7 +206,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
 
 
 ==============
-MS2 validation  
+MS2 validation
 ==============
 
 -----------

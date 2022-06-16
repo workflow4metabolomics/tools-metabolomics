@@ -202,10 +202,10 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   c_name,
   min_number_scan,
   mzdecimal,
-  r_threshold=DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
-  seuil_ra=DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
-  tolmz=DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
-  tolrt=DEFAULT_EXTRACT_FRAGMENTS_TOLRT
+  r_threshold = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
+  seuil_ra = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
+  tolmz = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
+  tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
@@ -625,9 +625,9 @@ check_galaxy_args_validity <- function(args) {
 
 get_csv_or_tsv <- function(
   path,
-  sep_stack=c("\t", ",", ";"),
-  header=TRUE,
-  quote="\""
+  sep_stack = c("\t", ",", ";"),
+  header = TRUE,
+  quote = "\""
 ) {
   sep <- sep_stack[1]
   result <- tryCatch({

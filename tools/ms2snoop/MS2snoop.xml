@@ -194,6 +194,54 @@ Rscript '$__tool_directory__/MS2snoop.R'
                 <expand macro="has_smol_verbose_stdout"/>
             </assert_stdout>
         </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <param name="debug" value="--debug" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+            </assert_stdout>
+        </test>
+        <test>
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <param name="debug" value="--debug" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_smol_verbose_stdout"/>
+            </assert_stdout>
+        </test>
     </tests>
     <help><![CDATA[
 .. class:: infomark

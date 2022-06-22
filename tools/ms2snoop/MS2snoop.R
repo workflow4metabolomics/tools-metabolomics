@@ -15,7 +15,7 @@
 #'
 
 
-assign("MS2SNOOP_VERSION", "1.0.1")
+assign("MS2SNOOP_VERSION", "1.1.0")
 lockBinding("MS2SNOOP_VERSION", globalenv())
 
 assign("MISSING_PARAMETER_ERROR", 1)
@@ -202,10 +202,10 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   c_name,
   min_number_scan,
   mzdecimal,
-  r_threshold=DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
-  seuil_ra=DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
-  tolmz=DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
-  tolrt=DEFAULT_EXTRACT_FRAGMENTS_TOLRT
+  r_threshold = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
+  seuil_ra = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
+  tolmz = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
+  tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
@@ -252,6 +252,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 
       if (global_verbose) {
         cat(" fragments :", vmz)
+        cat("\n")
       }
 
       ## mz of precursor in data precursor to check correlation with
@@ -371,9 +372,6 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       }
       if (!is.null(res_comp_by_file)) {
         res_comp <- rbind(res_comp, res_comp_by_file)
-      }
-      if (global_verbose) {
-        cat("\n")
       }
       dev.off()
     }
@@ -625,6 +623,43 @@ check_galaxy_args_validity <- function(args) {
   }
 }
 
+get_csv_or_tsv <- function(
+  path,
+  sep_stack = c("\t", ",", ";"),
+  header = TRUE,
+  quote = "\""
+) {
+  sep <- sep_stack[1]
+  result <- tryCatch({
+    read.table(
+      file = path,
+      sep = sep,
+      header = header,
+      quote = quote
+    )
+  }, error = function(e) {
+    return(data.frame())
+  })
+  if (length(sep_stack) == 1) {
+    return(result)
+  }
+  # if (
+  #   ncol(result) == 0 || ## failed
+  #   ncol(result) == 1    ## only one row, suspicious, possible fail # nolint
+  # ) {
+    new_result <- get_csv_or_tsv(
+      path,
+      sep_stack = sep_stack[-1],
+      header = header,
+      quote = quote
+    )
+    if (ncol(new_result) > ncol(result)) {
+      return(new_result)
+    }
+  # }
+  return(result)
+}
+
 main <- function(args) {
   if (args$version) {
     cat(sprintf("%s\n", MS2SNOOP_VERSION))
@@ -639,26 +674,11 @@ main <- function(args) {
     set_verbose()
   }
   ## MSpurity precursors file
-  precursors <- read.table(
-    file = args$precursors,
-    header = TRUE,
-    sep = "\t",
-    quote = "\""
-  )
+  precursors <- get_csv_or_tsv(args$precursors)
   ## MSpurity fragments file
-  fragments <- read.table(
-    file = args$fragments,
-    header = TRUE,
-    sep = "\t",
-    quote = "\""
-  )
+  fragments <- get_csv_or_tsv(args$fragments)
   ## list of compounds : col1=Name of molecule, col2=m/z, col3=retention time
-  compounds <- read.table(
-    file = args$compounds,
-    sep = "\t",
-    quote = "\"",
-    header = TRUE
-  )
+  compounds <- get_csv_or_tsv(args$compounds)
 
   res_all <- NULL
   for (i in seq_len(nrow(compounds))) {

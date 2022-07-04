@@ -4,8 +4,6 @@
     </description>
     <macros>
         <import>macros.xml</import>
-        <token name="@TOOL_VERSION@">1.1.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
@@ -244,14 +242,8 @@ Rscript '$__tool_directory__/MS2snoop.R'
         </test>
     </tests>
     <help><![CDATA[
-.. class:: infomark
 
-**Authors** Jean-Francois Martin (jean-francois.martin@inrae.fr), Lain Pavot (lain.pavot@inrae.fr), Kevin Wagner (kevin.wagner@inrae.fr) 
-
-.. class:: infomark
-
----------------------------------------------------
-
+@AUTHORS@
 
 ==============
 MS2 validation
@@ -261,8 +253,9 @@ MS2 validation
 Description
 -----------
 
-MS2snoop use results of msPurity to find spectra of standards listed in a compounds file.
-Check the fragments and precursor using correlation of among the different scans of fragments 
+MS2snoop use results of msPurity to find spectra of standards listed in
+a compounds file. Check the fragments and precursor using correlation of
+among the different scans of fragments 
 
 -----------------
 Workflow position
@@ -298,56 +291,22 @@ Input files
 +----------------------------------------------+------------+
 | Parameter : num + label                      |   Format   |
 +===========================+==================+============+
-| Input from msPurity Precursor                |   TSV      |
+| Input from msPurity Precursor                |   TSV,CSV  |
 +----------------------------------------------+------------+
-| Input from msPurity fragment                 |   TSV      |
+| Input from msPurity fragment                 |   TSV,CSV  |
 | Input compounds file to search in precursor  |            |
 +----------------------------------------------+------------+
-| and fragment (Name + m/z + ret Time)         |   TSV      |
+| and fragment (Name + m/z + ret Time)         |   TSV,CSV  |
 +----------------------------------------------+------------+
 
 
-----------
-Parameters
-----------
+@PARAMETERS@
 
-msPurity.purityA
-  | output TSV file
 
-msPurity.frag4feature
-  | output TSV file
+@OUTPUTS@
 
-Compounds file
-  | A TSV TXT file with a list of compounds with at least 3 columns : 
-  |   col1=Name of molecule, col2=m/z, col3=retention time
 
-tolerance for mz(dalton) rt(seconds) to match the standard in the compounds file with the precursor MSpurity files
-  |   tolmz <- 0.01
-  |   tolrt <- 20
+@CHANGELOG@
 
-relative intensity threshold
-  |   seuil_ra = 0.05
-
-nb decimal for mz
-  |   mzdecimal <- 0
-
-r pearson correlation threshold between precursor and fragment absolute intensity
-  |   r_threshold <- 0.85
-
-fragments are kept if there are found in a minimum number of scans
-  |   minNumberScan <- 8
-
-------------
-Output files
-------------
-
-compound_fragments_result.tsv
-  | tabular output
-  | Array with p rows (corresponding to the fragments for the different compounds of the compounds file)
-  | Last column "corvalid" is a boolean for validated fragments 
-
-processing_file.pdf
-  | pdf output 
-  | For each compound of the compounds file, Graph of the all fragments with parents (or most intense peak if parent is not detected in the fragments. At the end the pdf file a graph of the spectra with validated fragments.
    ]]></help>
 </tool>

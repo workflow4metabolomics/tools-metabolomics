@@ -551,8 +551,10 @@ create_parser <- function() {
 }
 
 stop_with_status <- function(msg, status) {
+  sink(stderr())
   message(sprintf("Error: %s", msg))
   message(sprintf("Error code: %s", status))
+  sink(NULL)
   base::quit(status = status)
 }
 

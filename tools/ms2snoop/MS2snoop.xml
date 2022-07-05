@@ -240,6 +240,14 @@ Rscript '$__tool_directory__/MS2snoop.R'
                 <expand macro="has_smol_verbose_stdout"/>
             </assert_stdout>
         </test>
+        <test expect_exit_code="2" expect_failure="true">
+            <param name="compound_txt" value="compounds_pos_old_format.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <assert_stderr>
+                <has_line line="Error: Some columns are missing: compound_name, rtsec, inchikey" />
+            </assert_stderr>
+        </test>
     </tests>
     <help><![CDATA[
 

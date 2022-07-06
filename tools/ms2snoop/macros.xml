@@ -1,5 +1,132 @@
 <macros>
 
+  <token name="@AUTHORS@">
+.. class:: infomark
+
+**Authors** Jean-Francois Martin (jean-francois.martin@inrae.fr), Lain Pavot (lain.pavot@inrae.fr), Kevin Wagner (kevin.wagner@inrae.fr) 
+
+.. class:: infomark
+
+---------------------------------------------------
+
+
+  </token>
+  <token name="@PARAMETERS@">
+    <![CDATA[
+----------
+Parameters
+----------
+
+msPurity.purityA
+  | output TSV file
+
+msPurity.frag4feature
+  | output TSV file
+
+Compounds file
+  | A tabulated, comma or semicolon separated values file whith
+    compounds. Its format is as follow:
+  |  
+  | At least 4 columns:
+  | **compound_name**: The name of the compound
+  | **mz**: The m/z ratio
+  | **rtsec**: The retention time in seconds
+  | **inchikey**: The compound's inchi key
+  |  
+  | An optional column can be added:
+  | **elemcomposition**: The elemental composition of the molecule
+
+tolerance for mz(dalton) rt(seconds) to match the standard in the
+ compounds file with the precursor MSpurity files
+  |   tolmz <- 0.01
+  |   tolrt <- 20
+
+relative intensity threshold
+  |   seuil_ra = 0.05
+
+nb decimal for mz
+  |   mzdecimal <- 0
+
+r pearson correlation threshold between precursor and fragment absolute
+  intensity
+  |   r_threshold <- 0.85
+
+fragments are kept if there are found in a minimum number of scans
+  |   minNumberScan <- 8
+
+]]>
+  </token>
+  <token name="@OUTPUTS@">
+    <![CDATA[
+------------
+Output files
+------------
+
+compound_fragments_result.tsv
+  | tabular output
+  | Array with p rows (corresponding to the fragments for the different
+    compounds of the compounds file)
+  | Last column "corvalid" is a boolean for validated fragments 
+
+processing_file.pdf
+  | pdf output 
+  | For each compound of the compounds file, Graph of the all fragments
+    with parents (or most intense peak if parent is not detected in the
+    fragments. At the end the pdf file a graph of the spectra with
+    validated fragments.
+]]>
+  </token>
+  <token name="@CHANGELOG@">
+--------------
+Changelog/News
+--------------
+
+2.0.0
+  | This version is motivated by a strengthening of the quality of the
+    input files.
+    Input files that don't match the newly defined format will not be
+    processed anymore. Previously, MS2Snoop expected the c_name, the
+    mzref and the rtref to be the 1st, the 2nd and the 3rd columns
+    respectively, and the header was somewhat ignored in the compound
+    file.
+  | 
+  | Now, we'd like to add some new columns, some of them are optional.
+    This new
+    format of file implies a better definition of the columns order,
+    names, optioning or requirement.
+    The exact columns name are:
+  |   - **compound_name** [MANDATORY] ;
+  |   - **inchikey** [MANDATORY] ;
+  |   - **elemcomposition** [OPTIONAL] ;
+  |   - **mz** [MANDATORY] ;
+  |   - **rtsec** [MANDATORY].
+  | 
+  | These names can be written indiferentially in lower and/or upper
+    case. The new definition being incompatible with the older one, that
+    was more flexible, but also more error-prone.
+
+1.1.0
+  | new feature, xml improvement (IUC)
+  | chore: better labels in the xml parameter fields
+  | feat: add support for tab, comma and semicolon separated values
+    input files.
+  | chore: add some tests in an external macro.xml file
+
+
+1.0.1
+  | Bug fix, new parameters and some improvement in the xml.
+  | fix: the program crashed when there were no result on the first
+    iteration. Fixed in the main loop.
+  | chore: the xml matches better the IUC recommendations
+  | chore: add a --debug and a --verbose option to the tool.
+
+1.0.0
+  | First version, published on the toolshed.
+
+  </token>
+
+  <token name="@TOOL_VERSION@">2.0.0</token>
+  <token name="@VERSION_SUFFIX@">0</token>
 
   <xml name="has_smol_stdout">
     <has_line line="processing  2-diethylamino-6-methyl pyrimidin-4-ol one " />

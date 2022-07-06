@@ -15,7 +15,7 @@
 #'
 
 
-assign("MS2SNOOP_VERSION", "1.1.0")
+assign("MS2SNOOP_VERSION", "2.0.0")
 lockBinding("MS2SNOOP_VERSION", globalenv())
 
 assign("MISSING_PARAMETER_ERROR", 1)
@@ -87,7 +87,9 @@ plot_pseudo_spectra <- function(
   vmz,
   cor_abs_int,
   refcol,
-  c_name
+  c_name,
+  inchikey,
+  elemcomposition
 ) {
   ## du fait de la difference de nombre de colonne entre la dataframe qui
   ## inclue les scans en 1ere col, mzRef se decale de 1
@@ -156,6 +158,8 @@ plot_pseudo_spectra <- function(
   corValid <- (round(cor_abs_int, 2) >= r_threshold) ##nolint object_name_linter
   cp_res <- data.frame(
     rep(c_name, length(vmz)),
+    rep(inchikey, length(vmz)),
+    rep(elemcomposition, length(vmz)),
     rep(fid, length(vmz)),
     vmz,
     cor_abs_int,
@@ -166,6 +170,8 @@ plot_pseudo_spectra <- function(
 
   colnames(cp_res) <- c(
     "compoundName",
+    "inchikey",
+    "elemcomposition",
     "fileid",
     "fragments_mz",
     "CorWithPrecursor",
@@ -200,6 +206,8 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   mzref,
   rtref,
   c_name,
+  inchikey,
+  elemcomposition,
   min_number_scan,
   mzdecimal,
   r_threshold = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
@@ -361,7 +369,9 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           vmz = vmz,
           cor_abs_int = cor_abs_int,
           refcol = refcol,
-          c_name = c_name
+          c_name = c_name,
+          inchikey = inchikey,
+          elemcomposition = elemcomposition
         )
         if (f == 1) {
           res_comp <- res_comp_by_file
@@ -541,8 +551,10 @@ create_parser <- function() {
 }
 
 stop_with_status <- function(msg, status) {
+  sink(stderr())
   message(sprintf("Error: %s", msg))
   message(sprintf("Error code: %s", status))
+  sink(NULL)
   base::quit(status = status)
 }
 
@@ -660,6 +672,15 @@ get_csv_or_tsv <- function(
   return(result)
 }
 
+uniformize_columns <- function(df) {
+  cols <- colnames(df)
+  for (func in c(tolower)) {
+    cols <- func(cols)
+  }
+  colnames(df) <- cols
+  return(df)
+}
+
 main <- function(args) {
   if (args$version) {
     cat(sprintf("%s\n", MS2SNOOP_VERSION))
@@ -680,6 +701,24 @@ main <- function(args) {
   ## list of compounds : col1=Name of molecule, col2=m/z, col3=retention time
   compounds <- get_csv_or_tsv(args$compounds)
 
+  compounds <- uniformize_columns(compounds)
+  mandatory_columns <- c(
+    "compound_name",
+    "mz",
+    "rtsec",
+    "inchikey"
+  )
+  presents <- mandatory_columns %in% colnames(compounds)
+  if (!all(presents)) {
+    stop_with_status(
+      sprintf(
+        "Some columns are missing: %s",
+        paste(mandatory_columns[which(!presents)], collapse = ", ")
+      ),
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
   res_all <- NULL
   for (i in seq_len(nrow(compounds))) {
     ## loop execution for all compounds in the compounds file
@@ -687,9 +726,11 @@ main <- function(args) {
     res_cor <- extract_fragments(
       precursors = precursors,
       fragments = fragments,
-      mzref = compounds[[2]][i],
-      rtref = compounds[[3]][i],
-      c_name = compounds[[1]][i],
+      mzref = compounds[["mz"]][i],
+      rtref = compounds[["rtsec"]][i],
+      c_name = compounds[["compound_name"]][i],
+      inchikey = compounds[["inchikey"]][i],
+      elemcomposition = compounds[["elemcomposition"]][i],
       min_number_scan = args$min_number_scan,
       mzdecimal = args$mzdecimal,
       r_threshold = args$r_threshold,
@@ -717,8 +758,8 @@ main <- function(args) {
   )
 }
 
-unset_debug()
-unset_verbose()
+global_debug <- FALSE
+global_verbose <- FALSE
 args <- optparse::parse_args(create_parser())
 main(args)
 

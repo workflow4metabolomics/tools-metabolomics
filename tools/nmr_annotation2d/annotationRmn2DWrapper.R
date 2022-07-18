@@ -41,7 +41,7 @@ library(ggplot2)
 library(openxlsx)
 library(stringr)
 library(tidyr)
-library(curl)
+## library(curl)
 library(jsonlite)
 library(stringi)
 
@@ -81,7 +81,7 @@ tocsy <- 0
 
 if (argLs$cosy_2dsequences == "yes") {
   cosy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -108,7 +108,7 @@ if (argLs$cosy_2dsequences == "yes") {
 
 if (argLs$hmbc_2dsequences == "yes") {
   hmbc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -137,7 +137,7 @@ if (argLs$hmbc_2dsequences == "yes") {
 
 if (argLs$hsqc_2dsequences == "yes") {
   hsqc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -165,7 +165,7 @@ if (argLs$hsqc_2dsequences == "yes") {
 
 if (argLs$jres_2dsequences == "yes") {
   jres <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -193,7 +193,7 @@ if (argLs$jres_2dsequences == "yes") {
 
 if (argLs$tocsy_2dsequences == "yes") {
   tocsy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -219,7 +219,7 @@ if (argLs$tocsy_2dsequences == "yes") {
   rm(peakforestSpectra_df)
 }
 
-if (argLs$cosy_2dsequences == "no" & argLs$hmbc_2dsequences == "no" & argLs$hsqc_2dsequences == "no" & argLs$jres_2dsequences == "no" & argLs$tocsy_2dsequences == "no")
+if (argLs$cosy_2dsequences == "no" && argLs$hmbc_2dsequences == "no" && argLs$hsqc_2dsequences == "no" && argLs$jres_2dsequences == "no" && argLs$tocsy_2dsequences == "no")
   stop("No chosen sequence. You have to choose at least 1 sequence", call. = FALSE)
 
 

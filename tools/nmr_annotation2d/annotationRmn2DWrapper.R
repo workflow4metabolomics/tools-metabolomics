@@ -41,7 +41,6 @@ library(ggplot2)
 library(openxlsx)
 library(stringr)
 library(tidyr)
-## library(curl)
 library(jsonlite)
 library(stringi)
 

@@ -1,7 +1,14 @@
 #!/bin/bash
 
-VENV=.venv
-CENV=.conda
+envs_directory=$(pwd)
+envs_directory=/tmp/ms2snoop_2_0_0-envs
+mkdir -p ${envs_directory}
+
+VENV=${envs_directory}/.manual-venv
+CENV=${envs_directory}/.manual-conda
+
+# VENV=/tmp/.venv
+# CENV=.conda
 MAMBA_SOLVER=
 ## comment to deactivate mamba solver
 MAMBA_SOLVER="--experimental-solver libmamba"
@@ -11,16 +18,16 @@ SIRIUS_VERSION=4.9.15
 ENV_NAME=ms2snoop_2_0_0
 XML_PATH=./MS2snoop.xml
 
-if [ ! -e "./${VENV}" ];then
+if [ ! -e "${VENV}" ];then
   echo "virtualenv not created yet, creating..."
   python3 -m virtualenv "${VENV}"
   echo "venv created"
 else
   echo "virtualenv already exist: ok"
 fi
-. ./.venv/bin/activate
+. ${VENV}/bin/activate
 
-if [ ! -e "./${CENV}" ];then
+if [ ! -e "${CENV}" ];then
   echo "conda env not created yet, creating..."
   if [ ! -e ./install_conda.sh ];then
     wget \
@@ -28,10 +35,10 @@ if [ ! -e "./${CENV}" ];then
       https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
     ;
   fi
-  bash ./install_conda.sh -b -p "./${CENV}"
+  bash ./install_conda.sh -b -p "${CENV}"
 
-  ./${CENV}/bin/conda install -y -n base conda-libmamba-solver
-  ./${CENV}/bin/conda create \
+  ${CENV}/bin/conda install -y -n base conda-libmamba-solver
+  ${CENV}/bin/conda create \
     -y \
     --quiet \
     --override-channels \
@@ -61,13 +68,16 @@ echo "ready to work"
 echo ""
 echo "===== processing ====="
 
-. "${oldwd}/${CENV}/bin/activate" "${oldwd}/${CENV}/envs/${ENV_NAME}" ;
+. "${CENV}/bin/activate" "${CENV}/envs/${ENV_NAME}" ;
+
+mkdir ./out
 
 Rscript ./MS2snoop.R \
   -c ./test-data/compounds_pos.csv \
   -f ./test-data/peaklist_fragments.tsv \
   -p ./test-data/peaklist_precursors.tsv \
-  -o ${tmp}/out \
+  --ionization="[M+H]+" \
+  -o ${tmp}/out.tsv \
 ;
 
 echo ""
@@ -88,6 +98,9 @@ fi
 echo ""
 echo "===== cleaning ====="
 
+
+echo "Press enter to finish..."
+read x
 echo "Removing ${tmp}..."
 rm -rf "${tmp}"
 

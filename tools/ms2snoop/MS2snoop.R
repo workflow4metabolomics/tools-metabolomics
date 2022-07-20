@@ -63,6 +63,32 @@ lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", globalenv())
 
 ########################################################################
 
+
+get_formulas <- function(c_name, elemcomposition, vmz, ionization) {
+  if (is.vector(vmz) && length(vmz) > 1) {
+    return(lapply(
+      vmz,
+      function(mz) {
+        return(get_formulas(c_name, elemcomposition, mz, ionization))
+      }
+    ))
+  }
+  input <- sprintf("%s-%s.ms", c_name, vmz)
+  output <- sprintf("out/%s-%s.out", c_name, vmz)
+  cat(
+    paste(
+      sprintf(">compound %s", c_name),
+      sprintf(">ionization %s", ionization),
+      sprintf(">parentmass %s", vmz),
+      sprintf(">formula %s", elemcomposition),
+      sep = "\n"
+    ),
+    file = input,
+    append = FALSE
+  )
+  system(sprintf("sirius -i '%s' -o '%s' tree", input, output))
+}
+
 #' @title plot_pseudo_spectra
 #' @param x
 #' @param r_threshold
@@ -89,7 +115,9 @@ plot_pseudo_spectra <- function(
   refcol,
   c_name,
   inchikey,
-  elemcomposition
+  elemcomposition,
+  ionization,
+  mzref
 ) {
   ## du fait de la difference de nombre de colonne entre la dataframe qui
   ## inclue les scans en 1ere col, mzRef se decale de 1
@@ -156,10 +184,22 @@ plot_pseudo_spectra <- function(
 
   ## prepare result file
   corValid <- (round(cor_abs_int, 2) >= r_threshold) ##nolint object_name_linter
+
+  if (
+    !is.null(ionization)
+    && !is.na(elemcomposition)
+    && length(elemcomposition) > 0
+    && elemcomposition != ""
+  ) {
+    formula <- get_formulas(c_name, elemcomposition, mzref, ionization)
+  } else {
+    formula <- NA
+  }
   cp_res <- data.frame(
     rep(c_name, length(vmz)),
     rep(inchikey, length(vmz)),
     rep(elemcomposition, length(vmz)),
+    rep(formula, length(vmz)),
     rep(fid, length(vmz)),
     vmz,
     cor_abs_int,
@@ -172,6 +212,7 @@ plot_pseudo_spectra <- function(
     "compoundName",
     "inchikey",
     "elemcomposition",
+    "formulas",
     "fileid",
     "fragments_mz",
     "CorWithPrecursor",
@@ -213,7 +254,8 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   r_threshold = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
   seuil_ra = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
   tolmz = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
-  tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT
+  tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT,
+  ionization = NULL
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
@@ -371,7 +413,9 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           refcol = refcol,
           c_name = c_name,
           inchikey = inchikey,
-          elemcomposition = elemcomposition
+          elemcomposition = elemcomposition,
+          ionization = ionization,
+          mzref = mzref
         )
         if (f == 1) {
           res_comp <- res_comp_by_file
@@ -547,6 +591,18 @@ create_parser <- function() {
     ),
     metavar = "number"
   )
+  parser <- optparse::add_option(
+    parser,
+    c("--ionization"),
+    type = "character",
+    action = "store",
+    default = "None",
+    help = paste(
+      "[default %default]",
+      "Which ionization to use for sirius"
+    ),
+    metavar = "character"
+  )
   return(parser)
 }
 
@@ -688,6 +744,9 @@ main <- function(args) {
   }
   sessionInfo()
   check_args_validity(args)
+  if (args$ionization == "None") {
+    args$ionization <- NULL
+  }
   if (args$debug) {
     set_debug()
   }
@@ -736,7 +795,8 @@ main <- function(args) {
       r_threshold = args$r_threshold,
       seuil_ra = args$seuil_ra,
       tolmz = args$tolmz,
-      tolrt = args$tolrt
+      tolrt = args$tolrt,
+      ionization = args$ionization
     )
     if (!is.null(res_cor)) {
       if (is.null(res_all)) {

@@ -123,7 +123,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             optional="true"
         >
             <option value="[M+H]+" selected="true">[M+H]+</option>
-            <option value="[M-H]-" selected="true">[M-H]-</option>
+            <option value="[M-H]-">[M-H]-</option>
         </param>
 
         <section title="Advenced Options" name="advenced">

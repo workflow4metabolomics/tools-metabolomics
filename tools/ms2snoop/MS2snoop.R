@@ -64,29 +64,85 @@ lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", globalenv())
 ########################################################################
 
 
-get_formulas <- function(c_name, elemcomposition, vmz, ionization) {
-  if (is.vector(vmz) && length(vmz) > 1) {
+get_formulas <- function(
+  c_name,
+  elemcomposition,
+  mzref,
+  ionization,
+  background = !TRUE,
+  spectra
+) {
+  if (is.vector(mzref) && length(mzref) > 1) {
     return(lapply(
-      vmz,
+      mzref,
       function(mz) {
         return(get_formulas(c_name, elemcomposition, mz, ionization))
       }
     ))
   }
-  input <- sprintf("%s-%s.ms", c_name, vmz)
-  output <- sprintf("out/%s-%s.out", c_name, vmz)
-  cat(
+  input <- sprintf("%s-%s.ms", c_name, mzref)
+  output <- sprintf("out/%s-%s.out", c_name, mzref)
+  file_content <- paste(
+    sprintf(">compound %s", c_name),
+    sprintf(">ionization %s", ionization),
+    sprintf(">parentmass %s", mzref),
+    sprintf(">formula %s", elemcomposition),
+    sep = "\n"
+  )
+  catf(
+    ">> MS file created for %s with content:\n%s\n",
+    c_name,
+    sprintf(
+      "%s\n\n>collision\n%s\n[... %s more rows of mz and intensities ...]",
+      file_content,
+      paste(
+        sprintf(
+          "%s %s",
+          spectra[1:3, "mz"],
+          spectra[1:3, "intensities"]
+        ),
+        collapse = "\n"
+      ),
+      nrow(spectra) -3
+    )
+  )
+  file_content <- sprintf(
+    "%s\n\n>collision\n%s",
+    file_content,
     paste(
-      sprintf(">compound %s", c_name),
-      sprintf(">ionization %s", ionization),
-      sprintf(">parentmass %s", vmz),
-      sprintf(">formula %s", elemcomposition),
-      sep = "\n"
-    ),
+      sprintf("%s %s", spectra$mz, spectra$intensities),
+      collapse = "\n"
+    )
+  )
+  cat(
+    file_content,
     file = input,
     append = FALSE
   )
-  system(sprintf("sirius -i '%s' -o '%s' tree", input, output))
+  command <- sprintf(
+    paste(
+      "sirius",
+      "--noCite",
+      "--noSummaries",
+      "--loglevel=WARNING",
+      "-i '%s'",
+      "-o '%s'",
+      "tree"
+    ),
+    input,
+    output
+  )
+  verbose_catf(
+    ">> Sirius is running %swith the command: %s\n",
+    if (background) "in the background " else "",
+    command
+  )
+  system(
+    command,
+    wait = !background,
+    ignore.stdout = background,
+    ignore.stderr = background
+  )
 }
 
 #' @title plot_pseudo_spectra
@@ -117,7 +173,8 @@ plot_pseudo_spectra <- function(
   inchikey,
   elemcomposition,
   ionization,
-  mzref
+  mzref,
+  filtered_fragments
 ) {
   ## du fait de la difference de nombre de colonne entre la dataframe qui
   ## inclue les scans en 1ere col, mzRef se decale de 1
@@ -185,14 +242,37 @@ plot_pseudo_spectra <- function(
   ## prepare result file
   corValid <- (round(cor_abs_int, 2) >= r_threshold) ##nolint object_name_linter
 
-  if (
-    !is.null(ionization)
-    && !is.na(elemcomposition)
-    && length(elemcomposition) > 0
-    && elemcomposition != ""
-  ) {
-    formula <- get_formulas(c_name, elemcomposition, mzref, ionization)
+  do_sirius <- TRUE
+  verbose_catf("Checking sirius parameters...\n")
+  if (is.null(ionization)) {
+    do_sirius <- FALSE
+    verbose_catf("[KO] No ionization passed in parameter.\n")
   } else {
+    verbose_catf("[OK] Ionization=%s.\n", ionization)
+  }
+  if (is.na(elemcomposition)) {
+    do_sirius <- FALSE
+    verbose_catf("[KO] Elemental composition is NA.\n")
+  } else if (length(elemcomposition) < 1) {
+    do_sirius <- FALSE
+    verbose_catf("[KO] No elemental composition is provided.\n")
+  } else if (elemcomposition == "") {
+    do_sirius <- FALSE
+    verbose_catf("[KO] Elemental composition is an empty string.\n")
+  } else {
+    verbose_catf("[OK] Elemental composition=%s.\n", elemcomposition)
+  }
+  if (do_sirius) {
+    verbose_catf("Everything is ok, preparing for sirius.\n")
+    formula <- get_formulas(
+      c_name = c_name,
+      elemcomposition = elemcomposition,
+      mzref = mzref,
+      ionization = ionization,
+      spectra = data.frame(mz = vmz, intensities = sum_int[-1])
+    )
+  } else {
+    verbose_catf("Sirius cannot be run.\n")
     formula <- NA
   }
   cp_res <- data.frame(
@@ -259,181 +339,212 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
-  cat("processing ", c_name, "\n")
+  catf("processing %s\n", c_name)
+  verbose_catf("===\n")
   selected_precursors <- which(
     (abs(precursors$precurMtchMZ - mzref) <= tolmz)
     & (abs(precursors$precurMtchRT - rtref) <= tolrt)
   )
 
+  verbose_catf(
+    "> %s precursors selected with mz=%s±%s and rt=%s±%s\n",
+    length(selected_precursors),
+    mzref,
+    tolmz,
+    rtref,
+    tolrt
+  )
+
   ## check if there is the precursor in the file
-  if (length(selected_precursors) > 0) {
 
-    sprecini <- precursors[selected_precursors, ]
+  if (length(selected_precursors) < 1) {
+    cat("> non detected in precursor file\n")
+    show_end_processing()
+    return(NULL)
+  }
 
-    ## check if fragments corresponding to precursor are found in several
-    ## files (collision energy)
-    ## this lead to a processing for each fileid
-    mf <- levels(as.factor(sprecini$fileid))
-    if (length(mf) > 1 && global_verbose) {
-      cat(" several files detected for this compounds :\n")
-    }
+  precursors <- precursors[selected_precursors, ]
 
-    for (f in seq_along(mf)) {
+  ## check if fragments corresponding to precursor are found in several
+  ## files (collision energy)
+  ## this lead to a processing for each fileid
+  file_ids <- as.character(sort(unique(precursors$fileid)))
+  if (length(file_ids) > 1) {
+    catf("> several files detected for this compounds :\n")
+  }
 
-      sprec <- sprecini[sprecini$fileid == mf[f], ]
+  for (f in seq_along(file_ids)) {
 
-      ## selection of fragment in the fragments file with the grpid common in
-      ## both fragments and precursors
-      selfrgt <- levels(as.factor(sprec$grpid))
-      sfrgt <- fragments[
-        fragments$grpid %in% selfrgt
-        & fragments$fileid == mf[f],
-      ]
+    # process_file()
 
-      ## filter fragments on relative intensity seuil_ra = user defined
-      ## parameter (MSpurity flags could be used here)
-      sfrgtfil <- sfrgt[sfrgt$ra > seuil_ra, ]
+    curent_file_id <- file_ids[f]
 
-      mznominal <- round(x = sfrgtfil$mz, mzdecimal)
-      sfrgtfil <- data.frame(sfrgtfil, mznominal)
+    curent_precursors <- precursors[precursors$fileid == curent_file_id, ]
 
-      ## creation of cross table row=scan col=mz X=ra
-      vmz <- levels(as.factor(sfrgtfil$mznominal))
+    ## selection of fragment in the fragments file with the grpid common in
+    ## both fragments and precursors
+    selected_group_id <- as.character(sort(unique(curent_precursors$grpid)))
+    sfrgt <- fragments[
+      fragments$grpid %in% selected_group_id
+      & fragments$fileid == curent_file_id,
+    ]
 
-      if (global_verbose) {
-        cat(" fragments :", vmz)
-        cat("\n")
-      }
+    ## filter fragments on relative intensity seuil_ra = user defined
+    ## parameter (MSpurity flags could be used here)
+    filtered_fragments <- sfrgt[sfrgt$ra > seuil_ra, ]
 
-      ## mz of precursor in data precursor to check correlation with
-      mz_prec <- paste0("mz", round(mean(sprec$mz), mzdecimal))
+    mznominal <- round(x = filtered_fragments$mz, mzdecimal)
+    filtered_fragments <- data.frame(filtered_fragments, mznominal)
 
-      for (m in seq_along(vmz)) {
+    ## creation of cross table row=scan col=mz X=ra
 
-        ## absolute intensity
-        cln <- c(
-          which(colnames(sfrgtfil) == "acquisitionNum"),
-          which(colnames(sfrgtfil) == "i")
-        )
-        int_mz <- sfrgtfil[sfrgtfil$mznominal == vmz[m], cln]
-        colnames(int_mz)[2] <- paste0("mz", vmz[m])
+    vmz <- as.character(sort(unique(filtered_fragments$mznominal)))
 
-        ## average intensities of mass in duplicate scans
-        comp_scans <- aggregate(x = int_mz, by = list(int_mz[[1]]), FUN = mean)
-        int_mz <- comp_scans[, -1]
+    ds_abs_int <- create_ds_abs_int(vmz, filtered_fragments)
 
-        if (m == 1) {
-          ds_abs_int <- int_mz
-        } else {
-          ds_abs_int <- merge(
-            x = ds_abs_int,
-            y = int_mz,
-            by.x = 1,
-            by.y = 1,
-            all.x = TRUE,
-            all.y = TRUE
-          )
-        }
-      }
-      if (global_debug) {
-        print(ds_abs_int)
-        write.table(
-          x = ds_abs_int,
-          file = paste0(c_name, "ds_abs_int.txt"),
-          row.names = FALSE,
-          sep = "\t"
-        )
-      }
-
-      ## elimination of mz with less than min_number_scan scans (user defined
-      ## parameter)
-      xmz <- rep(NA, ncol(ds_abs_int) - 1)
-      sum_int <- rep(NA, ncol(ds_abs_int))
-      nbxmz <- 0
-      nb_scan_check <- min(nrow(ds_abs_int), min_number_scan)
-
-      for (j in 2:ncol(ds_abs_int)) {
-        sum_int[j] <- sum(ds_abs_int[j], na.rm = TRUE)
-        if (sum(!is.na(ds_abs_int[[j]])) < nb_scan_check) {
-          nbxmz <- nbxmz + 1
-          xmz[nbxmz] <- j
-        }
-      }
-
-      xmz <- xmz[-which(is.na(xmz))]
-      if (length(xmz) > 0) {
-        ds_abs_int <- ds_abs_int[, -c(xmz)]
-        sum_int <- sum_int[-c(xmz)]
-        ## liste des mz keeped decale de 1 avec ds_abs_int
-        vmz <- as.numeric(vmz[-c(xmz - 1)])
-      }
-
-      ## reference ion for correlation computing = precursor OR maximum
-      ## intensity ion in precursor is not present
-      refcol <- which(colnames(ds_abs_int) == mz_prec)
-      if (length(refcol) == 0) {
-        refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
-      }
-      pdf(
-        file = sprintf("%s_processing_file%s.pdf", c_name, mf[f]),
-        width = 8,
-        height = 11
+    if (global_debug) {
+      print(ds_abs_int)
+      write.table(
+        x = ds_abs_int,
+        file = paste0(c_name, "ds_abs_int.txt"),
+        row.names = FALSE,
+        sep = "\t"
       )
-      par(mfrow = c(3, 2))
-
-      ## Pearson correlations between absolute intensities computing
-      cor_abs_int <- rep(NA, length(vmz))
-
-      if (length(refcol) > 0) {
-        for (i in 2:length(ds_abs_int)) {
-          cor_abs_int[i - 1] <- cor(
-            x = ds_abs_int[[refcol]],
-            y = ds_abs_int[[i]],
-            use = "pairwise.complete.obs",
-            method = "pearson"
-          )
-          plot(
-            ds_abs_int[[refcol]],
-            ds_abs_int[[i]],
-             xlab = colnames(ds_abs_int)[refcol],
-             ylab = colnames(ds_abs_int)[i],
-             main = sprintf(
-              "%s corr coeff r=%s", c_name, round(cor_abs_int[i - 1], 2)
-            )
-          )
-        }
-        ## plot pseudo spectra
-        res_comp_by_file <- plot_pseudo_spectra(
-          x = ds_abs_int,
-          r_threshold = r_threshold,
-          fid = mf[f],
-          sum_int = sum_int,
-          vmz = vmz,
-          cor_abs_int = cor_abs_int,
-          refcol = refcol,
-          c_name = c_name,
-          inchikey = inchikey,
-          elemcomposition = elemcomposition,
-          ionization = ionization,
-          mzref = mzref
-        )
-        if (f == 1) {
-          res_comp <- res_comp_by_file
-        }
-      } else {
-        res_comp_by_file <- NULL
-        cat(" non detected in fragments file \n")
-      }
-      if (!is.null(res_comp_by_file)) {
-        res_comp <- rbind(res_comp, res_comp_by_file)
-      }
-      dev.off()
     }
-  } else {
-    res_comp <- NULL
-    cat(" non detected in precursor file \n")
+
+    ## elimination of mz with less than min_number_scan scans (user defined
+    ## parameter)
+    xmz <- rep(NA, ncol(ds_abs_int) - 1)
+    sum_int <- rep(NA, ncol(ds_abs_int))
+    nbxmz <- 0
+    nb_scan_check <- min(nrow(ds_abs_int), min_number_scan)
+
+    for (j in 2:ncol(ds_abs_int)) {
+      sum_int[j] <- sum(ds_abs_int[j], na.rm = TRUE)
+      if (sum(!is.na(ds_abs_int[[j]])) < nb_scan_check) {
+        nbxmz <- nbxmz + 1
+        xmz[nbxmz] <- j
+      }
+    }
+
+    xmz <- xmz[-which(is.na(xmz))]
+    if (length(xmz) > 0) {
+      ds_abs_int <- ds_abs_int[, -c(xmz)]
+      sum_int <- sum_int[-c(xmz)]
+      ## liste des mz keeped decale de 1 avec ds_abs_int
+      vmz <- as.numeric(vmz[-c(xmz - 1)])
+    }
+
+    ## mz of precursor in data precursor to check correlation with
+    mz_prec <- paste0("mz", round(mean(curent_precursors$mz), mzdecimal))
+    ## reference ion for correlation computing = precursor OR maximum
+    ## intensity ion in precursor is not present
+    refcol <- which(colnames(ds_abs_int) == mz_prec)
+    if (length(refcol) == 0) {
+      refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
+    }
+    pdf(
+      file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
+      width = 8,
+      height = 11
+    )
+    par(mfrow = c(3, 2))
+
+    ## Pearson correlations between absolute intensities computing
+    cor_abs_int <- rep(NA, length(vmz))
+
+    if (length(refcol) > 0) {
+      for (i in 2:length(ds_abs_int)) {
+        cor_abs_int[i - 1] <- cor(
+          x = ds_abs_int[[refcol]],
+          y = ds_abs_int[[i]],
+          use = "pairwise.complete.obs",
+          method = "pearson"
+        )
+        plot(
+          ds_abs_int[[refcol]],
+          ds_abs_int[[i]],
+           xlab = colnames(ds_abs_int)[refcol],
+           ylab = colnames(ds_abs_int)[i],
+           main = sprintf(
+            "%s corr coeff r=%s", c_name, round(cor_abs_int[i - 1], 2)
+          )
+        )
+      }
+      ## plot pseudo spectra
+      res_comp_by_file <- plot_pseudo_spectra(
+        x = ds_abs_int,
+        r_threshold = r_threshold,
+        fid = curent_file_id,
+        sum_int = sum_int,
+        vmz = vmz,
+        cor_abs_int = cor_abs_int,
+        refcol = refcol,
+        c_name = c_name,
+        inchikey = inchikey,
+        elemcomposition = elemcomposition,
+        ionization = ionization,
+        mzref = mzref,
+        filtered_fragments = filtered_fragments
+      )
+      if (f == 1) {
+        res_comp <- res_comp_by_file
+      }
+      catf(
+        "%s has been processed and %s fragments have been found.\n",
+        c_name,
+        nrow(res_comp_by_file)
+      )
+    } else {
+      res_comp_by_file <- NULL
+      cat(">> non detected in fragments file \n")
+    }
+    if (!is.null(res_comp_by_file)) {
+      res_comp <- rbind(res_comp, res_comp_by_file)
+    }
+    show_end_processing()
+    dev.off()
   }
   return(res_comp)
+}
+
+create_ds_abs_int <- function(vmz, filtered_fragments) {
+  verbose_catf(
+    ">> fragments: %s\n",
+    paste(vmz, collapse = " ")
+  )
+  ### RFVBGTYHN
+  ds_abs_int <- create_int_mz(vmz[1], filtered_fragments)
+  for (mz in vmz[-1]) {
+    int_mz <- create_int_mz(mz, filtered_fragments)
+    ds_abs_int <- merge(
+      x = ds_abs_int,
+      y = int_mz,
+      by.x = 1,
+      by.y = 1,
+      all.x = TRUE,
+      all.y = TRUE
+    )
+  }
+  return(ds_abs_int)
+}
+
+create_int_mz <- function(mz, filtered_fragments) {
+  ## absolute intensity
+  cln <- c(
+    which(colnames(filtered_fragments) == "acquisitionNum"),
+    which(colnames(filtered_fragments) == "i")
+  )
+  int_mz <- filtered_fragments[filtered_fragments$mznominal == mz, cln]
+  colnames(int_mz)[2] <- paste0("mz", mz)
+  ## average intensities of mass in duplicate scans
+  comp_scans <- aggregate(x = int_mz, by = list(int_mz[[1]]), FUN = mean)
+  return(comp_scans[, -1])
+}
+
+show_end_processing <- function() {
+  verbose_catf("==========\n")
+  cat("\n")
 }
 
 set_global <- function(var, value) {
@@ -454,6 +565,16 @@ set_verbose <- function() {
 
 unset_verbose <- function() {
   set_global("global_verbose", FALSE)
+}
+
+verbose_catf <- function(...) {
+  if (global_verbose) {
+    cat(sprintf(...))
+  }
+}
+
+catf <- function(...) {
+  cat(sprintf(...))
 }
 
 create_parser <- function() {
@@ -737,13 +858,24 @@ uniformize_columns <- function(df) {
   return(df)
 }
 
+handle_galaxy_param_special_cases <- function(args) {
+  for (param in names(args)) {
+    if (is.character(args[[param]])) {
+      args[[param]] <- gsub("__ob__", "[", args[[param]])
+      args[[param]] <- gsub("__cb__", "]", args[[param]])
+    }
+  }
+  return(args)
+}
+
 main <- function(args) {
   if (args$version) {
-    cat(sprintf("%s\n", MS2SNOOP_VERSION))
+    catf("%s\n", MS2SNOOP_VERSION)
     base::quit(status = 0)
   }
   sessionInfo()
   check_args_validity(args)
+  args <- handle_galaxy_param_special_cases(args)
   if (args$ionization == "None") {
     args$ionization <- NULL
   }

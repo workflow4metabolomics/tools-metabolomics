@@ -842,39 +842,56 @@ check_galaxy_args_validity <- function(args) {
 get_csv_or_tsv <- function(
   path,
   sep_stack = c("\t", ",", ";"),
+  sep_names = c("tab", "comma", "semicolon"),
   header = TRUE,
   quote = "\""
 ) {
-  sep <- sep_stack[1]
-  result <- tryCatch({
-    read.table(
-      file = path,
-      sep = sep,
-      header = header,
-      quote = quote
-    )
-  }, error = function(e) {
-    return(data.frame())
-  })
-  if (length(sep_stack) == 1) {
-    return(result)
-  }
-  # if (
-  #   ncol(result) == 0 || ## failed
-  #   ncol(result) == 1    ## only one row, suspicious, possible fail # nolint
-  # ) {
-    new_result <- get_csv_or_tsv(
-      path,
-      sep_stack = sep_stack[-1],
-      header = header,
-      quote = quote
-    )
-    if (ncol(new_result) > ncol(result)) {
-      return(new_result)
-    }
-  # }
-  return(result)
+  sep <- determine_csv_or_tsv_sep(
+    path = path,
+    sep_stack = sep_stack,
+    header = header,
+    quote = quote
+  )
+  verbose_catf(
+    "%s separator has been determined for %s.\n",
+    sep_names[sep_stack == sep],
+    path
+  )
+  return(read.table(
+    file = path,
+    sep = sep,
+    header = header,
+    quote = quote
+  ))
 }
+
+determine_csv_or_tsv_sep <- function(
+  path,
+  sep_stack = c("\t", ",", ";"),
+  header = TRUE,
+  quote = "\""
+) {
+  count <- -1
+  best_sep <- sep_stack[1]
+  for (sep in sep_stack) {
+    tryCatch({
+      table <- read.table(
+        file = path,
+        sep = sep,
+        header = header,
+        quote = quote,
+        nrows = 1
+      )
+      if (ncol(table) > count) {
+        count <- ncol(table)
+        best_sep <- sep
+      }
+    })
+  }
+  return(best_sep)
+}
+
+
 
 uniformize_columns <- function(df) {
   cols <- colnames(df)
@@ -915,11 +932,8 @@ main <- function(args) {
   if (args$verbose) {
     set_verbose()
   }
-  ## MSpurity precursors file
   precursors <- get_csv_or_tsv(args$precursors)
-  ## MSpurity fragments file
   fragments <- get_csv_or_tsv(args$fragments)
-  ## list of compounds : col1=Name of molecule, col2=m/z, col3=retention time
   compounds <- get_csv_or_tsv(args$compounds)
 
   compounds <- uniformize_columns(compounds)
@@ -941,9 +955,7 @@ main <- function(args) {
   }
 
   res_all <- NULL
-  for (i in seq_len(nrow(compounds))) {
-    ## loop execution for all compounds in the compounds file
-    res_cor <- NULL
+  for (i in seq_len(nrow(compounds))[-1]) {
     res_cor <- extract_fragments(
       precursors = precursors,
       fragments = fragments,
@@ -972,12 +984,14 @@ main <- function(args) {
   if (is.null(res_all)) {
     stop_with_status("No result at all!", NO_ANY_RESULT_ERROR)
   }
+
   write.table(
     x = res_all,
     file = args$output,
     sep = "\t",
     row.names = FALSE
   )
+
 }
 
 global_debug <- FALSE

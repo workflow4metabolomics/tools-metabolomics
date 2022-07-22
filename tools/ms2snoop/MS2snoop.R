@@ -103,7 +103,7 @@ get_formulas <- function(
         ),
         collapse = "\n"
       ),
-      nrow(spectra) -3
+      nrow(spectra) - 3
     )
   )
   file_content <- sprintf(
@@ -174,7 +174,8 @@ plot_pseudo_spectra <- function(
   elemcomposition,
   ionization,
   mzref,
-  filtered_fragments
+  meaned_mz,
+  do_pdf = FALSE
 ) {
   ## du fait de la difference de nombre de colonne entre la dataframe qui
   ## inclue les scans en 1ere col, mzRef se decale de 1
@@ -183,61 +184,63 @@ plot_pseudo_spectra <- function(
   rel_int <- sum_int[-1]
   rel_int <- rel_int / max(rel_int)
 
-  ## define max value on vertical axis (need to increase in order to plot the
-  ## label of fragments)
-  ymax <- max(rel_int) + 0.2 * max(rel_int)
+  if (do_pdf) {
+    ## define max value on vertical axis (need to increase in order to plot the
+    ## label of fragments)
+    ymax <- max(rel_int) + 0.2 * max(rel_int)
 
-  par(mfrow = c(2, 1))
-  plot(vmz, rel_int, type = "h", ylim = c(0, ymax), main = c_name)
-  ## low correl coef. will be display in grey
-  cor_low <- which(round(cor_abs_int, 2) < r_threshold)
+    par(mfrow = c(2, 1))
+    plot(vmz, rel_int, type = "h", ylim = c(0, ymax), main = c_name)
+    ## low correl coef. will be display in grey
+    cor_low <- which(round(cor_abs_int, 2) < r_threshold)
 
-  lbmzcor <- sprintf("%s(r=%s)", vmz, round(cor_abs_int, 2))
+    lbmzcor <- sprintf("%s(r=%s)", vmz, round(cor_abs_int, 2))
 
-  if (length(cor_low) > 0) {
+    if (length(cor_low) > 0) {
+      text(
+        vmz[cor_low],
+        rel_int[cor_low],
+        lbmzcor[cor_low],
+        cex = 0.5,
+        col = "grey",
+        srt = 90,
+        adj = 0
+      )
+      if (length(vmz) - length(cor_low) > 1) {
+        text(
+          vmz[-c(refcol, cor_low)],
+          rel_int[-c(refcol, cor_low)],
+          lbmzcor[-c(refcol, cor_low)],
+          cex = 0.6,
+          col = 1,
+          srt = 90,
+          adj = 0
+        )
+      }
+    } else {
+      if (length(vmz) > 1) {
+        text(
+          vmz[-c(refcol)],
+          rel_int[-c(refcol)],
+          lbmzcor[-c(refcol)],
+          cex = 0.6,
+          col = 1,
+          srt = 90,
+          adj = 0
+        )
+      }
+    }
+
     text(
-      vmz[cor_low],
-      rel_int[cor_low],
-      lbmzcor[cor_low],
-      cex = 0.5,
-      col = "grey",
+      vmz[refcol],
+      rel_int[refcol],
+      lbmzcor[refcol],
+      cex = 0.8,
+      col = 2,
       srt = 90,
       adj = 0
     )
-    if (length(vmz) - length(cor_low) > 1) {
-      text(
-        vmz[-c(refcol, cor_low)],
-        rel_int[-c(refcol, cor_low)],
-        lbmzcor[-c(refcol, cor_low)],
-        cex = 0.6,
-        col = 1,
-        srt = 90,
-        adj = 0
-      )
-    }
-  } else {
-    if (length(vmz) > 1) {
-      text(
-        vmz[-c(refcol)],
-        rel_int[-c(refcol)],
-        lbmzcor[-c(refcol)],
-        cex = 0.6,
-        col = 1,
-        srt = 90,
-        adj = 0
-      )
-    }
   }
-
-  text(
-    vmz[refcol],
-    rel_int[refcol],
-    lbmzcor[refcol],
-    cex = 0.8,
-    col = 2,
-    srt = 90,
-    adj = 0
-  )
 
   ## prepare result file
   corValid <- (round(cor_abs_int, 2) >= r_threshold) ##nolint object_name_linter
@@ -269,7 +272,7 @@ plot_pseudo_spectra <- function(
       elemcomposition = elemcomposition,
       mzref = mzref,
       ionization = ionization,
-      spectra = data.frame(mz = vmz, intensities = sum_int[-1])
+      spectra = data.frame(mz = meaned_mz, intensities = sum_int[-1])
     )
   } else {
     verbose_catf("Sirius cannot be run.\n")
@@ -335,7 +338,8 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   seuil_ra = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
   tolmz = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
   tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT,
-  ionization = NULL
+  ionization = NULL,
+  do_pdf = FALSE
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
@@ -393,7 +397,18 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     ## parameter (MSpurity flags could be used here)
     filtered_fragments <- sfrgt[sfrgt$ra > seuil_ra, ]
 
-    mznominal <- round(x = filtered_fragments$mz, mzdecimal)
+    mznominal <- round(x = filtered_fragments$mz, digits = 0)
+    meaned_mz <- round(
+      aggregate(
+        data.frame(
+          mz = filtered_fragments$mz,
+          mznominal = mznominal
+        ),
+        list(mznominal),
+        FUN = mean
+      )$mz,
+      digits = mzdecimal
+    )
     filtered_fragments <- data.frame(filtered_fragments, mznominal)
 
     ## creation of cross table row=scan col=mz X=ra
@@ -404,12 +419,12 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 
     if (global_debug) {
       print(ds_abs_int)
-      write.table(
-        x = ds_abs_int,
-        file = paste0(c_name, "ds_abs_int.txt"),
-        row.names = FALSE,
-        sep = "\t"
-      )
+      # write.table(
+      #   x = ds_abs_int,
+      #   file = paste0(c_name, "ds_abs_int.txt"),
+      #   row.names = FALSE,
+      #   sep = "\t"
+      # )
     }
 
     ## elimination of mz with less than min_number_scan scans (user defined
@@ -433,6 +448,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       sum_int <- sum_int[-c(xmz)]
       ## liste des mz keeped decale de 1 avec ds_abs_int
       vmz <- as.numeric(vmz[-c(xmz - 1)])
+      meaned_mz <- meaned_mz[-c(xmz - 1)]
     }
 
     ## mz of precursor in data precursor to check correlation with
@@ -443,12 +459,15 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     if (length(refcol) == 0) {
       refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
     }
-    pdf(
-      file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
-      width = 8,
-      height = 11
-    )
-    par(mfrow = c(3, 2))
+
+    if (do_pdf) {
+      pdf(
+        file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
+        width = 8,
+        height = 11
+      )
+      par(mfrow = c(3, 2))
+    }
 
     ## Pearson correlations between absolute intensities computing
     cor_abs_int <- rep(NA, length(vmz))
@@ -461,15 +480,17 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           use = "pairwise.complete.obs",
           method = "pearson"
         )
-        plot(
-          ds_abs_int[[refcol]],
-          ds_abs_int[[i]],
-           xlab = colnames(ds_abs_int)[refcol],
-           ylab = colnames(ds_abs_int)[i],
-           main = sprintf(
-            "%s corr coeff r=%s", c_name, round(cor_abs_int[i - 1], 2)
+        if (do_pdf) {
+          plot(
+            ds_abs_int[[refcol]],
+            ds_abs_int[[i]],
+             xlab = colnames(ds_abs_int)[refcol],
+             ylab = colnames(ds_abs_int)[i],
+             main = sprintf(
+              "%s corr coeff r=%s", c_name, round(cor_abs_int[i - 1], 2)
+            )
           )
-        )
+        }
       }
       ## plot pseudo spectra
       res_comp_by_file <- plot_pseudo_spectra(
@@ -485,7 +506,8 @@ extract_fragments <- function( ## nolint cyclocomp_linter
         elemcomposition = elemcomposition,
         ionization = ionization,
         mzref = mzref,
-        filtered_fragments = filtered_fragments
+        meaned_mz = meaned_mz,
+        do_pdf = do_pdf
       )
       if (f == 1) {
         res_comp <- res_comp_by_file
@@ -503,9 +525,11 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       res_comp <- rbind(res_comp, res_comp_by_file)
     }
     show_end_processing()
-    dev.off()
+    if (do_pdf) {
+      dev.off()
+    }
   }
-  return(res_comp)
+  return(unique(res_comp))
 }
 
 create_ds_abs_int <- function(vmz, filtered_fragments) {
@@ -513,7 +537,6 @@ create_ds_abs_int <- function(vmz, filtered_fragments) {
     ">> fragments: %s\n",
     paste(vmz, collapse = " ")
   )
-  ### RFVBGTYHN
   ds_abs_int <- create_int_mz(vmz[1], filtered_fragments)
   for (mz in vmz[-1]) {
     int_mz <- create_int_mz(mz, filtered_fragments)

@@ -759,8 +759,6 @@ stop_with_status <- function(msg, status) {
 }
 
 check_args_validity <- function(args) { ## nolint cyclocomp_linter
-  sysvars <- Sys.getenv()
-  sysvarnames <- names(sysvars)
   if (length(args$output) == 0 || nchar(args$output[1]) == 0) {
     stop_with_status(
       "Missing output parameters. Please set it with --output.",
@@ -812,15 +810,21 @@ check_args_validity <- function(args) { ## nolint cyclocomp_linter
       MISSING_INPUT_FILE_ERROR
     )
   }
-  if (
+  if (in_galaxy_env()) {
+    check_galaxy_args_validity(args)
+  }
+}
+
+in_galaxy_env <- function() {
+  sysvars <- Sys.getenv()
+  sysvarnames <- names(sysvars)
+  return(
     "_GALAXY_JOB_HOME_DIR" %in% sysvarnames
     || "_GALAXY_JOB_TMP_DIR" %in% sysvarnames
     || "GALAXY_MEMORY_MB" %in% sysvarnames
     || "GALAXY_MEMORY_MB_PER_SLOT" %in% sysvarnames
     || "GALAXY_SLOTS" %in% sysvarnames
-  ) {
-    check_galaxy_args_validity(args)
-  }
+  )
 }
 
 check_galaxy_args_validity <- function(args) {
@@ -881,7 +885,7 @@ uniformize_columns <- function(df) {
   return(df)
 }
 
-handle_galaxy_param_special_cases <- function(args) {
+handle_galaxy_param <- function(args) {
   for (param in names(args)) {
     if (is.character(args[[param]])) {
       args[[param]] <- gsub("__ob__", "[", args[[param]])
@@ -896,9 +900,12 @@ main <- function(args) {
     catf("%s\n", MS2SNOOP_VERSION)
     base::quit(status = 0)
   }
-  sessionInfo()
+  if (in_galaxy_env()) {
+    print(sessionInfo())
+    cat("\n\n")
+  }
   check_args_validity(args)
-  args <- handle_galaxy_param_special_cases(args)
+  args <- handle_galaxy_param(args)
   if (args$ionization == "None") {
     args$ionization <- NULL
   }

@@ -11,6 +11,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
                             seuil = 0, unicite = "NO") {
   ## Longueur de la peak-list de la matrice a annoter
   PeakListLength <- length(matriceComplexe[, 1])
+print(dim(PeakListLength))
 
   ## Nombre de metabolites inclus dans BdD de composes standards
   nbMetabolitesBdD <- length(BdDStandards)
@@ -46,8 +47,8 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
           matrixAnnotation <- unique.data.frame(rbind.data.frame(matrixAnnotation, matriceComplexe[p, ]))
         }
         # Recherche du couple de pics de la matrice la liste des couples du metabolite standard
-        metaboliteIn <- (ppm1M >= (ppmAnnotationF2 - ppm1Tol) && ppm1M <= (ppmAnnotationF2 + ppm1Tol) &&
-                     ppm2M >= (ppmAnnotationF1 - ppm2Tol) && ppm2M <= (ppmAnnotationF1 + ppm2Tol))
+        metaboliteIn <- (ppm1M >= (ppmAnnotationF2 - ppm1Tol) & ppm1M <= (ppmAnnotationF2 + ppm1Tol) &
+                     ppm2M >= (ppmAnnotationF1 - ppm2Tol) & ppm2M <= (ppmAnnotationF1 + ppm2Tol))
         WhichMetaboliteIn <- which(metaboliteIn)
         # Si au moins un couple de la matrice a annoter dans liste couples metabolite standard
         if (length(WhichMetaboliteIn) > 0) {
@@ -60,6 +61,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
         cat("End of file \n")
       })
     }
+print(nrow(annotatedPpmRef))
 
     # Au - 1 couple de ppm de la matrice complexe annote
     if (nrow(annotatedPpmRef) >= 1) {
@@ -106,11 +108,11 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
       # Nombre de couples metabolite
       nbPeakMetabolite <- length(ppm1M)
       MetaboliteName <- names(BdDStandards[i])
-      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j, 1] - ppm1Tol) && ppm1M <= (allMetabolitesList[j, 1] + ppm1Tol) &&
-                            ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) && ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
+      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j, 1] - ppm1Tol) & ppm1M <= (allMetabolitesList[j, 1] + ppm1Tol) &
+                            ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) & ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
       WhichMetabolitesInAll <- which(metabolitesInAll)
 
-      if (MetaboliteName != allMetabolitesList[j, 3] && length(WhichMetabolitesInAll) > 0) {
+      if (MetaboliteName != allMetabolitesList[j, 3] & length(WhichMetabolitesInAll) > 0) {
 
         metabolitesAllUnicite <- rbind.data.frame(metabolitesAllUnicite, listeTotale_2D_unicite[j, ])
         commonPpm <- data.frame(ppm1 = allMetabolitesList[j, 1], ppm2 = allMetabolitesList[j, 2])
@@ -138,7 +140,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   }
 
   unicityAllList <- listeTotale_2D_unicite
-  if (nrow(listeTotale_2D_unicite) != 0 && nrow(metabolitesAllUnicite) != 0)
+  if (nrow(listeTotale_2D_unicite) != 0 & nrow(metabolitesAllUnicite) != 0)
     unicityAllList <- setdiff(listeTotale_2D_unicite, metabolitesAllUnicite)
 
   unicitynbCouplesRectif <- data.frame()
@@ -160,7 +162,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   listeTotale_metabo <- data.frame()
   if (nrow(commonPpmList) != 0) {
     for (o in seq_len(length(commonPpmList[, 1]))) {
-      tf6 <- (commonMetabolitesPpmAllList$ppm1 == commonPpmList[o, 1] && commonMetabolitesPpmAllList$ppm2 == commonPpmList[o, 2])
+      tf6 <- (commonMetabolitesPpmAllList$ppm1 == commonPpmList[o, 1] & commonMetabolitesPpmAllList$ppm2 == commonPpmList[o, 2])
       w6 <- which(tf6)
 
       for (s in seq_len(length(w6))) {
@@ -174,7 +176,6 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   }
 
   # Representation graphique
-  if (nom_sequence == "HSQC" || nom_sequence == "HMBC") {
   if (nom_sequence == "HSQC" | nom_sequence == "HMBC") {
     atome <- "13C"
     indice_positif <- 1
@@ -222,3 +223,4 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     return(list(liste_resultat_unicite = unicityAllList, listing_ppm_commun_affichage = listeTotale_metabo))
   }
 }
+

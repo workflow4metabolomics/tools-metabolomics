@@ -41,8 +41,6 @@ library(ggplot2)
 library(openxlsx)
 library(stringr)
 library(tidyr)
-library(curl)
-
 library(jsonlite)
 library(stringi)
 
@@ -50,6 +48,7 @@ if (!runExampleL)
     argLs <- parseCommandArgs(evaluate = FALSE)
 logFile <- argLs[["logOut"]]
 sink(logFile)
+
 
 cat("\tPACKAGE INFO\n")
 sessionInfo()
@@ -82,7 +81,8 @@ tocsy <- 0
 
 if (argLs$cosy_2dsequences == "yes") {
   cosy <- 1
-  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -105,6 +105,7 @@ if (argLs$cosy_2dsequences == "yes") {
   }
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
+print(length(BdDReference_COSY))
 }
 
 if (argLs$hmbc_2dsequences == "yes") {
@@ -134,7 +135,9 @@ if (argLs$hmbc_2dsequences == "yes") {
   }
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
+print(length(BdDReference_HMBC))
 }
+
 
 if (argLs$hsqc_2dsequences == "yes") {
   hsqc <- 1
@@ -162,7 +165,9 @@ if (argLs$hsqc_2dsequences == "yes") {
   }
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
+print(length(BdDReference_HSQC))
 }
+
 
 if (argLs$jres_2dsequences == "yes") {
   jres <- 1
@@ -190,6 +195,7 @@ if (argLs$jres_2dsequences == "yes") {
   }
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
+print(length(BdDReference_JRES))
 }
 
 if (argLs$tocsy_2dsequences == "yes") {
@@ -218,6 +224,7 @@ if (argLs$tocsy_2dsequences == "yes") {
   }
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
+print(length(BdDReference_TOCSY))
 }
 
 if (argLs$cosy_2dsequences == "no" && argLs$hmbc_2dsequences == "no" && argLs$hsqc_2dsequences == "no" && argLs$jres_2dsequences == "no" && argLs$tocsy_2dsequences == "no")
@@ -239,6 +246,7 @@ unicite <- str_to_upper(argLs$unicity)
 ## Output paramater values
 AnnotationGraph <- argLs[["AnnotationGraph"]]
 
+print(sessionInfo())
 print(argLs)
 
 ## ANNOTATION

@@ -38,6 +38,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (cosy == 1) {
     matrice.cosy <- read.xlsx(template, sheet = "COSY", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.cosy <- matrice.cosy[matrice.cosy$peak.index != "x", ]
+    print(dim(matrice.cosy))
     annotationCOSY <- annotationRmn2D(matrice.cosy, BdDReference_COSY, "COSY", ppm1Tol = tolPpm1, ppm2Tol = tolPpm1, seuil = seuilPls2D, unicite = unicite)
     dataCOSY <- data.frame(Metabolite = str_to_lower(annotationCOSY$liste_resultat$Metabolite), score.COSY = annotationCOSY$liste_resultat$score)
     dataCOSY <- unique.data.frame(dataCOSY)
@@ -46,6 +47,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (hmbc == 1) {
     matrice.hmbc <- read.xlsx(template, sheet = "HMBC", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.hmbc <- matrice.hmbc[matrice.hmbc$peak.index != "x", ]
+    print(dim(matrice.hmbc))
     annotationHMBC <- annotationRmn2D(matrice.hmbc, BdDReference_HMBC, "HMBC", ppm1Tol = tolPpm1, ppm2Tol = tolPpm2C, seuil = seuilPls2D, unicite = unicite)
     dataHMBC <- data.frame(Metabolite = str_to_lower(annotationHMBC$liste_resultat$Metabolite), score.HMBC = annotationHMBC$liste_resultat$score)
     dataHMBC <- unique.data.frame(dataHMBC)
@@ -54,6 +56,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (hsqc == 1) {
     matrice.hsqc <- read.xlsx(template, sheet = "HSQC", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.hsqc <- matrice.hsqc[matrice.hsqc$peak.index != "x", ]
+    print(dim(matrice.hsqc))
     annotationHSQC <- annotationRmn2D(matrice.hsqc, BdDReference_HSQC, "HSQC", ppm1Tol = tolPpm1, ppm2Tol = tolPpm2C, seuil = seuilPls2D, unicite = unicite)
     dataHSQC <- data.frame(Metabolite = str_to_lower(annotationHSQC$liste_resultat$Metabolite), score.HSQC = annotationHSQC$liste_resultat$score)
     dataHSQC <- unique.data.frame(dataHSQC)
@@ -62,6 +65,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (jres == 1) {
     matrice.jres <- read.xlsx(template, sheet = "JRES", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.jres <- matrice.jres[matrice.jres$peak.index != "x", ]
+    print(dim(matrice.jres))
     annotationJRES <- annotationRmn2D(matrice.jres, BdDReference_JRES, "JRES", ppm1Tol = tolPpm1, ppm2Tol = tolPpm2HJRes, seuil = seuilPls2D, unicite = unicite)
     dataJRES <- data.frame(Metabolite = str_to_lower(annotationJRES$liste_resultat$Metabolite), score.JRES = annotationJRES$liste_resultat$score)
     dataJRES <- unique.data.frame(dataJRES)
@@ -70,6 +74,7 @@ annotationRmn2DGlobale <- function(template, tolPpm1 = 0.01, tolPpm2HJRes = 0.00
   if (tocsy == 1) {
     matrice.tocsy <- read.xlsx(template, sheet = "TOCSY", startRow = 2, colNames = TRUE, rowNames = FALSE, cols = 1:3, na.strings = "NA")
     matrice.tocsy <- matrice.tocsy[matrice.tocsy$peak.index != "x", ]
+    print(dim(matrice.tocsy))
     annotationTOCSY <- annotationRmn2D(matrice.tocsy, BdDReference_TOCSY, "TOCSY", ppm1Tol = tolPpm1, ppm2Tol = tolPpm1, seuil = seuilPls2D, unicite = unicite)
     dataTOCSY <- data.frame(Metabolite = str_to_lower(annotationTOCSY$liste_resultat$Metabolite), score.TOCSY = annotationTOCSY$liste_resultat$score)
     dataTOCSY <- unique.data.frame(dataTOCSY)

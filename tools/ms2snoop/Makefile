@@ -21,10 +21,15 @@ ifeq ($(SCRIPT_RUNNER),perl)
 	SCRIPT_FILE=$(TOOLNAME).pl
 endif
 
+
+COMPOUND_POS = compounds_pos.csv
+PEAKLIST_FRAGMENTS = peaklist_fragments.tsv
+PEAKLIST_PRECURSORS = peaklist_precursors.tsv
+
 override SCRIPT_OPTIONS := \
-  -c $(TMP_DIR)/test-data/compounds_pos.csv \
-  -f $(TMP_DIR)/test-data/peaklist_fragments.tsv \
-  -p $(TMP_DIR)/test-data/peaklist_precursors.tsv \
+  -c $(TMP_DIR)/test-data/$(COMPOUND_POS) \
+  -f $(TMP_DIR)/test-data/$(PEAKLIST_FRAGMENTS) \
+  -p $(TMP_DIR)/test-data/$(PEAKLIST_PRECURSORS) \
   --ionization="[M+H]+" \
   -o $(TMP_DIR)/out.tsv \
   $(SCRIPT_OPTIONS)
@@ -78,15 +83,24 @@ else
 
 
 test:$(TOOL_ENV) link_files
-	export PATH=$(TOOL_ENV):$(TOOL_ENV)/bin:${PATH} \
+	@export PATH=$(TOOL_ENV):$(TOOL_ENV)/bin:${PATH} \
 	&& cd $(TMP_DIR) \
 	&& $(SCRIPT_RUNNER) ./$(SCRIPT_FILE) $(SCRIPT_OPTIONS) \
 	&& echo "" \
 	&& echo "-------------------" \
-	&& echo "Find the results in $(TMP_DIR)." \
+	&& echo "Find the results in $(TMP_DIR) ." \
 	&& echo "Press enter to terminate the script and erase temp files..." \
 	&& read x \
 	;
+
+test-real:
+	$(MAKE) \
+		test \
+		COMPOUND_POS=reallife_compounds_pos.csv \
+		PEAKLIST_FRAGMENTS=reallife_peaklist_fragments.tsv \
+		PEAKLIST_PRECURSORS=reallife_peaklist_precursors.tsv \
+	;
+
 
 ## The only good way to iterate on files is to not rely on `find` nor `ls`!
 link_files:
@@ -130,7 +144,13 @@ $(CONDA_ENV_PATH):
 				$(CONDA_DOWNLOAD_URL) \
 			; \
 		fi \
+		&& echo "" \
+		&& echo "Installing conda in $(CONDA_ENV_PATH)" \
+		&& echo "===" \
 		&& bash $(CONDA_INSTALL_SCRIPT) -b -p "$(CONDA_ENV_PATH)" \
+		&& echo "" \
+		&& echo "Installing conda-lock" \
+		&& echo "===" \
 		&& $(CONDA_BIN) install -y -n base -c conda-forge conda-lock \
 		; \
 	fi \
@@ -138,7 +158,12 @@ $(CONDA_ENV_PATH):
 
 $(VIRTUAL_ENV_PATH):
 	@if [ ! -d "$(VIRTUAL_ENV_PATH)" ];then \
-		python3 -m virtualenv "$(VIRTUAL_ENV_PATH)" ; \
+		echo "" \
+		&& echo "venv does not exist yet in $(VIRTUAL_ENV_PATH)..." \
+		&& echo "creating venv" \
+		&& echo "===" \
+		&& python3 -m virtualenv "$(VIRTUAL_ENV_PATH)" \
+		; \
 	fi \
 	;
 

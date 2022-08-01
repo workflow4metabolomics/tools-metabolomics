@@ -81,7 +81,11 @@ get_formulas <- function(
     ))
   }
   input <- sprintf("%s-%s.ms", c_name, mzref)
-  output <- sprintf("out/%s-%s.out", c_name, mzref)
+  output <- sprintf(
+    "out/%s-%s.out",
+    gsub("[[:space:]]", "", c_name),
+    mzref
+  )
   file_content <- paste(
     sprintf(">compound %s", c_name),
     sprintf(">ionization %s", ionization),
@@ -89,22 +93,29 @@ get_formulas <- function(
     sprintf(">formula %s", elemcomposition),
     sep = "\n"
   )
+  displayed_file_content <- sprintf(
+    "%s\n>collision\n%s",
+    file_content,
+    paste(
+      sprintf(
+        "%s %s",
+        spectra[1:3, "mz"],
+        spectra[1:3, "intensities"]
+      ),
+      collapse = "\n"
+    )
+  )
+  if (nrow(spectra) > 3) {
+    displayed_file_content <- sprintf(
+      "%s\n[... %s more rows of mz and intensities ...]",
+      displayed_file_content,
+      nrow(spectra) - 3
+    )
+  }
   catf(
     ">> MS file created for %s with content:\n%s\n",
     c_name,
-    sprintf(
-      "%s\n\n>collision\n%s\n[... %s more rows of mz and intensities ...]",
-      file_content,
-      paste(
-        sprintf(
-          "%s %s",
-          spectra[1:3, "mz"],
-          spectra[1:3, "intensities"]
-        ),
-        collapse = "\n"
-      ),
-      nrow(spectra) - 3
-    )
+    displayed_file_content
   )
   file_content <- sprintf(
     "%s\n\n>collision\n%s",
@@ -114,11 +125,7 @@ get_formulas <- function(
       collapse = "\n"
     )
   )
-  cat(
-    file_content,
-    file = input,
-    append = FALSE
-  )
+  cat(file_content, file = input, append = FALSE)
   command <- sprintf(
     paste(
       "sirius",
@@ -143,6 +150,7 @@ get_formulas <- function(
     ignore.stdout = background,
     ignore.stderr = background
   )
+  return(NA)
 }
 
 #' @title plot_pseudo_spectra
@@ -379,8 +387,6 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 
   for (f in seq_along(file_ids)) {
 
-    # process_file()
-
     curent_file_id <- file_ids[f]
 
     curent_precursors <- precursors[precursors$fileid == curent_file_id, ]
@@ -474,11 +480,17 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 
     if (length(refcol) > 0) {
       for (i in 2:length(ds_abs_int)) {
-        cor_abs_int[i - 1] <- cor(
+        cor_abs_int[i - 1] <- stats::cor(
           x = ds_abs_int[[refcol]],
           y = ds_abs_int[[i]],
           use = "pairwise.complete.obs",
           method = "pearson"
+        )
+        debug_catf(
+          "Correlation between %s and %s: %s\n",
+          paste(ds_abs_int[[refcol]], collapse = ";"),
+          paste(ds_abs_int[[i]], collapse = ";"),
+          paste(cor_abs_int[i - 1], collapse = ";")
         )
         if (do_pdf) {
           plot(
@@ -592,6 +604,13 @@ unset_verbose <- function() {
 
 verbose_catf <- function(...) {
   if (global_verbose) {
+    cat(sprintf(...))
+  }
+}
+
+
+debug_catf <- function(...) {
+  if (global_debug) {
     cat(sprintf(...))
   }
 }
@@ -955,7 +974,7 @@ main <- function(args) {
   }
 
   res_all <- NULL
-  for (i in seq_len(nrow(compounds))[-1]) {
+  for (i in seq_len(nrow(compounds))) {
     res_cor <- extract_fragments(
       precursors = precursors,
       fragments = fragments,

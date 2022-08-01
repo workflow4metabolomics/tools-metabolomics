@@ -130,8 +130,6 @@ Changelog/News
 
   <xml name="has_smol_stdout">
     <has_line line="processing 2-diethylamino-6-methyl pyrimidin-4-ol one" />
-    <has_line line="processing 5-hydroxy-thiabendazole" />
-    <has_line line="processing Tylosin" />
   </xml>
 
   <xml name="has_regular_stdout">
@@ -178,36 +176,6 @@ Changelog/News
 
   <xml name="has_debug_stdout">
     <has_line line="   acquisitionNum     mz68      mz71      mz74     mz81    mz82     mz83" />
-    <has_line line="   acquisitionNum     mz67     mz71     mz84     mz85     mz86     mz87" />
-    <!-- 
-    <has_line line="   acquisitionNum     mz63     mz67     mz71     mz73      mz77     mz79" />
-    <has_line line="   acquisitionNum     mz79     mz81     mz84     mz86     mz88      mz90" />
-    <has_line line="   acquisitionNum     mz67      mz69     mz71     mz72     mz73     mz75" />
-    <has_line line="   acquisitionNum     mz99    mz100   mz109    mz132    mz135    mz142    mz145" />
-    <has_line line="   acquisitionNum    mz105     mz109     mz111    mz112    mz114    mz115" />
-    <has_line line="   acquisitionNum     mz105    mz109    mz111    mz116     mz119    mz125" />
-    <has_line line="   acquisitionNum      mz79     mz91     mz92     mz94    mz103     mz104" />
-    <has_line line="   acquisitionNum     mz61     mz73     mz76     mz79     mz91      mz92" />
-    <has_line line="   acquisitionNum     mz67    mz72      mz73     mz76       mz77     mz78" />
-    <has_line line="   acquisitionNum    mz123    mz124     mz125    mz127       mz130    mz131" />
-    <has_line line="   acquisitionNum      mz96     mz97     mz99    mz100    mz101   mz103" />
-    <has_line line="   acquisitionNum     mz69      mz72      mz73   mz79     mz81     mz85" />
-    <has_line line="   acquisitionNum     mz82      mz83      mz85     mz87     mz91     mz94" />
-    <has_line line="   acquisitionNum     mz60     mz68     mz69      mz71      mz78      mz81" />
-    <has_line line="   acquisitionNum     mz84     mz86     mz87     mz88     mz89     mz91" />
-    <has_line line="   acquisitionNum     mz86      mz95     mz97     mz105     mz106     mz107" />
-    <has_line line="   acquisitionNum      mz72      mz91     mz99     mz100    mz105    mz109" />
-    <has_line line="   acquisitionNum    mz216    mz225     mz229    mz245    mz247    mz249" />
-    <has_line line="   acquisitionNum     mz61     mz70     mz71     mz72      mz77     mz81" />
-    <has_line line="   acquisitionNum    mz112    mz121    mz133   mz134     mz135     mz136" />
-    <has_line line="   acquisitionNum    mz115    mz116    mz119     mz120    mz127     mz135" />
-    <has_line line="   acquisitionNum     mz86     mz90     mz91     mz94      mz99     mz100" />
-    <has_line line="   acquisitionNum     mz219    mz221    mz223   mz225    mz226    mz227" />
-    <has_line line="   acquisitionNum    mz230    mz233    mz241    mz243    mz255    mz260" />
-    <has_line line="   acquisitionNum     mz75      mz81      mz89     mz91     mz93     mz95" />
-    <has_line line="   acquisitionNum     mz69      mz72     mz75     mz80      mz81      mz83" />
-    <has_line line="   acquisitionNum     mz77      mz79      mz81     mz82      mz83     mz85" />
-    -->
     <has_line line="       mz243    mz248    mz256     mz257     mz258" />
   </xml>
 
@@ -219,7 +187,7 @@ Changelog/News
 
   <xml name="has_smol_verbose_stdout">
     <has_line line=">> fragments: 68 71 74 81 82 83 84 94 97 99 102 103 104 105 109 111 112 117 118 120 121 123 124 126 128 134 136 137 139 140 141 144 146 147 148 149 150 151 152 154 162 163 164 165 166 167 168 180 181 182 183" />
-    <has_line line=">> fragments: 67 71 84 85 86 87 88 89 91 92 95 96 98 99 105 107 110 112 114 116 118 119 120 123 124 126 127 128 129 130 132 134 135 136 139 140 141 142 143 144 145 146 147 148 155 156 157 158 159 160 161 162 164 168 170 172 173 174 175 176 177 180 182 183 185 186 188 189 190 191 192 198 200 201 203 204 205 206 208 218 219" />
+    <!-- <has_line line=">> fragments: 67 71 84 85 86 87 88 89 91 92 95 96 98 99 105 107 110 112 114 116 118 119 120 123 124 126 127 128 129 130 132 134 135 136 139 140 141 142 143 144 145 146 147 148 155 156 157 158 159 160 161 162 164 168 170 172 173 174 175 176 177 180 182 183 185 186 188 189 190 191 192 198 200 201 203 204 205 206 208 218 219" /> -->
   </xml>
   <xml name="has_verbose_stdout">
     <has_line line=">> fragments: 68 71 74 81 82 83 84 94 97 99 102 103 104 105 109 111 112 117 118 120 121 123 124 126 128 134 136 137 139 140 141 144 146 147 148 149 150 151 152 154 162 163 164 165 166 167 168 180 181 182 183" />

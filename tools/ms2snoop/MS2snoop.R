@@ -468,12 +468,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     }
 
     if (processing_parameters$do_pdf) {
-      pdf(
-        file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
-        width = 8,
-        height = 11
-      )
-      par(mfrow = c(3, 2))
+      start_pdf(processing_parameters$c_name, curent_file_id)
     }
 
     ## Pearson correlations between absolute intensities computing
@@ -494,14 +489,12 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           paste(cor_abs_int[i - 1], collapse = ";")
         )
         if (processing_parameters$do_pdf) {
-          plot(
-            ds_abs_int[[refcol]],
-            ds_abs_int[[i]],
-             xlab = colnames(ds_abs_int)[refcol],
-             ylab = colnames(ds_abs_int)[i],
-             main = sprintf(
-              "%s corr coeff r=%s", c_name, round(cor_abs_int[i - 1], 2)
-            )
+          pdf_plot_ds_abs_int(
+            processing_parameters$c_name,
+            ds_abs_int,
+            refcol,
+            i,
+            round(cor_abs_int[i - 1], 2)
           )
         }
       }
@@ -532,7 +525,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     }
     show_end_processing()
     if (processing_parameters$do_pdf) {
-      dev.off()
+      end_pdf()
     }
   }
   return(unique(res_comp))
@@ -574,6 +567,30 @@ create_int_mz <- function(mz, filtered_fragments) {
 show_end_processing <- function() {
   verbose_catf("==========\n")
   cat("\n")
+}
+
+start_pdf <- function(c_name, curent_file_id) {
+  pdf(
+    file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
+    width = 8,
+    height = 11
+  )
+  par(mfrow = c(3, 2))
+}
+
+pdf_plot_ds_abs_int <- function(c_name, ds_abs_int, refcol, i, r_coef) {
+  plot(
+    ds_abs_int[[refcol]],
+    ds_abs_int[[i]],
+     xlab = colnames(ds_abs_int)[refcol],
+     ylab = colnames(ds_abs_int)[i],
+     main = sprintf(
+      "%s corr coeff r=%s", c_name, r_coef
+    )
+  )
+}
+end_pdf <- function() {
+  dev.off()
 }
 
 set_global <- function(var, value) {
@@ -903,8 +920,6 @@ determine_csv_or_tsv_sep <- function(
   }
   return(best_sep)
 }
-
-
 
 uniformize_columns <- function(df) {
   cols <- colnames(df)

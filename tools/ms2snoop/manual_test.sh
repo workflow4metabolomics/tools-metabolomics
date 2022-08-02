@@ -58,6 +58,7 @@ echo "===== preparing ====="
 
 oldwd=$(pwd)
 tmp=$(mktemp -d)
+trap "rm -rf ${tmp}" EXIT
 echo "Working in ${tmp}"
 cd "${tmp}"
 echo "creating links..."
@@ -102,7 +103,6 @@ echo "===== cleaning ====="
 echo "Press enter to finish..."
 read x
 echo "Removing ${tmp}..."
-rm -rf "${tmp}"
 
 echo ""
 echo "Done."

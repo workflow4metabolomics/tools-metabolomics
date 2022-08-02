@@ -74,17 +74,26 @@ echo "===== processing ====="
 mkdir ./out
 
 Rscript ./MS2snoop.R \
+  -c ./test-data/reallife_compounds_pos.csv \
+  -f ./test-data/reallife_peaklist_fragments.tsv \
+  -p ./test-data/reallife_peaklist_precursors.tsv \
+  --ionization="[M+?]+" \
+  -o ${tmp}/out2.tsv \
+;
+
+Rscript ./MS2snoop.R \
   -c ./test-data/compounds_pos.csv \
   -f ./test-data/peaklist_fragments.tsv \
   -p ./test-data/peaklist_precursors.tsv \
-  --ionization="[M+H]+" \
+  --ionization="[M+?]+" \
+  --mzdecimal=0 \
   -o ${tmp}/out.tsv \
 ;
 
 echo ""
 echo "Error code: ${?}" ;
 
-lines=$(diff ${tmp}/out test-data/compound_fragments_result.txt 2>&1)
+lines=$(diff ${tmp}/out.tsv test-data/compound_fragments_result.txt 2>&1)
 
 echo ""
 echo "===== results ====="

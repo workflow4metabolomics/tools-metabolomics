@@ -536,151 +536,162 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   file_ids <- as.character(sort(unique(precursors$fileid)))
   if (length(file_ids) > 1) {
     catf("> several files detected for this compounds :\n")
+  } else if (length(file_ids) < 1 || nrow(precursors) < 1) {
+    return(data.frame())
   }
 
-  for (f in seq_along(file_ids)) {
-
-    curent_file_id <- file_ids[f]
-
+  res_comp <- data.frame()
+  for (curent_file_id in file_ids) {
     curent_precursors <- precursors[precursors$fileid == curent_file_id, ]
-
-    ## selection of fragment in the fragments file with the grpid common in
-    ## both fragments and precursors
-    selected_group_id <- as.character(sort(unique(curent_precursors$grpid)))
-    sfrgt <- fragments[
-      fragments$grpid %in% selected_group_id
+    selected_fragments <- fragments[
+      fragments$grpid %in% as.character(curent_precursors$grpid)
       & fragments$fileid == curent_file_id,
     ]
-
-    ## filter fragments on relative intensity seuil_ra = user defined
-    ## parameter (MSpurity flags could be used here)
-    filtered_fragments <- sfrgt[sfrgt$ra > processing_parameters$seuil_ra, ]
-
-    mznominal <- round(x = filtered_fragments$mz, digits = 0)
-    meaned_mz <- round(
-      aggregate(
-        data.frame(
-          mz = filtered_fragments$mz,
-          mznominal = mznominal
-        ),
-        list(mznominal),
-        FUN = mean
-      )$mz,
-      digits = processing_parameters$mzdecimal
+    filtered_fragments <- selected_fragments[
+      selected_fragments$ra > processing_parameters$seuil_ra,
+    ]
+    res_comp_by_file <- process_file(
+      curent_file_id = curent_file_id,
+      precursor_mz = curent_precursors$mz,
+      filtered_fragments = filtered_fragments,
+      processing_parameters = processing_parameters
     )
-    filtered_fragments <- data.frame(filtered_fragments, mznominal)
-
-    ## creation of cross table row=scan col=mz X=ra
-
-    vmz <- as.character(sort(unique(filtered_fragments$mznominal)))
-
-    ds_abs_int <- create_ds_abs_int(vmz, filtered_fragments)
-
-    if (global_debug) {
-      print(ds_abs_int)
-      # write.table(
-      #   x = ds_abs_int,
-      #   file = paste0(c_name, "ds_abs_int.txt"),
-      #   row.names = FALSE,
-      #   sep = "\t"
-      # )
-    }
-
-    ## elimination of mz with less than min_number_scan scans (user defined
-    ## parameter)
-    xmz <- rep(NA, ncol(ds_abs_int) - 1)
-    sum_int <- rep(NA, ncol(ds_abs_int))
-    nbxmz <- 0
-    nb_scan_check <- min(nrow(ds_abs_int), processing_parameters$min_number_scan)
-
-    for (j in 2:ncol(ds_abs_int)) {
-      sum_int[j] <- sum(ds_abs_int[j], na.rm = TRUE)
-      if (sum(!is.na(ds_abs_int[[j]])) < nb_scan_check) {
-        nbxmz <- nbxmz + 1
-        xmz[nbxmz] <- j
-      }
-    }
-
-    xmz <- xmz[-which(is.na(xmz))]
-    if (length(xmz) > 0) {
-      ds_abs_int <- ds_abs_int[, -c(xmz)]
-      sum_int <- sum_int[-c(xmz)]
-      ## liste des mz keeped decale de 1 avec ds_abs_int
-      vmz <- as.numeric(vmz[-c(xmz - 1)])
-      meaned_mz <- meaned_mz[-c(xmz - 1)]
-    }
-
-    ## mz of precursor in data precursor to check correlation with
-    mz_prec <- paste0("mz", round(mean(curent_precursors$mz), processing_parameters$mzdecimal))
-    ## reference ion for correlation computing = precursor OR maximum
-    ## intensity ion in precursor is not present
-    refcol <- which(colnames(ds_abs_int) == mz_prec)
-    if (length(refcol) == 0) {
-      refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
-    }
-
-    if (processing_parameters$do_pdf) {
-      start_pdf(processing_parameters$c_name, curent_file_id)
-    }
-
-    ## Pearson correlations between absolute intensities computing
-    cor_abs_int <- rep(NA, length(vmz))
-
-    if (length(refcol) > 0) {
-      for (i in 2:length(ds_abs_int)) {
-        cor_abs_int[i - 1] <- stats::cor(
-          x = ds_abs_int[[refcol]],
-          y = ds_abs_int[[i]],
-          use = "pairwise.complete.obs",
-          method = "pearson"
-        )
-        debug_catf(
-          "Correlation between %s and %s: %s\n",
-          paste(ds_abs_int[[refcol]], collapse = ";"),
-          paste(ds_abs_int[[i]], collapse = ";"),
-          paste(cor_abs_int[i - 1], collapse = ";")
-        )
-        if (processing_parameters$do_pdf) {
-          pdf_plot_ds_abs_int(
-            processing_parameters$c_name,
-            ds_abs_int,
-            refcol,
-            i,
-            round(cor_abs_int[i - 1], 2)
-          )
-        }
-      }
-      ## plot pseudo spectra
-      res_comp_by_file <- plot_pseudo_spectra(
-        x = ds_abs_int,
-        fid = curent_file_id,
-        sum_int = sum_int,
-        vmz = vmz,
-        cor_abs_int = cor_abs_int,
-        refcol = refcol,
-        meaned_mz = meaned_mz
-      )
-      if (f == 1) {
-        res_comp <- res_comp_by_file
-      }
-      catf(
-        "%s has been processed and %s fragments have been found.\n",
-        c_name,
-        nrow(res_comp_by_file)
-      )
-    } else {
-      res_comp_by_file <- NULL
-      cat(">> non detected in fragments file \n")
-    }
     if (!is.null(res_comp_by_file)) {
       res_comp <- rbind(res_comp, res_comp_by_file)
     }
-    show_end_processing()
-    if (processing_parameters$do_pdf) {
-      end_pdf()
-    }
   }
   return(unique(res_comp))
+}
+
+
+process_file <- function(
+  curent_file_id,
+  precursor_mz,
+  filtered_fragments,
+  processing_parameters
+) {
+  mznominal <- round(x = filtered_fragments$mz, digits = 0)
+  meaned_mz <- round(
+    aggregate(
+      data.frame(
+        mz = filtered_fragments$mz,
+        mznominal = mznominal
+      ),
+      list(mznominal),
+      FUN = mean
+    )$mz,
+    digits = processing_parameters$mzdecimal
+  )
+  filtered_fragments <- data.frame(filtered_fragments, mznominal)
+
+  ## creation of cross table row=scan col=mz X=ra
+
+  vmz <- as.character(sort(unique(filtered_fragments$mznominal)))
+
+  ds_abs_int <- create_ds_abs_int(vmz, filtered_fragments)
+
+  if (global_debug) {
+    print(ds_abs_int)
+    # write.table(
+    #   x = ds_abs_int,
+    #   file = paste0(c_name, "ds_abs_int.txt"),
+    #   row.names = FALSE,
+    #   sep = "\t"
+    # )
+  }
+
+  ## elimination of mz with less than min_number_scan scans (user defined
+  ## parameter)
+  xmz <- rep(NA, ncol(ds_abs_int) - 1)
+  sum_int <- rep(NA, ncol(ds_abs_int))
+  nbxmz <- 0
+  nb_scan_check <- min(nrow(ds_abs_int), processing_parameters$min_number_scan)
+
+  for (j in 2:ncol(ds_abs_int)) {
+    sum_int[j] <- sum(ds_abs_int[j], na.rm = TRUE)
+    if (sum(!is.na(ds_abs_int[[j]])) < nb_scan_check) {
+      nbxmz <- nbxmz + 1
+      xmz[nbxmz] <- j
+    }
+  }
+
+  xmz <- xmz[-which(is.na(xmz))]
+  if (length(xmz) > 0) {
+    ds_abs_int <- ds_abs_int[, -c(xmz)]
+    sum_int <- sum_int[-c(xmz)]
+    ## liste des mz keeped decale de 1 avec ds_abs_int
+    vmz <- as.numeric(vmz[-c(xmz - 1)])
+    meaned_mz <- meaned_mz[-c(xmz - 1)]
+  }
+
+  ## mz of precursor in data precursor to check correlation with
+  mz_prec <- paste0(
+    "mz",
+    round(mean(precursor_mz), processing_parameters$mzdecimal)
+  )
+  ## reference ion for correlation computing = precursor OR maximum
+  ## intensity ion in precursor is not present
+  refcol <- which(colnames(ds_abs_int) == mz_prec)
+  if (length(refcol) == 0) {
+    refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
+  }
+
+  if (processing_parameters$do_pdf) {
+    start_pdf(processing_parameters$c_name, curent_file_id)
+  }
+
+  ## Pearson correlations between absolute intensities computing
+  cor_abs_int <- rep(NA, length(vmz))
+
+  if (length(refcol) > 0) {
+    for (i in 2:length(ds_abs_int)) {
+      cor_abs_int[i - 1] <- stats::cor(
+        x = ds_abs_int[[refcol]],
+        y = ds_abs_int[[i]],
+        use = "pairwise.complete.obs",
+        method = "pearson"
+      )
+      debug_catf(
+        "Correlation between %s and %s: %s\n",
+        paste(ds_abs_int[[refcol]], collapse = ";"),
+        paste(ds_abs_int[[i]], collapse = ";"),
+        paste(cor_abs_int[i - 1], collapse = ";")
+      )
+      if (processing_parameters$do_pdf) {
+        pdf_plot_ds_abs_int(
+          processing_parameters$c_name,
+          ds_abs_int,
+          refcol,
+          i,
+          round(cor_abs_int[i - 1], 2)
+        )
+      }
+    }
+    ## plot pseudo spectra
+    res_comp_by_file <- plot_pseudo_spectra(
+      x = ds_abs_int,
+      fid = curent_file_id,
+      sum_int = sum_int,
+      vmz = vmz,
+      cor_abs_int = cor_abs_int,
+      refcol = refcol,
+      meaned_mz = meaned_mz,
+      processing_parameters = processing_parameters
+    )
+    catf(
+      "%s has been processed and %s fragments have been found.\n",
+      processing_parameters$c_name,
+      nrow(res_comp_by_file)
+    )
+  } else {
+    res_comp_by_file <- NULL
+    cat(">> non detected in fragments file \n")
+  }
+  show_end_processing()
+  if (processing_parameters$do_pdf) {
+    end_pdf()
+  }
+  return(res_comp_by_file)
 }
 
 create_ds_abs_int <- function(vmz, filtered_fragments) {
@@ -705,11 +716,10 @@ create_ds_abs_int <- function(vmz, filtered_fragments) {
 
 create_int_mz <- function(mz, filtered_fragments) {
   ## absolute intensity
-  cln <- c(
-    which(colnames(filtered_fragments) == "acquisitionNum"),
-    which(colnames(filtered_fragments) == "i")
-  )
-  int_mz <- filtered_fragments[filtered_fragments$mznominal == mz, cln]
+  int_mz <- filtered_fragments[
+    filtered_fragments$mznominal == mz,
+    c("acquisitionNum", "i")
+  ]
   colnames(int_mz)[2] <- paste0("mz", mz)
   ## average intensities of mass in duplicate scans
   comp_scans <- aggregate(x = int_mz, by = list(int_mz[[1]]), FUN = mean)

@@ -65,18 +65,23 @@ lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", globalenv())
 
 
 get_formulas <- function(
-  c_name,
-  elemcomposition,
   mzref,
-  ionization,
-  background = !TRUE,
-  spectra
+  spectra,
+  nominal_mz_list,
+  processing_parameters,
+  background = !TRUE
 ) {
   if (is.vector(mzref) && length(mzref) > 1) {
     return(lapply(
       mzref,
       function(mz) {
-        return(get_formulas(c_name, elemcomposition, mz, ionization))
+        return(get_formulas(
+          mzref = mz,
+          spectra = spectra,
+          nominal_mz_list = nominal_mz_list,
+          processing_parameters = processing_parameters,
+          background = background
+        ))
       }
     ))
   }
@@ -91,10 +96,10 @@ get_formulas <- function(
     mzref
   )
   file_content <- paste(
-    sprintf(">compound %s", c_name),
-    sprintf(">ionization %s", ionization),
+    sprintf(">compound %s", processing_parameters$c_name),
+    sprintf(">ionization %s", processing_parameters$ionization),
     sprintf(">parentmass %s", mzref),
-    sprintf(">formula %s", elemcomposition),
+    sprintf(">formula %s", processing_parameters$elemcomposition),
     sep = "\n"
   )
   displayed_file_content <- sprintf(
@@ -118,7 +123,7 @@ get_formulas <- function(
   }
   catf(
     ">> MS file created for %s with content:\n%s\n",
-    c_name,
+    processing_parameters$c_name,
     displayed_file_content
   )
   file_content <- sprintf(
@@ -159,7 +164,6 @@ get_formulas <- function(
 
 #' @title plot_pseudo_spectra
 #' @param x
-#' @param r_threshold
 #' @param fid
 #' @param sum_int
 #' @param vmz
@@ -175,19 +179,13 @@ get_formulas <- function(
 #' fid file id when several a precursor has been detected in several files
 plot_pseudo_spectra <- function(
   x,
-  r_threshold,
   fid,
   sum_int,
   vmz,
   cor_abs_int,
   refcol,
-  c_name,
-  inchikey,
-  elemcomposition,
-  ionization,
-  mzref,
   meaned_mz,
-  do_pdf = FALSE
+  processing_parameters
 ) {
   ## du fait de la difference de nombre de colonne entre la dataframe qui
   ## inclue les scans en 1ere col, mzRef se decale de 1
@@ -196,15 +194,17 @@ plot_pseudo_spectra <- function(
   rel_int <- sum_int[-1]
   rel_int <- rel_int / max(rel_int)
 
-  if (do_pdf) {
+  if (processing_parameters$do_pdf) {
     ## define max value on vertical axis (need to increase in order to plot the
     ## label of fragments)
     ymax <- max(rel_int) + 0.2 * max(rel_int)
 
     par(mfrow = c(2, 1))
-    plot(vmz, rel_int, type = "h", ylim = c(0, ymax), main = c_name)
+    plot(vmz, rel_int, type = "h", ylim = c(0, ymax),
+      main = processing_parameters$c_name
+    )
     ## low correl coef. will be display in grey
-    cor_low <- which(round(cor_abs_int, 2) < r_threshold)
+    cor_low <- which(round(cor_abs_int, 2) < processing_parameters$r_threshold)
 
     lbmzcor <- sprintf("%s(r=%s)", vmz, round(cor_abs_int, 2))
 
@@ -255,52 +255,56 @@ plot_pseudo_spectra <- function(
   }
 
   ## prepare result file
-  corValid <- (round(cor_abs_int, 2) >= r_threshold) ##nolint object_name_linter
+  cor_valid <- (round(cor_abs_int, 2) >= processing_parameters$r_threshold)
 
   do_sirius <- TRUE
   verbose_catf("Checking sirius parameters...\n")
-  if (is.null(ionization)) {
+  if (is.null(processing_parameters$ionization)) {
     do_sirius <- FALSE
     verbose_catf("[KO] No ionization passed in parameter.\n")
   } else {
-    verbose_catf("[OK] Ionization=%s.\n", ionization)
+    verbose_catf("[OK] Ionization=%s.\n", processing_parameters$ionization)
   }
-  if (is.na(elemcomposition)) {
+  if (is.na(processing_parameters$elemcomposition)) {
     do_sirius <- FALSE
     verbose_catf("[KO] Elemental composition is NA.\n")
-  } else if (length(elemcomposition) < 1) {
+  } else if (length(processing_parameters$elemcomposition) < 1) {
     do_sirius <- FALSE
     verbose_catf("[KO] No elemental composition is provided.\n")
-  } else if (elemcomposition == "") {
+  } else if (processing_parameters$elemcomposition == "") {
     do_sirius <- FALSE
     verbose_catf("[KO] Elemental composition is an empty string.\n")
   } else {
-    verbose_catf("[OK] Elemental composition=%s.\n", elemcomposition)
+    verbose_catf(
+      "[OK] Elemental composition=%s.\n",
+      processing_parameters$elemcomposition
+    )
   }
+
+  cp_res_length <- length(vmz)
   if (do_sirius) {
     verbose_catf("Everything is ok, preparing for sirius.\n")
-    formula <- get_formulas(
-      c_name = c_name,
-      elemcomposition = elemcomposition,
-      mzref = mzref,
-      ionization = ionization,
-      spectra = data.frame(mz = meaned_mz, intensities = sum_int[-1])
+    formulas <- get_formulas(
+      mzref = processing_parameters$mzref,
+      spectra = data.frame(mz = meaned_mz, intensities = sum_int[-1]),
+      nominal_mz_list = vmz,
+      processing_parameters = processing_parameters
     )
   } else {
     verbose_catf("Sirius cannot be run.\n")
     formula <- NA
   }
   cp_res <- data.frame(
-    rep(c_name, length(vmz)),
-    rep(inchikey, length(vmz)),
-    rep(elemcomposition, length(vmz)),
-    rep(formula, length(vmz)),
-    rep(fid, length(vmz)),
+    rep(processing_parameters$c_name, cp_res_length),
+    rep(processing_parameters$inchikey, cp_res_length),
+    rep(processing_parameters$elemcomposition, cp_res_length),
+    rep(formula, cp_res_length),
+    rep(fid, cp_res_length),
     vmz,
     cor_abs_int,
     sum_int[-1],
     rel_int,
-    corValid
+    cor_valid
   )
 
   colnames(cp_res) <- c(
@@ -316,7 +320,6 @@ plot_pseudo_spectra <- function(
     "corValid"
   )
   return(cp_res)
-
 }
 
 #'
@@ -324,13 +327,12 @@ plot_pseudo_spectra <- function(
 #'
 #' @param precursors the precursor list from mspurity
 #' @param fragments the fragments list from ms purity
-#' @param mzref
-#' @param rtref
-#' @param c_name
-#' @param r_threshold default = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD
-#' @param seuil_ra default = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA
-#' @param tolmz default = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ
-#' @param tolrt default = DEFAULT_EXTRACT_FRAGMENTS_TOLRT
+# ' @param mzref
+# ' @param rtref
+# ' @param c_name
+# ' @param inchikey
+# ' @param elemcomposition
+#' @param processing_parameters
 #' @returns
 #'
 #' @description
@@ -339,36 +341,31 @@ plot_pseudo_spectra <- function(
 extract_fragments <- function( ## nolint cyclocomp_linter
   precursors,
   fragments,
-  mzref,
-  rtref,
-  c_name,
-  inchikey,
-  elemcomposition,
-  min_number_scan,
-  mzdecimal,
-  r_threshold = DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD,
-  seuil_ra = DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA,
-  tolmz = DEFAULT_EXTRACT_FRAGMENTS_TOLMZ,
-  tolrt = DEFAULT_EXTRACT_FRAGMENTS_TOLRT,
-  ionization = NULL,
-  do_pdf = FALSE
+  # mzref,
+  # rtref,
+  # c_name,
+  # inchikey,
+  # elemcomposition,
+  processing_parameters
 ) {
   ## filter precursor in the precursors file based on mz and rt in the
   ## compound list
-  catf("processing %s\n", c_name)
+  catf("processing %s\n", processing_parameters$c_name)
   verbose_catf("===\n")
+  param <- processing_parameters
   selected_precursors <- which(
-    (abs(precursors$precurMtchMZ - mzref) <= tolmz)
-    & (abs(precursors$precurMtchRT - rtref) <= tolrt)
+    (abs(precursors$precurMtchMZ - param$mzref) <= param$tolmz)
+    & (abs(precursors$precurMtchRT - param$rtref) <= param$tolrt)
   )
+  rm(param)
 
   verbose_catf(
     "> %s precursors selected with mz=%s±%s and rt=%s±%s\n",
     length(selected_precursors),
-    mzref,
-    tolmz,
-    rtref,
-    tolrt
+    processing_parameters$mzref,
+    processing_parameters$tolmz,
+    processing_parameters$rtref,
+    processing_parameters$tolrt
   )
 
   ## check if there is the precursor in the file
@@ -405,7 +402,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
 
     ## filter fragments on relative intensity seuil_ra = user defined
     ## parameter (MSpurity flags could be used here)
-    filtered_fragments <- sfrgt[sfrgt$ra > seuil_ra, ]
+    filtered_fragments <- sfrgt[sfrgt$ra > processing_parameters$seuil_ra, ]
 
     mznominal <- round(x = filtered_fragments$mz, digits = 0)
     meaned_mz <- round(
@@ -417,7 +414,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
         list(mznominal),
         FUN = mean
       )$mz,
-      digits = mzdecimal
+      digits = processing_parameters$mzdecimal
     )
     filtered_fragments <- data.frame(filtered_fragments, mznominal)
 
@@ -442,7 +439,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     xmz <- rep(NA, ncol(ds_abs_int) - 1)
     sum_int <- rep(NA, ncol(ds_abs_int))
     nbxmz <- 0
-    nb_scan_check <- min(nrow(ds_abs_int), min_number_scan)
+    nb_scan_check <- min(nrow(ds_abs_int), processing_parameters$min_number_scan)
 
     for (j in 2:ncol(ds_abs_int)) {
       sum_int[j] <- sum(ds_abs_int[j], na.rm = TRUE)
@@ -462,7 +459,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     }
 
     ## mz of precursor in data precursor to check correlation with
-    mz_prec <- paste0("mz", round(mean(curent_precursors$mz), mzdecimal))
+    mz_prec <- paste0("mz", round(mean(curent_precursors$mz), processing_parameters$mzdecimal))
     ## reference ion for correlation computing = precursor OR maximum
     ## intensity ion in precursor is not present
     refcol <- which(colnames(ds_abs_int) == mz_prec)
@@ -470,7 +467,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       refcol <- which(sum_int == max(sum_int, na.rm = TRUE))
     }
 
-    if (do_pdf) {
+    if (processing_parameters$do_pdf) {
       pdf(
         file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
         width = 8,
@@ -496,7 +493,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
           paste(ds_abs_int[[i]], collapse = ";"),
           paste(cor_abs_int[i - 1], collapse = ";")
         )
-        if (do_pdf) {
+        if (processing_parameters$do_pdf) {
           plot(
             ds_abs_int[[refcol]],
             ds_abs_int[[i]],
@@ -511,19 +508,12 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       ## plot pseudo spectra
       res_comp_by_file <- plot_pseudo_spectra(
         x = ds_abs_int,
-        r_threshold = r_threshold,
         fid = curent_file_id,
         sum_int = sum_int,
         vmz = vmz,
         cor_abs_int = cor_abs_int,
         refcol = refcol,
-        c_name = c_name,
-        inchikey = inchikey,
-        elemcomposition = elemcomposition,
-        ionization = ionization,
-        mzref = mzref,
-        meaned_mz = meaned_mz,
-        do_pdf = do_pdf
+        meaned_mz = meaned_mz
       )
       if (f == 1) {
         res_comp <- res_comp_by_file
@@ -541,7 +531,7 @@ extract_fragments <- function( ## nolint cyclocomp_linter
       res_comp <- rbind(res_comp, res_comp_by_file)
     }
     show_end_processing()
-    if (do_pdf) {
+    if (processing_parameters$do_pdf) {
       dev.off()
     }
   }
@@ -977,34 +967,39 @@ main <- function(args) {
     )
   }
 
-  res_all <- NULL
+  res_all <- data.frame()
+  processing_parameters <- list(
+    min_number_scan = args$min_number_scan,
+    mzdecimal = args$mzdecimal,
+    r_threshold = args$r_threshold,
+    seuil_ra = args$seuil_ra,
+    tolmz = args$tolmz,
+    tolrt = args$tolrt,
+    ionization = args$ionization,
+    do_pdf = FALSE
+  )
   for (i in seq_len(nrow(compounds))) {
+    processing_parameters$mzref <- compounds[["mz"]][i]
+    processing_parameters$rtref <- compounds[["rtsec"]][i]
+    processing_parameters$c_name <- compounds[["compound_name"]][i]
+    processing_parameters$inchikey <- compounds[["inchikey"]][i]
+    processing_parameters$elemcomposition <- compounds[["elemcomposition"]][i]
     res_cor <- extract_fragments(
       precursors = precursors,
       fragments = fragments,
-      mzref = compounds[["mz"]][i],
-      rtref = compounds[["rtsec"]][i],
-      c_name = compounds[["compound_name"]][i],
-      inchikey = compounds[["inchikey"]][i],
-      elemcomposition = compounds[["elemcomposition"]][i],
-      min_number_scan = args$min_number_scan,
-      mzdecimal = args$mzdecimal,
-      r_threshold = args$r_threshold,
-      seuil_ra = args$seuil_ra,
-      tolmz = args$tolmz,
-      tolrt = args$tolrt,
-      ionization = args$ionization
+      # mzref = compounds[["mz"]][i],
+      # rtref = compounds[["rtsec"]][i],
+      # c_name = compounds[["compound_name"]][i],
+      # inchikey = compounds[["inchikey"]][i],
+      # elemcomposition = compounds[["elemcomposition"]][i],
+      processing_parameters = processing_parameters
     )
     if (!is.null(res_cor)) {
-      if (is.null(res_all)) {
-        res_all <- res_cor
-      } else {
-        res_all <- rbind(res_all, res_cor)
-      }
+      res_all <- rbind(res_all, res_cor)
     }
   }
 
-  if (is.null(res_all)) {
+  if (nrow(res_all) == 0) {
     stop_with_status("No result at all!", NO_ANY_RESULT_ERROR)
   }
 
@@ -1014,7 +1009,6 @@ main <- function(args) {
     sep = "\t",
     row.names = FALSE
   )
-
 }
 
 global_debug <- FALSE

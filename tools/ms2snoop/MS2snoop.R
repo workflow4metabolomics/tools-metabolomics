@@ -15,54 +15,34 @@
 #'
 
 
-assign("MS2SNOOP_VERSION", "2.0.0")
-lockBinding("MS2SNOOP_VERSION", globalenv())
+define <- function(var, value, env = globalenv()) {
+  assign(var, value, envir = env)
+  lockBinding(var, env)
+}
 
-assign("MISSING_PARAMETER_ERROR", 1)
-lockBinding("MISSING_PARAMETER_ERROR", globalenv())
-
-assign("BAD_PARAMETER_VALUE_ERROR", 2)
-lockBinding("BAD_PARAMETER_VALUE_ERROR", globalenv())
-
-assign("MISSING_INPUT_FILE_ERROR", 3)
-lockBinding("MISSING_INPUT_FILE_ERROR", globalenv())
-
-assign("NO_ANY_RESULT_ERROR", 255)
-lockBinding("NO_ANY_RESULT_ERROR", globalenv())
-
-assign("DEFAULT_PRECURSOR_PATH", "peaklist_precursors.tsv")
-assign("DEFAULT_FRAGMENTS_PATH", "peaklist_fragments.tsv")
-assign("DEFAULT_COMPOUNDS_PATH", "compounds_pos.txt")
-assign("DEFAULT_OUTPUT_PATH", "compound_fragments_result.txt")
-assign("DEFAULT_TOLMZ", 0.01)
-assign("DEFAULT_TOLRT", 20)
-assign("DEFAULT_MZDECIMAL", 3)
-assign("DEFAULT_R_THRESHOLD", 0.85)
-assign("DEFAULT_MINNUMBERSCAN", 8)
-assign("DEFAULT_SEUIL_RA", 0.05)
-lockBinding("DEFAULT_PRECURSOR_PATH", globalenv())
-lockBinding("DEFAULT_FRAGMENTS_PATH", globalenv())
-lockBinding("DEFAULT_COMPOUNDS_PATH", globalenv())
-lockBinding("DEFAULT_OUTPUT_PATH", globalenv())
-lockBinding("DEFAULT_TOLMZ", globalenv())
-lockBinding("DEFAULT_TOLRT", globalenv())
-lockBinding("DEFAULT_MZDECIMAL", globalenv())
-lockBinding("DEFAULT_R_THRESHOLD", globalenv())
-lockBinding("DEFAULT_MINNUMBERSCAN", globalenv())
-lockBinding("DEFAULT_SEUIL_RA", globalenv())
-
-assign("DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD", 0.85)
-assign("DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA", 0.1)
-assign("DEFAULT_EXTRACT_FRAGMENTS_TOLMZ", 0.01)
-assign("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", 60)
-lockBinding("DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD", globalenv())
-lockBinding("DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA", globalenv())
-lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLMZ", globalenv())
-lockBinding("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", globalenv())
-
+define("MS2SNOOP_VERSION", "2.0.0")
+define("MISSING_PARAMETER_ERROR", 1)
+define("BAD_PARAMETER_VALUE_ERROR", 2)
+define("MISSING_INPUT_FILE_ERROR", 3)
+define("NO_ANY_RESULT_ERROR", 255)
+define("DEFAULT_PRECURSOR_PATH", "peaklist_precursors.tsv")
+define("DEFAULT_FRAGMENTS_PATH", "peaklist_fragments.tsv")
+define("DEFAULT_COMPOUNDS_PATH", "compounds_pos.txt")
+define("DEFAULT_OUTPUT_PATH", "compound_fragments_result.txt")
+define("DEFAULT_TOLMZ", 0.01)
+define("DEFAULT_TOLRT", 20)
+define("DEFAULT_MZDECIMAL", 3)
+define("DEFAULT_R_THRESHOLD", 0.85)
+define("DEFAULT_MINNUMBERSCAN", 8)
+define("DEFAULT_SEUIL_RA", 0.05)
+define("DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD", 0.85)
+define("DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA", 0.1)
+define("DEFAULT_EXTRACT_FRAGMENTS_TOLMZ", 0.01)
+define("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", 60)
+define("DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MIN_THRESHOLD", 0.01)
+define("DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MAX_THRESHOLD", 5)
 
 ########################################################################
-
 
 get_formulas <- function(
   mzref,
@@ -165,12 +145,12 @@ get_formulas <- function(
 extract_sirius_results <- function(
   output,
   nominal_mz_list,
-  mz_tolerance = 2,
-  max_error = 5,
-  min_error = 0.01
+  max_error = DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MAX_THRESHOLD,
+  min_error = DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MIN_THRESHOLD
 ) {
 
-  check_mz_parameters(mz_tolerance, max_error, min_error)
+  check_mz_parameters(max_error, min_error)
+  mz_tolerance <- (max_error - min_error) / 2.0
 
   out_dir <- sprintf(
     "%s/%s",
@@ -247,21 +227,7 @@ extract_sirius_results <- function(
   return(formulas)
 }
 
-check_mz_parameters <- function(mz_tolerance, max_error, min_error) {
-  if (mz_tolerance < 0) {
-    stop_with_status(
-      "mz tolerance cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (mz_tolerance == 0) {
-    stop_with_status(
-      "mz tolerance cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
+check_mz_parameters <- function(max_error, min_error) {
   if (max_error < 0) {
     stop_with_status(
       "max mz error cannot be negative",
@@ -286,12 +252,6 @@ check_mz_parameters <- function(mz_tolerance, max_error, min_error) {
   if (min_error == 0) {
     stop_with_status(
       "min mz error cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-  if (max_error < mz_tolerance) {
-    stop_with_status(
-      "max mz error should not be lesser than mz tolerance",
       BAD_PARAMETER_VALUE_ERROR
     )
   }

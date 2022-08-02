@@ -141,9 +141,9 @@ get_formulas <- function(
       "--noCite",
       "--noSummaries",
       "--loglevel=WARNING",
-      "-i '%s'",
-      "-o '%s'",
-      "tree"
+      "-i='%s'",
+      "-o='%s'",
+      "tree 2>&1 | grep -P '^(WARNING|SEVERE)'"
     ),
     input,
     output
@@ -159,7 +159,145 @@ get_formulas <- function(
     ignore.stdout = background,
     ignore.stderr = background
   )
-  return(NA)
+  return(extract_sirius_results(output, spectra[, "mz"]))
+  # return(extract_sirius_results(output, nominal_mz_list))
+}
+
+extract_sirius_results <- function(
+  output,
+  nominal_mz_list,
+  mz_tolerance = 2,
+  max_error = 5,
+  min_error = 0.01
+) {
+
+  if (mz_tolerance < 0) {
+    stop_with_status(
+      "mz tolerance cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (mz_tolerance == 0) {
+    stop_with_status(
+      "mz tolerance cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (max_error < 0) {
+    stop_with_status(
+      "max mz error cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (max_error == 0) {
+    stop_with_status(
+      "max mz error cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (min_error < 0) {
+    stop_with_status(
+      "min mz error cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (min_error == 0) {
+    stop_with_status(
+      "min mz error cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+  if (max_error < mz_tolerance) {
+    stop_with_status(
+      "max mz error should not be lesser than mz tolerance",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+  if (max_error <= min_error) {
+    stop_with_status(
+      "max mz error should not be greater than min error",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  out_dir <- sprintf(
+    "%s/%s",
+    list.dirs(output, recursive = FALSE)[[1]],
+    "spectra"
+  )
+  result_filename <- sprintf(
+    "%s/%s",
+    out_dir,
+    list.files(out_dir)[[1]]
+  )
+
+  if (!is.null(result_filename)) {
+    formula_df <- get_csv_or_tsv(result_filename)
+  } else {
+    return(rep(NA, length(nominal_mz_list)))
+  }
+
+  formulas <- data.frame(formula = c(), mz = c(), error = c())
+  for (nominal_mz in nominal_mz_list) {
+    curent_mz_tolerance <- mz_tolerance
+
+    ## just a bad value, to enter the while at least once
+    match <- data.frame()
+
+    while (nrow(match) != 1) {
+      match <- formula_df[
+        which(abs(nominal_mz - formula_df$mz) <= curent_mz_tolerance),
+      ]
+      if (nrow(match) == 0) {
+        ## if no match, increase the tolerance
+        curent_mz_tolerance <- curent_mz_tolerance * 1.5
+      } else {
+        ## decrease the tolerance to filter more
+        curent_mz_tolerance <- curent_mz_tolerance / 2.0
+      }
+      if (curent_mz_tolerance <= min_error) {
+        warning(
+          paste(
+            "The mz tolerance to try to match fragment with their formula",
+            "has lowered too low! This means that the sirius spectra output",
+            "contains multiple fragments with the same mz, and we cannot deal",
+            "with that."
+          )
+        )
+        match <- data.frame(
+          mz = mean(match$mz),
+          formula = paste(match$formula, collapse = ";")
+        )
+      }
+    }
+    match$error <- round(nominal_mz - match$mz, 4)
+    if (abs(match$error) > max_error) {
+      catf(
+        paste(
+          "Could not find formula for fragment %s.",
+          "Error is greater than %s (%s with %s)\n"
+        ),
+        nominal_mz, max_error, abs(match$error), match$formula
+      )
+      match$formula <- NA
+      match$error <- NA
+    } else {
+      catf(
+        "Fragment with mz=%s matches %s with an error of %s\n",
+        nominal_mz, match$formula, match$error
+      )
+    }
+    curent_row <- nrow(formulas) + 1
+    formulas[curent_row, "formula"] <- match$formula
+    formulas[curent_row, "mz"] <- match$mz
+    formulas[curent_row, "error"] <- match$error
+  }
+  return(formulas)
 }
 
 #' @title plot_pseudo_spectra
@@ -282,6 +420,8 @@ plot_pseudo_spectra <- function(
   }
 
   cp_res_length <- length(vmz)
+  errors <- rep(NA, cp_res_length)
+  formulas <- rep(NA, cp_res_length)
   if (do_sirius) {
     verbose_catf("Everything is ok, preparing for sirius.\n")
     formulas <- get_formulas(
@@ -290,15 +430,26 @@ plot_pseudo_spectra <- function(
       nominal_mz_list = vmz,
       processing_parameters = processing_parameters
     )
+    if (nrow(formulas) == 0) {
+      catf("No formula found.\n")
+    } else {
+      errors <- formulas$error
+      formulas <- formulas$formula
+      catf(
+        "Found %s formula for %s fragments\n",
+        length(formulas[which(!(is.na(formulas)))]),
+        cp_res_length
+      )
+    }
   } else {
     verbose_catf("Sirius cannot be run.\n")
-    formula <- NA
   }
   cp_res <- data.frame(
     rep(processing_parameters$c_name, cp_res_length),
     rep(processing_parameters$inchikey, cp_res_length),
     rep(processing_parameters$elemcomposition, cp_res_length),
-    rep(formula, cp_res_length),
+    formulas,
+    errors,
     rep(fid, cp_res_length),
     vmz,
     cor_abs_int,
@@ -311,7 +462,8 @@ plot_pseudo_spectra <- function(
     "compoundName",
     "inchikey",
     "elemcomposition",
-    "formulas",
+    "fragment",
+    "fragment_error",
     "fileid",
     "fragments_mz",
     "CorWithPrecursor",

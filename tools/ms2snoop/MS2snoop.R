@@ -80,10 +80,14 @@ get_formulas <- function(
       }
     ))
   }
-  input <- sprintf("%s-%s.ms", c_name, mzref)
+  input <- sprintf(
+    "%s-%s.ms",
+    gsub("[[:space:]]", "_", processing_parameters$c_name),
+    mzref
+  )
   output <- sprintf(
     "out/%s-%s.out",
-    gsub("[[:space:]]", "", c_name),
+    gsub("[[:space:]]", "_", processing_parameters$c_name),
     mzref
   )
   file_content <- paste(

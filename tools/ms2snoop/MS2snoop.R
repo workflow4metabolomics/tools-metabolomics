@@ -160,7 +160,6 @@ get_formulas <- function(
     ignore.stderr = background
   )
   return(extract_sirius_results(output, spectra[, "mz"]))
-  # return(extract_sirius_results(output, nominal_mz_list))
 }
 
 extract_sirius_results <- function(
@@ -171,59 +170,7 @@ extract_sirius_results <- function(
   min_error = 0.01
 ) {
 
-  if (mz_tolerance < 0) {
-    stop_with_status(
-      "mz tolerance cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (mz_tolerance == 0) {
-    stop_with_status(
-      "mz tolerance cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (max_error < 0) {
-    stop_with_status(
-      "max mz error cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (max_error == 0) {
-    stop_with_status(
-      "max mz error cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (min_error < 0) {
-    stop_with_status(
-      "min mz error cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (min_error == 0) {
-    stop_with_status(
-      "min mz error cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-  if (max_error < mz_tolerance) {
-    stop_with_status(
-      "max mz error should not be lesser than mz tolerance",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-  if (max_error <= min_error) {
-    stop_with_status(
-      "max mz error should not be greater than min error",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
+  check_mz_parameters(mz_tolerance, max_error, min_error)
 
   out_dir <- sprintf(
     "%s/%s",
@@ -298,6 +245,62 @@ extract_sirius_results <- function(
     formulas[curent_row, "error"] <- match$error
   }
   return(formulas)
+}
+
+check_mz_parameters <- function(mz_tolerance, max_error, min_error) {
+  if (mz_tolerance < 0) {
+    stop_with_status(
+      "mz tolerance cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (mz_tolerance == 0) {
+    stop_with_status(
+      "mz tolerance cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (max_error < 0) {
+    stop_with_status(
+      "max mz error cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (max_error == 0) {
+    stop_with_status(
+      "max mz error cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (min_error < 0) {
+    stop_with_status(
+      "min mz error cannot be negative",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+
+  if (min_error == 0) {
+    stop_with_status(
+      "min mz error cannot be zero",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+  if (max_error < mz_tolerance) {
+    stop_with_status(
+      "max mz error should not be lesser than mz tolerance",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
+  if (max_error <= min_error) {
+    stop_with_status(
+      "max mz error should not be greater than min error",
+      BAD_PARAMETER_VALUE_ERROR
+    )
+  }
 }
 
 #' @title plot_pseudo_spectra
@@ -592,12 +595,14 @@ process_file <- function(
 
   if (global_debug) {
     print(ds_abs_int)
-    # write.table(
-    #   x = ds_abs_int,
-    #   file = paste0(c_name, "ds_abs_int.txt"),
-    #   row.names = FALSE,
-    #   sep = "\t"
-    # )
+    if (FALSE) {
+      write.table(
+        x = ds_abs_int,
+        file = paste0(c_name, "ds_abs_int.txt"),
+        row.names = FALSE,
+        sep = "\t"
+      )
+    }
   }
 
   ## elimination of mz with less than min_number_scan scans (user defined
@@ -1164,11 +1169,6 @@ main <- function(args) {
     res_cor <- extract_fragments(
       precursors = precursors,
       fragments = fragments,
-      # mzref = compounds[["mz"]][i],
-      # rtref = compounds[["rtsec"]][i],
-      # c_name = compounds[["compound_name"]][i],
-      # inchikey = compounds[["inchikey"]][i],
-      # elemcomposition = compounds[["elemcomposition"]][i],
       processing_parameters = processing_parameters
     )
     if (!is.null(res_cor)) {

@@ -1,4 +1,9 @@
-<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
+<tool
+    id="ms2snoop"
+    name="MS2 Snoop"
+    version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
+    profile="21.09"
+>
     <description>
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
@@ -16,6 +21,8 @@
     <requirements>
         <requirement type="package" version="4.1.3">r-base</requirement>
         <requirement type="package" version="1.7.1">r-optparse</requirement>
+        <requirement type="package" version="4.9.15">sirius-csifingerid</requirement>
+        <requirement type="package" version="3.0">zip</requirement>
     </requirements>
     <stdio>
         <exit_code range="1" level="fatal" description="Missing parameter error" />
@@ -41,6 +48,10 @@ Rscript '$__tool_directory__/MS2snoop.R'
     --mzdecimal '$mzdecimal'
     --r_threshold '$r_threshold'
     --min_number_scan '$min_number_scan'
+    --ionization '$sirius.ionization'
+    --fragment_match_delta '$sirius.fragment_match_delta'
+    --fragment_match_delta_unit '$sirius.fragment_match_delta_unit'
+    $advenced.pdf
     $advenced.debug
     $advenced.verbose
         ]]>
@@ -51,7 +62,14 @@ Rscript '$__tool_directory__/MS2snoop.R'
             type="data"
             format="tabular,csv,tsv"
             label="list of compounds"
-            help="The table must fit the format: col1=Name of molecule, col2=m/z, col3=retention time"
+            help="
+            The table must fit the format:
+            compound_name [MANDATORY] ;
+            inchikey [MANDATORY] ;
+            elemcomposition [OPTIONAL] ;
+            mz [MANDATORY] ;
+            rtsec [MANDATORY].
+            "
         />
         <param
             argument="--peaklist_frag_tsv"
@@ -72,6 +90,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             max="10"
             value="0.01"
             label="MZ Tolerence"
+            help="M/z tolerance to determine if a precursor matches a compound"
         />
         <param
             argument="--tolrt"
@@ -79,7 +98,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="30"
             value="20"
-            label="RT Tolerence"
+            label="RT Tolerence (in seconds)"
+            help="
+                Retention time tolerance to determine if a
+                precursor matches a compound
+            "
         />
         <param
             argument="--seuil_ra"
@@ -87,7 +110,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="1"
             value="0.05"
-            label="r pearson correlation threshold between precursor and fragment absolute intensity"
+            label="R-Pearson correlation threshold used to filter fragments"
         />
         <param
             argument="--mzdecimal"
@@ -95,14 +118,19 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="5"
             value="0"
-            label="nb decimal for mz"
+            label="Number of decimal to output M/z values with"
         />
         <param
             argument="--r_threshold"
             type="float"
             min="0"
             value="0.85"
-            label="fragment absolute intensity"
+            label="
+                Minimun correlation with absolute intensity value to reach
+                for a fragment to be considered as valid.
+                In PDF generation, invalid fragments will be
+                displayed in grey.
+            "
         />
         <param
             argument="--min_number_scan"
@@ -111,9 +139,70 @@ Rscript '$__tool_directory__/MS2snoop.R'
             max="25"
             value="8"
             label="Present in at least X scan"
-            help="fragments are kept if they are found in a minimum number of scans"
+            help="
+                Mininum scan number in which a fragment must be found,
+                to be kept.
+            "
         />
+
+        <section title="Sirius Parameters" name="sirius">
+            <param
+                argument="--ionization"
+                type="select"
+                label="Which ionization"
+                help="Select the ionization to use in sirius"
+                optional="true"
+            >
+                <option value="[M+H]+" selected="true">[M+H]+</option>
+                <option value="[M-H]-">[M-H]-</option>
+                <option value="[M+?]+">[M+?]+</option>
+                <option value="[M+K]+">[M+K]+</option>
+                <option value="[M+Na]+">[M+Na]+</option>
+                <option value="[M+H-H2O]+">[M+H-H2O]+</option>
+                <option value="[M+H-H4O2]+">[M+H-H4O2]+</option>
+                <option value="[M+NH4]+">[M+NH4]+</option>
+                <option value="[M+Cl]-">[M+Cl]-</option>
+                <option value="[M-H2O-H]-">[M-H2O-H]-</option>
+                <option value="[M+Br]-">[M+Br]-</option>
+            </param>
+
+            <param
+                argument="--fragment_match_delta"
+                type="float"
+                min="0"
+                max="25"
+                value="10"
+                label="Fragment match delta"
+                help="
+                    Delta that determines if a fragment found by sirius
+                    is linked to a certain M/z value.
+                    Zero means all fragments found by sirius will be
+                    associated even when M/z difference is aberant.
+                "
+            />
+            <param
+                argument="--fragment_match_delta_unit"
+                type="select"
+                label="Delta unit"
+                help="Select the unit of the fragment match delta"
+                optional="true"
+            >
+                <option value="ppm" selected="true">PPM</option>
+                <option value="mz">M/z</option>
+            </param>
+        </section>
+
         <section title="Advenced Options" name="advenced">
+            <param
+                argument="--pdf"
+                type="boolean"
+                value=""
+                optional="true"
+                label="Output PDF"
+                help="The tool will output some pdf in a zip file"
+                truevalue="--pdf_path '$pdf_output'"
+                falsevalue=""
+            />
             <param
                 argument="--verbose"
                 type="boolean"
@@ -139,115 +228,227 @@ Rscript '$__tool_directory__/MS2snoop.R'
     <outputs>
         <data
             name="frag_result_txt"
-            format="tabular"
-            label="compound_fragments_result.txt"
+            format="tsv"
+            label="${tool.name} on ${peaklist_frag_tsv.name}"
         />
+        <data
+            name="pdf_output"
+            format="zip"
+            label="${tool.name} PDFs for ${peaklist_frag_tsv.name}"
+        >
+            <filter>advenced['pdf']</filter>
+        </data>
     </outputs>
     <tests>
         <test>
-            <param name="compound_txt" value="compounds_pos.txt" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <!-- Regular test with no option -->
+            <param
+                name="compound_txt"
+                value="compounds_pos.txt"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.tsv"
+            />
+            <output
+                name="frag_result_txt"
+                file="compound_fragments_result.txt"
+            />
             <assert_stdout>
                 <expand macro="has_regular_stdout"/>
                 <expand macro="has_not_verbose_stdout"/>
                 <expand macro="has_not_debug_stdout"/>
             </assert_stdout>
         </test>
+
         <test>
-            <param name="compound_txt" value="compounds_pos.txt" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <!-- Regular files with verbose output -->
+            <param
+                name="compound_txt"
+                value="compounds_pos.txt"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.tsv"
+            />
             <param name="verbose" value="--verbose" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
-            <assert_stdout>
-                <expand macro="has_regular_stdout"/>
-                <expand macro="has_verbose_stdout"/>
-                <expand macro="has_not_debug_stdout"/>
-            </assert_stdout>
-        </test>
-        <test>
-            <param name="compound_txt" value="compounds_pos.txt" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
-            <param name="debug" value="--debug" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
-            <assert_stdout>
-                <expand macro="has_smol_stdout"/>
-                <expand macro="has_debug_stdout"/>
-                <expand macro="has_not_verbose_stdout"/>
-            </assert_stdout>
-        </test>
-        <test>
-            <param name="compound_txt" value="compounds_pos.txt" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
-            <param name="debug" value="--debug" />
-            <param name="verbose" value="--verbose" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
-            <assert_stdout>
-                <expand macro="has_smol_stdout"/>
-                <expand macro="has_debug_stdout"/>
-                <expand macro="has_smol_verbose_stdout"/>
-            </assert_stdout>
-        </test>
-        <test>
-            <param name="compound_txt" value="compounds_pos.csv" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
-            <assert_stdout>
-                <expand macro="has_regular_stdout"/>
-                <expand macro="has_not_verbose_stdout"/>
-                <expand macro="has_not_debug_stdout"/>
-            </assert_stdout>
-        </test>
-        <test>
-            <param name="compound_txt" value="compounds_pos.csv" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
-            <param name="verbose" value="--verbose" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <output
+                name="frag_result_txt"
+                file="compound_fragments_result.txt"
+            />
             <assert_stdout>
                 <expand macro="has_regular_stdout"/>
                 <expand macro="has_verbose_stdout"/>
                 <expand macro="has_not_debug_stdout"/>
             </assert_stdout>
         </test>
+
         <test>
-            <param name="compound_txt" value="compounds_pos.csv" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <!-- Regular test with debug outputs -->
+            <param
+                name="compound_txt"
+                value="compounds_pos.txt"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.tsv"
+            />
             <param name="debug" value="--debug" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <output
+                name="frag_result_txt"
+                file="compound_fragments_result.txt"
+            />
             <assert_stdout>
                 <expand macro="has_smol_stdout"/>
                 <expand macro="has_debug_stdout"/>
                 <expand macro="has_not_verbose_stdout"/>
             </assert_stdout>
         </test>
+
         <test>
-            <param name="compound_txt" value="compounds_pos.csv" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <!-- Regular test with both verbose and debug outputs -->
+            <param
+                name="compound_txt"
+                value="compounds_pos.txt"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.tsv"
+            />
             <param name="debug" value="--debug" />
             <param name="verbose" value="--verbose" />
-            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <output
+                name="frag_result_txt"
+                file="compound_fragments_result.txt"
+            />
             <assert_stdout>
                 <expand macro="has_smol_stdout"/>
                 <expand macro="has_debug_stdout"/>
                 <expand macro="has_smol_verbose_stdout"/>
             </assert_stdout>
         </test>
+
+        <test>
+            <!--
+            This test mixes tsv, csv, and so, and ms2snoop is expected
+            handle them like usual.
+            -->
+            <param
+                name="compound_txt"
+                value="compounds_pos.csv"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.csv"
+            />
+            <param name="verbose" value="--verbose" />
+            <output
+                name="frag_result_txt"
+                file="compound_fragments_result.txt"
+            />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test>
+            <!--
+            This test contains smaller datasets. This is the "regular"
+            smol test, to prepare further smolah tests.
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
+        </test>
+
+        <test>
+            <!--
+            Test for pdf generation
+            -->
+            <param name="pdf" value="True" />
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
+        </test>
+
+        <test>
+            <!--
+                test for delta in ppm
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <param name="fragment_match_delta" value="8.542" />
+            <output name="frag_result_txt" file="smol/out-smol-delta-8.542.tsv" />
+        </test>
+
+        <test>
+            <!--
+                test for delta in m/z
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <param name="fragment_match_delta" value="0.05" />
+            <param name="fragment_match_delta_unit" value="mz" />
+            <output name="frag_result_txt" file="smol/out-smol-delta-0.05mz.tsv" />
+        </test>
+
+        <!--  === expected to fail tests === -->
         <test expect_exit_code="2" expect_failure="true">
-            <param name="compound_txt" value="compounds_pos_old_format.txt" />
-            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
-            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <!--
+            This test uses old format for molecules file.
+            Is is expected to fail
+            -->
+            <param
+                name="compound_txt"
+                value="compounds_pos_old_format.txt"
+            />
+            <param
+                name="peaklist_frag_tsv"
+                value="peaklist_fragments.tsv"
+            />
+            <param
+                name="peaklist_preco_tsv"
+                value="peaklist_precursors.csv"
+            />
             <assert_stderr>
                 <has_line line="Error: Some columns are missing: compound_name, rtsec, inchikey" />
             </assert_stderr>
         </test>
+
     </tests>
     <help><![CDATA[
 

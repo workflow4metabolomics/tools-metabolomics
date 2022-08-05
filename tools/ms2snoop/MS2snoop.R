@@ -535,14 +535,18 @@ extract_fragments <- function( ## nolint cyclocomp_linter
     filtered_fragments <- selected_fragments[
       selected_fragments$ra > processing_parameters$seuil_ra,
     ]
-    res_comp_by_file <- process_file(
-      curent_file_id = curent_file_id,
-      precursor_mz = curent_precursors$mz,
-      filtered_fragments = filtered_fragments,
-      processing_parameters = processing_parameters
-    )
-    if (!is.null(res_comp_by_file)) {
-      res_comp <- rbind(res_comp, res_comp_by_file)
+    if (nrow(filtered_fragments) != 0) {
+      res_comp_by_file <- process_file(
+        curent_file_id = curent_file_id,
+        precursor_mz = curent_precursors$mz,
+        filtered_fragments = filtered_fragments,
+        processing_parameters = processing_parameters
+      )
+      if (!is.null(res_comp_by_file)) {
+        res_comp <- rbind(res_comp, res_comp_by_file)
+      }
+    } else {
+      catf("No fragment found for in fragment file\n")
     }
   }
   return(unique(res_comp))
@@ -771,19 +775,19 @@ unset_verbose <- function() {
 
 verbose_catf <- function(...) {
   if (global_verbose) {
-    cat(sprintf(...))
+    cat(sprintf(...), sep = "")
   }
 }
 
 
 debug_catf <- function(...) {
   if (global_debug) {
-    cat(sprintf(...))
+    cat(sprintf(...), sep = "")
   }
 }
 
 catf <- function(...) {
-  cat(sprintf(...))
+  cat(sprintf(...), sep = "")
 }
 
 create_parser <- function() {

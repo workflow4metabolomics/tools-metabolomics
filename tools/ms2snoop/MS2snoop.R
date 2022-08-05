@@ -45,28 +45,6 @@ for (default in names(defaults)) {
   lockBinding(default, env)
 }
 
-define("MS2SNOOP_VERSION", "2.0.0")
-define("MISSING_PARAMETER_ERROR", 1)
-define("BAD_PARAMETER_VALUE_ERROR", 2)
-define("MISSING_INPUT_FILE_ERROR", 3)
-define("NO_ANY_RESULT_ERROR", 255)
-define("DEFAULT_PRECURSOR_PATH", "peaklist_precursors.tsv")
-define("DEFAULT_FRAGMENTS_PATH", "peaklist_fragments.tsv")
-define("DEFAULT_COMPOUNDS_PATH", "compounds_pos.txt")
-define("DEFAULT_OUTPUT_PATH", "compound_fragments_result.txt")
-define("DEFAULT_TOLMZ", 0.01)
-define("DEFAULT_TOLRT", 20)
-define("DEFAULT_MZDECIMAL", 3)
-define("DEFAULT_R_THRESHOLD", 0.85)
-define("DEFAULT_MINNUMBERSCAN", 8)
-define("DEFAULT_SEUIL_RA", 0.05)
-define("DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD", 0.85)
-define("DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA", 0.1)
-define("DEFAULT_EXTRACT_FRAGMENTS_TOLMZ", 0.01)
-define("DEFAULT_EXTRACT_FRAGMENTS_TOLRT", 60)
-define("DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MIN_THRESHOLD", 0.01)
-define("DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MAX_THRESHOLD", 5)
-
 ########################################################################
 
 get_formulas <- function(
@@ -95,11 +73,48 @@ get_formulas <- function(
     gsub("[[:space:]]", "_", processing_parameters$c_name),
     mzref
   )
+  create_ms_file(input, mzref, spectra, processing_parameters)
   output <- sprintf(
     "out/%s-%s.out",
     gsub("[[:space:]]", "_", processing_parameters$c_name),
     mzref
   )
+  command <- sprintf(
+    paste(
+      "sirius",
+      "--noCite",
+      "--noSummaries",
+      "--loglevel=WARNING",
+      "-i='%s'",
+      "-o='%s'",
+      "tree",
+      ## loglevel is not working taken into account during
+      ## sirius startup, so we filter outputs...
+      "2>&1 | grep '^(WARNING|SEVERE)'"
+    ),
+    input,
+    output
+  )
+  verbose_catf(
+    ">> Sirius is running %swith the command: %s\n",
+    if (background) "in the background " else "",
+    command
+  )
+  system(
+    command,
+    wait = !background,
+    ignore.stdout = background,
+    ignore.stderr = background
+  )
+  return(extract_sirius_results(output, spectra$mz, processing_parameters))
+}
+
+create_ms_file <- function(
+  path,
+  mzref,
+  spectra,
+  processing_parameters
+) {
   file_content <- paste(
     sprintf(">compound %s", processing_parameters$c_name),
     sprintf(">ionization %s", processing_parameters$ionization),
@@ -139,153 +154,135 @@ get_formulas <- function(
       collapse = "\n"
     )
   )
-  cat(file_content, file = input, append = FALSE)
-  command <- sprintf(
-    paste(
-      "sirius",
-      "--noCite",
-      "--noSummaries",
-      "--loglevel=WARNING",
-      "-i='%s'",
-      "-o='%s'",
-      "tree 2>&1 | grep -P '^(WARNING|SEVERE)'"
-    ),
-    input,
-    output
-  )
-  verbose_catf(
-    ">> Sirius is running %swith the command: %s\n",
-    if (background) "in the background " else "",
-    command
-  )
-  system(
-    command,
-    wait = !background,
-    ignore.stdout = background,
-    ignore.stderr = background
-  )
-  return(extract_sirius_results(output, spectra[, "mz"]))
+  cat(file_content, file = path, append = FALSE)
 }
 
 extract_sirius_results <- function(
   output,
-  nominal_mz_list,
-  max_error = DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MAX_THRESHOLD,
-  min_error = DEFAULT_FRAGMENTS_MATCH_FORMULA_MZ_MIN_THRESHOLD
+  mz_list,
+  processing_parameters
 ) {
 
-  check_mz_parameters(max_error, min_error)
-  mz_tolerance <- (max_error - min_error) / 2.0
+  delta <- processing_parameters$fragment_match_delta
+  delta_unit <- tolower(processing_parameters$fragment_match_delta_unit)
 
-  out_dir <- sprintf(
+  output <- list.dirs(output, recursive = FALSE)[[1]]
+
+  spectra_out_dir <- sprintf("%s/spectra", output)
+  spectra_filename <- sprintf(
     "%s/%s",
-    list.dirs(output, recursive = FALSE)[[1]],
-    "spectra"
-  )
-  result_filename <- sprintf(
-    "%s/%s",
-    out_dir,
-    list.files(out_dir)[[1]]
+    spectra_out_dir,
+    list.files(spectra_out_dir)[[1]]
   )
 
-  if (!is.null(result_filename)) {
-    formula_df <- get_csv_or_tsv(result_filename)
+  trees_out_dir <- sprintf("%s/trees", output)
+  trees_filename <- sprintf(
+    "%s/%s",
+    trees_out_dir,
+    list.files(trees_out_dir)[[1]]
+  )
+
+  if (!is.null(spectra_filename)) {
+    sirius_results <- get_csv_or_tsv(spectra_filename)
   } else {
-    return(rep(NA, length(nominal_mz_list)))
+    return(rep(NA, length(mz_list)))
+  }
+  if (!is.null(trees_filename)) {
+    sirius_results <- cbind(sirius_results, extract_sirius_ppm(trees_filename))
+  } else {
+    return(rep(NA, length(mz_list)))
   }
 
-  formulas <- data.frame(formula = c(), mz = c(), error = c())
-  for (nominal_mz in nominal_mz_list) {
-    curent_mz_tolerance <- mz_tolerance
+  fragment_matchings <- data.frame(
+    formula = NA,
+    ppm = NA,
+    mz = mz_list,
+    error = NA
+  )
 
-    ## just a bad value, to enter the while at least once
-    match <- data.frame()
+  sirius_results <- filter_sirius_with_delta(
+    sirius_results = sirius_results,
+    original_mz = fragment_matchings$mz,
+    delta = delta,
+    delta_unit = delta_unit
+  )
 
-    while (nrow(match) != 1) {
-      match <- formula_df[
-        which(abs(nominal_mz - formula_df$mz) <= curent_mz_tolerance),
-      ]
-      if (nrow(match) == 0) {
-        ## if no match, increase the tolerance
-        curent_mz_tolerance <- curent_mz_tolerance * 1.5
-      } else {
-        ## decrease the tolerance to filter more
-        curent_mz_tolerance <- curent_mz_tolerance / 2.0
-      }
-      if (curent_mz_tolerance <= min_error) {
-        warning(
-          paste(
-            "The mz tolerance to try to match fragment with their formula",
-            "has lowered too low! This means that the sirius spectra output",
-            "contains multiple fragments with the same mz, and we cannot deal",
-            "with that."
-          )
-        )
-        match <- data.frame(
-          mz = mean(match$mz),
-          formula = paste(match$formula, collapse = ";")
-        )
-      }
-    }
-    match$error <- round(nominal_mz - match$mz, 4)
-    if (abs(match$error) > max_error) {
-      catf(
-        paste(
-          "Could not find formula for fragment %s.",
-          "Error is greater than %s (%s with %s)\n"
-        ),
-        nominal_mz, max_error, abs(match$error), match$formula
-      )
-      match$formula <- NA
-      match$error <- NA
-    } else {
-      catf(
-        "Fragment with mz=%s matches %s with an error of %s\n",
-        nominal_mz, match$formula, match$error
-      )
-    }
-    curent_row <- nrow(formulas) + 1
-    formulas[curent_row, "formula"] <- match$formula
-    formulas[curent_row, "mz"] <- match$mz
-    formulas[curent_row, "error"] <- match$error
+  for (index in seq_len(nrow(sirius_results))) {
+    result <- sirius_results[index, ]
+    filter <- which(order(abs(fragment_matchings$mz - result$mz)) == 1)
+    fragment_matchings[filter, "formula"] <- result$formula
+    fragment_matchings[filter, "ppm"] <- result$ppm
+    catf(
+      "[OK] Fragment with m/z=%s matches %s with a difference of %s ppm\n",
+      fragment_matchings[filter, "mz"], result$formula, result$ppm
+    )
   }
-  return(formulas)
+  return(fragment_matchings)
 }
 
-check_mz_parameters <- function(max_error, min_error) {
-  if (max_error < 0) {
-    stop_with_status(
-      "max mz error cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
+filter_sirius_with_delta <- function(
+  sirius_results,
+  original_mz,
+  delta,
+  delta_unit
+) {
+  if (is.numeric(delta) && !is.na(delta) && delta > 0) {
+    if (delta_unit == "ppm") {
+      filter <- abs(sirius_results$ppm) <= delta
+      fine <- which(filter)
+      not_fine <- which(!filter)
+      catf(
+        paste("[KO] fragment %s (m/z=%s) eleminated because ppm=%s is greater",
+          "than delta=%s\n"
+        ),
+        sirius_results[not_fine, ]$formula,
+        sirius_results[not_fine, ]$mz,
+        sirius_results[not_fine, ]$ppm,
+        delta
+      )
+      sirius_results <- sirius_results[fine, ]
+    } else if (delta_unit == "mz") {
+      differences <- sapply(
+        sirius_results$mz,
+        function(mz) min(abs(original_mz - mz))
+      )
+      fine <- which(sapply(
+        sirius_results$mz,
+        function(mz) any(abs(original_mz - mz) <= delta)
+      ))
+      not_fine <- which(sapply(
+        sirius_results$mz,
+        function(mz) all(abs(original_mz - mz) > delta)
+      ))
+      catf(
+        paste(
+          "[KO] fragment %s eleminated because mz difference=%s is",
+          "greater than delta=%s\n"
+        ),
+        sirius_results[not_fine, ]$formula,
+        differences[not_fine],
+        delta
+      )
+      sirius_results <- sirius_results[fine, ]
+    }
   }
+  return(sirius_results)
+}
 
-  if (max_error == 0) {
-    stop_with_status(
-      "max mz error cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (min_error < 0) {
-    stop_with_status(
-      "min mz error cannot be negative",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-
-  if (min_error == 0) {
-    stop_with_status(
-      "min mz error cannot be zero",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
-  if (max_error <= min_error) {
-    stop_with_status(
-      "max mz error should not be greater than min error",
-      BAD_PARAMETER_VALUE_ERROR
-    )
-  }
+extract_sirius_ppm <- function(path) {
+  json <- file(path, "r")
+  suppressWarnings(json_lines <- readLines(json))
+  close(json)
+  json_lines <- json_lines[
+    grepl("\\s+\"(massDeviation|recalibratedMass)\" :", json_lines)
+  ]
+  json_lines <- gsub("^\\s+\"[^\"]+\" : \"?", "", json_lines)
+  ppms <- json_lines[seq(1, length(json_lines), 2)]
+  mz <- json_lines[seq(2, length(json_lines), 2)]
+  ppms <- as.numeric(gsub(" ppm .*", "", ppms))
+  mz <- as.numeric(gsub(",$", "", mz))
+  ordered <- order(mz)
+  return(list(ppm = ppms[ordered], recalibrated_mz = mz[ordered]))
 }
 
 #' @title plot_pseudo_spectra
@@ -408,7 +405,7 @@ plot_pseudo_spectra <- function(
   }
 
   cp_res_length <- length(vmz)
-  errors <- rep(NA, cp_res_length)
+  ppm <- rep(NA, cp_res_length)
   formulas <- rep(NA, cp_res_length)
   if (do_sirius) {
     verbose_catf("Everything is ok, preparing for sirius.\n")
@@ -421,7 +418,7 @@ plot_pseudo_spectra <- function(
     if (nrow(formulas) == 0) {
       catf("No formula found.\n")
     } else {
-      errors <- formulas$error
+      ppm <- formulas$ppm
       formulas <- formulas$formula
       catf(
         "Found %s formula for %s fragments\n",
@@ -437,9 +434,9 @@ plot_pseudo_spectra <- function(
     rep(processing_parameters$inchikey, cp_res_length),
     rep(processing_parameters$elemcomposition, cp_res_length),
     formulas,
-    errors,
-    rep(fid, cp_res_length),
     vmz,
+    ppm,
+    rep(fid, cp_res_length),
     cor_abs_int,
     sum_int[-1],
     rel_int,
@@ -451,9 +448,9 @@ plot_pseudo_spectra <- function(
     "inchikey",
     "elemcomposition",
     "fragment",
-    "fragment_error",
+    "fragment_mz",
+    "ppm",
     "fileid",
-    "fragments_mz",
     "CorWithPrecursor",
     "AbsoluteIntensity",
     "relativeIntensity",
@@ -946,6 +943,30 @@ create_parser <- function() {
     ),
     metavar = "character"
   )
+  parser <- optparse::add_option(
+    parser,
+    c("--fragment_match_delta"),
+    type = "numeric",
+    action = "store",
+    default = DEFAULT_FRAGMENTS_MATCH_DELTA,
+    help = paste(
+      "[default %default]",
+      "Fragment match delta"
+    ),
+    metavar = "numeric"
+  )
+  parser <- optparse::add_option(
+    parser,
+    c("--fragment_match_delta_unit"),
+    type = "character",
+    action = "store",
+    default = DEFAULT_FRAGMENTS_MATCH_DELTA_UNIT,
+    help = paste(
+      "[default %default]",
+      "Fragment match delta"
+    ),
+    metavar = "character"
+  )
   return(parser)
 }
 
@@ -1178,7 +1199,9 @@ main <- function(args) {
     ionization = args$ionization,
     do_pdf = nchar(args$pdf_path) > 0,
     pdf_zip_path = args$pdf_path,
-    pdf_path = tempdir()
+    pdf_path = tempdir(),
+    fragment_match_delta = args$fragment_match_delta,
+    fragment_match_delta_unit = args$fragment_match_delta_unit
   )
   for (i in seq_len(nrow(compounds))) {
     processing_parameters$mzref <- compounds[["mz"]][i]

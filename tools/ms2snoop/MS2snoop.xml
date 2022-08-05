@@ -48,7 +48,10 @@ Rscript '$__tool_directory__/MS2snoop.R'
     --mzdecimal '$mzdecimal'
     --r_threshold '$r_threshold'
     --min_number_scan '$min_number_scan'
-    --ionization '$ionization'
+    --ionization '$sirius.ionization'
+    --fragment_match_delta '$sirius.fragment_match_delta'
+    --fragment_match_delta_unit '$sirius.fragment_match_delta_unit'
+    $advenced.pdf
     $advenced.debug
     $advenced.verbose
         ]]>
@@ -59,7 +62,12 @@ Rscript '$__tool_directory__/MS2snoop.R'
             type="data"
             format="tabular,csv,tsv"
             label="list of compounds"
-            help="The table must fit the format: col1=Name of molecule, col2=m/z, col3=retention time"
+            help="
+            The table must fit the format:
+                col1=Name of molecule,
+                col2=m/z,
+                col3=retention time
+            "
         />
         <param
             argument="--peaklist_frag_tsv"
@@ -95,7 +103,10 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="1"
             value="0.05"
-            label="r pearson correlation threshold between precursor and fragment absolute intensity"
+            label="
+                R-Pearson correlation threshold between precursor and
+                fragment absolute intensity
+            "
         />
         <param
             argument="--mzdecimal"
@@ -119,18 +130,58 @@ Rscript '$__tool_directory__/MS2snoop.R'
             max="25"
             value="8"
             label="Present in at least X scan"
-            help="fragments are kept if they are found in a minimum number of scans"
+            help="
+                fragments are kept if they are found in a
+                minimum number of scans
+            "
         />
-        <param
-            argument="--ionization"
-            type="select"
-            label="Which ionization"
-            help="Select the ionization to use in cirius"
-            optional="true"
-        >
-            <option value="[M+H]+" selected="true">[M+H]+</option>
-            <option value="[M-H]-">[M-H]-</option>
-        </param>
+
+        <section title="Sirius Parameters" name="sirius">
+            <param
+                argument="--ionization"
+                type="select"
+                label="Which ionization"
+                help="Select the ionization to use in cirius"
+                optional="true"
+            >
+                <option value="[M+H]+" selected="true">[M+H]+</option>
+                <option value="[M-H]-">[M-H]-</option>
+                <option value="[M+?]+">[M+?]+</option>
+                <option value="[M+K]+">[M+K]+</option>
+                <option value="[M+Na]+">[M+Na]+</option>
+                <option value="[M+H-H2O]+">[M+H-H2O]+</option>
+                <option value="[M+H-H4O2]+">[M+H-H4O2]+</option>
+                <option value="[M+NH4]+">[M+NH4]+</option>
+                <option value="[M+Cl]-">[M+Cl]-</option>
+                <option value="[M-H2O-H]-">[M-H2O-H]-</option>
+                <option value="[M+Br]-">[M+Br]-</option>
+            </param>
+
+            <param
+                argument="--fragment_match_delta"
+                type="float"
+                min="0"
+                max="25"
+                value="10"
+                label="Fragment match delta"
+                help="
+                    Delta that determines if a fragment found by sirius
+                    is linked to a certain M/z value.
+                    Zero means all fragments found by sirius will be
+                    associated even when M/z difference is aberant.
+                "
+            />
+            <param
+                argument="--fragment_match_delta_unit"
+                type="select"
+                label="Delta unit"
+                help="Select the unit of the fragment match delta"
+                optional="true"
+            >
+                <option value="ppm" selected="true">PPM</option>
+                <option value="mz">M/z</option>
+            </param>
+        </section>
 
         <section title="Advenced Options" name="advenced">
             <param
@@ -168,8 +219,8 @@ Rscript '$__tool_directory__/MS2snoop.R'
     <outputs>
         <data
             name="frag_result_txt"
-            format="tabular"
-            label="compound_fragments_result.txt"
+            format="tsv"
+            label="${tool.name} on ${peaklist_frag_tsv.name}"
         />
         <data
             name="pdf_output"

@@ -41,8 +41,7 @@ defaults <- list(
   DEFAULT_SEUIL_RA = 0.05,
   DEFAULT_FRAGMENTS_MATCH_DELTA = 10,
   DEFAULT_FRAGMENTS_MATCH_DELTA_UNIT = "ppm",
-  # DEFAULT_PDF = FALSE,
-  DEFAULT_PDF_PATH = "" # "/tmp/ms2snoop-pdf"
+  DEFAULT_PDF_PATH = ""
 )
 env <- globalenv()
 for (default in names(defaults)) {
@@ -580,14 +579,6 @@ process_file <- function(
 
   if (global_debug) {
     print(ds_abs_int)
-    if (FALSE) {
-      write.table(
-        x = ds_abs_int,
-        file = paste0(c_name, "ds_abs_int.txt"),
-        row.names = FALSE,
-        sep = "\t"
-      )
-    }
   }
 
   ## elimination of mz with less than min_number_scan scans (user defined

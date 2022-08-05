@@ -81,6 +81,16 @@ processing_file.pdf
 Changelog/News
 --------------
 
+
+2.1.0
+  | Adds support for sirius to match fragments with their formula
+  | Adds support for PDF generation from galaxy
+  | Fix: default RA threshold, that was too high (0.5 -> 0.05)
+  | Fix: default mz decimal number (0 -> 3)
+  | Fix: mz decimal: rounded values were used instead of original one in
+    some computing ; rounded values are still output.
+  | Fix: missing session info is now display when launched from galaxy.
+
 2.0.0
   | This version is motivated by a strengthening of the quality of the
     input files.

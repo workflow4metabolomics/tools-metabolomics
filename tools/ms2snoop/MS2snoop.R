@@ -14,15 +14,24 @@
 #' @import optparse
 #'
 
+
+get_version <- function() {
+  cmd <- commandArgs(trailingOnly = FALSE)
+  root <- dirname(gsub("--file=", "", cmd[grep("--file=", cmd)]))
+  readme <- readLines(file.path(root, "README.md"))
+  version_line <- readme[grepl(" * **@version**: ", readme, fixed = TRUE)]
+  return(gsub(".*: ", "", version_line))
+}
+
 defaults <- list(
-  MS2SNOOP_VERSION = "2.0.0",
+  MS2SNOOP_VERSION = get_version(),
   MISSING_PARAMETER_ERROR = 1,
   BAD_PARAMETER_VALUE_ERROR = 2,
   MISSING_INPUT_FILE_ERROR = 3,
   NO_ANY_RESULT_ERROR = 255,
-  DEFAULT_PRECURSOR_PATH = "peaklist_precursors.tsv",
-  DEFAULT_FRAGMENTS_PATH = "peaklist_fragments.tsv",
-  DEFAULT_COMPOUNDS_PATH = "compounds_pos.txt",
+  DEFAULT_PRECURSOR_PATH = NULL,
+  DEFAULT_FRAGMENTS_PATH = NULL,
+  DEFAULT_COMPOUNDS_PATH = NULL,
   DEFAULT_OUTPUT_PATH = "compound_fragments_result.txt",
   DEFAULT_TOLMZ = 0.01,
   DEFAULT_TOLRT = 20,
@@ -30,10 +39,6 @@ defaults <- list(
   DEFAULT_R_THRESHOLD = 0.85,
   DEFAULT_MINNUMBERSCAN = 8,
   DEFAULT_SEUIL_RA = 0.05,
-  DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD = 0.85,
-  DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA = 0.1,
-  DEFAULT_EXTRACT_FRAGMENTS_TOLMZ = 0.01,
-  DEFAULT_EXTRACT_FRAGMENTS_TOLRT = 60,
   DEFAULT_FRAGMENTS_MATCH_DELTA = 10,
   DEFAULT_FRAGMENTS_MATCH_DELTA_UNIT = "ppm",
   # DEFAULT_PDF = FALSE,
@@ -478,11 +483,6 @@ plot_pseudo_spectra <- function(
 extract_fragments <- function( ## nolint cyclocomp_linter
   precursors,
   fragments,
-  # mzref,
-  # rtref,
-  # c_name,
-  # inchikey,
-  # elemcomposition,
   processing_parameters
 ) {
   ## filter precursor in the precursors file based on mz and rt in the

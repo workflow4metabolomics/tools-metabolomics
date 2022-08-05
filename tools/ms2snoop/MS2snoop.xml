@@ -64,9 +64,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
             label="list of compounds"
             help="
             The table must fit the format:
-                col1=Name of molecule,
-                col2=m/z,
-                col3=retention time
+            compound_name [MANDATORY] ;
+            inchikey [MANDATORY] ;
+            elemcomposition [OPTIONAL] ;
+            mz [MANDATORY] ;
+            rtsec [MANDATORY].
             "
         />
         <param
@@ -88,6 +90,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             max="10"
             value="0.01"
             label="MZ Tolerence"
+            help="M/z tolerance to determine if a precursor matches a compound"
         />
         <param
             argument="--tolrt"
@@ -95,7 +98,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="30"
             value="20"
-            label="RT Tolerence"
+            label="RT Tolerence (in seconds)"
+            help="
+                Retention time tolerance to determine if a
+                precursor matches a compound
+            "
         />
         <param
             argument="--seuil_ra"
@@ -103,10 +110,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="1"
             value="0.05"
-            label="
-                R-Pearson correlation threshold between precursor and
-                fragment absolute intensity
-            "
+            label="R-Pearson correlation threshold used to filter fragments"
         />
         <param
             argument="--mzdecimal"
@@ -114,14 +118,19 @@ Rscript '$__tool_directory__/MS2snoop.R'
             min="0"
             max="5"
             value="0"
-            label="nb decimal for mz"
+            label="Number of decimal to output M/z values with"
         />
         <param
             argument="--r_threshold"
             type="float"
             min="0"
             value="0.85"
-            label="fragment absolute intensity"
+            label="
+                Minimun correlation with absolute intensity value to reach
+                for a fragment to be considered as valid.
+                In PDF generation, invalid fragments will be
+                displayed in grey.
+            "
         />
         <param
             argument="--min_number_scan"
@@ -131,8 +140,8 @@ Rscript '$__tool_directory__/MS2snoop.R'
             value="8"
             label="Present in at least X scan"
             help="
-                fragments are kept if they are found in a
-                minimum number of scans
+                Mininum scan number in which a fragment must be found,
+                to be kept.
             "
         />
 
@@ -141,7 +150,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
                 argument="--ionization"
                 type="select"
                 label="Which ionization"
-                help="Select the ionization to use in cirius"
+                help="Select the ionization to use in sirius"
                 optional="true"
             >
                 <option value="[M+H]+" selected="true">[M+H]+</option>

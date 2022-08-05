@@ -88,8 +88,11 @@ Rscript ./MS2snoop.R \
   -f ./test-data/reallife_peaklist_fragments.tsv \
   -p ./test-data/reallife_peaklist_precursors.tsv \
   --ionization="[M+?]+" \
+  --pdf_path ./out-pdf.zip \
+  --mzdecimal=8 \
   -o ${tmp}/out2.tsv \
 ;
+
 
 Rscript ./MS2snoop.R \
   -c ./test-data/compounds_pos.csv \

@@ -1,4 +1,9 @@
-<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
+<tool
+    id="ms2snoop"
+    name="MS2 Snoop"
+    version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
+    profile="21.09"
+>
     <description>
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
@@ -17,6 +22,7 @@
         <requirement type="package" version="4.1.3">r-base</requirement>
         <requirement type="package" version="1.7.1">r-optparse</requirement>
         <requirement type="package" version="4.9.15">sirius-csifingerid</requirement>
+        <requirement type="package" version="3.0">zip</requirement>
     </requirements>
     <stdio>
         <exit_code range="1" level="fatal" description="Missing parameter error" />
@@ -128,6 +134,16 @@ Rscript '$__tool_directory__/MS2snoop.R'
 
         <section title="Advenced Options" name="advenced">
             <param
+                argument="--pdf"
+                type="boolean"
+                value=""
+                optional="true"
+                label="Output PDF"
+                help="The tool will output some pdf in a zip file"
+                truevalue="--pdf_path '$pdf_output'"
+                falsevalue=""
+            />
+            <param
                 argument="--verbose"
                 type="boolean"
                 value=""
@@ -155,6 +171,13 @@ Rscript '$__tool_directory__/MS2snoop.R'
             format="tabular"
             label="compound_fragments_result.txt"
         />
+        <data
+            name="pdf_output"
+            format="zip"
+            label="${tool.name} PDFs for ${peaklist_frag_tsv.name}"
+        >
+            <filter>advenced['pdf']</filter>
+        </data>
     </outputs>
     <tests>
         <test>

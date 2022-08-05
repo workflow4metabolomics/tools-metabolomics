@@ -14,10 +14,35 @@
 #' @import optparse
 #'
 
-
-define <- function(var, value, env = globalenv()) {
-  assign(var, value, envir = env)
-  lockBinding(var, env)
+defaults <- list(
+  MS2SNOOP_VERSION = "2.0.0",
+  MISSING_PARAMETER_ERROR = 1,
+  BAD_PARAMETER_VALUE_ERROR = 2,
+  MISSING_INPUT_FILE_ERROR = 3,
+  NO_ANY_RESULT_ERROR = 255,
+  DEFAULT_PRECURSOR_PATH = "peaklist_precursors.tsv",
+  DEFAULT_FRAGMENTS_PATH = "peaklist_fragments.tsv",
+  DEFAULT_COMPOUNDS_PATH = "compounds_pos.txt",
+  DEFAULT_OUTPUT_PATH = "compound_fragments_result.txt",
+  DEFAULT_TOLMZ = 0.01,
+  DEFAULT_TOLRT = 20,
+  DEFAULT_MZDECIMAL = 3,
+  DEFAULT_R_THRESHOLD = 0.85,
+  DEFAULT_MINNUMBERSCAN = 8,
+  DEFAULT_SEUIL_RA = 0.05,
+  DEFAULT_EXTRACT_FRAGMENTS_R_THRESHOLD = 0.85,
+  DEFAULT_EXTRACT_FRAGMENTS_SEUIL_RA = 0.1,
+  DEFAULT_EXTRACT_FRAGMENTS_TOLMZ = 0.01,
+  DEFAULT_EXTRACT_FRAGMENTS_TOLRT = 60,
+  DEFAULT_FRAGMENTS_MATCH_DELTA = 10,
+  DEFAULT_FRAGMENTS_MATCH_DELTA_UNIT = "ppm",
+  # DEFAULT_PDF = FALSE,
+  DEFAULT_PDF_PATH = "" # "/tmp/ms2snoop-pdf"
+)
+env <- globalenv()
+for (default in names(defaults)) {
+  assign(default, defaults[[default]], envir = env)
+  lockBinding(default, env)
 }
 
 define("MS2SNOOP_VERSION", "2.0.0")
@@ -526,7 +551,6 @@ extract_fragments <- function( ## nolint cyclocomp_linter
   return(unique(res_comp))
 }
 
-
 process_file <- function(
   curent_file_id,
   precursor_mz,
@@ -602,7 +626,7 @@ process_file <- function(
   }
 
   if (processing_parameters$do_pdf) {
-    start_pdf(processing_parameters$c_name, curent_file_id)
+    start_pdf(processing_parameters, curent_file_id)
   }
 
   ## Pearson correlations between absolute intensities computing
@@ -696,9 +720,17 @@ show_end_processing <- function() {
   cat("\n")
 }
 
-start_pdf <- function(c_name, curent_file_id) {
+start_pdf <- function(processing_parameters, curent_file_id) {
+  if (!dir.exists(processing_parameters$pdf_path)) {
+    dir.create(processing_parameters$pdf_path, recursive = TRUE)
+  }
   pdf(
-    file = sprintf("%s_processing_file%s.pdf", c_name, curent_file_id),
+    file = sprintf(
+      "%s/%s_processing_file%s.pdf",
+      processing_parameters$pdf_path,
+      processing_parameters$c_name,
+      curent_file_id
+    ),
     width = 8,
     height = 11
   )
@@ -894,6 +926,16 @@ create_parser <- function() {
   )
   parser <- optparse::add_option(
     parser,
+    c("--pdf_path"),
+    type = "character",
+    default = DEFAULT_PDF_PATH,
+    help = paste(
+      "[default %default]",
+      "PDF files output path"
+    )
+  )
+  parser <- optparse::add_option(
+    parser,
     c("--ionization"),
     type = "character",
     action = "store",
@@ -1067,6 +1109,22 @@ handle_galaxy_param <- function(args) {
   return(args)
 }
 
+zip_pdfs <- function(processing_parameters) {
+  if (processing_parameters$do_pdf) {
+    if (zip <- Sys.getenv("R_ZIPCMD", "zip") == "") {
+      catf("R could not fin the zip executable. Trying luck: zip = \"zip\"")
+      zip <- "zip"
+    } else {
+      catf("Found zip executable at %s .", zip)
+    }
+    utils::zip(
+      processing_parameters$pdf_zip_path,
+      processing_parameters$pdf_path,
+      zip = zip
+    )
+  }
+}
+
 main <- function(args) {
   if (args$version) {
     catf("%s\n", MS2SNOOP_VERSION)
@@ -1118,7 +1176,9 @@ main <- function(args) {
     tolmz = args$tolmz,
     tolrt = args$tolrt,
     ionization = args$ionization,
-    do_pdf = FALSE
+    do_pdf = nchar(args$pdf_path) > 0,
+    pdf_zip_path = args$pdf_path,
+    pdf_path = tempdir()
   )
   for (i in seq_len(nrow(compounds))) {
     processing_parameters$mzref <- compounds[["mz"]][i]
@@ -1146,6 +1206,8 @@ main <- function(args) {
     sep = "\t",
     row.names = FALSE
   )
+  zip_pdfs(processing_parameters)
+  unlink(processing_parameters$pdf_path, recursive = TRUE)
 }
 
 global_debug <- FALSE

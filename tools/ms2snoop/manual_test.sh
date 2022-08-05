@@ -74,6 +74,16 @@ echo "===== processing ====="
 mkdir ./out
 
 Rscript ./MS2snoop.R \
+  -c ./test-data/smol/smol_compounds_pos.csv \
+  -f ./test-data/smol/smol_fragments.tsv \
+  -p ./test-data/smol/smol_precursors.tsv \
+  --ionization="[M+?]+" \
+  --fragment_match_delta=8.542 \
+  --fragment_match_delta_unit=ppm \
+  -o ${tmp}/out-smol.tsv \
+;
+
+Rscript ./MS2snoop.R \
   -c ./test-data/reallife_compounds_pos.csv \
   -f ./test-data/reallife_peaklist_fragments.tsv \
   -p ./test-data/reallife_peaklist_precursors.tsv \

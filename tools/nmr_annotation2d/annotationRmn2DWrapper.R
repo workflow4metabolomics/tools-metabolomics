@@ -35,7 +35,6 @@ flagC <- "\n"
 ##------------------------------
 ## R libraries laoding
 ##------------------------------
-library(batch)
 library(dplyr)
 library(ggplot2)
 library(openxlsx)
@@ -44,8 +43,21 @@ library(tidyr)
 library(jsonlite)
 library(stringi)
 
+## In-house function to escape the bach R library
+parse_args <- function() {
+  args <- commandArgs()
+  start <- which(args == "--args")[1] + 1
+  if (is.na(start)) {
+    return(list())
+  }
+  seq_by2 <- seq(start, length(args), by = 2)
+  result <- as.list(args[seq_by2 + 1])
+  names(result) <- args[seq_by2]
+  return(result)
+}
+
 if (!runExampleL)
-    argLs <- parseCommandArgs(evaluate = FALSE)
+    argLs <- parse_args(evaluate = FALSE)
 logFile <- argLs[["logOut"]]
 sink(logFile)
 

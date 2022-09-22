@@ -1,4 +1,4 @@
-<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0">
+<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.1">
 
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
@@ -421,6 +421,13 @@ Example of output files obtaining wehn running the algorithm on a mix of 23 know
 
 .. image:: ./static/images/OutputsExampleMix.png
         :width: 500
+
+Changelog/News
+--------------
+
+**Version 2.0.1 - September 2022**
+
+- NEW FEATURE: The tool does not rely on the batch package anymore to parse its command line.
 
     </help>
     <citations>

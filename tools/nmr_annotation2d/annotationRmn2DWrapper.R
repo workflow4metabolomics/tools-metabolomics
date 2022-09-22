@@ -45,7 +45,7 @@ library(stringi)
 
 ## In-house function to escape the bach R library
 parse_args <- function() {
-  args <- commandArgs()
+  args <- unlist(parse_args())
   start <- which(args == "--args")[1] + 1
   if (is.na(start)) {
     return(list())

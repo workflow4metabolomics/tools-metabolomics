@@ -45,7 +45,7 @@ library(stringi)
 
 ## In-house function to escape the bach R library
 parse_args <- function() {
-  args <- parse_args()
+  args <- commandArgs()
   start <- which(args == "--args")[1] + 1
   if (is.na(start)) {
     return(list())
@@ -58,6 +58,7 @@ parse_args <- function() {
 
 if (!runExampleL)
     argLs <- parse_args()
+
 logFile <- argLs[["logOut"]]
 sink(logFile)
 

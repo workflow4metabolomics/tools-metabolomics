@@ -57,7 +57,7 @@ parse_args <- function() {
 }
 
 if (!runExampleL)
-    argLs <- parse_args(evaluate = FALSE)
+    argLs <- parse_args()
 logFile <- argLs[["logOut"]]
 sink(logFile)
 

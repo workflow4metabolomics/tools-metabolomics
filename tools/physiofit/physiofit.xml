@@ -153,7 +153,7 @@ calculate fluxes in batch experiments, assuming cells are in metabolic (pseudo) 
    * open-source, free and easy to install everywhere where Python 3 and pip run,
    * biologist-friendly.
 
-It is one of the routine tools that we use at the `MetaSys team <http://www.toulouse-biotechnology-institute.fr/en/research/molecular-physiology-and-metabolism/metasys.html>`_ and `MetaToul platform <http://www.metatoul.fr>`_ to calculate fluxes.
+It is one of the routine tools that we use at the MetaSys team and `MetaToul platform <http://www.metatoul.fr>`_ to calculate fluxes.
 
 The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
 

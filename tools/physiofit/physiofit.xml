@@ -29,7 +29,7 @@
     #if '$advanced_settings.cm_select.cm' == 'true':
         -cm '$advanced_settings.cm_select.conc_met_bounds'
     #end if
-    #if '$advanced_settings.fm_select.fm':
+    #if '$advanced_settings.fm_select.fm' == 'true':
         -fm '$advanced_settings.fm_select.flux_met_bounds'
     #end if
     #if '$advanced_settings.cb_select.cb' == 'true':

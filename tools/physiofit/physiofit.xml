@@ -6,42 +6,42 @@
 
     physiofit4galaxy --galaxy
 
-    #if $input_selection.input_selector == 'tsv':
-        --data $input_selection.datafile
+    #if '$input_selection.input_selector' == 'tsv':
+        --data '$input_selection.datafile'
     #end if
-    #if $input_selection.input_selector == 'json':
-        --data $input_selection.datafile
-        --config $input_selection.cfgfile
+    #if '$input_selection.input_selector' == 'json':
+        --data '$input_selection.datafile'
+        --config '$input_selection.cfgfile'
     #end if
-    $basic_settings.lag
-    #if $basic_settings.deg_select.deg == 'true':
-        -d $basic_setting.degconsts
+    '$basic_settings.lag'
+    #if '$basic_settings.deg_select.deg' == 'true':
+        -d '$basic_setting.degconsts'
     #end if
-    #if $basic_settings.mc_select.montecarlo == 'true':
-        -mc $basic_settings.mc_select.iters
+    #if '$basic_settings.mc_select.montecarlo' == 'true':
+        -mc '$basic_settings.mc_select.iters'
     #end if
 
-    --vini $advanced_settings.vini
+    --vini '$advanced_settings.vini'
 
-    #if $advanced_settings.sd_select.sd == 'true':
-        -s $advanced_settings.sd_select.stddevs
+    #if' $advanced_settings.sd_select.sd' == 'true':
+        -s '$advanced_settings.sd_select.stddevs'
     #end if
-    #if $advanced_settings.cm_select.cm == 'true':
-        -cm $advanced_settings.cm_select.conc_met_bounds
+    #if '$advanced_settings.cm_select.cm' == 'true':
+        -cm '$advanced_settings.cm_select.conc_met_bounds'
     #end if
-    #if $advanced_settings.fm_select.fm:
-        -fm $advanced_settings.fm_select.flux_met_bounds
+    #if '$advanced_settings.fm_select.fm':
+        -fm '$advanced_settings.fm_select.flux_met_bounds'
     #end if
-    #if $advanced_settings.cb_select.cb == 'true':
-        -cb $advanced_settings.cb_select.conc_biom_bounds
+    #if '$advanced_settings.cb_select.cb' == 'true':
+        -cb '$advanced_settings.cb_select.conc_biom_bounds'
     #end if
-    #if $advanced_settings.fb_select.fb:
-        -fb $advanced_settings.fb_select.flux_biom_bounds
+    #if '$advanced_settings.fb_select.fb':
+        -fb '$advanced_settings.fb_select.flux_biom_bounds'
     #end if
-    #if $advanced_settings.verbose:
+    #if '$advanced_settings.verbose':
         -v
     #end if
-    -op $plots -of $fluxes -os $stats -oc $config
+    -op '$plots' -of '$fluxes' -os '$stats' -oc '$config'
 
     ]]></command>
     <inputs>

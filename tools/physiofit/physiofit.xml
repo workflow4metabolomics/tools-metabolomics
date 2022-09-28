@@ -35,7 +35,7 @@
     #if '$advanced_settings.cb_select.cb' == 'true':
         -cb '$advanced_settings.cb_select.conc_biom_bounds'
     #end if
-    #if '$advanced_settings.fb_select.fb':
+    #if '$advanced_settings.fb_select.fb' == 'true':
         -fb '$advanced_settings.fb_select.flux_biom_bounds'
     #end if
     #if '$advanced_settings.verbose':

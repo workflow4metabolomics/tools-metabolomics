@@ -23,7 +23,7 @@
 
     --vini '$advanced_settings.vini'
 
-    #if' $advanced_settings.sd_select.sd' == 'true':
+    #if '$advanced_settings.sd_select.sd' == 'true':
         -s '$advanced_settings.sd_select.stddevs'
     #end if
     #if '$advanced_settings.cm_select.cm' == 'true':

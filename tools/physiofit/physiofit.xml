@@ -136,25 +136,25 @@
 
     <tests>
         <test>
-            <param name="input_selection|input_selector" value="tsv" />
-            <param name="input_selection|datafile" value="KEIO_ROBOT6_1.tsv" />
+            <param name='input_selection|input_selector' value='tsv' />
+            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />
             <section name='basic_settings'>
-                <param name="lag" value="false"/>
-                <param name="deg_select|deg" value="false"/>
-                <param name="mc_select|montecarlo" value="false"/>
+                <param name='lag' value='false'/>
+                <param name='deg_select|deg' value='false'/>
+                <param name='mc_select|montecarlo' value='false'/>
             </section>
-            <section name="advanced_settings">
-                <param name="vini" value="1"/>
-                <param name="sd_select|sd" value="false"/>
-                <param name="cm_select|cm" value="false"/>
-                <param name="fm_select|fm" value="false"/>
-                <param name="cb_select|cb" value="false"/>
-                <param name="fb_select|fb" value="false"/>
-                <param name="verbose" value="false"/>
+            <section name='advanced_settings'>
+                <param name='vini' value='1'/>
+                <param name='sd_select|sd' value='false'/>
+                <param name='cm_select|cm' value='false'/>
+                <param name='fm_select|fm' value='false'/>
+                <param name='cb_select|cb' value='false'/>
+                <param name='fb_select|fb' value='false'/>
+                <param name='verbose' value='false'/>
             </section>
-            <output name="fluxes">
+            <output name='fluxes'>
                 <assert_contents>
-                    <has_n_columns n="7"/>
+                    <has_n_columns n='7'/>
                 </assert_contents>
             </output>
 

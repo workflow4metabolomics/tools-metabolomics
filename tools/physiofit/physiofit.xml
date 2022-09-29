@@ -1,46 +1,63 @@
-<tool id='physiofit' name='PhysioFit' version='2.1.0+galaxy0' python_template_version='3.5'>
+<tool id='physiofit' name='PhysioFit' profile='21.09' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5'>
+    <description>Extracellular flux analysis</description>
+    <macros>
+        <token name="@TOOL_VERSION@">2.1.0</token>
+    </macros>
     <requirements>
-        <requirement type='package' version='2.1.0' >physiofit4galaxy</requirement>
+        <requirement type='package' version='@TOOL_VERSION@'>physiofit4galaxy</requirement>
     </requirements>
     <command detect_errors='exit_code'><![CDATA[
 
     physiofit4galaxy --galaxy
 
-    #if '$input_selection.input_selector' == 'tsv':
+    #if $input_selection.input_selector == 'tsv':
         --data '$input_selection.datafile'
     #end if
-    #if '$input_selection.input_selector' == 'json':
+
+    #if $input_selection.input_selector == 'json':
         --data '$input_selection.datafile'
         --config '$input_selection.cfgfile'
     #end if
-    '$basic_settings.lag'
-    #if '$basic_settings.deg_select.deg' == 'true':
+
+
+    #if $basic_settings.lag == 'true':
+        -l
+    #end if
+
+    #if $basic_settings.deg_select.deg == 'Yes':
         -d '$basic_setting.degconsts'
     #end if
-    #if '$basic_settings.mc_select.montecarlo' == 'true':
+
+    #if $basic_settings.mc_select.montecarlo == 'Yes':
         -mc '$basic_settings.mc_select.iters'
     #end if
 
     --vini '$advanced_settings.vini'
 
-    #if '$advanced_settings.sd_select.sd' == 'true':
+    #if $advanced_settings.sd_select.sd == 'Yes':
         -s '$advanced_settings.sd_select.stddevs'
     #end if
-    #if '$advanced_settings.cm_select.cm' == 'true':
+
+    #if $advanced_settings.cm_select.cm == 'Yes':
         -cm '$advanced_settings.cm_select.conc_met_bounds'
     #end if
-    #if '$advanced_settings.fm_select.fm' == 'true':
+
+    #if $advanced_settings.fm_select.fm == 'Yes':
         -fm '$advanced_settings.fm_select.flux_met_bounds'
     #end if
-    #if '$advanced_settings.cb_select.cb' == 'true':
+
+    #if $advanced_settings.cb_select.cb == 'Yes':
         -cb '$advanced_settings.cb_select.conc_biom_bounds'
     #end if
-    #if '$advanced_settings.fb_select.fb' == 'true':
+
+    #if $advanced_settings.fb_select.fb == 'Yes':
         -fb '$advanced_settings.fb_select.flux_biom_bounds'
     #end if
-    #if '$advanced_settings.verbose':
+
+    #if $advanced_settings.verbose == 'true':
         -v
     #end if
+
     -op '$plots' -of '$fluxes' -os '$stats' -oc '$config'
 
     ]]></command>
@@ -52,10 +69,10 @@
                 <option value='json'>config file (json)</option>
             </param>
             <when value='tsv'>
-                <param name='datafile' type='data' format='tsv, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
+                <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
             </when>
             <when value='json'>
-                <param name='datafile' type='data' format='tsv, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
+                <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
                 <param name='cfgfile' type='data' format='json' label='Upload configuration file' />
             </when>
         </conditional>
@@ -63,18 +80,24 @@
 
         <section name='basic_settings' title='Basic Settings'>
 
-            <param name='lag' type='boolean' argument='--lag' label='Flag to estimate lag phase' truevalue='-l' falsevalue=''/>
+            <param name='lag' type='boolean' label='Flag to estimate lag phase'/>
 
             <conditional name='deg_select'>
-                <param name='deg' type='boolean' argument='--deg' label='Flag to add degradation constants' truevalue='true' falsevalue=''/>
-                <when value='true'>
+                <param name='deg' type='select' label='Select yes to add degradation constants'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param type='text' name='degconsts' value='{}' label='Enter degradation constants in dictionary format (see docs for more information)'/>
                 </when>
             </conditional>
 
             <conditional name='mc_select'>
-                <param name='montecarlo' type='boolean' argument='--montecarlo' label='Flag for sensitivity analysis' truevalue='true'/>
-                <when value='true'>
+                <param name='montecarlo' type='select' label='Select yes for sensitivity analysis'>
+                    <option value='Yes'>Yes</option>
+                    <option value='No'>No</option>
+                </param>
+                <when value='Yes'>
                     <param name='iters' type='integer' value='100' label='Number of iterations for sensitivity analysis'/>
                 </when>
             </conditional>
@@ -87,41 +110,56 @@
             <param name='vini' type='float' value='1' label='Initial value for fluxes to estimate' />
 
             <conditional name='sd_select'>
-                <param name='sd' type='boolean' argument='-s' label='Flag to add standard deviations' truevalue='true'/>
-                <when value='true'>
+                <param name='sd' type='select' label='Select yes to add standard deviations'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param name='stddevs' type='text' value='{}' label='Standard deviation on measurements. Give SDs in dictionary format (see docs for more information)' />
                 </when>
             </conditional>
 
             <conditional name='cm_select'>
-                <param name='cm' type='boolean' argument='-cm' label='Flag to add bounds on metabolite concentrations' truevalue='true' />
-                <when value='true'>
+                <param name='cm' type='select' label='Flag to add bounds on metabolite concentrations'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param name='conc_met_bounds' type='text' value='()' label='Bounds on metabolite concentrations. Bounds should be given in tuple format (see docs for more information)' />
                 </when>
             </conditional>
 
             <conditional name='fm_select'>
-                <param name='fm' type='boolean' argument='-fm' label='Flag to add bounds on metabolite fluxes' truevalue='true' />
-                <when value='true'>
+                <param name='fm' type='select' label='Select yes to add bounds on metabolite fluxes'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param name='flux_met_bounds' type='text' value='()' label='Bounds on metabolite fluxes. Bounds should be given in tuple format (see docs for more information)' />
                 </when>
             </conditional>
 
             <conditional name='cb_select'>
-                <param name='cb' type='boolean' argument='-cb' label='Flag to add bounds on biomass concentrations' truevalue='true' />
-                <when value='true'>
+                <param name='cb' type='select' label='Select yes to add bounds on biomass concentrations'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param name='conc_biom_bounds' type='text' value='()' label='Bounds on biomass concentrations. Bounds should be given in tuple format (see docs for more information)' />
                 </when>
             </conditional>
 
             <conditional name='fb_select'>
-                <param name='fb' type='boolean' argument='-fb' label='Flag to add bounds on biomass fluxes' truevalue='true' />
-                <when value='true'>
+                <param name='fb' type='select' label='Select yes to add bounds on biomass fluxes'>
+                    <option value='No'>No</option>
+                    <option value='Yes'>Yes</option>
+                </param>
+                <when value='Yes'>
                     <param name='flux_biom_bounds' type='text' value='()' label='Bounds on biomass fluxes. Bounds should be given in tuple format (see docs for more information)' />
                 </when>
             </conditional>
 
-            <param name='verbose' type='boolean' argument='-v' label='Flag to get debug information'/>
+            <param name='verbose' type='boolean' label='Flag to get debug information'/>
 
         </section>
 

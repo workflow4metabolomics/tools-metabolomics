@@ -20,7 +20,7 @@
     #end if
 
 
-    #if $basic_settings.lag == 'true':
+    #if $basic_settings.lag:
         -l
     #end if
 
@@ -54,7 +54,7 @@
         -fb '$advanced_settings.fb_select.flux_biom_bounds'
     #end if
 
-    #if $advanced_settings.verbose == 'true':
+    #if $advanced_settings.verbose:
         -v
     #end if
 
@@ -80,7 +80,7 @@
 
         <section name='basic_settings' title='Basic Settings'>
 
-            <param name='lag' type='boolean' label='Flag to estimate lag phase'/>
+            <param name='lag' type='boolean' argument='--lag' truevalue='-l' falsevalue='' label='Flag to estimate lag phase'/>
 
             <conditional name='deg_select'>
                 <param name='deg' type='select' label='Select yes to add degradation constants'>
@@ -159,7 +159,7 @@
                 </when>
             </conditional>
 
-            <param name='verbose' type='boolean' label='Flag to get debug information'/>
+            <param name='verbose' type='boolean' argument='--verbose' truevalue='-v' falsevalue='' label='Flag to get debug information'/>
 
         </section>
 

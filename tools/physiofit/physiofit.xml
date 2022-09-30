@@ -19,7 +19,6 @@
         --config '$input_selection.cfgfile'
     #end if
 
-
     #if $basic_settings.lag:
         -l
     #end if
@@ -103,7 +102,6 @@
             </conditional>
 
         </section>
-
 
         <section name='advanced_settings' title='Advanced Settings'>
 
@@ -220,7 +218,7 @@ calculate fluxes in batch experiments, assuming cells are in metabolic (pseudo) 
    * open-source, free and easy to install everywhere where Python 3 and pip run,
    * biologist-friendly.
 
-It is one of the routine tools that we use at the MetaSys team and `MetaToul platform <http://www.metatoul.fr>`_ to calculate fluxes.
+It is one of the routine tools that we use at the MetaSys team and MetaToul platform to calculate fluxes.
 
 The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
 
@@ -229,14 +227,15 @@ We strongly encourage you to read the `documentation <https://physiofit.readthed
     ]]></help>
             <citations>
                 <citation type='bibtex'>
-                    @misc{githubphysiofit,
-                      author = {Le Gregam, Loic},
-                      year = {2022},
-                      title = {PhysioFit},
-                      publisher = {Peiro et al.},
-                      journal = {Appl Environ Microbiol},
-                      url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
-                        }
+                    @misc{
+                    githubphysiofit,
+                    author = {Le Gregam, Loic},
+                    year = {2022},
+                    title = {PhysioFit},
+                    publisher = {Peiro et al.},
+                    journal = {Appl Environ Microbiol},
+                    url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
+                    }
                 </citation>
         </citations>
 </tool>

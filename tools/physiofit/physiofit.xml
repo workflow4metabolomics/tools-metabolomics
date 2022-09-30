@@ -166,10 +166,10 @@
     </inputs>
 
     <outputs>
-    <data name='plots' label='Plots' format='pdf'/>
-    <data name='fluxes' label='Flux_results' format='tabular'/>
-    <data name='stats' label='Stat_results' format='tabular'/>
-    <data name='config' label='Config_file' format='json'/>
+        <data name='plots' label='Plots' format='pdf'/>
+        <data name='fluxes' label='Flux_results' format='tabular'/>
+        <data name='stats' label='Stat_results' format='tabular'/>
+        <data name='config' label='Config_file' format='json'/>
     </outputs>
 
     <tests>
@@ -226,15 +226,16 @@ The code is open-source, and available on `GitHub <https://github.com/MetaSys-LI
 We strongly encourage you to read the `documentation <https://physiofit.readthedocs.io/en/latest/>`_ before using PhysioFit.
 
     ]]></help>
-    <citations>
-        <citation type='bibtex'>
-    @misc{githubphysiofit,
-      author = {Le Gregam, Loic},
-      year = {2022},
-      title = {PhysioFit},
-      publisher = {Peiro et al.},
-      journal = {Appl Environ Microbiol},
-      url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
-    }</citation>
+            <citations>
+                <citation type='bibtex'>
+                    @misc{githubphysiofit,
+                      author = {Le Gregam, Loic},
+                      year = {2022},
+                      title = {PhysioFit},
+                      publisher = {Peiro et al.},
+                      journal = {Appl Environ Microbiol},
+                      url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
+                        }
+                </citation>
         </citations>
 </tool>

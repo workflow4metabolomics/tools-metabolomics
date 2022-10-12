@@ -19,6 +19,7 @@
         --config '$input_selection.cfgfile'
     #end if
 
+
     #if $basic_settings.lag:
         -l
     #end if
@@ -103,6 +104,7 @@
 
         </section>
 
+
         <section name='advanced_settings' title='Advanced Settings'>
 
             <param name='vini' type='float' value='1' label='Initial value for fluxes to estimate' />
@@ -164,10 +166,10 @@
     </inputs>
 
     <outputs>
-        <data name='plots' label='Plots' format='pdf'/>
-        <data name='fluxes' label='Flux_results' format='tabular'/>
-        <data name='stats' label='Stat_results' format='tabular'/>
-        <data name='config' label='Config_file' format='json'/>
+    <data name='plots' label='Plots' format='pdf'/>
+    <data name='fluxes' label='Flux_results' format='tabular'/>
+    <data name='stats' label='Stat_results' format='tabular'/>
+    <data name='config' label='Config_file' format='json'/>
     </outputs>
 
     <tests>
@@ -175,25 +177,50 @@
             <param name='input_selection|input_selector' value='tsv' />
             <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />
             <section name='basic_settings'>
-                <param name='lag' value='false'/>
-                <param name='deg_select|deg' value='false'/>
-                <param name='mc_select|montecarlo' value='false'/>
+                <param name='lag' value='No'/>
+                <param name='deg_select|deg' value='No'/>
+                <param name='mc_select|montecarlo' value='Yes'/>
             </section>
             <section name='advanced_settings'>
                 <param name='vini' value='1'/>
-                <param name='sd_select|sd' value='false'/>
-                <param name='cm_select|cm' value='false'/>
-                <param name='fm_select|fm' value='false'/>
-                <param name='cb_select|cb' value='false'/>
-                <param name='fb_select|fb' value='false'/>
-                <param name='verbose' value='false'/>
+                <param name='sd_select|sd' value='No'/>
+                <param name='cm_select|cm' value='No'/>
+                <param name='fm_select|fm' value='No'/>
+                <param name='cb_select|cb' value='No'/>
+                <param name='fb_select|fb' value='No'/>
+                <param name='verbose' value='No'/>
             </section>
             <output name='fluxes'>
                 <assert_contents>
                     <has_n_columns n='7'/>
+                    <has_n_lines n='7'/>
+                    <has_size value='767' delta='20'/>
                 </assert_contents>
             </output>
-
+        </test>
+        <test expect_test_failure='true'>
+            <param name='input_selection|input_selector' value='tsv' />
+            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />
+            <section name='basic_settings'>
+                <param name='lag' value='No'/>
+                <param name='deg_select|deg' value='No'/>
+                <param name='mc_select|montecarlo' value='No'/>
+            </section>
+            <section name='advanced_settings'>
+                <param name='vini' value='1'/>
+                <param name='sd_select|sd' value='No'/>
+                <param name='cm_select|cm' value='No'/>
+                <param name='fm_select|fm' value='No'/>
+                <param name='cb_select|cb' value='No'/>
+                <param name='fb_select|fb' value='No'/>
+                <param name='verbose' value='No'/>
+            </section>
+            <output name='fluxes'>
+                <assert_contents>
+                    <has_n_columns n='7'/>
+                    <has_n_lines n='6'/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
 
@@ -217,24 +244,22 @@ calculate fluxes in batch experiments, assuming cells are in metabolic (pseudo) 
    * open-source, free and easy to install everywhere where Python 3 and pip run,
    * biologist-friendly.
 
-It is one of the routine tools that we use at the MetaSys team and MetaToul platform to calculate fluxes.
+It is one of the routine tools that we use at the MetaSys team and `MetaToul platform <http://www.metatoul.fr>`_ to calculate fluxes.
 
 The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
 
 We strongly encourage you to read the `documentation <https://physiofit.readthedocs.io/en/latest/>`_ before using PhysioFit.
 
     ]]></help>
-            <citations>
-                <citation type='bibtex'>
-                    @misc{
-                    githubphysiofit,
-                    author = {Le Gregam, Loic},
-                    year = {2022},
-                    title = {PhysioFit},
-                    publisher = {Peiro et al.},
-                    journal = {Appl Environ Microbiol},
-                    url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
-                    }
-                </citation>
+    <citations>
+        <citation type='bibtex'>
+    @misc{githubphysiofit,
+      author = {Le Gregam, Loic},
+      year = {2022},
+      title = {PhysioFit},
+      publisher = {Peiro et al.},
+      journal = {Appl Environ Microbiol},
+      url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
+    }</citation>
         </citations>
 </tool>

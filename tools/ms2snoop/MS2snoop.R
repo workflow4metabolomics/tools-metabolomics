@@ -1,4 +1,3 @@
-#'
 #' read and process mspurity W4M files
 #' create a summary of fragment for each precursor and a graphics of peseudo
 #' spectra + correlation on which checking of fragment is based on
@@ -54,7 +53,6 @@ for (default in names(defaults)) {
 get_formulas <- function(
   mzref,
   spectra,
-  nominal_mz_list,
   processing_parameters,
   background = !TRUE
 ) {
@@ -65,7 +63,6 @@ get_formulas <- function(
         return(get_formulas(
           mzref = mz,
           spectra = spectra,
-          nominal_mz_list = nominal_mz_list,
           processing_parameters = processing_parameters,
           background = background
         ))
@@ -154,7 +151,7 @@ create_ms_file <- function(
     "%s\n\n>collision\n%s",
     file_content,
     paste(
-      sprintf("%s %s", spectra$mz, spectra$intensities),
+      paste(spectra$mz, spectra$intensities),
       collapse = "\n"
     )
   )
@@ -236,7 +233,8 @@ filter_sirius_with_delta <- function(
       fine <- which(filter)
       not_fine <- which(!filter)
       catf(
-        paste("[KO] fragment %s (m/z=%s) eleminated because ppm=%s is greater",
+        paste(
+          "[KO] fragment %s (m/z=%s) eleminated because ppm=%s is greater",
           "than delta=%s\n"
         ),
         sirius_results[not_fine, ]$formula,
@@ -416,7 +414,6 @@ plot_pseudo_spectra <- function(
     formulas <- get_formulas(
       mzref = processing_parameters$mzref,
       spectra = data.frame(mz = meaned_mz, intensities = sum_int[-1]),
-      nominal_mz_list = vmz,
       processing_parameters = processing_parameters
     )
     if (nrow(formulas) == 0) {
@@ -438,7 +435,7 @@ plot_pseudo_spectra <- function(
     rep(processing_parameters$inchikey, cp_res_length),
     rep(processing_parameters$elemcomposition, cp_res_length),
     formulas,
-    vmz,
+    meaned_mz,
     ppm,
     rep(fid, cp_res_length),
     cor_abs_int,

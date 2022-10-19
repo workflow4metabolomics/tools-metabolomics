@@ -1,9 +1,4 @@
-<tool
-    id="ms2snoop"
-    name="MS2 Snoop"
-    version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
-    profile="21.09"
->
+<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
     <description>
         MS1/MS2 spectra and associated adducts extraction and cleaning
     </description>
@@ -33,11 +28,13 @@
         <regex match="Error in\s+.*:\s+.*" />
     </stdio>
     <version_command>
-        Rscript '$__tool_directory__/MS2snoop.R' --version | head -n 1
+<![CDATA[
+@COMMAND_RSCRIPT@ '$__tool_directory__/MS2snoop.R' --version | head -n 1
+]]>
     </version_command>
     <command>
-        <![CDATA[
-Rscript '$__tool_directory__/MS2snoop.R'
+<![CDATA[
+@COMMAND_RSCRIPT@ '$__tool_directory__/MS2snoop.R'
     --output '$frag_result_txt'
     --compounds '$compound_txt'
     --fragments '$peaklist_frag_tsv'
@@ -54,77 +51,34 @@ Rscript '$__tool_directory__/MS2snoop.R'
     $advenced.pdf
     $advenced.debug
     $advenced.verbose
-        ]]>
+]]>
     </command>
     <inputs>
-        <param
-            argument="--compound_txt"
-            type="data"
-            format="tabular,csv,tsv"
+        <param argument="--compound_txt" type="data" format="tabular,csv,tsv"
             label="list of compounds"
-            help="
-            The table must fit the format:
-            compound_name [MANDATORY] ;
-            inchikey [MANDATORY] ;
-            elemcomposition [OPTIONAL] ;
-            mz [MANDATORY] ;
-            rtsec [MANDATORY].
-            "
+            help="The table must fit the format: compound_name, inchikey, [elemcomposition], mz, rtsec."
         />
-        <param
-            argument="--peaklist_frag_tsv"
-            type="data"
-            format="tabular,csv,tsv"
+        <param argument="--peaklist_frag_tsv" type="data" format="tabular,csv,tsv"
             label="MSpurity fragments file"
         />
-        <param
-            argument="--peaklist_preco_tsv"
-            type="data"
-            format="tabular,csv,tsv"
+        <param argument="--peaklist_preco_tsv" type="data" format="tabular,csv,tsv"
             label="MSpurity precursors file"
         />
-        <param
-            argument="--tolmz"
-            type="float"
-            min="0.0001"
-            max="10"
-            value="0.01"
+        <param argument="--tolmz" type="float" min="0.0001" max="10" value="0.01"
             label="MZ Tolerence"
             help="M/z tolerance to determine if a precursor matches a compound"
         />
-        <param
-            argument="--tolrt"
-            type="integer"
-            min="0"
-            max="30"
-            value="20"
+        <param argument="--tolrt" type="integer" min="0" max="30" value="20"
             label="RT Tolerence (in seconds)"
-            help="
-                Retention time tolerance to determine if a
-                precursor matches a compound
-            "
+            help="Retention time tolerance to determine if a precursor matches a compound"
         />
-        <param
-            argument="--seuil_ra"
-            type="float"
-            min="0"
-            max="1"
-            value="0.05"
+        <param argument="--seuil_ra" type="float" min="0" max="1" value="0.05"
             label="R-Pearson correlation threshold used to filter fragments"
         />
-        <param
-            argument="--mzdecimal"
-            type="integer"
-            min="0"
-            max="5"
-            value="0"
+        <param argument="--mzdecimal" type="integer" min="0" max="5" value="3"
             label="Number of decimal to output M/z values with"
         />
-        <param
-            argument="--r_threshold"
-            type="float"
-            min="0"
-            value="0.85"
+        <param argument="--r_threshold" type="float" min="0" value="0.85"
             label="
                 Minimun correlation with absolute intensity value to reach
                 for a fragment to be considered as valid.
@@ -132,26 +86,15 @@ Rscript '$__tool_directory__/MS2snoop.R'
                 displayed in grey.
             "
         />
-        <param
-            argument="--min_number_scan"
-            type="integer"
-            min="0"
-            max="25"
-            value="8"
+        <param argument="--min_number_scan" type="integer" min="0" max="25" value="8"
             label="Present in at least X scan"
-            help="
-                Mininum scan number in which a fragment must be found,
-                to be kept.
-            "
+            help="Mininum scan number in which a fragment must be found, to be kept."
         />
 
         <section title="Sirius Parameters" name="sirius">
-            <param
-                argument="--ionization"
-                type="select"
+            <param argument="--ionization" type="select" optional="true"
                 label="Which ionization"
                 help="Select the ionization to use in sirius"
-                optional="true"
             >
                 <option value="[M+H]+" selected="true">[M+H]+</option>
                 <option value="[M-H]-">[M-H]-</option>
@@ -166,12 +109,7 @@ Rscript '$__tool_directory__/MS2snoop.R'
                 <option value="[M+Br]-">[M+Br]-</option>
             </param>
 
-            <param
-                argument="--fragment_match_delta"
-                type="float"
-                min="0"
-                max="25"
-                value="10"
+            <param argument="--fragment_match_delta" type="float" min="0" max="25" value="10"
                 label="Fragment match delta"
                 help="
                     Delta that determines if a fragment found by sirius
@@ -180,12 +118,9 @@ Rscript '$__tool_directory__/MS2snoop.R'
                     associated even when M/z difference is aberant.
                 "
             />
-            <param
-                argument="--fragment_match_delta_unit"
-                type="select"
+            <param argument="--fragment_match_delta_unit" type="select" optional="true"
                 label="Delta unit"
                 help="Select the unit of the fragment match delta"
-                optional="true"
             >
                 <option value="ppm" selected="true">PPM</option>
                 <option value="mz">M/z</option>
@@ -193,71 +128,33 @@ Rscript '$__tool_directory__/MS2snoop.R'
         </section>
 
         <section title="Advenced Options" name="advenced">
-            <param
-                argument="--pdf"
-                type="boolean"
-                value=""
-                optional="true"
+            <param argument="--pdf" type="boolean" truevalue="--pdf_path '$pdf_output'" falsevalue="" value="" optional="true"
                 label="Output PDF"
                 help="The tool will output some pdf in a zip file"
-                truevalue="--pdf_path '$pdf_output'"
-                falsevalue=""
             />
-            <param
-                argument="--verbose"
-                type="boolean"
-                value=""
-                optional="true"
+            <param argument="--verbose" type="boolean" truevalue="--verbose" falsevalue="" value="" optional="true"
                 label="Verbose logs"
                 help="The tool will print more logs"
-                truevalue="--verbose"
-                falsevalue=""
             />
-            <param
-                argument="--debug"
-                type="boolean"
-                value=""
-                optional="true"
+            <param argument="--debug" type="boolean" truevalue="--debug" falsevalue="" value="" optional="true"
                 label="Debug statements"
                 help="The tool will print debug statements"
-                truevalue="--debug"
-                falsevalue=""
             />
         </section>
     </inputs>
     <outputs>
-        <data
-            name="frag_result_txt"
-            format="tsv"
-            label="${tool.name} on ${peaklist_frag_tsv.name}"
-        />
-        <data
-            name="pdf_output"
-            format="zip"
-            label="${tool.name} PDFs for ${peaklist_frag_tsv.name}"
-        >
+        <data name="frag_result_txt" format="tsv" label="${tool.name} on ${peaklist_frag_tsv.name}" />
+        <data name="pdf_output" format="zip" label="${tool.name} PDFs for ${peaklist_frag_tsv.name}">
             <filter>advenced['pdf']</filter>
         </data>
     </outputs>
     <tests>
         <test>
             <!-- Regular test with no option -->
-            <param
-                name="compound_txt"
-                value="compounds_pos.txt"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.tsv"
-            />
-            <output
-                name="frag_result_txt"
-                file="compound_fragments_result.txt"
-            />
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
             <assert_stdout>
                 <expand macro="has_regular_stdout"/>
                 <expand macro="has_not_verbose_stdout"/>
@@ -267,23 +164,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
 
         <test>
             <!-- Regular files with verbose output -->
-            <param
-                name="compound_txt"
-                value="compounds_pos.txt"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.tsv"
-            />
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <param name="verbose" value="--verbose" />
-            <output
-                name="frag_result_txt"
-                file="compound_fragments_result.txt"
-            />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
             <assert_stdout>
                 <expand macro="has_regular_stdout"/>
                 <expand macro="has_verbose_stdout"/>
@@ -293,23 +178,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
 
         <test>
             <!-- Regular test with debug outputs -->
-            <param
-                name="compound_txt"
-                value="compounds_pos.txt"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.tsv"
-            />
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <param name="debug" value="--debug" />
-            <output
-                name="frag_result_txt"
-                file="compound_fragments_result.txt"
-            />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
             <assert_stdout>
                 <expand macro="has_smol_stdout"/>
                 <expand macro="has_debug_stdout"/>
@@ -319,24 +192,12 @@ Rscript '$__tool_directory__/MS2snoop.R'
 
         <test>
             <!-- Regular test with both verbose and debug outputs -->
-            <param
-                name="compound_txt"
-                value="compounds_pos.txt"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.tsv"
-            />
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
             <param name="debug" value="--debug" />
             <param name="verbose" value="--verbose" />
-            <output
-                name="frag_result_txt"
-                file="compound_fragments_result.txt"
-            />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
             <assert_stdout>
                 <expand macro="has_smol_stdout"/>
                 <expand macro="has_debug_stdout"/>
@@ -349,23 +210,11 @@ Rscript '$__tool_directory__/MS2snoop.R'
             This test mixes tsv, csv, and so, and ms2snoop is expected
             handle them like usual.
             -->
-            <param
-                name="compound_txt"
-                value="compounds_pos.csv"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.csv"
-            />
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
             <param name="verbose" value="--verbose" />
-            <output
-                name="frag_result_txt"
-                file="compound_fragments_result.txt"
-            />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
             <assert_stdout>
                 <expand macro="has_regular_stdout"/>
                 <expand macro="has_verbose_stdout"/>
@@ -432,26 +281,17 @@ Rscript '$__tool_directory__/MS2snoop.R'
             This test uses old format for molecules file.
             Is is expected to fail
             -->
-            <param
-                name="compound_txt"
-                value="compounds_pos_old_format.txt"
-            />
-            <param
-                name="peaklist_frag_tsv"
-                value="peaklist_fragments.tsv"
-            />
-            <param
-                name="peaklist_preco_tsv"
-                value="peaklist_precursors.csv"
-            />
+            <param name="compound_txt" value="compounds_pos_old_format.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
             <assert_stderr>
                 <has_line line="Error: Some columns are missing: compound_name, rtsec, inchikey" />
             </assert_stderr>
         </test>
 
     </tests>
-    <help><![CDATA[
-
+    <help>
+<![CDATA[
 @AUTHORS@
 
 ==============
@@ -508,14 +348,9 @@ Input files
 | and fragment (Name + m/z + ret Time)         |   TSV,CSV  |
 +----------------------------------------------+------------+
 
-
 @PARAMETERS@
-
-
 @OUTPUTS@
-
-
 @CHANGELOG@
-
-   ]]></help>
+]]>
+    </help>
 </tool>

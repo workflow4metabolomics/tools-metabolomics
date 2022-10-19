@@ -1,5 +1,5 @@
 name: physiofit
 owner: workflow4metabolomics
 description: PhysioFit is a scientific tool designed to i) quantify exchange (production and consumption) fluxes and ii) cell growth rate during (batch) cultivations of microorganisms. Fluxes are estimated from time-course measurements of extracellular metabolites and biomass concentrations. PhysioFit has been designed to calculate fluxes in batch experiments, assuming cells are in metabolic (pseudo) steady-state (i.e. fluxes are constant during the experiment).
-categories: [Fluxomics]
+categories: [Metabolomics]
 remote_repository_url: https://github.com/MetaSys-LISBP/PhysioFit

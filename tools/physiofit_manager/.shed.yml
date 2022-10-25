@@ -1,0 +1,5 @@
+name: physiofit_manager
+owner: workflow4metabolomics
+description: Handling of physiofit input files
+categories: [Metabolomics]
+remote_repository_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/PhysioFit_Data_Manager

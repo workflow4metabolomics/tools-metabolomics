@@ -1,4 +1,4 @@
-<tool id='physiofit_data_manager' name='PhysioFit_Manager' profile='21.09' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5'>
+<tool id='physiofit_data_manager' name='PhysioFit Manager' profile='21.09' version='@TOOL_VERSION@+galaxy0'>
     <description>Managing inputs for PhysioFit</description>
     <macros>
         <token name="@TOOL_VERSION@">1.0.1</token>
@@ -8,12 +8,15 @@
     </requirements>
     <command detect_errors='exit_code'><![CDATA[
 
-        physiofit_manager -b $biomass_file -c $concentrations_file -e $physiofit_input
+        physiofit_manager
+        -b '$biomass_file'
+        -c '$concentrations_file'
+        -e '$physiofit_input'
 
     ]]></command>
     <inputs>
-        <param name='biomass_file' type='data' format='tabular, txt' multiple='true' label='Upload the file containing the time-course measurements of biomass concentrations' />
-        <param name='concentrations_file' type='data' format='tabular, txt' multiple='true' label='Upload file containing the time-course measurements of the different metabolite concentrations' />
+        <param name='biomass_file' type='data' format='tabular,txt' multiple='true' label='File containing the time-course measurements of biomass concentrations' />
+        <param name='concentrations_file' type='data' format='tabular,txt' multiple='true' label='File containing the time-course measurements of the different metabolite concentrations' />
     </inputs>
 
     <outputs>

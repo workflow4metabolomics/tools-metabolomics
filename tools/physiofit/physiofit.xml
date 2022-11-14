@@ -1,7 +1,7 @@
 <tool id='physiofit' name='PhysioFit' profile='21.09' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5'>
     <description>Extracellular flux analysis</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.1.0</token>
+        <token name="@TOOL_VERSION@">2.2.1</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>physiofit4galaxy</requirement>

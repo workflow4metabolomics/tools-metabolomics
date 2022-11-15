@@ -216,25 +216,25 @@
                 </assert_contents>
             </output>
         </test>
-        <test>
-            <param name='input_selection|input_selector' value='tsv' />
-            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />
-            <section name='basic_settings'>
-                <param name='lag' value='No'/>
-                <param name='deg_select|deg' value='No'/>
-                <param name='mc_select|montecarlo' value='No'/>
-            </section>
-            <section name='advanced_settings'>
-                <param name='vini' value='1'/>
-                <param name='sd_select|sd' value='No'/>
-                <param name='cm_select|cm' value='No'/>
-                <param name='fm_select|fm' value='No'/>
-                <param name='cb_select|cb' value='No'/>
-                <param name='fb_select|fb' value='No'/>
-                <param name='verbose' value='No'/>
-            </section>
-            <output name='fluxes' file='flux_results.tsv'/>
-        </test>
+<!--        <test>-->
+<!--            <param name='input_selection|input_selector' value='tsv' />-->
+<!--            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />-->
+<!--            <section name='basic_settings'>-->
+<!--                <param name='lag' value='No'/>-->
+<!--                <param name='deg_select|deg' value='No'/>-->
+<!--                <param name='mc_select|montecarlo' value='No'/>-->
+<!--            </section>-->
+<!--            <section name='advanced_settings'>-->
+<!--                <param name='vini' value='1'/>-->
+<!--                <param name='sd_select|sd' value='No'/>-->
+<!--                <param name='cm_select|cm' value='No'/>-->
+<!--                <param name='fm_select|fm' value='No'/>-->
+<!--                <param name='cb_select|cb' value='No'/>-->
+<!--                <param name='fb_select|fb' value='No'/>-->
+<!--                <param name='verbose' value='No'/>-->
+<!--            </section>-->
+<!--            <output name='fluxes' file='flux_results.tsv'/>-->
+<!--        </test>-->
     </tests>
 
     <help><![CDATA[

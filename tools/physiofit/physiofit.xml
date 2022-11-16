@@ -1,7 +1,7 @@
 <tool id='physiofit' name='PhysioFit' profile='21.09' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5'>
     <description>Extracellular flux analysis</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.1.0</token>
+        <token name="@TOOL_VERSION@">2.2.1</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>physiofit4galaxy</requirement>
@@ -25,7 +25,7 @@
     #end if
 
     #if $basic_settings.deg_select.deg == 'Yes':
-        -d '$basic_setting.degconsts'
+        -d '$basic_settings.deg_select.degconsts'
     #end if
 
     #if $basic_settings.mc_select.montecarlo == 'Yes':
@@ -58,7 +58,7 @@
         -v
     #end if
 
-    -op '$plots' -of '$fluxes' -os '$stats' -oc '$config'
+    -op '$plots' -of '$fluxes' -os '$stats' -oc '$config' 2> $log
 
     ]]></command>
     <inputs>
@@ -88,7 +88,15 @@
                     <option value='Yes'>Yes</option>
                 </param>
                 <when value='Yes'>
-                    <param type='text' name='degconsts' value='{}' label='Enter degradation constants in dictionary format (see docs for more information)'/>
+                    <param type='text' name='degconsts' value='{}' label='Enter degradation constants in dictionary format (see docs for more information)'>
+                        <sanitizer>
+                            <valid>
+                                <add value='"'/>
+                                <add value='{'/>
+                                <add value='}'/>
+                            </valid>
+                        </sanitizer>
+                    </param>
                 </when>
             </conditional>
 
@@ -115,7 +123,15 @@
                     <option value='Yes'>Yes</option>
                 </param>
                 <when value='Yes'>
-                    <param name='stddevs' type='text' value='{}' label='Standard deviation on measurements. Give SDs in dictionary format (see docs for more information)' />
+                    <param name='stddevs' type='text' value='{}' label='Standard deviation on measurements. Give SDs in dictionary format (see docs for more information)'>
+                        <sanitizer>
+                            <valid>
+                                <add value='"'/>
+                                <add value='{'/>
+                                <add value='}'/>
+                            </valid>
+                        </sanitizer>
+                    </param>
                 </when>
             </conditional>
 
@@ -125,7 +141,8 @@
                     <option value='Yes'>Yes</option>
                 </param>
                 <when value='Yes'>
-                    <param name='conc_met_bounds' type='text' value='()' label='Bounds on metabolite concentrations. Bounds should be given in tuple format (see docs for more information)' />
+                    <param name='conc_met_bounds' type='text' value='()' label='Bounds on metabolite concentrations. Bounds should be given in tuple format (see docs for more information)'/>
+
                 </when>
             </conditional>
 
@@ -170,6 +187,7 @@
     <data name='fluxes' label='Flux_results' format='tabular'/>
     <data name='stats' label='Stat_results' format='tabular'/>
     <data name='config' label='Config_file' format='json'/>
+    <data name='log' label='Run_Log' format='txt'/>
     </outputs>
 
     <tests>
@@ -198,6 +216,25 @@
                 </assert_contents>
             </output>
         </test>
+<!--        <test>-->
+<!--            <param name='input_selection|input_selector' value='tsv' />-->
+<!--            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />-->
+<!--            <section name='basic_settings'>-->
+<!--                <param name='lag' value='No'/>-->
+<!--                <param name='deg_select|deg' value='No'/>-->
+<!--                <param name='mc_select|montecarlo' value='No'/>-->
+<!--            </section>-->
+<!--            <section name='advanced_settings'>-->
+<!--                <param name='vini' value='1'/>-->
+<!--                <param name='sd_select|sd' value='No'/>-->
+<!--                <param name='cm_select|cm' value='No'/>-->
+<!--                <param name='fm_select|fm' value='No'/>-->
+<!--                <param name='cb_select|cb' value='No'/>-->
+<!--                <param name='fb_select|fb' value='No'/>-->
+<!--                <param name='verbose' value='No'/>-->
+<!--            </section>-->
+<!--            <output name='fluxes' file='flux_results.tsv'/>-->
+<!--        </test>-->
     </tests>
 
     <help><![CDATA[

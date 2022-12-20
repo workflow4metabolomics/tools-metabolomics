@@ -54,7 +54,8 @@ get_formulas <- function(
   mzref,
   spectra,
   processing_parameters,
-  background = !TRUE
+  background = !TRUE,
+  show_sirius_outputs = !TRUE
 ) {
   if (is.vector(mzref) && length(mzref) > 1) {
     return(lapply(
@@ -89,13 +90,16 @@ get_formulas <- function(
       "-i='%s'",
       "-o='%s'",
       "tree",
-      ## loglevel is not working taken into account during
-      ## sirius startup, so we filter outputs...
-      "2>&1 | grep '^(WARNING|SEVERE)'"
+      "2>&1"
     ),
     input,
     output
   )
+  if (!show_sirius_outputs) {
+    ## loglevel is not taken into account during
+    ## sirius startup, so we filter outputs...
+    command <- paste(command, "| grep '^(WARNING|SEVERE)'")
+  }
   verbose_catf(
     ">> Sirius is running %swith the command: %s\n",
     if (background) "in the background " else "",

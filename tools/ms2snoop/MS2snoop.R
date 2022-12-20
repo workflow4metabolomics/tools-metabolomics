@@ -210,7 +210,7 @@ extract_sirius_results <- function(
 
   for (index in seq_len(nrow(sirius_results))) {
     result <- sirius_results[index, ]
-    filter <- which(order(abs(fragment_matchings$mz - result$mz)) == 1)
+    filter <- order(abs(fragment_matchings$mz - result$mz))[1]
     fragment_matchings[filter, "formula"] <- result$formula
     fragment_matchings[filter, "ppm"] <- result$ppm
     catf(

@@ -48,9 +48,15 @@
     --ionization '$sirius.ionization'
     --fragment_match_delta '$sirius.fragment_match_delta'
     --fragment_match_delta_unit '$sirius.fragment_match_delta_unit'
-    $advenced.pdf
+    #if $advenced.pdf:
+        --pdf_path './out.zip'
+    #end if
     $advenced.debug
     $advenced.verbose
+#if $advenced.pdf:
+&& cat ./out.zip > $pdf_output
+#end if
+
 ]]>
     </command>
     <inputs>
@@ -128,7 +134,7 @@
         </section>
 
         <section title="Advenced Options" name="advenced">
-            <param argument="--pdf" type="boolean" truevalue="--pdf_path '$pdf_output'" falsevalue="" value="" optional="true"
+            <param argument="--pdf" type="boolean" value="" optional="true"
                 label="Output PDF"
                 help="The tool will output some pdf in a zip file"
             />
@@ -143,8 +149,8 @@
         </section>
     </inputs>
     <outputs>
-        <data name="frag_result_txt" format="tsv" label="${tool.name} on ${peaklist_frag_tsv.name}" />
-        <data name="pdf_output" format="zip" label="${tool.name} PDFs for ${peaklist_frag_tsv.name}">
+        <data name="frag_result_txt" format="tsv" label="${tool.name}_on_${peaklist_frag_tsv.name}.tsv" />
+        <data name="pdf_output" format="zip" label="${tool.name}_PDFs_for_${peaklist_frag_tsv.name}.zip">
             <filter>advenced['pdf']</filter>
         </data>
     </outputs>

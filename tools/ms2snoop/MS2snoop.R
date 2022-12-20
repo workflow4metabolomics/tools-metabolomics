@@ -1124,7 +1124,7 @@ handle_galaxy_param <- function(args) {
 
 zip_pdfs <- function(processing_parameters) {
   if (processing_parameters$do_pdf) {
-    if (zip <- Sys.getenv("R_ZIPCMD", "zip") == "") {
+    if ((zip <- Sys.getenv("R_ZIPCMD", "zip")) == "") {
       catf("R could not fin the zip executable. Trying luck: zip = \"zip\"")
       zip <- "zip"
     } else {

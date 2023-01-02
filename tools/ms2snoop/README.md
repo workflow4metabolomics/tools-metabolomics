@@ -5,7 +5,7 @@ Metadata
 -----------
 
  * **@name**: MS2 Snoop
- * **@version**: 2.2.0
+ * **@version**: 2.2.1
  * **@authors**: Jean François Martin (INRAE), Kevin Wagner (INRAE)
  * **@maintainers**: Lain Pavot (PFEM - INRAE - MetaboHUB)
  * **@init date**: 2022, April

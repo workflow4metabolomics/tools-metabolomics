@@ -193,7 +193,8 @@ extract_sirius_results <- function(
     return(rep(NA, length(mz_list)))
   }
   if (!is.null(trees_filename)) {
-    sirius_results <- cbind(sirius_results, extract_sirius_ppm(trees_filename))
+    extracted_ppm <- extract_sirius_ppm(trees_filename)
+    sirius_results <- cbind(sirius_results, extracted_ppm)
   } else {
     return(rep(NA, length(mz_list)))
   }

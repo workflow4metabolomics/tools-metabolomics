@@ -54,7 +54,7 @@
     $advenced.debug
     $advenced.verbose
 #if $advenced.pdf:
-&& cat ./out.zip > $pdf_output
+&& cat ./out.zip > '$pdf_output'
 #end if
 
 ]]>
@@ -149,8 +149,8 @@
         </section>
     </inputs>
     <outputs>
-        <data name="frag_result_txt" format="tsv" label="${tool.name}_on_${peaklist_frag_tsv.name}.tsv" />
-        <data name="pdf_output" format="zip" label="${tool.name}_PDFs_for_${peaklist_frag_tsv.name}.zip">
+        <data name="frag_result_txt" format="tsv" label="${tool.name}_on_${peaklist_frag_tsv.name}" />
+        <data name="pdf_output" format="zip" label="${tool.name}_PDFs_for_${peaklist_frag_tsv.name}">
             <filter>advenced['pdf']</filter>
         </data>
     </outputs>

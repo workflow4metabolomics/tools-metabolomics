@@ -48,9 +48,15 @@
     --ionization '$sirius.ionization'
     --fragment_match_delta '$sirius.fragment_match_delta'
     --fragment_match_delta_unit '$sirius.fragment_match_delta_unit'
-    $advenced.pdf
+    #if $advenced.pdf:
+        --pdf_path './out.zip'
+    #end if
     $advenced.debug
     $advenced.verbose
+#if $advenced.pdf:
+&& cat ./out.zip > '$pdf_output'
+#end if
+
 ]]>
     </command>
     <inputs>
@@ -128,7 +134,7 @@
         </section>
 
         <section title="Advenced Options" name="advenced">
-            <param argument="--pdf" type="boolean" truevalue="--pdf_path '$pdf_output'" falsevalue="" value="" optional="true"
+            <param argument="--pdf" type="boolean" value="" optional="true"
                 label="Output PDF"
                 help="The tool will output some pdf in a zip file"
             />
@@ -143,14 +149,14 @@
         </section>
     </inputs>
     <outputs>
-        <data name="frag_result_txt" format="tsv" label="${tool.name} on ${peaklist_frag_tsv.name}" />
-        <data name="pdf_output" format="zip" label="${tool.name} PDFs for ${peaklist_frag_tsv.name}">
+        <data name="frag_result_txt" format="tsv" label="${tool.name}_on_${peaklist_frag_tsv.name}" />
+        <data name="pdf_output" format="zip" label="${tool.name}_PDFs_for_${peaklist_frag_tsv.name}">
             <filter>advenced['pdf']</filter>
         </data>
     </outputs>
     <tests>
         <test>
-            <!-- Regular test with no option -->
+            <!-- #1 Regular test with no option -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
@@ -163,7 +169,7 @@
         </test>
 
         <test>
-            <!-- Regular files with verbose output -->
+            <!-- #2 Regular files with verbose output -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
@@ -177,7 +183,7 @@
         </test>
 
         <test>
-            <!-- Regular test with debug outputs -->
+            <!-- #3 Regular test with debug outputs -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
@@ -191,7 +197,7 @@
         </test>
 
         <test>
-            <!-- Regular test with both verbose and debug outputs -->
+            <!-- #4 Regular test with both verbose and debug outputs -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
             <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
@@ -207,7 +213,7 @@
 
         <test>
             <!--
-            This test mixes tsv, csv, and so, and ms2snoop is expected
+            #5 This test mixes tsv, csv, and so, and ms2snoop is expected
             handle them like usual.
             -->
             <param name="compound_txt" value="compounds_pos.csv" />
@@ -224,7 +230,7 @@
 
         <test>
             <!--
-            This test contains smaller datasets. This is the "regular"
+            #6 This test contains smaller datasets. This is the "regular"
             smol test, to prepare further smolah tests.
             -->
             <param name="ionization" value="[M+?]+" />
@@ -237,7 +243,7 @@
 
         <test>
             <!--
-            Test for pdf generation
+            #7 Test for pdf generation
             -->
             <param name="pdf" value="True" />
             <param name="ionization" value="[M+?]+" />
@@ -250,7 +256,7 @@
 
         <test>
             <!--
-                test for delta in ppm
+               #8  test for delta in ppm
             -->
             <param name="ionization" value="[M+?]+" />
             <param name="mzdecimal" value="3" />
@@ -263,7 +269,7 @@
 
         <test>
             <!--
-                test for delta in m/z
+                #9 test for delta in m/z
             -->
             <param name="ionization" value="[M+?]+" />
             <param name="mzdecimal" value="3" />
@@ -278,7 +284,7 @@
         <!--  === expected to fail tests === -->
         <test expect_exit_code="2" expect_failure="true">
             <!--
-            This test uses old format for molecules file.
+            #10 This test uses old format for molecules file.
             Is is expected to fail
             -->
             <param name="compound_txt" value="compounds_pos_old_format.txt" />

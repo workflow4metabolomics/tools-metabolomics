@@ -54,7 +54,8 @@ get_formulas <- function(
   mzref,
   spectra,
   processing_parameters,
-  background = !TRUE
+  background = !TRUE,
+  show_sirius_outputs = !TRUE
 ) {
   if (is.vector(mzref) && length(mzref) > 1) {
     return(lapply(
@@ -89,13 +90,16 @@ get_formulas <- function(
       "-i='%s'",
       "-o='%s'",
       "tree",
-      ## loglevel is not working taken into account during
-      ## sirius startup, so we filter outputs...
-      "2>&1 | grep '^(WARNING|SEVERE)'"
+      "2>&1"
     ),
     input,
     output
   )
+  if (!show_sirius_outputs) {
+    ## loglevel is not taken into account during
+    ## sirius startup, so we filter outputs...
+    command <- paste(command, "| grep '^(WARNING|SEVERE)'")
+  }
   verbose_catf(
     ">> Sirius is running %swith the command: %s\n",
     if (background) "in the background " else "",
@@ -189,7 +193,8 @@ extract_sirius_results <- function(
     return(rep(NA, length(mz_list)))
   }
   if (!is.null(trees_filename)) {
-    sirius_results <- cbind(sirius_results, extract_sirius_ppm(trees_filename))
+    extracted_ppm <- extract_sirius_ppm(trees_filename)
+    sirius_results <- cbind(sirius_results, extracted_ppm)
   } else {
     return(rep(NA, length(mz_list)))
   }
@@ -210,7 +215,7 @@ extract_sirius_results <- function(
 
   for (index in seq_len(nrow(sirius_results))) {
     result <- sirius_results[index, ]
-    filter <- which(order(abs(fragment_matchings$mz - result$mz)) == 1)
+    filter <- order(abs(fragment_matchings$mz - result$mz))[1]
     fragment_matchings[filter, "formula"] <- result$formula
     fragment_matchings[filter, "ppm"] <- result$ppm
     catf(
@@ -1124,7 +1129,7 @@ handle_galaxy_param <- function(args) {
 
 zip_pdfs <- function(processing_parameters) {
   if (processing_parameters$do_pdf) {
-    if (zip <- Sys.getenv("R_ZIPCMD", "zip") == "") {
+    if ((zip <- Sys.getenv("R_ZIPCMD", "zip")) == "") {
       catf("R could not fin the zip executable. Trying luck: zip = \"zip\"")
       zip <- "zip"
     } else {

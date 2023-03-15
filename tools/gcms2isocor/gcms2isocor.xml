@@ -3,7 +3,7 @@
         <requirement type="package" version="8.0.121">openjdk</requirement> 
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-      java -cp '$__tool_directory__/P2M2Tools-assembly-0.1.7.jar' fr.inrae.metabolomics.p2m2.command.GCMS2IsocorCommand
+      java -cp '$__tool_directory__/P2M2Tools-assembly-0.1.8.jar' fr.inrae.metabolomics.p2m2.command.GCMS2IsocorCommand
        #for $input in $input_gcms_files
          #if $input
            $input

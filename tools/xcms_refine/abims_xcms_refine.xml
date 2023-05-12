@@ -1,4 +1,4 @@
-<tool id="abims_xcms_refine" name="xcms refineChromPeaks (refine)" version="3.12.0+galaxy0">
+<tool id="abims_xcms_refine" name="xcms refineChromPeaks (refine)" version="3.12.0+galaxy0" profile="@PROFILE@">
 
     <description>Remove or merge chromatographic peaks based on specific criteria.</description>
 

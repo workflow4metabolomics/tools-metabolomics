@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <macros>
 
-    <token name="@TOOL_VERSION@">3.12.0</token>
+    <token name="@TOOL_VERSION@">3.12.1</token>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
@@ -17,7 +17,7 @@
         #if $file_load_section.file_load_conditional.file_load_select == "yes":
             #if $file_load_section.file_load_conditional.input[0].is_of_type("mzxml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzdata") or $file_load_section.file_load_conditional.input[0].is_of_type("netcdf"):
                 #set singlefile_galaxyPath = '|'.join( [ str( $single_file ) for $single_file in $file_load_section.file_load_conditional.input ] )
-                #set singlefile_sampleName = '|'.join( [ str( $single_file.name ) for $single_file in $file_load_section.file_load_conditional.input ] )
+                #set singlefile_sampleName = '|'.join( [ str( $single_file.element_identifier ) for $single_file in $file_load_section.file_load_conditional.input ] )
 
                 singlefile_galaxyPath '$singlefile_galaxyPath' singlefile_sampleName '$singlefile_sampleName'
             #else

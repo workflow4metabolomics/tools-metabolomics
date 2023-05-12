@@ -187,11 +187,8 @@
     <outputs>
         <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="${image.name.rsplit('.',1)[0]}.xset.RData" from_work_dir="xcmsSet.RData" />
         <data name="log" format="txt" label="${image.name.rsplit('.',1)[0]}.xset.log.txt" from_work_dir="log.txt" />
-        <data name="peaklist_out1" format="tabular" label="${image.name[:-6]}.chromPeak_table.tsv" from_work_dir="chromPeak_table.tsv" >
-            <filter>methods['method'] == 'CentWave' and (methods['CentWaveAdv']['peaklist'])</filter>
-        </data>
-        <data name="peaklist_out2" format="tabular" label="${image.name[:-6]}.chromPeak_table.tsv" from_work_dir="chromPeak_table.tsv" >
-            <filter>methods['method'] == 'MatchedFilter' and (methods['MatchedFilterAdv']['peaklist'])</filter>
+        <data name="peaklist_out" format="tabular" label="${image.name[:-6]}.chromPeak_table.tsv" from_work_dir="chromPeak_table.tsv" >
+            <filter>methods['method'] in ['CentWave', 'MatchedFilter'] and (methods['CentWaveAdv']['peaklist'])</filter>
         </data>
     </outputs>
 
@@ -227,7 +224,7 @@
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
         </test>-->
-        <test>
+        <test expect_num_outputs="3">
             <param name="image" value="ko15-raw.RData" ftype="rdata" />
             <conditional name="methods">
                 <param name="method" value="CentWave" />

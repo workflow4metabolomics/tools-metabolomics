@@ -19,13 +19,13 @@ source_local("lib.r")
 
 pkgs <- c("xcms", "batch", "RColorBrewer")
 loadAndDisplayPackages(pkgs)
-cat("\n\n");
+cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
 # interpretation of arguments given in command line as an R list of objects
 args <- parseCommandArgs(evaluate = FALSE)
-write.table(as.matrix(args), col.names = F, quote = F, sep = "\t")
+write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
 

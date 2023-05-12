@@ -1,4 +1,4 @@
-<tool id="xcms_merge" name="xcms findChromPeaks Merger" version="@TOOL_VERSION@+galaxy0">
+<tool id="xcms_merge" name="xcms findChromPeaks Merger" version="@TOOL_VERSION@+galaxy0" profile="@PROFILE@">
     <description>Merge xcms findChromPeaks RData into a unique file to be used by group</description>
 
     <macros>

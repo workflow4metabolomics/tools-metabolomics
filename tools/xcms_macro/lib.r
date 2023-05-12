@@ -89,15 +89,19 @@ mergeXData <- function(args) {
         }
     }
     rm(image)
-    xdata <- xdata_merged; rm(xdata_merged)
-    singlefile <- singlefile_merged; rm(singlefile_merged)
-    md5sumList <- md5sumList_merged; rm(md5sumList_merged)
-    sampleNamesList <- sampleNamesList_merged; rm(sampleNamesList_merged)
+    xdata <- xdata_merged
+    rm(xdata_merged)
+    singlefile <- singlefile_merged
+    rm(singlefile_merged)
+    md5sumList <- md5sumList_merged
+    rm(md5sumList_merged)
+    sampleNamesList <- sampleNamesList_merged
+    rm(sampleNamesList_merged)
 
     if (!is.null(args$sampleMetadata)) {
         cat("\tXSET PHENODATA SETTING...\n")
         sampleMetadataFile <- args$sampleMetadata
-        sampleMetadata <- getDataFrameFromFile(sampleMetadataFile, header = F)
+        sampleMetadata <- getDataFrameFromFile(sampleMetadataFile, header = FALSE)
         xdata@phenoData@data$sample_group <- sampleMetadata$V2[match(xdata@phenoData@data$sample_name, sampleMetadata$V1)]
 
         if (any(is.na(pData(xdata)$sample_group))) {
@@ -109,16 +113,20 @@ mergeXData <- function(args) {
     }
 
     if (!is.null(chromTIC_merged)) {
-      chromTIC <- chromTIC_merged; chromTIC@phenoData <- xdata@phenoData
+      chromTIC <- chromTIC_merged
+      chromTIC@phenoData <- xdata@phenoData
     }
     if (!is.null(chromBPI_merged)) {
-      chromBPI <- chromBPI_merged; chromBPI@phenoData <- xdata@phenoData
+      chromBPI <- chromBPI_merged
+      chromBPI@phenoData <- xdata@phenoData
     }
     if (!is.null(chromTIC_adjusted_merged)) {
-      chromTIC_adjusted <- chromTIC_adjusted_merged; chromTIC_adjusted@phenoData <- xdata@phenoData
+      chromTIC_adjusted <- chromTIC_adjusted_merged
+      chromTIC_adjusted@phenoData <- xdata@phenoData
     }
     if (!is.null(chromBPI_adjusted_merged)) {
-      chromBPI_adjusted <- chromBPI_adjusted_merged; chromBPI_adjusted@phenoData <- xdata@phenoData
+      chromBPI_adjusted <- chromBPI_adjusted_merged
+      chromBPI_adjusted@phenoData <- xdata@phenoData
     }
 
     return(list("xdata" = xdata, "singlefile" = singlefile, "md5sumList" = md5sumList, "sampleNamesList" = sampleNamesList, "chromTIC" = chromTIC, "chromBPI" = chromBPI, "chromTIC_adjusted" = chromTIC_adjusted, "chromBPI_adjusted" = chromBPI_adjusted))
@@ -143,7 +151,8 @@ formatIonIdentifiers <- function(variableMetadata, numDigitsRT = 0, numDigitsMZ 
     splitDeco <- strsplit(as.character(variableMetadata$name), "_")
     idsDeco <- sapply(splitDeco,
       function(x) {
-        deco <- unlist(x)[2]; if (is.na(deco)) return("") else return(paste0("_", deco))
+        deco <- unlist(x)[2]
+        if (is.na(deco)) return("") else return(paste0("_", deco))
       }
     )
     namecustom <- make.unique(paste0("M", round(variableMetadata[, "mz"], numDigitsMZ), "T", round(variableMetadata[, "rt"], numDigitsRT), idsDeco))
@@ -169,7 +178,7 @@ getPlotChromPeakDensity <- function(xdata, param = NULL, mzdigit = 4) {
 
     if (length(unique(xdata$sample_group)) < 10) {
         group_colors <- brewer.pal(length(unique(xdata$sample_group)), "Set1")
-    }else{
+    } else {
         group_colors <- hcl.colors(length(unique(xdata$sample_group)), palette = "Dark 3")
     }
     names(group_colors) <- unique(xdata$sample_group)
@@ -216,12 +225,13 @@ getPlotAdjustedRtime <- function(xdata) {
 
 #@author G. Le Corguille
 # value: intensity values to be used into, maxo or intb
-getPeaklistW4M <- function(xdata, intval = "into", convertRTMinute = F, numDigitsMZ = 4, numDigitsRT = 0, naTOzero = T, variableMetadataOutput, dataMatrixOutput, sampleNamesList) {
+getPeaklistW4M <- function(xdata, intval = "into", convertRTMinute = FALSE, numDigitsMZ = 4, numDigitsRT = 0, naTOzero = TRUE, variableMetadataOutput, dataMatrixOutput, sampleNamesList) {
     dataMatrix <- featureValues(xdata, method = "medret", value = intval)
     colnames(dataMatrix) <- make.names(tools::file_path_sans_ext(colnames(dataMatrix)))
     dataMatrix <- cbind(name = groupnames(xdata), dataMatrix)
     variableMetadata <- featureDefinitions(xdata)
-    colnames(variableMetadata)[1] <- "mz"; colnames(variableMetadata)[4] <- "rt"
+    colnames(variableMetadata)[1] <- "mz"
+    colnames(variableMetadata)[4] <- "rt"
     variableMetadata <- data.frame(name = groupnames(xdata), variableMetadata)
 
     variableMetadata <- RTSecondToMinute(variableMetadata, convertRTMinute)
@@ -231,17 +241,17 @@ getPeaklistW4M <- function(xdata, intval = "into", convertRTMinute = F, numDigit
     # FIX: issue when the vector at peakidx is too long and is written in a new line during the export
     variableMetadata[, "peakidx"] <- vapply(variableMetadata[, "peakidx"], FUN = paste, FUN.VALUE = character(1), collapse = ",")
 
-    write.table(variableMetadata, file = variableMetadataOutput, sep = "\t", quote = F, row.names = F)
-    write.table(dataMatrix, file = dataMatrixOutput, sep = "\t", quote = F, row.names = F)
+    write.table(variableMetadata, file = variableMetadataOutput, sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(dataMatrix, file = dataMatrixOutput, sep = "\t", quote = FALSE, row.names = FALSE)
 
 }
 
 #@author G. Le Corguille
 # It allow different of field separators
-getDataFrameFromFile <- function(filename, header = T) {
-    myDataFrame <- read.table(filename, header = header, sep = ";", stringsAsFactors = F)
-    if (ncol(myDataFrame) < 2) myDataFrame <- read.table(filename, header = header, sep = "\t", stringsAsFactors = F)
-    if (ncol(myDataFrame) < 2) myDataFrame <- read.table(filename, header = header, sep = ",", stringsAsFactors = F)
+getDataFrameFromFile <- function(filename, header = TRUE) {
+    myDataFrame <- read.table(filename, header = header, sep = ";", stringsAsFactors = FALSE)
+    if (ncol(myDataFrame) < 2) myDataFrame <- read.table(filename, header = header, sep = "\t", stringsAsFactors = FALSE)
+    if (ncol(myDataFrame) < 2) myDataFrame <- read.table(filename, header = header, sep = ",", stringsAsFactors = FALSE)
     if (ncol(myDataFrame) < 2) {
         error_message <- "Your tabular file seems not well formatted. The column separators accepted are ; , and tabulation"
         print(error_message)
@@ -271,7 +281,7 @@ getPlotChromatogram <- function(chrom, xdata, pdfname = "Chromatogram.pdf", aggr
     # Color by group
     if (length(unique(xdata$sample_group)) < 10) {
         group_colors <- brewer.pal(length(unique(xdata$sample_group)), "Set1")
-    }else{
+    } else {
         group_colors <- hcl.colors(length(unique(xdata$sample_group)), palette = "Dark 3")
     }
     if (length(group_colors) > 1) {
@@ -392,10 +402,11 @@ retrieveRawfileInTheWorkingDir <- function(singlefile, zipfile, args, prefix = "
             singlefile_galaxyPath <- singlefile[[singlefile_sampleName]]
             if (!file.exists(singlefile_galaxyPath)) {
                 error_message <- paste("Cannot access the sample:", singlefile_sampleName, "located:", singlefile_galaxyPath, ". Please, contact your administrator ... if you have one!")
-                print(error_message); stop(error_message)
+                print(error_message)
+                stop(error_message)
             }
 
-            if (!suppressWarnings(try(file.link(singlefile_galaxyPath, singlefile_sampleName), silent = T)))
+            if (!suppressWarnings(try(file.link(singlefile_galaxyPath, singlefile_sampleName), silent = TRUE)))
                 file.copy(singlefile_galaxyPath, singlefile_sampleName)
             files <- c(files, singlefile_sampleName)
         }
@@ -410,7 +421,7 @@ retrieveRawfileInTheWorkingDir <- function(singlefile, zipfile, args, prefix = "
         suppressWarnings(unzip(zipfile, unzip = "unzip"))
 
         #get the directory name
-        suppressWarnings(filesInZip <- unzip(zipfile, list = T))
+        suppressWarnings(filesInZip <- unzip(zipfile, list = TRUE))
         directories <- unique(unlist(lapply(strsplit(filesInZip$Name, "/"), function(x) x[1])))
         directories <- directories[!(directories %in% c("__MACOSX")) & file.info(directories)$isdir]
         directory <- "."

@@ -14,13 +14,15 @@ cat("\tSESSION INFO\n")
 
 #Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE); base_dir <- dirname(substring(argv[grep("--file=", argv)], 8)); source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
 pkgs <- c("CAMERA", "batch")
 loadAndDisplayPackages(pkgs)
-cat("\n\n");
+cat("\n\n")
 
 
 # ----- FUNCTION -----
@@ -62,13 +64,13 @@ args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in
 # ----- ARGUMENTS PROCESSING -----
 
 #image is an .RData file necessary to use xset variable given by previous tools
-load(args$image);
+load(args$image)
 
 htmlOutput <- "summary.html"
-if (!is.null(args$htmlOutput)) htmlOutput <- args$htmlOutput;
+if (!is.null(args$htmlOutput)) htmlOutput <- args$htmlOutput
 
 user_email <- NULL
-if (!is.null(args$user_email)) user_email <- args$user_email;
+if (!is.null(args$user_email)) user_email <- args$user_email
 
 # if the RData come from XCMS 1.x
 if (exists("xset")) {

@@ -1,4 +1,4 @@
-<tool id="xcms_export_samplemetadata" name="xcms get a sampleMetadata file" version="@TOOL_VERSION@+galaxy0" profile="@PROFILE@">
+<tool id="xcms_export_samplemetadata" name="xcms get a sampleMetadata file" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>which need to be filled with extra information</description>
 
     <macros>

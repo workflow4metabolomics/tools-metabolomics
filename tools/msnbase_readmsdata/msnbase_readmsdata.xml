@@ -185,14 +185,6 @@ Create your zip file (*e.g.* arabidopsis.zip).
 
 **Step 3 : Uploading it to our Galaxy server**
 
-If your zip file is less than 2Gb, you can use the Get Data tool to upload it.
-
-Otherwise if your zip file is larger than 2Gb, please refer to the HOWTO_ on workflow4metabolomics.org.
-
-.. _HOWTO: http://application.sb-roscoff.fr/download/w4m/howto/galaxy_upload_up_2Go.pdf
-
-For more information, do not hesitate to send us an email at supportATworkflow4metabolomics.org.
-
 Advices for converting your files into mzXML format (XCMS input)
 ----------------------------------------------------------------
 

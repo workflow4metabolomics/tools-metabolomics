@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy0">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy1">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>
@@ -17,7 +17,7 @@
                 #set $source = $os.readlink(str($input))
                 singlefile_galaxyPath '$source' singlefile_sampleName '$os.path.basename($source)'
             #else
-                singlefile_galaxyPath '$input' singlefile_sampleName '$input.name'
+                singlefile_galaxyPath '$input' singlefile_sampleName '$input.element_identifier'
             #end if
         #else
             zipfile '$input'
@@ -28,7 +28,7 @@
 
     <inputs>
 
-        <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf,no_unzip.zip,zip" label="File(s) from your history containing your chromatograms" help="Single file mode for the following formats: mzxml, mzml, mzdata and netcdf. Zip file mode for the following formats: no_unzip.zip, zip. See the help section below." />
+        <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf,zip" label="File(s) from your history containing your chromatograms" help="Single file mode for the following formats: mzxml, mzml, mzdata and netcdf. Zip file mode for the following formats: zip. See the help section below." />
 
     </inputs>
 
@@ -123,7 +123,7 @@ Workflow position
 ========================= ==========================================
 Name                      Format
 ========================= ==========================================
-Upload File               mzxml,mzml,mzdata,netcdf,no_unzip.zip,zip
+Upload File               mzxml,mzml,mzdata,netcdf,zip
 ========================= ==========================================
 
 The easier way to process is to create a Dataset Collection of the type List

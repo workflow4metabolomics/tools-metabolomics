@@ -38,7 +38,7 @@
                 <when value="no">
                 </when>
                 <when value="yes">
-                    <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf,no_unzip.zip,zip" multiple="true" label="File(s) from your history containing your chromatograms" help="Single file mode for the format: mzxml, mzml, mzdata and netcdf. Zip file mode for the format: no_unzip.zip, zip. See the help section below." />
+                    <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf,zip" multiple="true" label="File(s) from your history containing your chromatograms" help="Single file mode for the format: mzxml, mzml, mzdata and netcdf. Zip file mode for the format: zip. See the help section below." />
                 </when>
             </conditional>
         </section>

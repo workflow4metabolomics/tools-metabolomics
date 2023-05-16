@@ -82,7 +82,7 @@
 
     <!-- PEAKLIST -->
     <token name="@COMMAND_PEAKLIST@">
-        #if $peaklist.peaklistBool
+        #if $peaklist.peaklistBool == 'true'
             convertRTMinute $peaklist.convertRTMinute
             numDigitsMZ $peaklist.numDigitsMZ
             numDigitsRT $peaklist.numDigitsRT
@@ -105,14 +105,17 @@
 
     <xml name="input_peaklist_section">
         <section name="peaklist" title="Peak List" expanded="True">
-            <param name="peaklistBool" type="hidden" label="Get the Peak List" value="True" />
+            <param name="peaklistBool" type="hidden" label="Get the Peak List" value="true" />
             <expand macro="input_peaklist"/>
         </section>
     </xml>
 
     <xml name="input_peaklist_conditional">
         <conditional name="peaklist">
-            <param name="peaklistBool" type="boolean" label="Get the Peak List" />
+            <param name="peaklistBool" type="select" label="Get the Peak List">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </param>
             <when value="true">
               <expand macro="input_peaklist"/>
             </when>
@@ -122,10 +125,10 @@
 
     <xml name="output_peaklist"  token_function="">
         <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.@FUNCTION@.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" >
-            <filter>(peaklist['peaklistBool'])</filter>
+            <filter>peaklist['peaklistBool'] == 'true'</filter>
         </data>
         <data name="dataMatrix" format="tabular" label="${image.name[:-6]}.@FUNCTION@.dataMatrix.tsv" from_work_dir="dataMatrix.tsv" >
-            <filter>(peaklist['peaklistBool'])</filter>
+            <filter>peaklist['peaklistBool'] == 'true'</filter>
         </data>
     </xml>
 
@@ -245,24 +248,24 @@ For details and explanations concerning all the parameters and workflow of xcms_
 .. _xcms: https://bioconductor.org/packages/release/bioc/html/xcms.html
 .. _manual: http://www.bioconductor.org/packages/release/bioc/manuals/xcms/man/xcms.pdf
 .. _example: https://bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms.html
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+.. _news: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
     </token>
 
     <token name="@HELP_XCMS_NEWVERSION_3440@">
 **Version 3.4.4.0 - 08/02/2019**
 
-- UPGRADE: upgrade the xcms version from 3.0.0 to 3.4.4 (see XCMS News_)
+- UPGRADE: upgrade the xcms version from 3.0.0 to 3.4.4 (see XCMS news_)
     </token>
     <token name="@HELP_XCMS_NEWVERSION_3610@">
 **Version 3.6.1+galaxy* - 03/09/2019**
 
-- UPGRADE: upgrade the xcms version from 3.4.4 to 3.6.1 (see XCMS News_)
+- UPGRADE: upgrade the xcms version from 3.4.4 to 3.6.1 (see XCMS news_)
     </token>
     <token name="@HELP_XCMS_NEWVERSION_31200@">
 **Version 3.12.0+galaxy* - 03/03/2020**
 
-- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS News_)
+- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS news_)
     </token>
 
     <xml name="citation">

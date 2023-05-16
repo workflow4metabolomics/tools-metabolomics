@@ -1,4 +1,4 @@
-<tool id="ipo4xcmsSet" name="IPO for xcmsSet" version="@TOOL_VERSION@+galaxy0">
+<tool id="ipo4xcmsSet" name="IPO for xcmsSet" version="@TOOL_VERSION@+galaxy1">
 
     <description>IPO optimization process for xcms.findChromPeaks</description>
 
@@ -11,7 +11,7 @@
     <command detect_errors="exit_code"><![CDATA[
         LANG=C Rscript '$__tool_directory__/ipo4xcmsSet.r'
 
-        singlefile_galaxyPath '$input' singlefile_sampleName '$input.name'
+        singlefile_galaxyPath '$input' singlefile_sampleName '$input.element_identifier'
 
         samplebyclass $samplebyclass
 

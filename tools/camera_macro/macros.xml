@@ -2,6 +2,7 @@
 <macros>
 
     <token name="@TOOL_VERSION@">1.48.0</token>
+    <token name="@VERSION_SUFFIX@">1</token>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="0.4_3">r-snow</requirement>
@@ -26,7 +27,7 @@
         #if $file_load_section.file_load_conditional.file_load_select == "yes":
             #if $file_load_section.file_load_conditional.input[0].is_of_type("mzxml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzdata") or $file_load_section.file_load_conditional.input[0].is_of_type("netcdf"):
                 #set singlefile_galaxyPath = ','.join( [ str( $single_file ) for $single_file in $file_load_section.file_load_conditional.input ] )
-                #set singlefile_sampleName = ','.join( [ str( $single_file.name ) for $single_file in $file_load_section.file_load_conditional.input ] )
+                #set singlefile_sampleName = ','.join( [ str( $single_file.element_identifier ) for $single_file in $file_load_section.file_load_conditional.input ] )
                 singlefile_galaxyPath '$singlefile_galaxyPath' singlefile_sampleName '$singlefile_sampleName'
             #else
                 zipfile '$file_load_section.file_load_conditional.input'

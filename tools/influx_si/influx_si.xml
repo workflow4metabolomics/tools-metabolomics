@@ -1,4 +1,4 @@
-<tool id="influx_si" name="influx_si" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5">
+<tool id="influx_si" name="influx_si" version="@TOOL_VERSION@+galaxy1">
    <description>metabolic flux analysis</description>
    <macros>
         <token name="@TOOL_VERSION@">5.1.0</token>
@@ -17,7 +17,7 @@
 
        #for $inp in $inp_all:
          #for $i in $inp:
-           ln -s '$i' '$i.name' &&
+           ln -s '$i' '$i.element_identifier' &&
          #end for
        #end for
        
@@ -81,7 +81,7 @@
          #if $si.s_i == 'i' and $si.time_order:
            --time_order='$si.time_order'
          #end if
-         '${"' '".join([str($in_m.name) for $in_m in $input_main])}'
+         '${"' '".join([str($in_m.element_identifier) for $in_m in $input_main])}'
          > 'influx_${si.s_i}.stdout.txt' 2>'influx_${si.s_i}.stderr.txt'; res="\$?" &&
        
        for f in *.ftbl *.log *.err *.R *.kvh *.attrs; do mv -f "\$f" "\$f".txt || true; done &&
@@ -101,7 +101,7 @@
           <when value="s"/>
           <when value="i">
               <param type="data" name="input_ti" label="time course data" format="txt,tsv" multiple="true"/>
-              <param argument="--time_order" type="select" label="time order for ODE solving" display="radio" optional="true" help="Order 2 is more precise but more time consuming. The value &#x27;1,2&#x27; makes to start solving the ODE with the first order scheme then continues with the order 2.">
+              <param argument="--time_order" type="select" label="time order for ODE solving" optional="true" help="Order 2 is more precise but more time consuming. The value &#x27;1,2&#x27; makes to start solving the ODE with the first order scheme then continues with the order 2.">
                   <option value="None">None</option>
                   <option value="1">1</option>
                   <option value="2">2</option>

@@ -244,7 +244,7 @@ xset.RData: rdata.xcms.findchrompeaks format
 Changelog/News
 --------------
 
-.. _News: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+.. _news: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
 
 
 **Version 3.6.1.0 - 08/02/2021**

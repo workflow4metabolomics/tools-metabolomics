@@ -203,7 +203,7 @@
         </test>
         -->
         <!-- from retcor -->
-        <test>
+        <test expect_num_outputs="5">
             <param name="image" value="faahKO-single-class.xset.merged.group.retcor.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="PeakDensity"/>

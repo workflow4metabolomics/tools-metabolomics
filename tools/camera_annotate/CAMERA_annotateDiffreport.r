@@ -3,30 +3,30 @@
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE); base_dir <- dirname(substring(argv[grep("--file=", argv)], 8)); source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
 pkgs <- c("CAMERA", "multtest", "batch")
 loadAndDisplayPackages(pkgs)
-cat("\n\n");
-
+cat("\n\n")
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
 
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
-write.table(as.matrix(args), col.names = F, quote = F, sep = "\t")
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
-cat("\n\n");
-
-
+cat("\n\n")
 # ----- PROCESSING INFILE -----
 cat("\tINFILE PROCESSING INFO\n")
 
-#image is an .RData file necessary to use xset variable given by previous tools
-load(args$image); args$image <- NULL
+# image is an .RData file necessary to use xset variable given by previous tools
+load(args$image)
+args$image <- NULL
 
 cat("\n\n")
 
@@ -50,7 +50,7 @@ directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Because so far CAMERA isn't compatible with the new XCMSnExp object
 if (exists("xdata")) {
-    xset <- getxcmsSetObject(xdata)
+  xset <- getxcmsSetObject(xdata)
 }
 
 cat("\n\n")
@@ -72,7 +72,7 @@ cat("\tXSET OBJECT INFO\n")
 print(xa)
 cat("\n\n")
 
-#saving R data in .Rdata file to save the variables used in the present tool
+# saving R data in .Rdata file to save the variables used in the present tool
 objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFargs", "zipfile", "singlefile")
 save(list = objects2save[objects2save %in% ls()], file = "annotatediff.RData")
 

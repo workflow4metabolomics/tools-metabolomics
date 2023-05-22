@@ -43,7 +43,7 @@ jobs:
         echo 'event.after: ${{ github.event.after }}'
     - name: Determine latest commit in the Galaxy repo
       id: get-galaxy-sha
-      run: echo "::set-output name=galaxy-head-sha::$(git ls-remote https://github.com/${{ env.GALAXY_FORK }}/galaxy refs/heads/${{ env.GALAXY_BRANCH }} | cut -f1)"
+      run: echo "galaxy-head-sha=$(git ls-remote https://github.com/${{ env.GALAXY_FORK }}/galaxy refs/heads/${{ env.GALAXY_BRANCH }} | cut -f1)" >> $GITHUB_OUTPUT
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
@@ -115,6 +115,7 @@ jobs:
       id: lint
       with:
         mode: lint
+        fail-level: warn
         repository-list: ${{ needs.setup.outputs.repository-list }}
         tool-list: ${{ needs.setup.outputs.tool-list }}
     - uses: actions/upload-artifact@v3
@@ -311,7 +312,7 @@ jobs:
   combine_outputs:
     name: Combine chunked test results
     needs: [setup, test]
-    if: ${{ needs.setup.outputs.repository-list != '' }}
+    if: ${{ always() && needs.setup.outputs.repository-list != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -344,12 +345,18 @@ jobs:
       id: check
       with:
         mode: check
+    - name: Check if all test chunks succeeded
+      run: |
+        NFILES=$(ls artifacts/ | grep "Tool test output" | wc -l)
+        if [[ "${{ needs.setup.outputs.chunk-count }}" != "$NFILES" ]]; then
+          exit 1
+        fi
 
   # deploy the tools to the toolsheds (first TTS for testing)
   deploy:
     name: Deploy
     needs: [setup, lint, flake8, lintr, combine_outputs]
-    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' ) && github.repository_owner == 'workflow4metabolomics' }}
+    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' ) && github.repository_owner == 'galaxyproject' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

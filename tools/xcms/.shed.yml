@@ -44,7 +44,17 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, abims_xcms_group.xml, xcms_group.r]
-
+  xcms_merge:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Merge individual xcmsSet outputs'
+    long_description: |
+      Filtration and Peak Identification using xcmsSet function from xcms R
+      package to preprocess LC/MS data for relative quantification and
+      statistical analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, xcms_merge.xml, xcms_merge.R]
 
 suite:
   name: suite_xcms

@@ -34,88 +34,18 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, abims_xcms_fillPeaks.xml, xcms_fillpeaks.r]
+  xcms_group:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Group peaks from different samples together'
+    long_description: |
+      Group peaks together across samples using overlapping m/z bins and
+      calculation of smoothed peak distributions in chromatographic time.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_group.xml, xcms_group.r]
 
-  # spades_rnaviralspades:
-  #   description: De novo assembler for transcriptomes, metatranscriptomes and metaviromes.
-  #   long_description: |
-  #     rnaviralSPAdes is a pipeline specially designed for de novo assembler tailored for RNA viral datasets (transcriptome, metatranscriptome and metavirome).
-  #   include:
-  #     - test-data
-  #     - rnaviralspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
 
-  # rnaspades:
-  #   description: De novo transcriptome assembler.
-  #   long_description: |
-  #       rnaSPAdes is a pipeline for de novo transcriptome assembly from RNA-Seq data and is suitable for all kinds of organisms.
-  #   include:
-  #     - test-data
-  #     - rnaspades.xml
-  #     - macros.xml
-
-  # spades_plasmidspades:
-  #   description: Extract and assembly plasmids from WGS data.
-  #   long_description: |
-  #     plasmidSPAdes is a pipeline for assembling plasmid data sets. Ihas the potential to massively increase the throughput of plasmid sequencing and to provide information about plasmids in thousands of sequenced bacterial genomes by re-assembling their genomes, identifying their plasmids and supplementing the corresponding GenBank entries with the plasmid annotations
-  #   include:
-  #     - test-data
-  #     - plasmidspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-
-  # spades_metaviralspades:
-  #   description: Extract and assembly viral genomes from metagenomic data.
-  #   long_description: |
-  #     metaplasmidSPAdes is a pipeline for assembling plasmids from metagenomic data sets.
-  #   include:
-  #     - test-data
-  #     - metaviralspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-
-  # metaspades:
-  #   description: A pipeline for metagenomic data sets.
-  #   long_description: |
-  #      metaSPAdes is a pipeline for assembling metagenomic data sets. metaSPAdes focuses on reconstructing a consensus backbone of a strain mixture, thus ignoring some strain-specific features corresponding to rare strains.
-  #   include:
-  #     - test-data
-  #     - metaspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-  #   owner: nml
-    
-  # spades_metaplasmidspades:
-  #   description: Extract and assembly plasmids from metagenomic data.
-  #   long_description: |
-  #     metaplasmidSPAdes is a pipeline for assembling plasmids from metagenomic data sets.
-  #   include:
-  #     - test-data
-  #     - metaplasmidspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-
-  # spades_coronaspades:
-  #   description: SARS-CoV-2 de novo genome assembler.
-  #   long_description: |
-  #       Due to an increased interest in coronavirus research, a coronavirus assembly mode for SPAdes assembler has been developed (a.k.a coronaSPAdes).
-  #       It enables assembly of full-length coronaviridae genomes from the transcriptomic and metatranscriptomic data.
-  #   include:
-  #     - test-data
-  #     - coronaspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-
-  # spades_biosyntheticspades:
-  #   description: Biosynthetic gene cluster assembly.
-  #   long_description: |
-  #     biosyntheticSPAdes is a pipeline for biosynthetic gene cluster assembly.
-  #   include:
-  #     - test-data
-  #     - biosyntheticspades.xml
-  #     - macros.xml
-  #     - write_tsv_script.py
-    
 suite:
   name: suite_xcms
   owner: lecorguille

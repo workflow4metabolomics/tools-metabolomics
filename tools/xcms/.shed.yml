@@ -19,9 +19,21 @@ repositories:
     description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Get a sample metadata file'
     long_description: |
       Generates a skeleton of sampleMetadata
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
     owner: lecorguille
     include:
       [*default-includes, xcms_export_samplemetadata.xml, xcms_export_samplemetadata.r]
+  xcms_fillpeaks:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Integrate areas of missing peaks'
+    long_description: |
+      For each sample, identify peak groups where that sample is not represented.
+      For each of those peak groups, integrate the signal in the region of that peak group and create a new peak.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_fillPeaks.xml, xcms_fillpeaks.r]
 
   # spades_rnaviralspades:
   #   description: De novo assembler for transcriptomes, metatranscriptomes and metaviromes.

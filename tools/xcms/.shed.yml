@@ -55,6 +55,24 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, xcms_merge.xml, xcms_merge.R]
+  xcms_plot_chromatogram:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)'
+    long_description: |
+      Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, xcms_plot_chromatogram.xml, xcms_plot_chromatogram.r]
+  xcms_refine:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Refine choice of peaks'
+    long_description: |
+      Remove or merge chromatographic peaks based on specific criteria.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
 
 suite:
   name: suite_xcms

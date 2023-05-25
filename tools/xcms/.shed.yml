@@ -82,6 +82,17 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
+  xcms_xcmsset:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - peaks calling in NetCDF/mzXML files'
+    long_description: |
+      Filtration and Peak Identification using xcmsSet function from xcms R
+      package to preprocess LC/MS data for relative quantification and
+      statistical analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_xcmsSet.xml, xcms_xcmsSet.r]
 
 suite:
   name: suite_xcms

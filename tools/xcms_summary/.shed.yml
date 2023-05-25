@@ -1,9 +1,0 @@
-categories: [Metabolomics]
-description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - HTML Summary for XCMS and CAMERA analysis'
-homepage_url: http://workflow4metabolomics.org
-long_description: 'Part of the W4M project: http://workflow4metabolomics.org\n\nXCMS:
-  http://www.bioconductor.org/packages/release/bioc/html/xcms.html\n\nThis tool create
-  a HTML summary of XCMS and CAMERA analysis'
-name: xcms_summary
-owner: lecorguille
-remote_repository_url: https://github.com/workflow4metabolomics/xcms

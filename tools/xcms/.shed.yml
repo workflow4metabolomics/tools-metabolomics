@@ -93,6 +93,25 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, abims_xcms_xcmsSet.xml, xcms_xcmsSet.r]
+  xcms_summary:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - HTML Summary for XCMS and CAMERA analysis'
+    long_description: |
+      This tool create a HTML summary of XCMS and CAMERA analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_summary.xml, xcms_summary.r]
+  msnbase_readmsdata:
+    description: '[Metabolomics][W4M][LC-MS] MSnbase R Package - Preprocessing - Imports Mass-Spectrometry Data Files'
+    long_description: |
+      Reads XML-based mass-spectrometry data files.  Can be chained with the W4M
+      xcms.findChromPeaks tool
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, msnbase_readmsdata.xml, msnbase_readmsdata.r, macros_msnbase.xml]
 
 suite:
   name: suite_xcms

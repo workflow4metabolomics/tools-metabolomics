@@ -1,9 +1,0 @@
-categories: [Metabolomics]
-description: '[Metabolomics][W4M][LC-MS] MSnbase R Package - Preprocessing - Imports Mass-Spectrometry Data Files'
-homepage_url: http://workflow4metabolomics.org
-long_description: 'Part of the W4M project: http://workflow4metabolomics.org MSnbase:
-  https://bioconductor.org/packages/release/bioc/html/MSnbase.html Reads XML-based mass-spectrometry data files.
-  Can be chained with the W4M xcms.findChromPeaks tool '
-name: msnbase_readmsdata
-owner: lecorguille
-remote_repository_url: https://github.com/workflow4metabolomics/xcms

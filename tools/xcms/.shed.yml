@@ -5,7 +5,6 @@ definitions:
     - lib.r
     - macros_xcms.xml
     - macros.xml
-    - README.rst
 
 name: xcms
 owner: workflow4metabolomics
@@ -54,7 +53,7 @@ repositories:
       XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
     owner: lecorguille
     include:
-      [*default-includes, xcms_merge.xml, xcms_merge.R]
+      [*default-includes, xcms_merge.xml, xcms_merge.r]
   xcms_plot_chromatogram:
     description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)'
     long_description: |

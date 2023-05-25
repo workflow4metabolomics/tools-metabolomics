@@ -41,7 +41,7 @@
 
     <tests>
 
-        <test>
+        <test expect_num_outputs="2">
             <param name="input" value="faahKO_reduce.zip"  ftype="zip" />
             <assert_stdout>
                 <has_text text="rowNames: faahKO_reduce/KO/ko15.CDF faahKO_reduce/KO/ko16.CDF" />
@@ -55,7 +55,7 @@
             </assert_stdout>
             <output name="sampleMetadata" value="sampleMetadata.tsv" />
         </test>
-        <test>
+        <test expect_num_outputs="1">
             <param name="input" value="ko15.CDF"  ftype="netcdf" />
             <assert_stdout>
                 <has_text text="rowNames: ko15.CDF" />

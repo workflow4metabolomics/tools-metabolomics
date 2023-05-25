@@ -128,7 +128,7 @@
             <output name="variableMetadata" file="faahKO.xset.group2.retcor2.group2.fillPeaks2.variableMetadata.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group2.retcor2.group2.fillPeaks2.dataMatrix.tsv" />
         </test>-->
-        <test>
+        <test expect_num_outputs="3">
             <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.RData" ftype="rdata"/>
             <section name="peaklist">
                 <param name="peaklistBool" value="true" />

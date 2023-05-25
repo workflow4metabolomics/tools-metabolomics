@@ -97,6 +97,8 @@ Output files
 **Base Peak Intensity Chromatogram (BPI)**
     | Sum of intensity (Y) of the most intense peaks at each retention time (X)
 
+@HELP_XCMS_MANUAL@
+
 ---------------------------------------------------
 
 Changelog/News

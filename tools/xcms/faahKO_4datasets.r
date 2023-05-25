@@ -1,8 +1,6 @@
 library(xcms)
 library(faahKO)
 
-#BiocManager::install("faahKO")
-
 parallel <- TRUE
 
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
@@ -31,7 +29,7 @@ if (parallel) {
     xdata <- xdata_merged
     if (!is.null(args$sampleMetadata)) {
         sampleMetadataFile <- args$sampleMetadata
-        sampleMetadata <- getDataFrameFromFile(sampleMetadataFile, header = F)
+        sampleMetadata <- getDataFrameFromFile(sampleMetadataFile, header = FALSE)
         xdata@phenoData@data$sample_group <- sampleMetadata$V2[match(xdata@phenoData@data$sample_name, sampleMetadata$V1)]
 
         if (any(is.na(pData(xdata)$sample_group))) {

@@ -41,12 +41,6 @@ repositories:
     owner: workflow4metabolomics
     include:
       [*default-includes, abims_CAMERA_combinexsAnnos.xml, CAMERA_combinexsAnnos.r]
-  # :
-  #   description: ''
-  #   long_description: |
-  #   owner: 
-  #   include:
-  #     [*default-includes, , ]
 
 suite:
   name: suite_camera

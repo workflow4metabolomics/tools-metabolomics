@@ -73,6 +73,15 @@ repositories:
     owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
+  xcms_retcor:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Correct retention time from different samples'
+    long_description: |
+      Retention Time Correction using retcor function from xcms R package
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
 
 suite:
   name: suite_xcms

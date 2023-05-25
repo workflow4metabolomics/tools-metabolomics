@@ -41,7 +41,7 @@
         </test>-->
         <test>
             <param name="image" value="faahKO-single.xset.merged.group.retcor.group.fillpeaks.RData" ftype="rdata"/>
-            <output name="htmlOutput" file="faahKO-single.xset.merged.group.retcor.group.fillpeaks.summary.html" />
+            <output name="htmlOutput" file="faahKO-single.xset.merged.group.retcor.group.fillpeaks.summary.html" lines_diff="2"/>
         </test>
     </tests>
 

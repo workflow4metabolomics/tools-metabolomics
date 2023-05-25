@@ -147,6 +147,7 @@
       </section>
    </inputs>
    <outputs>
+      <!-- TODO: this should probably not be a collection, also name_and_ext probably does not work correctly for all elements-->
       <collection name="influx_si_output" type="list" label="influx_${si.s_i}_on_${on_string}">
          <discover_datasets pattern="__name_and_ext__" directory="outdir" visible="false"/>
       </collection>
@@ -157,8 +158,13 @@
          <conditional name="si">
             <param name="s_i" value="s" />
          </conditional>
-         <output_collection name="influx_si_output" type="list">
-            <element name="e_coli.log" ftype="txt" file="e_coli.log" compare="sim_size" delta="100" />
+         <output_collection name="influx_si_output" type="list" count="11">
+            <element name="e_coli.log" ftype="txt">
+               <assert_contents>
+                  <has_n_lines n="38"/>
+                  <has_line_matching expression="^end.*"/>
+               </assert_contents>
+            </element>
          </output_collection>
       </test>
       <test>
@@ -167,7 +173,12 @@
             <param name="s_i" value="s" />
          </conditional>
          <output_collection name="influx_si_output" type="list">
-            <element name="e_coli_growth.log" ftype="txt" file="e_coli_growth.log" compare="sim_size" delta="100" />
+            <element name="e_coli_growth.log" ftype="txt">
+               <assert_contents>
+                  <has_n_lines n="45"/>
+                  <has_line_matching expression="^end.*"/>
+               </assert_contents>
+            </element>
          </output_collection>
       </test>
       <test>
@@ -178,7 +189,12 @@
             <!--param name="time_order" value="1,2" /--> <!--How to pass single value with comma in it?-->
          </conditional>
          <output_collection name="influx_si_output" type="list">
-            <element name="e_coli_i.log" ftype="txt" file="e_coli_i.log" compare="sim_size" delta="100" />
+            <element name="e_coli_i.log" ftype="txt">
+               <assert_contents>
+                  <has_n_lines n="47"/>
+                  <has_line_matching expression="^end.*"/>
+               </assert_contents>
+            </element>
          </output_collection>
       </test>
       <test>
@@ -188,13 +204,16 @@
             <param name="s_i" value="s" />
          </conditional>
          <output_collection name="influx_si_output" type="list">
-            <element name="e_coli_1-Glc_exact.log" file="e_coli_1-Glc_exact.log" compare="sim_size" delta="100" />
+            <element name="e_coli_1-Glc_exact.log" ftype="txt">
+               <assert_contents>
+                  <has_n_lines n="40"/>
+                  <has_line_matching expression="^end.*"/>
+               </assert_contents>
+            </element>
          </output_collection>
       </test>
    </tests>
    <help><![CDATA[
-   Usage: influx_s [options] /path/to/FTBL_file1 [FTBL_file2 [...]]
-
    Optimize free fluxes and optionaly metabolite concentrations of a given static metabolic network defined in an FTBL file to fit 13C data provided in the same FTBL file.
    ]]></help>
    <citations>

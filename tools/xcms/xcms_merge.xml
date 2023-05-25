@@ -51,7 +51,7 @@
             <output name="sampleMetadataOutput" file="noclass.merged.sampleMetadata.tsv" />
         </test>
         -->
-        <test>
+        <test expect_num_outputs="1">
             <param name="images" value="ko15-xset.RData,ko16-xset.RData,wt15-xset.RData,wt16-xset.RData" ftype="rdata"/>
             <expand macro="test_file_load_single"/>
             <param name="sampleMetadata" value="sampleMetadata.tab" />
@@ -167,6 +167,8 @@ Output files
 xset.merged.RData: rdata.xcms.findchrompeaks format
 
     | Rdata file that is necessary in the next step of the workflow "xcms.groupChromPeaks".
+
+@HELP_XCMS_MANUAL@
 
 ---------------------------------------------------
 

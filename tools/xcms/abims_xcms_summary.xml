@@ -82,6 +82,8 @@ CAMERA.annotate           ``*``.annotate.*.RData      rdata.camera.``*``
 
 .. image:: xcms_summary_workflow.png
 
+@HELP_XCMS_MANUAL@
+
 ---------------------------------------------------
 
 Changelog/News

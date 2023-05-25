@@ -24,12 +24,23 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, abims_CAMERA_annotateDiffreport.xml, CAMERA_annotateDiffreport.r]
-  # :
-  #   description: ''
-  #   long_description: |
-  #   owner: 
-  #   include:
-  #     [*default-includes, , ]
+  camera_combinexsannos:
+    description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Annotation - combinexsAnnos Check CAMERA ion species annotation due to matching with opposite ion mode'
+    long_description: |
+      This function check annotations of ion species with the help of a sample
+      from opposite ion mode. As first step it searches for pseudospectra from
+      the positive and the negative sample within a retention time window. For
+      every result the m/z differences between both samples are matched against
+      specific rules, which are combinations from pos. and neg. ion species. As
+      example M+H and M-H with a m/z difference of 2.014552. If two ions matches
+      such a difference, the ion annotations are changed (previous annotation is
+      wrong), confirmed or added. Returns the peaklist from one ion mode with
+      recalculated annotations.
+      Part of the W4M project: http://workflow4metabolomics.org
+      CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, abims_CAMERA_combinexsAnnos.xml, CAMERA_combinexsAnnos.r]
   # :
   #   description: ''
   #   long_description: |

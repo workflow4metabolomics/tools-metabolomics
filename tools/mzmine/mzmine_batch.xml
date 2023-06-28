@@ -27,12 +27,10 @@
             echo 'libraries/$escaped_l'.$l.ext >> libraries.txt &&
         #end for
     #end if
-
     ## modify output paths in batch XML to relative path
-    ## TODO currently all goes to a single output dir one
-    ## could use more logic and create multiple outputs
-    ## that may be filtered on user demand using a bool/select
+    ## - any output will be redirected to ./output/BASENAME
     mkdir -p output/ &&
+    
     sed -e 's@<current_file>.*[\\\/]\([^\\\/]\+\)</current_file>@<current_file>./output/\1</current_file>@' '$batch' > batch.xml &&
 
     mzmine
@@ -41,40 +39,26 @@
         #if $libraries
             --libraries 'libraries.txt'
         #end if
-## TODO we could think about implementing this parameter by adding an env var that admins could set
-##  -m,--memory <arg>      keep objects (scan data, features, etc) in memory.
-##                         Options: none, all, features, centroids, raw,
-##                         masses_features (masses_features for features and
-##                         centroids)
-## TODO maybe in the future
-##  -p,--pref <arg>        preferences file
+        --memory "\${MZMINE_MEMORY:-none}"
         --temp "\${TMPDIR:-\$_GALAXY_JOB_TMP_DIR}"
         --threads \${GALAXY_SLOTS:-1}
 ## ignored parameters
+##  -p,--pref <arg>        preferences file
 ## -r,--running          keep MZmine running in headless mode
 ## -tdfpseudoprofile     Loads pseudo-profile frame spectra for tdf files
 ##                       instead of centroided spectra.
 ## -tsfprofile           Loads profile spectra from .tsf data instead of
 ##                       centroid spectra.
-
     ]]></command>
     <inputs>
         <param argument="--batch" type="data" format="xml" label="MZMine batch file" help="XML batch file (ideally created with version @TOOL_VERSION@)"/>
-        <!-- TODO input as collection (default) or multiple data input-->
-        <param argument="--input" type="data" format="mzml,mzxml" multiple="true" label="Spectra (mzml)"/>
-        <param argument="--libraries" type="data" format="json,mgf" multiple="true" optional="true" label="Spectral libraries"/>
+        <param argument="--input" type="data" format="mzml,mzxml,csv" multiple="true" label="Spectra (mzml)"/>
+        <param argument="--libraries" type="data" format="json,mgf,msp" multiple="true" optional="true" label="Spectral libraries"/>
     </inputs>
     <outputs>
         <collection name="output" type="list">
             <discover_datasets pattern="__name_and_ext__" directory="output"/>
         </collection>
-        <!-- maybe a distiction in different output types would be better
-        <collection name="raw_data" type="list" label="${tool.name} on ${on_string}: raw data">
-            <discover_datasets pattern="__name_and_ext__" directory="raw_data"/>
-        </collection>
-        <collection name="feature_list" type="list" label="${tool.name} on ${on_string}: feature list">
-            <discover_datasets pattern="__name_and_ext__" directory="feature_list" />
-        </collection> -->
     </outputs>
     <tests>
         <test>
@@ -115,6 +99,26 @@
         - Input spectra in mzml format
         - Spectra libraries in mgf or json format (optional)
 
+        **Outputs**
+
+        Galaxy will store all outputs of MZMine in a single collection. When specifying the batch XML
+        file one should pay attention to use file extensions that correspond to Galaxy datatypes
+        (which allows Galaxy to easily autodetect the datatype). The following extensions can be used
+        (lower/upper case does not matter):
+
+        - mzml
+        - netcdf
+        - mgf
+        - txt
+        - msp
+        - csv
+        - mztab
+        - mztab2 (this is mzTab-m)
+        - json
+        - tabular (Galaxy's tsv implementation)
+
+        Specific datasets from the collection can be accessed using the *Extract dataset* tool, e.g.
+        for further processing in Galaxy.
     ]]></help>
     <citations>
         <citation type="doi">10.1038/s41587-023-01690-2</citation>

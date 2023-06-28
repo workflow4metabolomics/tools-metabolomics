@@ -609,7 +609,7 @@
     <batchstep method="io.github.mzmine.modules.io.export_features_sirius.SiriusExportModule" parameter_version="1">
         <parameter name="Feature lists" type="BATCH_LAST_FEATURELISTS"/>
         <parameter name="Filename">
-            <current_file>D:\tmp\export_mzmine3\test2_sirius.mgf</current_file>
+            <current_file>D:\tmp\export_mzmine3\test2_sirius.MGF</current_file>
             <last_file>D:\tmp\new_sirius\merged_new_sirius.mgf</last_file>
             <last_file>D:\tmp\test\merged_new_sirius.mgf</last_file>
         </parameter>

@@ -1,0 +1,165 @@
+<macros>
+
+  <token name="@DEFAULT_MZ@">303.05</token>
+  <token name="@DEFAULT_TOLERENCE@">10.0</token>
+  <token name="@DEFAULT_ADDUCT@">M+H</token>
+  <token name="@DEFAULT_DATABASE@">HMDB</token>
+
+  <xml name="get_data_inputs">
+    <param argument="--mz-ratio" type="float" min="1" max="1000" value="@DEFAULT_MZ@"
+      help="
+        The database will give us all compounds with m/z = 
+        m/zRatio±MassTolerance and we will plot those
+        compounds.
+        Choose the mass tolerance according to this information.
+      "
+      label="M/z Ratio"
+    />
+
+    <param argument="--mass-tolerance" type="float" value="@DEFAULT_TOLERENCE@"
+      help="
+        The database will give us all compounds with m/z = 
+        m/zRatio±MassTolerance and we will plot those
+        compounds.
+        Choose the mass tolerance according to this information.
+      "
+      label="Mass Tolerance"
+    />
+
+    <param argument="--database" type="select" value="@DEFAULT_DATABASE@"
+      label="Which database to interrogate"
+      help="
+        Those databases are sub-databases of KMD-HMDB Metabolites
+        and contains compounds with their KMD.
+      "
+    >
+      <option selected="true" value="hmdb">HMDB</option>
+      <option value="farid">KMD Metabolites</option>
+    </param>
+
+    <param argument="--adducts" type="select" multiple="true"
+      label="Adducts"
+      help="Which adducts to retrieve"
+    >
+      <option selected="true" value="M+H">M+H</option>
+      <option value="M+2H">M+2H</option>
+      <option value="M+H+NH4">M+H+NH4</option>
+      <option value="M+H+Na">M+H+Na</option>
+      <option value="M+H+K">M+H+K</option>
+      <option value="M+ACN+2H">M+ACN+2H</option>
+      <option value="M+2Na">M+2Na</option>
+      <option value="M+H-2H2O">M+H-2H2O</option>
+      <option value="M+H-H2O">M+H-H2O</option>
+      <option value="M+NH4">M+NH4</option>
+      <option value="M+Na">M+Na</option>
+      <option value="M+CH3OH+H">M+CH3OH+H</option>
+      <option value="M+K">M+K</option>
+      <option value="M+ACN+H">M+ACN+H</option>
+      <option value="M+2Na-H">M+2Na-H</option>
+      <option value="M+IsoProp+H">M+IsoProp+H</option>
+      <option value="M+ACN+Na">M+ACN+Na</option>
+      <option value="M+2K+H">M+2K+H</option>
+      <option value="M+DMSO+H">M+DMSO+H</option>
+      <option value="M+2ACN+H">M+2ACN+H</option>
+      <option value="2M+H">2M+H</option>
+      <option value="2M+NH4">2M+NH4</option>
+      <option value="2M+Na">2M+Na</option>
+      <option value="2M+K">2M+K</option>
+      <option value="M-H">M-H</option>
+      <option value="M-2H">M-2H</option>
+      <option value="M-H2O-H">M-H2O-H</option>
+      <option value="M+Cl">M+Cl</option>
+      <option value="M+FA-H">M+FA-H</option>
+      <option value="M+Hac-H">M+Hac-H</option>
+      <option value="M-H+HCOONa">M-H+HCOONa</option>
+      <option value="M+Br">M+Br</option>
+      <option value="M+TFA-H">M+TFA-H</option>
+      <option value="2M-H">2M-H</option>
+      <option value="2M+FA-H">2M+FA-H</option>
+      <option value="2M+Hac-H">2M+Hac-H</option>
+    </param>
+  </xml>
+
+  <xml name="produce_plot_inputs">
+    <param name="csv_input" type="data" format="tabular"
+      help="Tabular file to use to produce the plot."
+      label="A Tabular Input File"
+    />
+    <param
+      name="annotation_columns"
+      type="data_column"
+      data_ref="csv_input"
+      use_header_names="true"
+      multiple="true"
+      optional="true"
+      help="Select columns to show when a point of the graph is hovered"
+      label="Annotation columns"
+    />
+    <param
+      name="x_columns"
+      type="data_column"
+      data_ref="csv_input"
+      use_header_names="true"
+      optional="true"
+      multiple="true"
+      help="
+        Select one or multiple column to use as X values
+        to generate the graph. See the help section to better
+        understand the usage of multiple values
+      "
+      label="X Axis"
+    />
+    <param
+      name="y_columns"
+      type="data_column"
+      data_ref="csv_input"
+      use_header_names="true"
+      optional="true"
+      multiple="true"
+      help="
+        Select one or multiple column to use as Y values
+        to generate the graph. See the help section to better
+        understand the usage of multiple values
+      "
+      label="Y Axis"
+    />
+  </xml>
+
+  <xml name="not_get_data">
+    <param name="mz_ratio" value="unknown" type="hidden" />
+    <param name="mass_tolerance" value="unknown" type="hidden" />
+    <param name="database" value="unknown" type="hidden" />
+    <param name="adducts" value="unknown" type="hidden" />
+  </xml>
+
+  <xml name="not_produce_plot">
+    <param name="csv_input" value="unknown" type="hidden" />
+    <param name="annotation_columns" type="hidden" />
+    <param name="x_columns" type="hidden" />
+    <param name="y_columns" type="hidden" />
+  </xml>
+
+  <xml name="get_data_outputs">
+    <data name="output_path" format="csv"
+      label="csv - ${tool.name} on ${what.mz_ratio}±${what.mass_tolerance} - ${what.database}"
+    >
+      <filter>"get_data" in str(what['to_do'])</filter>
+    </data>
+  </xml>
+
+  <xml name="produce_plot_outputs">
+    <data name="output" format="html"
+      label="html on ${
+      ' - '
+      + str($what['mz_ratio'])
+      + '±' + str($what['mass_tolerance'])
+      + ' - ' + str($what['database'])
+      if 'get_data' in str($what['to_do'])
+      else ''' ' ''' + $what.csv_input.name + ''' ' '''
+    }"
+    >
+      <filter>"produce_plot" in str(what['to_do'])</filter>
+    </data>
+  </xml>
+
+</macros>

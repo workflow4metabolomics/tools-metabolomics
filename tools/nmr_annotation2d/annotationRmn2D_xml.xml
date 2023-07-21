@@ -229,6 +229,7 @@
         <data format="tabular" name="annotationCombination" label="${tool.name}_annotationCombination" />
         <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
+
     <tests>
         <test expect_num_outputs="13">
             <param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>

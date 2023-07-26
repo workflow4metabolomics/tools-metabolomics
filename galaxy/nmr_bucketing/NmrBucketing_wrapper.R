@@ -81,6 +81,7 @@ if (!is.null(argLs[["zipfile"]])){
 	zipfile= argLs[["zipfile"]]
 	directory=unzip(zipfile, list=F)
 	directory=paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
+        sampleMetadataOut <- argLs[["sampleOut"]]
 } else if (!is.null(argLs[["tsvfile"]])){
 	fileType="tsv"
 	directory <- read.table(argLs[["tsvfile"]],check.names=FALSE,header=TRUE,sep="\t")
@@ -105,13 +106,11 @@ graphique <- argLs[["graphType"]]
   # Outputs
 nomGraphe <- argLs[["graphOut"]]
 dataMatrixOut <- argLs[["dataMatrixOut"]]
+variableMetadataOut <- argLs[["variableOut"]]
 logFile <- argLs[["logOut"]]
-if (fileType=="zip")
-{
+if (fileType=="zip"){
   sampleMetadataOut <- argLs[["sampleOut"]]
-  variableMetadataOut <- argLs[["variableOut"]]
 }
-
 
 ## Checking R packages
 ##--------------------
@@ -142,9 +141,14 @@ data_bucket1 <- outputs[[1]]
 somme <- apply(data_bucket1, 1, sum)
 data_bucket <- data_bucket1[somme !=0, ]
 
-data_sample <- outputs[[2]]
-data_variable <- outputs[[3]]
-ppm <- outputs[[4]]
+if (fileType=="zip"){
+	data_sample <- outputs[[2]]
+	data_variable <- outputs[[3]]
+	ppm <- outputs[[4]]
+} else{	
+	data_variable <- outputs[[2]]
+	ppm <- outputs[[3]]
+}
 ppm <- round(ppm,2)
 
 ## Graphical outputs
@@ -162,7 +166,8 @@ if (graphique != "None")
   
   # Graphic Device opening
   pdf(nomGraphe,onefile=TRUE)
-  
+  graphical.zone.length <- length(exclusionZonesBorders)
+
   if (graphique == "Overlay")
   {
     # Global spectral window
@@ -172,41 +177,23 @@ if (graphique != "None")
     ## Zoomed spectral window depending on exclusion zone(s)
     if (nbZones != 0)
     {
-      BInf <- excludedZone[n]
-      if (round(BInf,1) == BInf)
-      {
-        BInf <- BInf+0.01
-      }
-      spectra <- data.frame(t(data_bucket[1:(which(ppm == BInf)[[1]]),]))
-      drawSpec(spectra,xlab="", ylab="Intensity", main="")			
-      n <- n - 1
-      
-      while (n >= nbZones & nbZones > 1)
-      {
-        BInf <- excludedZone[n-1]
-        if (round(BInf,1) > BInf)
-        {
-          BInf <- BInf+0.01
-        }
-        spectra <- data.frame(t(data_bucket[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]]),]))
-        drawSpec(spectra,xlab="", ylab="Intensity", main="")
-        n <- n - 2
-      }
-      
-      BInf <- excludedZone[1]
-      if (round(BInf,1) <= BInf)
-      {
-        BInf <- BInf+0.01
-      }
-      spectra <- data.frame(t(data_bucket[(which(ppm == BInf)[[1]]):nrow(data_bucket),]))
-      drawSpec(spectra,xlab="", ylab="Intensity", main="")
+	  n <- length(excludedZone)
+	  drawSpec(spectra[,1:which(ppm == round(excludedZone[n],1))[1]],xlab="", ylab="spectra", main="")
+
+	  n <- n - 1
+	  while (n >= nbZones & nbZones > 1)
+	  {
+		drawSpec(spectra[,(which(ppm == round(excludedZone[n],1)[1])):(which(ppm == round(excludedZone[n-1],1)[1]))],xlab="", ylab="spectra", main="")
+		n <- n - 2
+	  }
+	  drawSpec(spectra[,(which(ppm == round(excludedZone[1])[1],1)):ncol(spectra)],xlab="", ylab="spectra", main="")
     }
   }
-  else
+  else 
   {
     for (i in 1:ncol(data_bucket))
     {
-      par(mfrow=c((nbZones+2),1))
+      par(mfrow=c((graphical.zone.length+2),1))
       n <- length(excludedZone)
       spectra <- t(data_bucket[,i])
 	  names(spectra) <- rownames(data_bucket)
@@ -221,68 +208,55 @@ if (graphique != "None")
 	  axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
      
       ## Zoomed spectral window depending on exclusion zone(s)
-      if (nbZones != 0)
-      {
-        BInf <- excludedZone[n]
-        if (round(BInf,1) == BInf)
-        {
-          BInf <- BInf+0.01
-        }
-        spectra <- t(data_bucket[1:(which(ppm == BInf)[[1]]),i])
-		names(spectra) <- rownames(data_bucket)[1:(which(ppm == BInf)[[1]])]
-		plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")			
+	  for (g in 1:graphical.zone.length)
+	  {
+		spectra <- t(data_bucket[,i])
+		names(spectra) <- rownames(data_bucket)
+		if (g==1)
+		{
+			plot(1:length(spectra[1:(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1])]), 
+				 spectra[1:(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1])], type='l', xlab="", ylab="Intensity", main="", xaxt = "n")
+			xPos <- 1
+			nAxisPos <- 4
+			startP <- length(nAxisPos) 
+			endP <- length(1:(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1]))
+			GraphRange <- c(startP:endP)
+			tempVal = trunc(length(GraphRange)/nAxisPos)
+			xPos = c(0:nAxisPos) * tempVal
+			axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
+		} else 
+		{
+			plot(1:length(spectra[(which(ppm == round(exclusionZonesBorders[[g-1]][2],1))[1]):(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1])]), 
+				 spectra[(which(ppm == round(exclusionZonesBorders[[g-1]][2],1))[1]):(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1])], 
+				 type='l', xlab="", ylab="Intensity", main="", xaxt = "n")
+			xPos <- 1
+			nAxisPos <- 4
+			startP <- length(nAxisPos) 
+			endP <- length(spectra[(which(ppm == round(exclusionZonesBorders[[g-1]][2],1))[1]):(which(ppm == round(exclusionZonesBorders[[g]][1],1))[1])])
+			GraphRange <- c(startP:endP)
+			tempVal = trunc(length(GraphRange)/nAxisPos)
+			xPos = c(0:nAxisPos) * tempVal
+			noms <- rownames(data_bucket)[xPos + which(ppm == round(exclusionZonesBorders[[g-1]][2],1))[1]]
+			axis(1, at = xPos, labels = noms)
+		}
+	  }
+		plot(1:length(spectra[(which(ppm == round(exclusionZonesBorders[[g]][2],1))[1]):nrow(data_bucket)]), 
+			 spectra[(which(ppm == round(exclusionZonesBorders[[g]][2],1))[1]):nrow(data_bucket)], type='l', xlab="", ylab="Intensity", main="", xaxt = "n")
 		xPos <- 1
 		nAxisPos <- 4
 		startP <- length(nAxisPos) 
-		endP <- length(spectra)
+		endP <- length((which(ppm == round(exclusionZonesBorders[[g]][2],1))[1]):nrow(data_bucket))
 		GraphRange <- c(startP:endP)
 		tempVal = trunc(length(GraphRange)/nAxisPos)
 		xPos = c(0:nAxisPos) * tempVal
-		axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
-        n <- n - 1
-        
-        while (n >= nbZones & nbZones > 1)
-        {
-          BInf <- excludedZone[n-1]
-          if (round(BInf,1) > BInf)
-          {
-            BInf <- BInf+0.01
-          }
-          spectra <- t(data_bucket[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]]),i])
-		  names(spectra) <- rownames(data_bucket)[(which(ppm == excludedZone[n])[[1]]):(which(ppm == BInf)[[1]])]
-          plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")
-		  xPos <- 1
-		  nAxisPos <- 4
-		  startP <- length(nAxisPos) 
-		  endP <- length(spectra)
-		  GraphRange <- c(startP:endP)
-		  tempVal = trunc(length(GraphRange)/nAxisPos)
-		  xPos = c(0:nAxisPos) * tempVal
-		  axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
-          n <- n - 2
-        }
-        
-        BInf <- excludedZone[1]
-        if (round(BInf,1) <= BInf)
-        {
-          BInf <- BInf+0.01
-        }
-        spectra <- t(data_bucket[(which(ppm == BInf)[[1]]):nrow(data_bucket),i])
-		names(spectra) <- rownames(data_bucket)[(which(ppm == BInf)[[1]]):nrow(data_bucket)]
-        plot(1:length(spectra), spectra, type='l',xlab="", ylab="Intensity", main="", xaxt = "n")
-		xPos <- 1
-		nAxisPos <- 4
-		startP <- length(nAxisPos) 
-		endP <- length(spectra)
-		GraphRange <- c(startP:endP)
-		tempVal = trunc(length(GraphRange)/nAxisPos)
-		xPos = c(0:nAxisPos) * tempVal
-		axis(1, at = xPos, labels = rownames(data_bucket)[xPos + startP])
-      }
-    }
+		noms <- c(rownames(data_bucket)[xPos[-5] + which(ppm == round(exclusionZonesBorders[[g]][2],1))[1]], rownames(data_bucket)[which(ppm == rightBorder)[1]])
+		print(noms)
+		axis(1, at = xPos, labels = noms)
+	}
   }
-  dev.off()
+    invisible(dev.off())
 }
+
 ## Saving
 ##-------
   # Data
@@ -290,14 +264,16 @@ data_bucket <- cbind(rownames(data_bucket),data_bucket)
 colnames(data_bucket) <- c("Bucket",colnames(data_bucket)[-1])
 write.table(data_bucket,file=argLs$dataMatrixOut,quote=FALSE,row.names=FALSE,sep="\t")
   # Sample
-data_sample <- cbind(rownames(data_sample),data_sample)
-colnames(data_sample) <- c("Sample",colnames(data_sample)[-1])
-write.table(data_sample,file=argLs$sampleOut,quote=FALSE,row.names=FALSE,sep="\t")
+if (fileType=="zip")
+{
+	data_sample <- cbind(rownames(data_sample),data_sample)
+	colnames(data_sample) <- c("Sample",colnames(data_sample)[-1])
+	write.table(data_sample,file=argLs$sampleOut,quote=FALSE,row.names=FALSE,sep="\t")
+}
   # Variable
 data_variable <- cbind(rownames(data_variable),data_variable)
 colnames(data_variable) <- c("Bucket",colnames(data_variable)[-1])
 write.table(data_variable,file=argLs$variableOut,quote=FALSE,row.names=FALSE,sep="\t")
-
 
 ## Ending
 ##---------------------

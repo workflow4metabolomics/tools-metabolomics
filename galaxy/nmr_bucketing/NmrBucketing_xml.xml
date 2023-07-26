@@ -20,14 +20,12 @@
             zipfile '$inputs.zip_file'
         #end if
 
-
         ## Bucket width
         bucket_width $bucket_width
 
         ## Spectra borders
         left_border $left_border
         right_border $right_border
-
 
         ## Spectra representation
         graphType $graphType
@@ -43,7 +41,7 @@
 
         ## Outputs
         logOut $logOut
-        dataMatrixOut '$dataMatrixOut'
+        dataMatrixOut $dataMatrixOut
         sampleOut '$sampleOut'
         variableOut '$variableOut'
         graphOut '$graphOut'
@@ -271,6 +269,9 @@ Under construction
 
 Changelog/News
 --------------
+**Version 2.0.4 - 25/09/2018**
+
+- Removal of zero's for normalisation
 
 **Version 2.0.3 - 25/09/2018**
 

@@ -142,12 +142,12 @@ For example, imagine you have 5 columns in you tsv file,
 and those columns are named: A, B, C, D and F.
 
 If you choose X = [A, C] and Y = [B],
-then you will get two graphs (in one single HTML) file with:
+then you will get two graphs (in one single HTML file) with:
 
  - f(A) = B
  - f(C) = B
 
-But if you choose multiple values for both X and B, you get
+But if you choose multiple values for both X and Y, you get
 all combinations of columns X and Y. For example, if you
 select X = [A, B] and Y = [C, D, E], then you will get six
 graphs on the same plot:

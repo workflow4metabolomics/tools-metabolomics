@@ -25,7 +25,7 @@ def cli():
 )
 @click.option(
     "--input",
-    default="./test.csv",
+    default="./test.tsv",
     help="Provide the mz-ratio."
 )
 @click.option(

@@ -187,7 +187,8 @@ def compound(*args, **kwargs):
     output_csv_result(
         result,
         columns,
-        other_kwargs.get("output_path")
+        other_kwargs.get("output_path"),
+        delimiter="\t",
     )
 
 

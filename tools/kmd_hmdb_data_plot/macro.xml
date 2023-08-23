@@ -81,14 +81,14 @@
   </xml>
 
   <xml name="produce_plot_inputs">
-    <param name="csv_input" type="data" format="tabular"
+    <param name="tsv_input" type="data" format="tsv"
       help="Tabular file to use to produce the plot."
       label="A Tabular Input File"
     />
     <param
       name="annotation_columns"
       type="data_column"
-      data_ref="csv_input"
+      data_ref="tsv_input"
       use_header_names="true"
       multiple="true"
       optional="true"
@@ -98,7 +98,7 @@
     <param
       name="x_columns"
       type="data_column"
-      data_ref="csv_input"
+      data_ref="tsv_input"
       use_header_names="true"
       optional="true"
       multiple="true"
@@ -112,7 +112,7 @@
     <param
       name="y_columns"
       type="data_column"
-      data_ref="csv_input"
+      data_ref="tsv_input"
       use_header_names="true"
       optional="true"
       multiple="true"
@@ -133,30 +133,28 @@
   </xml>
 
   <xml name="not_produce_plot">
-    <param name="csv_input" value="unknown" type="hidden" />
+    <param name="tsv_input" value="unknown" type="hidden" />
     <param name="annotation_columns" type="hidden" />
     <param name="x_columns" type="hidden" />
     <param name="y_columns" type="hidden" />
   </xml>
 
   <xml name="get_data_outputs">
-    <data name="output_path" format="csv"
-      label="csv - ${tool.name} on ${what.mz_ratio}±${what.mass_tolerance} - ${what.database}"
+    <data name="output_path" format="tsv"
+      label="tsv - ${tool.name} on ${what.mz_ratio}±${what.mass_tolerance} - ${what.database}"
     >
       <filter>"get_data" in str(what['to_do'])</filter>
+      <actions>
+        <action name="column_names" type="metadata"
+          default="database,metabolite_name,chemical_formula,hmdb_id,inchikey,compound_id,adduct,kendricks_mass,kendricks_mass_defect,monisotopic_molecular_weight,nominal_mass,polarity,annotation_id"
+        />
+      </actions>
     </data>
   </xml>
 
   <xml name="produce_plot_outputs">
     <data name="output" format="html"
-      label="html on ${
-      ' - '
-      + str($what['mz_ratio'])
-      + '±' + str($what['mass_tolerance'])
-      + ' - ' + str($what['database'])
-      if 'get_data' in str($what['to_do'])
-      else ''' ' ''' + $what.csv_input.name + ''' ' '''
-    }"
+      label="html - ${tool.name} on ${what.tsv_input.name}"
     >
       <filter>"produce_plot" in str(what['to_do'])</filter>
     </data>

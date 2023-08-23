@@ -1,6 +1,6 @@
 <tool id="kmd_hmdb_data_plot" name="KMD HMDB Data Plot" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
     <description>
-        retrieves data from KMD HMDB API and produce plot and csv file
+        retrieves data from KMD HMDB API and produce plot and tsv file
     </description>
     <macros>
         <import>macro.xml</import>
@@ -29,7 +29,7 @@
         --database '$what.database'
         --mass-tolerance '$what.mass_tolerance'
         #for adduct in $what.adducts
-            --adducts $adduct
+            --adducts '$adduct'
         #end for
         --output-path '$output_path'
 #end if
@@ -44,7 +44,7 @@
     #if "get_data" in str($what.to_do)
         --input '$output_path'
     #else
-        --input '$what.csv_input'
+        --input '$what.tsv_input'
     #end if
 
     #if $what.x_columns
@@ -75,12 +75,6 @@
     <inputs>
         <conditional name="what">
             <param name="to_do" type="select"
-                help="
-                    Select wheither you want to:
-                     - Both get data and plot them
-                     - Only get data
-                     - Only plot them
-                "
                 label="What to do"
             >
                 <option value="get_data">Only get data</option>
@@ -109,10 +103,22 @@
         <expand macro="produce_plot_outputs" />
     </outputs>
 
+    <tests>
+        <test>
+            <!-- #1 get_data with tolerance = 0.01 -->
+            <param name="to_do" value="get_data" />
+            <param name="mass_tolerance" value="0.01" />
+            <param name="mz_ratio" value="303.05" />
+            <param name="database" value="hmdb" />
+            <param name="adducts" value="M+H" />
+            <output name="output_path" file="get_data_tol_0.01.tsv" />
+        </test>
+    </tests>
+
     <help><![CDATA[
 
 This tool includes two utilities.
-One that retrieves data from the KMD HMDB API formated as a CSV file,
+One that retrieves data from the KMD HMDB API formated as a tsv file,
 and the other plots those data in a plotly graph.
 
 The default behavior of the plot is to produce a plot of the kmd in
@@ -132,7 +138,7 @@ Those two utilities are usable independently, or sequentially in galaxy.
 Multiple X / Y values in the X/Y column selection can be
 selected to produce a lot of graphs at once.
 
-For example, imagine you have 5 columns in you CSV file,
+For example, imagine you have 5 columns in you tsv file,
 and those columns are named: A, B, C, D and F.
 
 If you choose X = [A, C] and Y = [B],
@@ -140,7 +146,6 @@ then you will get two graphs (in one single HTML) file with:
 
  - f(A) = B
  - f(C) = B
-
 
 But if you choose multiple values for both X and B, you get
 all combinations of columns X and Y. For example, if you
@@ -154,12 +159,21 @@ graphs on the same plot:
  - f(B) = D
  - f(B) = E
 
-
 All those graph's traces will be tooglable in the HTML page.
 So don't hesitate to select a lot of parameters for X and Y!
 
 ]]>
     </help>
     <citations></citations>
+    <creator>
+        <person
+            honorificPrefix="Mx."
+            givenName="Lain"
+            familyName="Pavot"
+            jobTitle="Computer-Grrrl"
+            email="lain.pavot@inrae.fr"
+            identifier="https://orcid.org/0009-0007-1841-4358"
+        />
+    </creator>
 
 </tool>

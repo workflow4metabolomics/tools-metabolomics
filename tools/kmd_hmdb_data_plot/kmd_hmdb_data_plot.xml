@@ -15,9 +15,6 @@
     </edam_operations>
     <requirements>
         <requirement type="package" version="3.10">python</requirement>
-        <requirement type="package" version="23.1.0">attrs</requirement>
-        <requirement type="package" version="8.1.3">click</requirement>
-        <requirement type="package" version="0.24.1">httpx</requirement>
         <requirement type="package" version="2.0.3">pandas</requirement>
         <requirement type="package" version="5.15.0">plotly</requirement>
         <requirement type="package" version="1.0.1">kmd_hmdb_api_client</requirement>
@@ -171,7 +168,6 @@ So don't hesitate to select a lot of parameters for X and Y!
             honorificPrefix="Mx."
             givenName="Lain"
             familyName="Pavot"
-            jobTitle="Computer-Grrrl"
             email="lain.pavot@inrae.fr"
             identifier="https://orcid.org/0009-0007-1841-4358"
         />

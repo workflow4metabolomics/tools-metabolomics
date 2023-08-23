@@ -20,6 +20,7 @@
         <requirement type="package" version="0.24.1">httpx</requirement>
         <requirement type="package" version="2.0.3">pandas</requirement>
         <requirement type="package" version="5.15.0">plotly</requirement>
+        <requirement type="package" version="1.0.1">kmd_hmdb_api_client</requirement>
     </requirements>
     <command detect_errors="exit_code">
 <![CDATA[

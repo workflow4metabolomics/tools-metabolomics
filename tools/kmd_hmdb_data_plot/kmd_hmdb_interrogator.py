@@ -3,19 +3,19 @@
 import csv
 import operator
 
-import chopin_kmd_hmdb_api_client.client
-from chopin_kmd_hmdb_api_client.api.default import (
+import click
+
+import kmd_hmdb_api_client.client
+from kmd_hmdb_api_client.api.default import (
     api_annotation_get,
     api_compound_find,
     api_taxonomy_get,
 )
 
-import click
-
 __version__ = "1.0.0"
 
 
-kmd_hmdb_client = chopin_kmd_hmdb_api_client.client.Client(
+kmd_hmdb_client = kmd_hmdb_api_client.client.Client(
     "https://kmd-hmdb-rest-api.metabolomics-chopin.e-metabohub.fr",
     verify_ssl=False,
     timeout=500,

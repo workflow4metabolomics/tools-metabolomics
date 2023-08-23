@@ -154,7 +154,14 @@
 
   <xml name="produce_plot_outputs">
     <data name="output" format="html"
-      label="html - ${tool.name} on ${what.tsv_input.name}"
+      label="html - ${tool.name} on ${
+      ' - '
+      + str($what['mz_ratio'])
+      + '±' + str($what['mass_tolerance'])
+      + ' - ' + str($what['database'])
+      if 'get_data' in str($what['to_do'])
+      else ''' ' ''' + $what.csv_input.name + ''' ' '''
+    }"
     >
       <filter>"produce_plot" in str(what['to_do'])</filter>
     </data>

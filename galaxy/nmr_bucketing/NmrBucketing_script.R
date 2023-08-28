@@ -160,14 +160,16 @@ NmrBucketing <- function(fileType, fileName, leftBorder = 10.0, rightBorder = 0.
     n <- length(FileNames)
     
     # Reading and Bucketing
-    fileName <- paste(fileName, "/", sep = "")
+##    fileName <- paste(fileName, "/", sep = "")
   
     i <- 1
     while (i <= n) {
       # File reading
-      SampleDir <- paste(fileName, FileNames[i], "/1/", sep = "")
-      setwd(SampleDir)
-      DataDir <- "pdata/1"
+##      SampleDir <- paste(fileName, FileNames[i], "/1/", sep = "")
+      SampleDir <- file.path(fileName, FileNames[i], "1", sep="")
+      DataDir <- SampleDir
+##      setwd(SampleDir)
+##      DataDir <- "pdata/1"
   
       rawSpectrum <- NmRBrucker_read(DataDir, rawSpectrum)
   
@@ -244,3 +246,4 @@ NmrBucketing <- function(fileType, fileName, leftBorder = 10.0, rightBorder = 0.
     return(list(bucketedSpectra, variableMetadata, ppm))
   }
 }
+

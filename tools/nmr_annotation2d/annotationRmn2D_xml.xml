@@ -427,4 +427,343 @@ Example of output files obtaining wehn running the algorithm on a mix of 23 know
         <citation type="doi">10.1093/bioinformatics/btu813</citation>
     </citations>
 
+    <inputs>
+        <param name="zip_xlsfile" type="data" format="xlsx" label="File to annotate in xlsx format" />
+
+        <param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
+        <param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
+
+        <param name="cosy_2dsequences" type="select" label="2D-NMR COSY sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+        <param name="hmbc_2dsequences" type="select" label="2D-NMR HMBC sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+        <param name="hsqc_2dsequences" type="select" label="2D-NMR HSQC sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+        <param name="jres_2dsequences" type="select" label="2D-NMR JRES sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+        <param name="tocsy_2dsequences" type="select" label="2D-NMR TOCSY sequence">
+            <option value="yes" > yes </option>
+            <option value="no" selected="true"> no </option>
+        </param>
+
+        <conditional name="inHouse_DB_choices">
+            <param name="choice" type="select" label="In-house database" help="Choose if you want to use use in-house database to annotate" >
+                <option value="yes" > yes </option>
+                <option value="no" selected="true"> no </option>
+            </param>
+            <when value="yes">
+                <conditional name="inHouse_DB_cosy">
+                    <param name="choice" type="select" label="COSY In-house database" help="Choose if you want to use use in-house database to annotate COSY sequence" >
+                        <option value="yes" > yes </option>
+                        <option value="no" selected="true"> no </option>
+                    </param>
+                    <when value="yes">
+                        <param name="cosyDB" type="data" format="no_unzip.zip" label="Zip file of the COSY RData object" />
+                    </when>
+                    <when value="no" />
+                </conditional>
+                <conditional name="inHouse_DB_hmbc">
+                    <param name="choice" type="select" label="HMBC In-house database" help="Choose if you want to use use in-house database to annotate HMBC sequence" >
+                        <option value="yes" > yes </option>
+                        <option value="no" selected="true"> no </option>
+                    </param>
+                    <when value="yes">
+                        <param name="hmbcDB" type="data" format="no_unzip.zip" label="Zip file of the HMBC RData object" />
+                    </when>
+                    <when value="no" />
+                </conditional>
+                <conditional name="inHouse_DB_hsqc">
+                    <param name="choice" type="select" label="HSQC In-house database" help="Choose if you want to use use in-house database to annotate HSQC sequence" >
+                        <option value="yes" > yes </option>
+                        <option value="no" selected="true"> no </option>
+                    </param>
+                    <when value="yes">
+                        <param name="hsqcDB" type="data" format="no_unzip.zip" label="Zip file of the HSQC RData object" />
+                    </when>
+                    <when value="no" />
+                </conditional>
+                <conditional name="inHouse_DB_jres">
+                    <param name="choice" type="select" label="JRES In-house database" help="Choose if you want to use use in-house database to annotate JRES sequence" >
+                        <option value="yes" > yes </option>
+                        <option value="no" selected="true"> no </option>
+                    </param>
+                    <when value="yes">
+                        <param name="jresDB" type="data" format="no_unzip.zip" label="Zip file of the JRES RData object" />
+                    </when>
+                    <when value="no" />
+                </conditional>
+                <conditional name="inHouse_DB_tocsy">
+                    <param name="choice" type="select" label="TOCSY In-house database" help="Choose if you want to use use in-house database to annotate TOCSY sequence" >
+                        <option value="yes" > yes </option>
+                        <option value="no" selected="true"> no </option>
+                    </param>
+                    <when value="yes">
+                        <param name="tocsyDB" type="data" format="no_unzip.zip" label="Zip file of the TOCSY RData object" />
+                    </when>
+                    <when value="no" />
+                </conditional>
+            </when>
+            <when value="no" />
+        </conditional>
+
+        <param name="tolppm1" type="float" min="0" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
+        <param name="tolppm2" type="float" min="0" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
+        <param name="tolppmJRES" type="float" min="0" value="0.002" help="Tolerance on chemical shift for the y-axis for the JRES sequence. Default value is 0.002 (Hz)" />
+
+        <param name="threshold" type="float" min="0" max="1" value="0" help="Treshold on score of presence. Default value is 0" />
+
+        <param name="unicity" label="Unicity of annotation" type="select" display="radio" help="Select only chemical shifts corresponding to one one metabolite">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </param>
+
+    </inputs>
+
+    <outputs>
+        <data format="txt" name="logOut" label="${tool.name}_log" />
+
+        <data format="tabular" name="annotationCOSY" label="${tool.name}_annotationCOSY" >
+            <filter> cosy_2dsequences != "no" </filter>
+        </data>
+        <data format="tabular" name="ppmCommunCOSY" label="${tool.name}_uplicateCOSY" >
+            <filter> cosy_2dsequences != "no" </filter>
+        </data>
+
+        <data format="tabular" name="annotationJRES" label="${tool.name}_annotationJRES" >
+            <filter> jres_2dsequences != "no" </filter>
+        </data>
+        <data format="tabular" name="ppmCommunJRES" label="${tool.name}_duplicateJRES" >
+            <filter> jres_2dsequences != "no" </filter>
+        </data>
+
+        <data format="tabular" name="annotationHMBC" label="${tool.name}_annotationHMBC" >
+            <filter> hmbc_2dsequences != "no" </filter>
+        </data>
+        <data format="tabular" name="ppmCommunHMBC" label="${tool.name}_duplicateHMBC" >
+            <filter> hmbc_2dsequences != "no" </filter>
+        </data>
+
+        <data format="tabular" name="annotationHSQC" label="${tool.name}_annotationHSQC" >
+            <filter> hsqc_2dsequences != "no" </filter>
+        </data>
+        <data format="tabular" name="ppmCommunHSQC" label="${tool.name}_duplicateHSQC" >
+            <filter> hsqc_2dsequences != "no" </filter>
+        </data>
+
+        <data format="tabular" name="annotationTOCSY" label="${tool.name}_annotationTOCSY" >
+            <filter> tocsy_2dsequences != "no" </filter>
+        </data>
+        <data format="tabular" name="ppmCommunTOCSY" label="${tool.name}_duplicateTOCSY" >
+            <filter> tocsy_2dsequences != "no" </filter>
+        </data>
+
+        <data format="tabular" name="annotationCombination" label="${tool.name}_annotationCombination" />
+        <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
+    </outputs>
+
+    <tests>
+        <test expect_num_outputs="13">
+            <param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
+            <param name="cosy_2dsequences" value="yes"/>
+            <param name="jres_2dsequences" value="yes"/>
+            <param name="hmbc_2dsequences" value="yes"/>
+            <param name="hsqc_2dsequences" value="yes"/>
+            <param name="tocsy_2dsequences" value="yes"/>
+            <param name="inHouse_DB_choices.choice" value="no"/>
+            <param name="tolppm1" value="0.01"/>
+            <param name="tolppm2" value="0.5"/>
+            <param name="tolppmJRES" value="0.002"/>
+            <param name="threshold" value="0.3"/>
+            <param name="unicity" value="no"/>
+            <output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
+            <output name="ppmCommunCOSY" file="2DNMRAnnotation_duplicateCOSY.tabular"/>
+            <output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
+            <output name="ppmCommunHMBC" file="2DNMRAnnotation_duplicateHMBC.tabular"/>
+            <output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
+            <output name="ppmCommunHSQC" file="2DNMRAnnotation_duplicateHSQC.tabular"/>
+            <output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
+            <output name="ppmCommunJRES" file="2DNMRAnnotation_duplicateJRES.tabular"/>
+            <output name="annotationTOCSY" file="2DNMRAnnotation_annotationTOCSY.tabular"/>
+            <output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTOCSY.tabular"/>
+            <output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
+        </test>
+    </tests>
+    <help>
+
+.. class:: infomark
+
+**Authors** Marie Tremblay-Franco (marie.tremblay-franco@inra.fr), Coline Gardou
+
+.. class:: infomark
+
+
+---------------------------------------------------
+
+============================
+Bidimensional NMR Annotation
+============================
+
+-----------
+Description
+-----------
+
+BARSA is an automatic algorithm for bi-dimensional NMR spectra annotation
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+========================= ================= ======= =========
+Name                      output file       format  parameter
+========================= ================= ======= =========
+NA                        NA                NA      NA
+========================= ================= ======= =========
+
+
+**Downstream tools**
+
+========================= ================= ======= =========
+Name                      output file       format  parameter
+========================= ================= ======= =========
+NA                        NA                NA      NA
+========================= ================= ======= =========
+
+
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| Parameter : num + label   |   Format   |
++===========================+============+
+| 1 : Choose your inputs    |   xlsx     |
++---------------------------+------------+
+
+**Choose your inputs**
+    | xlsx file can include several peak lists, coming from several 2D NMR sequences
+    |
+
+.. image:: ./static/images/2DNmr_FileToAnnotate_xlsxFormat.png
+
+----------
+Parameters
+----------
+
+Bi-dimensional NMR peak list(s) to annotate; select one or more sequence(s)
+    | COSY: yes/no
+    | JRES: yes/no
+    | HMBC: yes/no
+    | HSQC: yes/no
+    | TOCSY: yes/no
+    | Default value is no
+    |
+
+In-house databases
+    | Use of your own databases to annotate peak list(s)
+    | If YES: parameters **COSY In-house database**, **JRES In-house database**, ** HMBC In-house database**, **HSQC In-house database** and **TOCSY In-house database** are visible
+    | Select one or more in-house database
+    |
+
+
+Tolerances
+    | tolppm1: Maximum variation of the chemical shift (due to experimental conditions) of a peak along the x-axis
+    | tolppm2: Maximum variation of the chemical shift (due to experimental conditions) of a peak along the y-axis
+    | tolppmJRES: Maximum variation of the chemical shift (due to experimental conditions) of a peak for the JRES sequence
+    | Default values: 0.01 and 0.01 ppm; 0.002 Hz
+    |
+
+
+Threshold
+    | All metabolites with a presence probability (number of detected peak(s)/number of theoretical peak(s)) under this threshold are removed
+    | Default value: 0
+    |
+
+
+Unicity of annotation
+    | All the peaks assigned to more than one metabolite are removed
+    |
+
+
+------------
+Output files
+------------
+COSY
+    | tabular outputs
+    | annotationCOSY: Array with p rows (corresponding to the identified metabolites) and 4 columns containing the chemical shift on the x-axis, the chemical shift on the y-axis, the metabolite name and the presence probability
+    | ppmCommunCOSY: Array containing for all the peaks assigned to more than one metabolite: the chemical shift on the x-axis, the chemical shift on the y-axis and the list of assigned metabolites
+    | Only display if COSY was chosen
+    |
+
+
+JRES
+    | tabular outputs
+    | annotationJRES: Array with p rows (corresponding to the identified metabolites) and 4 columns containing the chemical shift on the x-axis, the chemical shift on the y-axis, the metabolite name and the presence probability
+    | ppmCommunJRES: Array containing for all the peaks assigned to more than one metabolite: the chemical shift on the x-axis, the chemical shift on the y-axis and the list of assigned metabolites
+    | Only display if JRES was chosen
+    |
+
+
+HMBC
+    | tabular outputs
+    | annotationHMBC: Array with p rows (corresponding to the identified metabolites) and 4 columns containing the chemical shift on the x-axis, the chemical shift on the y-axis, the metabolite name and the presence probability
+    | ppmCommunHMBC: Array containing for all the peaks assigned to more than one metabolite: the chemical shift on the x-axis, the chemical shift on the y-axis and the list of assigned metabolites
+    | Only display if HMBC was chosen
+    |
+
+
+HSQC
+    | tabular outputs
+    | annotationHSQC: Array with p rows (corresponding to the identified metabolites) and 4 columns containing the chemical shift on the x-axis, the chemical shift on the y-axis, the metabolite name and the presence probability
+    | ppmCommunHSQC: Array containing for all the peaks assigned to more than one metabolite: the chemical shift on the x-axis, the chemical shift on the y-axis and the list of assigned metabolites
+    | Only display if HSQC was chosen
+    |
+
+
+TOCSY
+    | tabular outputs
+    | annotationTOCSY: Array with p rows (corresponding to the identified metabolites) and 4 columns containing the chemical shift on the x-axis, the chemical shift on the y-axis, the metabolite name and the presence probability
+    | ppmCommunTOCSY: Array containing for all the peaks assigned to more than one metabolite: the chemical shift on the x-axis, the chemical shift on the y-axis and the list of assigned metabolites
+    | Only display if TOCSY was chosen
+    |
+
+
+annotationCombination
+    | tabular outputs
+    | Array with p rows (corresponding to the identified metabolites) including the Metabolite name, the COSY presence probability, the JRES presence probability, the HMBC presence probability, the HSQC presence probability, the TOCSY presence probability and the averageScore
+    | Depends on the chosen sequences
+    | Only display if 2 or more sequences have be chosen
+
+
+AnnotationGraph.pdf
+    | pdf output
+    | Bi-dimensional graphical chart of real pairs of chemical shifts, with name of identified metabolites
+
+
+
+---------------------------------------------------
+
+-------
+Example
+-------
+Example of output files obtaining wehn running the algorithm on a mix of 23 known compounds
+
+.. image:: ./static/images/OutputsExampleMix.png
+        :width: 500
+
+    </help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
+
 </tool>

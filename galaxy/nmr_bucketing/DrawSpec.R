@@ -10,16 +10,18 @@ drawSpec <- function(X, startP = -1, endP = -1, groupLabel = NULL, useLog = -1, 
     }
   }
   if (lowBound != -1) {
-    for (i in seq_len(nrow(X))= {
+    for (i in seq_len(nrow(X))) {
       myIndex <- which(X[i, ] < lowBound)
       X[i, myIndex] <- lowBound
     }
   }
   if (is.null(groupLabel)) {
-    groupLabel <- c(1:seq_len(nrow(X)))
+    groupLabel <- seq_along(rownames(X))
     groupLabel <- as.factor(groupLabel)
   } else {
-    levels(groupLabel) <- c(1:seq_len(length(levels(groupLabel))))
+    if (!is.factor(groupLabel))
+      groupLabel <- as.factor(groupLabel)
+    levels(groupLabel) <- seq_along(groupLabel)
   }
   if (startP == -1)
     startP <- 1
@@ -46,7 +48,7 @@ drawSpec <- function(X, startP = -1, endP = -1, groupLabel = NULL, useLog = -1, 
     for (i in seq_len(length(levels(groupLabel)))) {
       groupLabelIdx <- which(groupLabel == levels(groupLabel)[i])
       color <- palette(rainbow(length(levels(groupLabel))))
-      for (j in seq_len(nrow(groupLabelIdx))) { 
+      for (j in seq_len(length(groupLabelIdx))) { 
         lines(yn[groupLabelIdx[j], ], col = color[i])
       }
     }

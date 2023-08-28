@@ -131,7 +131,6 @@ error.stock <- "\n"
 if(length(error.stock) > 1)
   stop(error.stock)
 
-
 ## Computation
 ##------------
 outputs <- NmrBucketing(fileType=fileType, fileName=directory, leftBorder=leftBorder, rightBorder=rightBorder, bucketSize=bucketSize,
@@ -281,3 +280,4 @@ cat("\nEnd of 'NMR bucketing' Galaxy module call: ", as.character(Sys.time()), s
 sink()
 options(stringsAsFactors = strAsFacL)
 rm(list = ls())
+

@@ -1,0 +1,176 @@
+<tool id="kmd_hmdb_data_plot" name="KMD HMDB Data Plot" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
+    <description>
+        retrieves data from KMD HMDB API and produce plot and tsv file
+    </description>
+    <macros>
+        <import>macro.xml</import>
+        <token name="@TOOL_VERSION@">1.0.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <edam_topics>
+        <edam_topic>topic_0091</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_3803</edam_operation>
+    </edam_operations>
+    <requirements>
+        <requirement type="package" version="3.10">python</requirement>
+        <requirement type="package" version="2.0.3">pandas</requirement>
+        <requirement type="package" version="5.15.0">plotly</requirement>
+        <requirement type="package" version="1.0.1">kmd_hmdb_api_client</requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+<![CDATA[
+#if "get_data" in str($what.to_do)
+    python3 '$__tool_directory__/kmd_hmdb_interrogator.py' compound
+        --mz-ratio '$what.mz_ratio'
+        --database '$what.database'
+        --mass-tolerance '$what.mass_tolerance'
+        #for adduct in $what.adducts
+            --adducts '$adduct'
+        #end for
+        --output-path '$output_path'
+#end if
+
+#if $what.to_do == "get_data_and_produce_plot"
+    &&
+#end if
+
+#if "produce_plot" in str($what.to_do)
+    python3 '$__tool_directory__/kmd_hmdb_plot_generator.py' plot
+
+    #if "get_data" in str($what.to_do)
+        --input '$output_path'
+    #else
+        --input '$what.tsv_input'
+    #end if
+
+    #if $what.x_columns
+        #for x in $what.x_columns
+          --x-column '$x'
+        #end for
+    #end if
+
+    #if $what.y_columns
+        #for y in $what.y_columns
+          --y-column '$y'
+        #end for
+    #end if
+
+    #if $what.annotation_columns
+        #for annotation_column in $what.annotation_columns
+            --annotation-column '$annotation_column'
+        #end for
+    #end if
+
+      --output 'out.html'
+
+    && cat 'out.html' > '$output'
+#end if
+]]>
+    </command>
+
+    <inputs>
+        <conditional name="what">
+            <param name="to_do" type="select"
+                label="What to do"
+            >
+                <option value="get_data">Only get data</option>
+                <option value="produce_plot">Only produce plot</option>
+                <option value="get_data_and_produce_plot" selected="true">
+                    Get data from database + Produce Plot
+                </option>
+            </param>
+            <when value="produce_plot">
+                <expand macro="produce_plot_inputs" />
+                <expand macro="not_get_data" />
+            </when>
+            <when value="get_data">
+                <expand macro="get_data_inputs" />
+                <expand macro="not_produce_plot" />
+            </when>
+            <when value="get_data_and_produce_plot">
+                <expand macro="get_data_inputs" />
+                <expand macro="not_produce_plot" />
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <expand macro="get_data_outputs" />
+        <expand macro="produce_plot_outputs" />
+    </outputs>
+
+    <tests>
+        <test>
+            <!-- #1 get_data with tolerance = 0.01 -->
+            <param name="to_do" value="get_data" />
+            <param name="mass_tolerance" value="0.01" />
+            <param name="mz_ratio" value="303.05" />
+            <param name="database" value="hmdb" />
+            <param name="adducts" value="M+H" />
+            <output name="output_path" file="get_data_tol_0.01.tsv" />
+        </test>
+    </tests>
+
+    <help><![CDATA[
+
+This tool includes two utilities.
+One that retrieves data from the KMD HMDB API formated as a tsv file,
+and the other plots those data in a plotly graph.
+
+The default behavior of the plot is to produce a plot of the kmd in
+in function of the nominal mass of the compound.
+
+Compounds are retrieved using a query with default parameters:
+ - mz default to @DEFAULT_MZ@
+ - mz tolerance defaults to @DEFAULT_TOLERENCE@
+ - adduct list defaults to "@DEFAULT_ADDUCT@"
+ - database default to "@DEFAULT_DATABASE@", and possible values are one of:
+
+   - KMD Metabolites
+   - HMDB
+
+Those two utilities are usable independently, or sequentially in galaxy.
+
+Multiple X / Y values in the X/Y column selection can be
+selected to produce a lot of graphs at once.
+
+For example, imagine you have 5 columns in you tsv file,
+and those columns are named: A, B, C, D and F.
+
+If you choose X = [A, C] and Y = [B],
+then you will get two graphs (in one single HTML file) with:
+
+ - f(A) = B
+ - f(C) = B
+
+But if you choose multiple values for both X and Y, you get
+all combinations of columns X and Y. For example, if you
+select X = [A, B] and Y = [C, D, E], then you will get six
+graphs on the same plot:
+
+ - f(A) = C
+ - f(A) = D
+ - f(A) = E
+ - f(B) = C
+ - f(B) = D
+ - f(B) = E
+
+All those graph's traces will be tooglable in the HTML page.
+So don't hesitate to select a lot of parameters for X and Y!
+
+]]>
+    </help>
+    <citations></citations>
+    <creator>
+        <person
+            honorificPrefix="Mx."
+            givenName="Lain"
+            familyName="Pavot"
+            email="lain.pavot@inrae.fr"
+            identifier="https://orcid.org/0009-0007-1841-4358"
+        />
+    </creator>
+
+</tool>

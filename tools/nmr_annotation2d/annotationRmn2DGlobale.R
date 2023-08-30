@@ -250,16 +250,16 @@ annotationRmn2DGlobale <- function( ## nolint
           compound <- as.character(sequences_combination[m, 1])
           for (c in seq_len(length(hsqc_compound)))
             if (str_to_lower(compound) == str_to_lower(hsqc_compound[c]))
-               sequences_combination[m, which(colnames(sequences_combination) == "score.HSQC")] <- 0
+              sequences_combination[m, which(colnames(sequences_combination) == "score.HSQC")] <- 0
         }
       }
 
       if (!is.null(sequences_combination$score.JRES)) {
         if (is.na(sequences_combination[m, which(colnames(sequences_combination) == "score.JRES")])) {
           compound <- as.character(sequences_combination[m, 1])
-          for (c in seq_len(length(jres_compound)))
-            if (str_to_lower(compound) == str_to_lower(jres_compound[c]))
-              sequences_combination[m, which(colnames(sequences_combination) == "score.JRES")] <- 0
+        for (c in seq_len(length(jres_compound)))
+          if (str_to_lower(compound) == str_to_lower(jres_compound[c]))
+            sequences_combination[m, which(colnames(sequences_combination) == "score.JRES")] <- 0
         }
       }
 

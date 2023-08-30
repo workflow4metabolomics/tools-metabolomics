@@ -1,5 +1,5 @@
 viridis <- function(n, alpha = 1, begin = 0, end = 1, direction = 1, option = "D") {
-  if (begin < 0 | begin > 1 | end < 0 | end > 1) {
+  if (begin < 0 || begin > 1 || end < 0 || end > 1) {
     stop("begin and end must be in [0,1]")
   }
   if (abs(direction) != 1) {

@@ -218,7 +218,7 @@ if (argLs$tocsy_2dsequences == "yes") {
   rm(peakforestSpectra_df)
 }
 
-if (argLs$cosy_2dsequences == "no" & argLs$hmbc_2dsequences == "no" & argLs$hsqc_2dsequences == "no" & argLs$jres_2dsequences == "no" & argLs$tocsy_2dsequences == "no")
+if (argLs$cosy_2dsequences == "no" && argLs$hmbc_2dsequences == "no" && argLs$hsqc_2dsequences == "no" && argLs$jres_2dsequences == "no" && argLs$tocsy_2dsequences == "no")
   stop("No chosen sequence. You have to choose at least 1 sequence", call. = FALSE)
 
 
@@ -248,49 +248,38 @@ annotationMelange <- annotationRmn2DGlobale(fileToAnnotate, tolPpm1 = tolPpm1, t
 dev.off()
 
 if (cosy == 1) {
-  write.table(annotationMelange$COSY$liste_resultat, file = argLs[["annotationCOSY"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$COSY$liste_resultat, file = argLs[["annotationCOSY"]], quote = FALSE, row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$COSY$listing_ppm_commun) != 0)
-    write.table(annotationMelange$COSY$listing_ppm_commun, file = argLs[["ppmCommunCOSY"]], quote = FALSE,
-                  row.names = FALSE, sep = "\t")
+    write.table(annotationMelange$COSY$listing_ppm_commun, file = argLs[["ppmCommunCOSY"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 
 if (hmbc == 1) {
-  write.table(annotationMelange$HMBC$liste_resultat, file = argLs[["annotationHMBC"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$HMBC$liste_resultat, file = argLs[["annotationHMBC"]], quote = FALSE, row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$HMBC$listing_ppm_commun) != 0)
-    write.table(annotationMelange$HMBC$listing_ppm_commun, file = argLs[["ppmCommunHMBC"]], quote = FALSE,
-                row.names = FALSE, sep = "\t")
+    write.table(annotationMelange$HMBC$listing_ppm_commun, file = argLs[["ppmCommunHMBC"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 
 if (hsqc == 1) {
-  write.table(annotationMelange$HSQC$liste_resultat, file = argLs[["annotationHSQC"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$HSQC$liste_resultat, file = argLs[["annotationHSQC"]], quote = FALSE, row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$HSQC$listing_ppm_commun) != 0)
-    write.table(annotationMelange$HSQC$listing_ppm_commun, file = argLs[["ppmCommunHSQC"]], quote = FALSE,
-                row.names = FALSE, sep = "\t")
+    write.table(annotationMelange$HSQC$listing_ppm_commun, file = argLs[["ppmCommunHSQC"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 
 if (jres == 1) {
-  write.table(annotationMelange$JRES$liste_resultat, file = argLs[["annotationJRES"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$JRES$liste_resultat, file = argLs[["annotationJRES"]], quote = FALSE, row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$JRES$listing_ppm_commun) != 0)
-    write.table(annotationMelange$JRES$listing_ppm_commun, file = argLs[["ppmCommunJRES"]], quote = FALSE,
-                row.names = FALSE, sep = "\t")
+    write.table(annotationMelange$JRES$listing_ppm_commun, file = argLs[["ppmCommunJRES"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 
 if (tocsy == 1) {
-  write.table(annotationMelange$TOCSY$liste_resultat, file = argLs[["annotationTOCSY"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$TOCSY$liste_resultat, file = argLs[["annotationTOCSY"]], quote = FALSE, row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$TOCSY$listing_ppm_commun) != 0)
-    write.table(annotationMelange$TOCSY$listing_ppm_commun, file = argLs[["ppmCommunTOCSY"]], quote = FALSE,
-                row.names = FALSE, sep = "\t")
+    write.table(annotationMelange$TOCSY$listing_ppm_commun, file = argLs[["ppmCommunTOCSY"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 
 ## Combinaison de sequences
 if (cosy + jres + hmbc + hsqc + tocsy > 1) {
-  write.table(annotationMelange$combination, file = argLs[["annotationCombination"]], quote = FALSE,
-              row.names = FALSE, sep = "\t")
+  write.table(annotationMelange$combination, file = argLs[["annotationCombination"]], quote = FALSE, row.names = FALSE, sep = "\t")
 }
 st1 <- Sys.time()
 print(st1 - st0)

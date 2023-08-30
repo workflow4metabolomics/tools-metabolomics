@@ -46,8 +46,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
           matrixAnnotation <- unique.data.frame(rbind.data.frame(matrixAnnotation, matriceComplexe[p, ]))
         }
         # Recherche du couple de pics de la matrice la liste des couples du metabolite standard
-        metaboliteIn <- (ppm1M >= (ppmAnnotationF2 - ppm1Tol) & ppm1M <= (ppmAnnotationF2 + ppm1Tol) &
-                         ppm2M >= (ppmAnnotationF1 - ppm2Tol) & ppm2M <= (ppmAnnotationF1 + ppm2Tol))
+        metaboliteIn <- (ppm1M >= (ppmAnnotationF2 - ppm1Tol) && ppm1M <= (ppmAnnotationF2 + ppm1Tol) && ppm2M >= (ppmAnnotationF1 - ppm2Tol) && ppm2M <= (ppmAnnotationF1 + ppm2Tol))
         WhichMetaboliteIn <- which(metaboliteIn)
         # Si au moins un couple de la matrice a annoter dans liste couples metabolite standard
         if (length(WhichMetaboliteIn) > 0) {
@@ -107,11 +106,10 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
       nbPeakMetabolite <- length(ppm1M)
       MetaboliteName <- names(BdDStandards[i])
 
-      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j, 1] - ppm1Tol) & ppm1M <= (allMetabolitesList[j, 1] + ppm1Tol) &
-                           ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) & ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
+      metabolitesInAll <- (ppm1M >= (allMetabolitesList[j, 1] - ppm1Tol) & ppm1M <= (allMetabolitesList[j, 1] + ppm1Tol) & ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) & ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
       WhichMetabolitesInAll <- which(metabolitesInAll)
 
-      if (MetaboliteName != allMetabolitesList[j, 3] & length(WhichMetabolitesInAll) > 0) {
+      if (MetaboliteName != allMetabolitesList[j, 3] && length(WhichMetabolitesInAll) > 0) {
         metabolitesAllUnicite <- rbind.data.frame(metabolitesAllUnicite, listeTotale_2D_unicite[j, ])
         commonPpm <- data.frame(ppm1 = allMetabolitesList[j, 1], ppm2 = allMetabolitesList[j, 2])
         commonPpmList <- rbind.data.frame(commonPpmList, commonPpm)
@@ -138,7 +136,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   }
 
   unicityAllList <- listeTotale_2D_unicite
-  if (nrow(listeTotale_2D_unicite) != 0 & nrow(metabolitesAllUnicite) != 0)
+  if (nrow(listeTotale_2D_unicite) != 0 && nrow(metabolitesAllUnicite) != 0)
     unicityAllList <- setdiff(listeTotale_2D_unicite, metabolitesAllUnicite)
 
   unicitynbCouplesRectif <- data.frame()
@@ -174,7 +172,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
   }
 
   # Representation graphique
-  if (nom_sequence == "HSQC" | nom_sequence == "HMBC") {
+  if (nom_sequence == "HSQC" || nom_sequence == "HMBC") {
     atome <- "13C"
     indice_positif <- 1
     indice_negatif <- -10

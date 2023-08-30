@@ -8,9 +8,9 @@
 runExampleL <- FALSE
 
 if (runExampleL) {
-##------------------------------
-## Example of arguments
-##------------------------------
+  ##------------------------------
+  ## Example of arguments
+  ##------------------------------
 }
 
 
@@ -41,12 +41,11 @@ library(ggplot2)
 library(openxlsx)
 library(stringr)
 library(tidyr)
-library(curl)
 library(jsonlite)
 library(stringi)
 
 if (!runExampleL)
-    argLs <- parseCommandArgs(evaluate = FALSE)
+  argLs <- parseCommandArgs(evaluate = FALSE)
 logFile <- argLs[["logOut"]]
 sink(logFile)
 
@@ -57,9 +56,9 @@ sessionInfo()
 ## Functions
 ##------------------------------
 source_local <- function(fname) {
-    argv <- commandArgs(trailingOnly = FALSE)
-    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-    source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 #Import the different functions
 source_local("annotationRmn2D.R")
@@ -68,11 +67,11 @@ source_local("viridis.R")
 
 ## Input parameter values
 fileToAnnotate <- argLs[[1]]
-  # Constraints values
+# Constraints values
 ph <- argLs$pH
 field <- argLs$magneticField
 
-  # Chosen sequence(s)
+# Chosen sequence(s)
 cosy <- 0
 hmbc <- 0
 hsqc <- 0
@@ -81,7 +80,7 @@ tocsy <- 0
 
 if (argLs$cosy_2dsequences == "yes") {
   cosy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=cosy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -90,7 +89,7 @@ if (argLs$cosy_2dsequences == "yes") {
 
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_COSY <- peakforestSpectra$peaks
-    names(BdDReference_COSY) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_COSY) <- str_split(peakforestSpectra[, 1], simplify = TRUE, pattern = ";")[, 1]
     names(BdDReference_COSY) <- enc2utf8(names(BdDReference_COSY))
     names(BdDReference_COSY) <- str_replace_all(names(BdDReference_COSY), "\u00e9", "e")
 
@@ -108,7 +107,7 @@ if (argLs$cosy_2dsequences == "yes") {
 
 if (argLs$hmbc_2dsequences == "yes") {
   hmbc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hmbc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
   if (ph != 0)
     peakforestSpectra <- peakforestSpectra[peakforestSpectra$sampleNMRTubeConditionsMetadata$potentiaHydrogenii == ph, ]
@@ -118,7 +117,7 @@ if (argLs$hmbc_2dsequences == "yes") {
   if (nrow(peakforestSpectra) != 0) {
 
     BdDReference_HMBC <- peakforestSpectra$peaks
-    names(BdDReference_HMBC) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_HMBC) <- str_split(peakforestSpectra[, 1], simplify = TRUE, pattern = ";")[, 1]
     names(BdDReference_HMBC) <- enc2utf8(names(BdDReference_HMBC))
     names(BdDReference_HMBC) <- str_replace_all(names(BdDReference_HMBC), "\u00e9", "e")
 
@@ -137,7 +136,7 @@ if (argLs$hmbc_2dsequences == "yes") {
 
 if (argLs$hsqc_2dsequences == "yes") {
   hsqc <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=hsqc&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -147,7 +146,7 @@ if (argLs$hsqc_2dsequences == "yes") {
 
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_HSQC <- peakforestSpectra$peaks
-    names(BdDReference_HSQC) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_HSQC) <- str_split(peakforestSpectra[, 1], simplify = TRUE, pattern = ";")[, 1]
     names(BdDReference_HSQC) <- enc2utf8(names(BdDReference_HSQC))
     names(BdDReference_HSQC) <- str_replace_all(names(BdDReference_HSQC), "\u00e9", "e")
 
@@ -165,7 +164,7 @@ if (argLs$hsqc_2dsequences == "yes") {
 
 if (argLs$jres_2dsequences == "yes") {
   jres <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=jres&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -175,7 +174,7 @@ if (argLs$jres_2dsequences == "yes") {
 
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_JRES <- peakforestSpectra$peaks
-    names(BdDReference_JRES) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_JRES) <- str_split(peakforestSpectra[, 1], simplify = TRUE, pattern = ";")[, 1]
     names(BdDReference_JRES) <- enc2utf8(names(BdDReference_JRES))
     names(BdDReference_JRES) <- str_replace_all(names(BdDReference_JRES), "\u00e9", "e")
 
@@ -193,7 +192,7 @@ if (argLs$jres_2dsequences == "yes") {
 
 if (argLs$tocsy_2dsequences == "yes") {
   tocsy <- 1
-  peakforestSpectra <- readLines(curl("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
+  peakforestSpectra <- readLines(base::url("https://metabohub.peakforest.org/rest/v1/spectra/nmr2d/search?query=tocsy&token=9131jq9l8gsjn1j14t351h716u&max=500"))
   peakforestSpectra <- fromJSON(peakforestSpectra, simplifyDataFrame = TRUE)
 
   if (ph != 0)
@@ -203,7 +202,7 @@ if (argLs$tocsy_2dsequences == "yes") {
 
   if (nrow(peakforestSpectra) != 0) {
     BdDReference_TOCSY <- peakforestSpectra$peaks
-    names(BdDReference_TOCSY) <- str_split(peakforestSpectra[, 2], simplify = TRUE, pattern = ";")[, 1]
+    names(BdDReference_TOCSY) <- str_split(peakforestSpectra[, 1], simplify = TRUE, pattern = ";")[, 1]
     names(BdDReference_TOCSY) <- enc2utf8(names(BdDReference_TOCSY))
     names(BdDReference_TOCSY) <- str_replace_all(names(BdDReference_TOCSY), "\u00e9", "e")
 
@@ -223,14 +222,14 @@ if (argLs$cosy_2dsequences == "no" & argLs$hmbc_2dsequences == "no" & argLs$hsqc
   stop("No chosen sequence. You have to choose at least 1 sequence", call. = FALSE)
 
 
-  # User database
+# User database
 
 
-  # Allowed chemical shifts
+# Allowed chemical shifts
 tolPpm1 <- argLs$tolppm1
 tolPpm2HJRes <- argLs$tolppmJRES
 tolPpm2C <- argLs$tolppm2
-  # Threshold to remove metabolites (probability score < threshold)
+# Threshold to remove metabolites (probability score < threshold)
 seuil <- argLs$threshold
 # Remove metabolites when multiple assignations?
 unicite <- str_to_upper(argLs$unicity)
@@ -244,15 +243,15 @@ print(argLs)
 st0 <- Sys.time()
 pdf(AnnotationGraph, onefile = TRUE)
 annotationMelange <- annotationRmn2DGlobale(fileToAnnotate, tolPpm1 = tolPpm1, tolPpm2HJRes = tolPpm2HJRes,
-                                             tolPpm2C = tolPpm2C, cosy = cosy, hmbc = hmbc, hsqc = hsqc,
-                                             jres = jres, tocsy = tocsy, seuil = seuil, unicite = unicite)
+                                            tolPpm2C = tolPpm2C, cosy = cosy, hmbc = hmbc, hsqc = hsqc,
+                                            jres = jres, tocsy = tocsy, seuil = seuil, unicite = unicite)
 dev.off()
 
 if (cosy == 1) {
   write.table(annotationMelange$COSY$liste_resultat, file = argLs[["annotationCOSY"]], quote = FALSE,
               row.names = FALSE, sep = "\t")
   if (nrow(annotationMelange$COSY$listing_ppm_commun) != 0)
-      write.table(annotationMelange$COSY$listing_ppm_commun, file = argLs[["ppmCommunCOSY"]], quote = FALSE,
+    write.table(annotationMelange$COSY$listing_ppm_commun, file = argLs[["ppmCommunCOSY"]], quote = FALSE,
                   row.names = FALSE, sep = "\t")
 }
 

@@ -47,7 +47,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
         }
         # Recherche du couple de pics de la matrice la liste des couples du metabolite standard
         metaboliteIn <- (ppm1M >= (ppmAnnotationF2 - ppm1Tol) & ppm1M <= (ppmAnnotationF2 + ppm1Tol) &
-                     ppm2M >= (ppmAnnotationF1 - ppm2Tol) & ppm2M <= (ppmAnnotationF1 + ppm2Tol))
+                         ppm2M >= (ppmAnnotationF1 - ppm2Tol) & ppm2M <= (ppmAnnotationF1 + ppm2Tol))
         WhichMetaboliteIn <- which(metaboliteIn)
         # Si au moins un couple de la matrice a annoter dans liste couples metabolite standard
         if (length(WhichMetaboliteIn) > 0) {
@@ -57,7 +57,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
           }
         }
       }, error = function(e) {
-        cat("End of file \n");
+        cat("End of file \n")
       })
     }
 
@@ -108,7 +108,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
       MetaboliteName <- names(BdDStandards[i])
 
       metabolitesInAll <- (ppm1M >= (allMetabolitesList[j, 1] - ppm1Tol) & ppm1M <= (allMetabolitesList[j, 1] + ppm1Tol) &
-                            ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) & ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
+                           ppm2M >= (allMetabolitesList[j, 2] - ppm2Tol) & ppm2M <= (allMetabolitesList[j, 2] + ppm2Tol))
       WhichMetabolitesInAll <- which(metabolitesInAll)
 
       if (MetaboliteName != allMetabolitesList[j, 3] & length(WhichMetabolitesInAll) > 0) {
@@ -214,7 +214,7 @@ annotationRmn2D <- function(matriceComplexe, BdDStandards, nom_sequence, ppm1Tol
     print(sp)
   }
 
-   # Liste des resultats (couples pmm / metabolite / score) + liste ppms metabolites communs
+  # Liste des resultats (couples pmm / metabolite / score) + liste ppms metabolites communs
   if (unicite == "NO") {
     return(list(liste_resultat = allMetabolitesList, listing_ppm_commun = listeTotale_metabo))
   } else {

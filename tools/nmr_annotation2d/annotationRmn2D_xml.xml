@@ -230,6 +230,7 @@
         <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
 
+##     		<param name="inHouse_DB_choices.choice" value="no"/>
     <tests>
     	<test>
     		<param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
@@ -238,7 +239,7 @@
     		<param name="hmbc_2dsequences" value="yes"/>
     		<param name="hsqc_2dsequences" value="yes"/>
     		<param name="tocsy_2dsequences" value="yes"/>
-    		<param name="inHouse_DB_choices.choice" value="no"/>
+
     		<param name="tolppm1" value="0.01"/>
     		<param name="tolppm2" value="0.5"/>
     		<param name="tolppmJRES" value="0.002"/>

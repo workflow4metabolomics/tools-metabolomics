@@ -104,6 +104,7 @@ if (argLs$cosy_2dsequences == "yes") {
   rm(peakforestSpectra)
   rm(peakforestSpectra_df)
 }
+print(length(BdDReference_COSY))
 
 if (argLs$hmbc_2dsequences == "yes") {
   hmbc <- 1

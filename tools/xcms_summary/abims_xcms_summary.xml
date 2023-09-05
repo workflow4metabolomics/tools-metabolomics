@@ -139,5 +139,10 @@ Changelog/News
 
 
     <expand macro="citation" />
+    <edam_operations>
+        <edam_operation>operation_0337</edam_operation> <!-- Visualisation -->
+    </edam_operations>
+    <expand macro="edam_topics"/>
+    <expand macro="xrefs"/>
 
 </tool>

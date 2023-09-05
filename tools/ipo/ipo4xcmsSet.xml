@@ -252,4 +252,8 @@ Changelog/News
     ]]></help>
 
     <expand macro="citation" />
+
+    <expand macro="edam_topics"/>
+    <expand macro="edam_operations"/>
+    <expand macro="xrefs"/>
 </tool>

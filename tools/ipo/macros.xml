@@ -89,4 +89,24 @@
             <citation type="doi">10.1093/bioinformatics/btu813</citation>
         </citations>
     </xml>
+    <xml name="edam_topics">
+        <edam_topics>
+            <edam_topic>topic_2259</edam_topic> <!-- Systems biology -->
+            <edam_topic>topic_3172</edam_topic> <!-- Metabolomics -->
+            <edam_topic>topic_3307</edam_topic> <!-- Computational biology -->
+        </edam_topics>
+    </xml>
+    <xml name="edam_operations">
+      <edam_operations>
+          <edam_operation>operation_3627</edam_operation> <!-- Mass spectra calibration -->
+          <edam_operation>operation_3215</edam_operation> <!-- Peak detection -->
+          <edam_operation>operation_2425</edam_operation> <!-- Optimisation and refinement -->
+      </edam_operations>
+    </xml>
+    <xml name="xrefs">
+      <xrefs>
+          <xref type="bio.tools">ipo</xref>
+          <xref type="bio.tools">workflow4metabolomics</xref>
+      </xrefs>
+    </xml>
 </macros>

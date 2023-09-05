@@ -269,4 +269,17 @@ For details and explanations concerning all the parameters and workflow of xcms_
             <expand macro="citation_w4m"/>
         </citations>
     </xml>
+    <xml name="edam_topics">
+        <edam_topics>
+            <edam_topic>topic_2259</edam_topic> <!-- Systems biology -->
+            <edam_topic>topic_3172</edam_topic> <!-- Metabolomics -->
+            <edam_topic>topic_3307</edam_topic> <!-- Computational biology -->
+        </edam_topics>
+    </xml>
+    <xml name="xrefs">
+      <xrefs>
+          <xref type="bio.tools">camera</xref>
+          <xref type="bio.tools">workflow4metabolomics</xref>
+      </xrefs>
+    </xml>
 </macros>

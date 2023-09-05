@@ -198,4 +198,10 @@ Changelog/News
     ]]></help>
 
     <expand macro="citation" />
+
+    <expand macro="edam_topics"/>
+    <edam_operations>
+        <edam_operation>operation_3436</edam_operation> <!-- Aggregation -->
+    </edam_operations>
+    <expand macro="xrefs"/>
 </tool>

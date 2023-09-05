@@ -222,5 +222,17 @@ Example
        <citation type="doi">10.1007/s11306-017-1244-5</citation>
        <citation type="doi">10.1093/bioinformatics/btu813</citation>
    </citations>
+   <edam_topics>
+       <edam_topic>topic_2259</edam_topic> <!-- Systems biology -->
+       <edam_topic>topic_3172</edam_topic> <!-- Metabolomics -->
+       <edam_topic>topic_3307</edam_topic> <!-- Computational biology -->
+   </edam_topics>
+   <edam_operations>
+       <edam_operation>operation_0226</edam_operation> <!-- Annotation -->
+   </edam_operations>
+   <xrefs>
+       <xref type="bio.tools">asics</xref>
+       <xref type="bio.tools">workflow4metabolomics</xref>
+   </xrefs>
 
 </tool>

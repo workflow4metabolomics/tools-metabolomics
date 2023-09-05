@@ -305,5 +305,11 @@ Changelog/News
 
     <expand macro="citation" />
 
+    <expand macro="edam_topics"/>
+    <edam_operations>
+        <edam_operation>operation_3557</edam_operation> <!-- Imputation -->
+    </edam_operations>
+    <expand macro="xrefs"/>
+
 
 </tool>

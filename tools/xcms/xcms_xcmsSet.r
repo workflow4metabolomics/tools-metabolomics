@@ -11,9 +11,9 @@ cat("\tSESSION INFO\n")
 
 #Import the different functions
 source_local <- function(fname) {
-    argv <- commandArgs(trailingOnly = FALSE)
-    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-    source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -36,7 +36,7 @@ cat("\tARGUMENTS PROCESSING INFO\n")
 #saving the commun parameters
 BPPARAM <- MulticoreParam(1)
 if (!is.null(args$BPPARAM)) {
-    BPPARAM <- MulticoreParam(args$BPPARAM)
+  BPPARAM <- MulticoreParam(args$BPPARAM)
 }
 register(BPPARAM)
 
@@ -49,9 +49,9 @@ if (!is.null(args$peaklist)) peaklistParam <- args$peaklist
 method <- args$method
 
 if (!is.null(args$roiList)) {
-    cat("\t\troiList provided\n")
-    args$roiList <- list(getDataFrameFromFile(args$roiList))
-    print(args$roiList)
+  cat("\t\troiList provided\n")
+  args$roiList <- list(getDataFrameFromFile(args$roiList))
+  print(args$roiList)
 }
 
 cat("\n\n")
@@ -103,10 +103,10 @@ sampleNamesList <- getSampleMetadata(xdata = xdata, sampleMetadataOutput = "samp
 
 # Create a chromPeaks table if required
 if (exists("peaklistParam")) {
-    if (peaklistParam) {
-        cat("\nCreating the chromatographic peaks' table...\n")
-        write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
-    }
+  if (peaklistParam) {
+      cat("\nCreating the chromatographic peaks' table...\n")
+      write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+  }
 }
 
 cat("\n\n")

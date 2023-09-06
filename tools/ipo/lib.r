@@ -4,7 +4,7 @@ parseCommandArgs <- function(...) {
   args <- batch::parseCommandArgs(...)
   for (key in names(args)) {
     if (args[key] %in% c("TRUE", "FALSE"))
-        args[key] <- as.logical(args[key])
+      args[key] <- as.logical(args[key])
   }
   return(args)
 }
@@ -158,7 +158,7 @@ retrieveRawfileInWD <- function(singlefile, zipfile) {
       }
 
       if (!suppressWarnings(try(file.link(singlefile_galaxyPath, singlefile_sampleName), silent = TRUE)))
-          file.copy(singlefile_galaxyPath, singlefile_sampleName)
+        file.copy(singlefile_galaxyPath, singlefile_sampleName)
 
     }
     directory <- "."

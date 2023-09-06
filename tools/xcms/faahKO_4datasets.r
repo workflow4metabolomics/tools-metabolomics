@@ -8,11 +8,14 @@ cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE, recursive
 cdfs <- cdfs[c(1, 2, 7, 8)]
 
 pd <- data.frame(
-                 sample_name <- sub(basename(cdfs),
-                 pattern = ".CDF",
-                 replacement = "", fixed = TRUE),
-                 sample_group = c(rep("KO", 2), rep("WT", 2)),
-                 stringsAsFactors = FALSE)
+  sample_name <- sub(
+    basename(cdfs),
+    pattern = ".CDF",
+    replacement = "", fixed = TRUE
+  ),
+  sample_group = c(rep("KO", 2), rep("WT", 2)),
+  stringsAsFactors = FALSE
+)
 
 cwp <- CentWaveParam()
 

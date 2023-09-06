@@ -83,7 +83,7 @@ register(SerialParam())
 xdata <- fillChromPeaks(xdata, param = fillChromPeaksParam)
 
 if (exists("intval")) {
-    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
+  getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
 }
 
 cat("\n\n")

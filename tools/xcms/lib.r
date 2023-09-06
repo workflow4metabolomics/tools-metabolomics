@@ -313,11 +313,11 @@ getSampleMetadata <- function(xdata = NULL, sampleMetadataOutput = "sampleMetada
   sampleNamesMakeNames <- make.names(sampleNamesOrigin)
 
   if (any(duplicated(sampleNamesMakeNames))) {
-  write("\n\nERROR: Usually, R has trouble to deal with special characters in its column names, so it rename them using make.names().\nIn your case, at least two columns after the renaming obtain the same name, thus XCMS will collapse those columns per name.", stderr())
-  for (sampleName in sampleNamesOrigin) {
-    write(paste(sampleName, "\t->\t", make.names(sampleName)), stderr())
-  }
-  stop("\n\nERROR: One or more of your files will not be import by xcmsSet. It may due to bad characters in their filenames.")
+    write("\n\nERROR: Usually, R has trouble to deal with special characters in its column names, so it rename them using make.names().\nIn your case, at least two columns after the renaming obtain the same name, thus XCMS will collapse those columns per name.", stderr())
+    for (sampleName in sampleNamesOrigin) {
+      write(paste(sampleName, "\t->\t", make.names(sampleName)), stderr())
+    }
+    stop("\n\nERROR: One or more of your files will not be import by xcmsSet. It may due to bad characters in their filenames.")
   }
 
   if (!all(sampleNamesOrigin == sampleNamesMakeNames)) {

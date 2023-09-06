@@ -8,7 +8,8 @@ cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE, recursive
 cdfs <- cdfs[c(1, 2, 7, 8)]
 
 pd <- data.frame(
-                 sample_name <- sub(basename(cdfs), pattern = ".CDF",
+                 sample_name <- sub(basename(cdfs),
+                 pattern = ".CDF",
                  replacement = "", fixed = TRUE),
                  sample_group = c(rep("KO", 2), rep("WT", 2)),
                  stringsAsFactors = FALSE)
@@ -55,7 +56,7 @@ pgp <- PeakGroupsParam(minFraction = 0.85)
 xdata <- adjustRtime(xdata, param = pgp)
 
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-        minFraction = 0.4, bw = 20)
+                        minFraction = 0.4, bw = 20)
 xdata <- groupChromPeaks(xdata, param = pdp)
 
 xdata <- fillChromPeaks(xdata)
@@ -72,7 +73,7 @@ getxcmsSetObject <- function(xobject) {
     suppressWarnings(xset <- as(xobject, "xcmsSet"))
     if (is.null(xset@phenoData$sample_group))
       sampclass(xset) <- "."
-   else
+    else
       sampclass(xset) <- xset@phenoData$sample_group
     return(xset)
   }

@@ -104,8 +104,8 @@ sampleNamesList <- getSampleMetadata(xdata = xdata, sampleMetadataOutput = "samp
 # Create a chromPeaks table if required
 if (exists("peaklistParam")) {
   if (peaklistParam) {
-      cat("\nCreating the chromatographic peaks' table...\n")
-      write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+    cat("\nCreating the chromatographic peaks' table...\n")
+    write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
   }
 }
 

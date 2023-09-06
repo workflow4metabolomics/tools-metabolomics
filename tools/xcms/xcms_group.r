@@ -11,9 +11,9 @@ cat("\tSESSION INFO\n")
 
 #Import the different functions
 source_local <- function(fname) {
-    argv <- commandArgs(trailingOnly = FALSE)
-    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-    source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -83,7 +83,7 @@ cat("\t\tDRAW GRAPHICS\n")
 getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
 
 if (exists("intval")) {
-    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
+  getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
 }
 
 cat("\n\n")

@@ -30,29 +30,29 @@ writehtml <- function(...) {
   cat(..., "\n", file = htmlOutput, append = TRUE, sep = "")
 }
 writeraw <- function(htmlOutput, object, open = "at") {
-    log_file <- file(htmlOutput, open = open)
-    sink(log_file)
-    sink(log_file, type = "output")
-        print(object)
-    sink()
-    close(log_file)
+  log_file <- file(htmlOutput, open = open)
+  sink(log_file)
+  sink(log_file, type = "output")
+  print(object)
+  sink()
+  close(log_file)
 }
 getSampleNames <- function(xobject) {
-    if (class(xobject) == "xcmsSet")
-        return(sampnames(xobject))
-    if (class(xobject) == "XCMSnExp")
-        return(xobject@phenoData@data$sample_name)
+  if (class(xobject) == "xcmsSet")
+    return(sampnames(xobject))
+  if (class(xobject) == "XCMSnExp")
+    return(xobject@phenoData@data$sample_name)
 }
 getFilePaths <- function(xobject) {
-    if (class(xobject) == "xcmsSet")
-        return(xobject@filepaths)
-    if (class(xobject) == "XCMSnExp")
-        return(fileNames(xobject))
+  if (class(xobject) == "xcmsSet")
+    return(xobject@filepaths)
+  if (class(xobject) == "XCMSnExp")
+    return(fileNames(xobject))
 }
 equalParams <- function(param1, param2) {
-    writeraw("param1.txt", param1, open = "wt")
-    writeraw("param2.txt", param2, open = "wt")
-    return(tools::md5sum("param1.txt") == tools::md5sum("param2.txt"))
+  writeraw("param1.txt", param1, open = "wt")
+  writeraw("param2.txt", param2, open = "wt")
+  return(tools::md5sum("param1.txt") == tools::md5sum("param2.txt"))
 }
 
 
@@ -74,19 +74,19 @@ if (!is.null(args$user_email)) user_email <- args$user_email
 
 # if the RData come from XCMS 1.x
 if (exists("xset")) {
-    xobject <- xset
-    # retrocompatability
-    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(sampnames(xobject)))
+  xobject <- xset
+  # retrocompatability
+  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(sampnames(xobject)))
 }
 # if the RData come from CAMERA
 if (exists("xa")) {
-    xobject <- xa@xcmsSet
-    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xa@xcmsSet@phenoData$sample_name))
+  xobject <- xa@xcmsSet
+  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xa@xcmsSet@phenoData$sample_name))
 }
 # if the RData come from XCMS 3.x
 if (exists("xdata")) {
-    xobject <- xdata
-    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xdata@phenoData@data$sample_name))
+  xobject <- xdata
+  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xdata@phenoData@data$sample_name))
 }
 
 if (!exists("xobject")) stop("You need at least a xdata, a xset or a xa object.")

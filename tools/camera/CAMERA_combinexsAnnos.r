@@ -58,11 +58,11 @@ cat("\n\n")
 cat("\tMAIN PROCESSING INFO\n")
 
 cAnnot <- combinexsAnnos_function(
-    xaP = xaP, xaN = xaN,
-    diffrepP = diffrepP, diffrepN = diffrepN,
-    pos = args$pos, tol = args$tol, ruleset = args$ruleset, keep_meta = args$keep_meta,
-    convertRTMinute = args$convertRTMinute, numDigitsMZ = args$numDigitsMZ, numDigitsRT = args$numDigitsRT,
-    variableMetadataOutput = "variableMetadata.tsv"
+  xaP = xaP, xaN = xaN,
+  diffrepP = diffrepP, diffrepN = diffrepN,
+  pos = args$pos, tol = args$tol, ruleset = args$ruleset, keep_meta = args$keep_meta,
+  convertRTMinute = args$convertRTMinute, numDigitsMZ = args$numDigitsMZ, numDigitsRT = args$numDigitsRT,
+  variableMetadataOutput = "variableMetadata.tsv"
 )
 
 # ----- EXPORT -----

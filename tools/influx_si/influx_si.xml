@@ -20,7 +20,7 @@
            ln -s '$i' '$i.element_identifier' &&
          #end for
        #end for
-       
+
        influx_$si.s_i
             $opt.noopt
             $opt.noscale

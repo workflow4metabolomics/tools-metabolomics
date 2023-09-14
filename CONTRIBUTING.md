@@ -50,7 +50,7 @@ generally working. The Galaxy Wiki has a
 [page](https://wiki.galaxyproject.org/Admin/Tools/WritingTests) on writing
 tests.
 
-It isrecommended to testi with [planemo](https://github.com/galaxyproject/planemo/), which provides a simple command line utility for testing functionality
+It is recommended to test it with [planemo](https://github.com/galaxyproject/planemo/), which provides a simple command line utility for testing functionality.
 
 ```console
 $ planemo test --install_galaxy my_tool.xml

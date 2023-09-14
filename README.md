@@ -21,10 +21,10 @@ needs to be approved by a majority of the current team members.
 
 ## Workflow4Metabolomics
 
-This repository was initiated the Workflow4Metabolomics project. The
+This repository was initiated by the Workflow4Metabolomics project. 
 [Workflow4Metabolomics](http://workflow4metabolomics.org), W4M in short, is a
-French infrastructure offering software tool processing, analyzing and
-annotating metabolomics data.
+collective offering ressources for processing, analyzing and
+annotating metabolomic data.
 
 ## Related open source projects
 

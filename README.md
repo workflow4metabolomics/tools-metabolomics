@@ -12,7 +12,6 @@ Tools themselves should stick with the [IUC](https://github.com/galaxyproject/to
 ## Team Members
 
 - Bjorn Gruening (@bgruening)
-- Lain-inrae (@Lain-inrae)
 - Gildas Le Corguillé (@lecorguille)
 - Guitton Yann (@yguitton)
 

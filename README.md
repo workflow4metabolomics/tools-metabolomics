@@ -5,12 +5,25 @@
 ## Purpose
 This repository aims to gather tools and contributors from the metabolomics world.
 
-It is maintained by the Workflow4Metabolomics project but open to any contributors.
+It is maintained by Galaxy metabolomics community and open to any contributors.
 
 Tools themselves should stick with the [IUC](https://github.com/galaxyproject/tools-iuc) (Galaxy Intergalactic Utilities Commission) [standards and best practices](https://galaxy-iuc-standards.readthedocs.io/en/latest/)
 
-### Workflow4Metabolomics
-The [Workflow4Metabolomics](http://workflow4metabolomics.org), W4M in short, is a French infrastructure offering software tool processing, analyzing and annotating metabolomics data.
+## Team Members
+
+- Bjorn Gruening (@bgruening)
+- Gildas Le Corguillé (@lecorguille)
+- Guitton Yann (@yguitton)
+
+New team members can be suggested by a PR against this file which
+needs to be approved by a majority of the current team members.
+
+## Workflow4Metabolomics
+
+This repository was initiated by the Workflow4Metabolomics project. 
+[Workflow4Metabolomics](http://workflow4metabolomics.org), W4M in short, is a
+collective offering ressources for processing, analyzing and
+annotating metabolomic data.
 
 ## Related open source projects
 

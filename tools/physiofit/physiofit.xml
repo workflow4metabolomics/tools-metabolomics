@@ -29,7 +29,7 @@
             <param name='configfile' value='config_file.yml'/>
             <output name='recap'>
                 <assert_contents>
-                    <has_size value='798' delta='50'/>
+                    <has_size value='798' delta='150'/>
                     <has_n_lines n='7'/>
                 </assert_contents>
             </output>

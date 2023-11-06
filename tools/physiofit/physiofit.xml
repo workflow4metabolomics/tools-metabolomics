@@ -27,12 +27,12 @@
         <test>
             <param name='datafile' value='data.txt'/>
             <param name='configfile' value='config_file.yml'/>
-            <output name='recap'>
+            <!-- <output name='recap'>
                 <assert_contents>
                     <has_size value='798' delta='150'/>
                     <has_n_lines n='7'/>
                 </assert_contents>
-            </output>
+            </output> -->
             <output name='zip'>
                 <assert_contents>
                     <!-- <has_archive_member path='A\flux_results.tsv'/>

@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy1">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy2">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>
@@ -34,9 +34,6 @@
 
     <outputs>
         <data name="xsetRData" format="rdata.msnbase.raw" label="${input.name.rsplit('.',1)[0]}.raw.RData" from_work_dir="readmsdata.RData" />
-        <data name="sampleMetadata" format="tabular" label="${input.name.rsplit('.',1)[0]}.sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv" >
-            <filter>input.extension not in ["mzxml","mzml","mzdata","netcdf"]</filter>
-        </data>
     </outputs>
 
     <tests>
@@ -53,7 +50,6 @@
                 <has_text text="faahKO_reduce/WT/wt15.CDF        wt15           WT" />
                 <has_text text="faahKO_reduce/WT/wt16.CDF        wt16           WT" />
             </assert_stdout>
-            <output name="sampleMetadata" value="sampleMetadata.tsv" />
         </test>
         <test expect_num_outputs="1">
             <param name="input" value="ko15.CDF"  ftype="netcdf" />

@@ -80,7 +80,7 @@ repositories:
       XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
     owner: lecorguille
     include:
-      [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
+      [*default-includes, abims_xcms_retcor.xml, xcms_retcor.r]
   xcms_xcmsset:
     description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - peaks calling in NetCDF/mzXML files'
     long_description: |

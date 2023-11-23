@@ -193,8 +193,7 @@ options:
                         dependent fluxes, cumomers, stats and so on
   --noscale             no scaling factors to optimize => all scaling factors
                         are assumed to be 1
-  --meth {BFGS,Nelder-Mead,nlsic,pso}
-                        method for optimization, one of 'nlsic|BFGS|Nelder-
+  --meth METH           method for optimization, one of 'nlsic|BFGS|Nelder-
                         Mead|pso'. Default: 'nlsic'. Multiple occurrences of
                         this option can appear on command line. In this case,
                         specified minimization methods are applied
@@ -264,8 +263,7 @@ options:
                         Monte-Carlo simulations for sensitivity analysis.
                         Default: none, i.e. current system value is used, so
                         random drawing will be varying at each run.
-  --excl_outliers [EXCL_OUTLIERS]
-                        This option takes an optional argument, a p-value
+  --excl_outliers V     This option takes an optional argument V, a p-value
                         between 0 and 1 which is used to filter out
                         measurement outliers. The filtering is based on Z
                         statistics calculated on reduced residual
@@ -274,8 +272,7 @@ options:
   --addnoise            Add centered gaussian noise to simulated measurements
                         written to _res.kvh file. SD of this noise is taken
                         from FTBL file
-  --time_order {None,1,2,1,2}
-                        Time order for ODE solving (1 (default), 2 or 1,2).
+  --time_order TO       Time order TO for ODE solving (1 (default), 2 or 1,2).
                         Order 2 is more precise but more time consuming. The
                         value '1,2' makes to start solving the ODE with the
                         first order scheme then continues with the order 2.

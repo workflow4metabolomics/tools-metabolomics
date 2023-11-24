@@ -117,7 +117,7 @@
                 </param>
                 <when value="s"/>
                 <when value="i">
-                    <param name="time_order" type="select" label="--time_order" display="radio" optional="true" help="Time order for ODE solving (1 (default), 2 or 1,2). Order 2 is more precise but more time consuming. The value &#x27;1,2&#x27; makes to start solving the ODE with the first order scheme then continues with the order 2.">
+                    <param name="time_order" type="select" label="--time_order" display="radio" help="Time order for ODE solving (1 (default), 2 or 1,2). Order 2 is more precise but more time consuming. The value &#x27;1,2&#x27; makes to start solving the ODE with the first order scheme then continues with the order 2.">
                         <option value="None">None</option>
                         <option value="1">1</option>
                         <option value="2">2</option>

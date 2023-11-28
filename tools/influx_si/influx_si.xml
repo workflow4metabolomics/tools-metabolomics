@@ -48,10 +48,10 @@
               <conditional name="si">
                      <param name="s_i" value="s" />
               </conditional>
-              <output_collection name="influx_si_output" type="list" count="8">
+              <output_collection name="influx_si_output" type="list" count="9">
                 <element name="e_coli.log" ftype="txt">
                   <assert_contents>
-                    <has_n_lines n="37"/>
+                    <has_n_lines n="38"/>
                     <has_line_matching expression="^end.*"/>
                 </assert_contents>
                 </element>

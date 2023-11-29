@@ -8,55 +8,54 @@
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">influx_si</requirement>
     </requirements>
-    <command detect_errors="exit_code"><![CDATA[  
-      
-       mkdir outdir;
-       #for $inp in $input_main:
-        unzip $inp;
-       #end for
-              
-       influx_$si.s_i
-         @COMMAND_OPT@
-         #if $si.s_i == 'i' and $si.time_order:
-           --time_order='$si.time_order'
-         #end if
-         #for $inp in $input_main:
-          #set base = $inp.name[:-4]
-         --prefix "$base"
-         #end for
-         @MTF_OPT@
-         > 'outdir/influx_${si.s_i}.stdout.txt' 2>'outdir/influx_${si.s_i}.stderr.txt';
-       
-       #for $inp in $input_main:
-         #set base = $inp.name[:-4]
-         for f in "$base"_res/*.{err,log}; do mv -f "\$f" "\$f".txt || true; done;
-         for f in "$base"_res/*.{sim,stat}; do mv -f "\$f" "\$f".tsv || true; done;
-         for f in "$base"_res/*.pdf; do [ -e "\$f" ] && mv -f "\$f" "\$f".pdf || true; done;
-         rm -rf "$base"_res/tmp/;
-         mv "$base"_res/* outdir/;
-       #end for
+    <command detect_errors="exit_code"><![CDATA[
+        mkdir outdir;
+        #for $inp in $input_main:
+            unzip $inp;
+        #end for
+               
+        influx_$si.s_i
+            @COMMAND_OPT@
+            #if $si.s_i == 'i' and $si.time_order:
+              --time_order='$si.time_order'
+            #end if
+            #for $inp in $input_main:
+                #set base = $inp.name[:-4]
+                --prefix "$base"
+            #end for
+            @MTF_OPT@
+            > 'outdir/influx_${si.s_i}.stdout.txt' 2>'outdir/influx_${si.s_i}.stderr.txt';
+
+        #for $inp in $input_main:
+            #set base = $inp.name[:-4]
+            for f in "$base"_res/*.{err,log}; do mv -f "\$f" "\$f".txt || true; done;
+            for f in "$base"_res/*.{sim,stat}; do mv -f "\$f" "\$f".tsv || true; done;
+            for f in "$base"_res/*.pdf; do [ -e "\$f" ] && mv -f "\$f" "\$f".pdf || true; done;
+            rm -rf "$base"_res/tmp/;
+            mv "$base"_res/* outdir/;
+        #end for
     ]]></command>
     <expand macro="inputs" />
     <outputs>
-       <collection name="influx_si_output" type="list" label="influx_${si.s_i}_on_${on_string}">
-              <discover_datasets  directory="outdir" pattern="__name_and_ext__" visible="false"/>
-     </collection>
+        <collection name="influx_si_output" type="list" label="influx_${si.s_i}_on_${on_string}">
+            <discover_datasets  directory="outdir" pattern="__name_and_ext__" visible="false"/>
+        </collection>
     </outputs>
     <tests>
-       <test>
-              <param name="input_main" value="e_coli.zip" />
-              <conditional name="si">
-                     <param name="s_i" value="s" />
-              </conditional>
-              <output_collection name="influx_si_output" type="list" count="9">
+        <test>
+            <param name="input_main" value="e_coli.zip" />
+            <conditional name="si">
+                <param name="s_i" value="s" />
+            </conditional>
+            <output_collection name="influx_si_output" type="list" count="9">
                 <element name="e_coli.log" ftype="txt">
-                  <assert_contents>
-                    <has_n_lines n="38"/>
-                    <has_line_matching expression="^end.*"/>
-                </assert_contents>
+                    <assert_contents>
+                        <has_n_lines n="38"/>
+                        <has_line_matching expression="^end.*"/>
+                    </assert_contents>
                 </element>
-              </output_collection>
-       </test>
+            </output_collection>
+        </test>
     </tests>
     <expand macro="help" />
     <expand macro="citation" />

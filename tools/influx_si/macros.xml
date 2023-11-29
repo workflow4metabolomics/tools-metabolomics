@@ -12,99 +12,74 @@
     <token name="@TOOL_VERSION@">7.0.1</token>
     <token name="@VERSION_SUFFIX@">1</token>
     <token name="@COMMAND_OPT@"><![CDATA[
-  #if $opt.noopt:
-    --noopt
-  #end if
-  #if $opt.noscale:
-    --noscale
-  #end if
-  #if $opt.meth:
-    --meth='$opt.meth'
-  #end if
-  #if $opt.fullsys:
-    --fullsys
-  #end if
-  #if $opt.emu:
-    --emu
-  #end if
-  #if $opt.irand:
-    --irand
-  #end if
-  #if $opt.sens:
-    --sens='$opt.sens'
-  #end if
-  #if $opt.cupx:
-    --cupx='$opt.cupx'
-  #end if
-  #if $opt.cupn:
-    --cupn='$opt.cupn'
-  #end if
-  #if $opt.cupp:
-    --cupp='$opt.cupp'
-  #end if
-  #if $opt.clownr:
-    --clownr='$opt.clownr'
-  #end if
-  #if $opt.cinout:
-    --cinout='$opt.cinout'
-  #end if
-  #if $opt.clowp:
-    --clowp='$opt.clowp'
-  #end if
-  #if $opt.np:
-    --np='$opt.np'
-  #end if
-  #if $opt.ln:
-    --ln
-  #end if
-  #if $opt.sln:
-    --sln
-  #end if
-  #if $opt.tikhreg:
-    --tikhreg
-  #end if
-  #if $opt.lim:
-    --lim
-  #end if
-  #if $opt.zc:
-    --zc='$opt.zc'
-  #end if
-  #if $opt.ffguess:
-    --ffguess
-  #end if
-  #if $opt.fseries:
-    --fseries='$opt.fseries'
-  #end if
-  #if $opt.iseries:
-    --iseries='$opt.iseries'
-  #end if
-  #if $opt.seed:
-    --seed='$opt.seed'
-  #end if
-  #if $opt.excl_outliers:
-    --excl_outliers
-  #end if
-  #if $opt.nocalc:
-    --nocalc
-  #end if
-  #if $opt.addnoise:
-    --addnoise
-  #end if
-  #if $opt.TIMEIT:
-    --TIMEIT
-  #end if
-  #if $opt.prof:
-    --prof
-  #end if
-  #if $opt.tblimit:
-    --tblimit='$opt.tblimit'
-  #end if
+    $noopt
+    $noscale
+    $fullsys
+    $emu
+    $irand
+    $ln
+    $sln
+    $tikhreg
+    $lim
+    $ffguess
+    $nocalc
+    $addnoise
+    $TIMEIT
+    $prof
+    #if $opt.meth:
+      --meth='$opt.meth'
+    #end if
+    #if $opt.irand:
+      --irand
+    #end if
+    #if $opt.sens:
+      --sens='$opt.sens'
+    #end if
+    #if $opt.cupx:
+      --cupx='$opt.cupx'
+    #end if
+    #if $opt.cupn:
+      --cupn='$opt.cupn'
+    #end if
+    #if $opt.cupp:
+      --cupp='$opt.cupp'
+    #end if
+    #if $opt.clownr:
+      --clownr='$opt.clownr'
+    #end if
+    #if $opt.cinout:
+      --cinout='$opt.cinout'
+    #end if
+    #if $opt.clowp:
+      --clowp='$opt.clowp'
+    #end if
+    #if $opt.np:
+      --np='$opt.np'
+    #end if
+    #if $opt.zc:
+      --zc='$opt.zc'
+    #end if
+    #if $opt.fseries:
+      --fseries='$opt.fseries'
+    #end if
+    #if $opt.iseries:
+      --iseries='$opt.iseries'
+    #end if
+    #if $opt.seed:
+      --seed='$opt.seed'
+    #end if
+    #if $opt.excl_outliers:
+      --excl_outliers $opt.excl_outliers
+    #end if
+    #if $opt.tblimit:
+      --tblimit='$opt.tblimit'
+    #end if
 ]]>
     </token>
     <token name="@MTF_OPT@"><![CDATA[
-  #if $opt.mtf:
-    --mtf '$opt.mtf'
-  #end if
+        #if $opt.mtf:
+            --mtf '$opt.mtf'
+        #end if
 ]]>
     </token>
     <xml name="inputs">
@@ -126,58 +101,59 @@
                 </when>
             </conditional>
             <section name="opt" title="Advanced Options" expanded="false">
-              <param argument="--noopt" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--noopt" optional="true" help="no optimization, just use free parameters as is (after a projection on feasibility domain), to calculate dependent fluxes, cumomers, stats and so on" />
-              <param argument="--noscale" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--noscale" optional="true" help="no scaling factors to optimize =&gt; all scaling factors are assumed to be 1" />
-              <param argument="--meth" type="select" label="--meth" optional="true" help="method for optimization, one of nlsic|BFGS|Nelder-Mead|pso. Default: nlsic">
-                <option value="BFGS">BFGS</option>
-                <option value="Nelder-Mead">Nelder-Mead</option>
-                <option value="nlsic">nlsic</option>
-                <option value="pso">pso</option>
-              </param>
-              <param argument="--fullsys" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--fullsys" optional="true" help="calculate all cumomer set (not just the reduced one necesary to simulate measurements)" />
-              <param argument="--emu" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--emu" optional="true" help="simulate labeling in EMU approach" />
-              <param argument="--irand" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--irand" optional="true" help="ignore initial approximation for free parameters (free fluxes and metabolite concentrations) from the FTBL file or from a dedicated file (cf --fseries and --iseries option) and use random values drawn uniformly from [0,1] interval" />
-              <param argument="--sens" type="text" value="" label="--sens" optional="true" help="sensitivity method: SENS can be &#x27;mc[=N]&#x27;, mc stands for Monte-Carlo. N is an optional number of Monte-Carlo simulations. Default for N: 10" />
-              <param argument="--cupx" type="float" min="0" max="1" value="" label="--cupx" optional="true" help="upper limit for reverse fluxes. Must be in interval [0, 1]. Default: 0.999" />
-              <param argument="--cupn" type="float" min="0" value="" label="--cupn" optional="true" help="absolute limit for net fluxes: -cupn &lt;= netflux &lt;= cupn. Must be non negative. Value 0 means no limit. Default: 1.e3" />
-              <param argument="--cupp" type="float" min="0" value="" label="--cupp" optional="true" help="upper limit for metabolite pool. Default: 1.e5" />
-              <param argument="--clownr" type="float" min="0" value="" label="--clownr" optional="true" help="lower limit for not reversible free and dependent fluxes. Zero value (default) means no lower limit" />
-              <param argument="--cinout" type="float" min="0" value="" label="--cinout" optional="true" help="lower limit for input/output free and dependent fluxes. Must be non negative. Default: 0" />
-              <param argument="--clowp" type="float" min="0" value="" label="--clowp" optional="true" help="lower limit for free metabolite pools. Must be positive. Default 1.e-8" />
-              <param argument="--np" type="float" min="0" value="" label="--np" optional="true" help="When integer &gt;= 1, it is a number of parallel subprocesses used in Monte-Carlo (MC) simulations or for multiple FTBL inputs. When NP is a float number between 0 and 1, it gives a fraction of available cores (rounded to closest integer) to be used. Without this option or for NP=0, all available cores in a given node are used for MC simulations." />
-              <param argument="--ln" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--ln" optional="true" help="Least norm solution is used for increments during the non-linear iterations when Jacobian is rank deficient" />
-              <param argument="--sln" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--sln" optional="true" help="Least norm of the solution of linearized problem (and not just of increments) is used when Jacobian is rank deficient" />
-              <param argument="--tikhreg" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--tikhreg" optional="true" help="Approximate least norm solution is used for increments during the non-linear iterations when Jacobian is rank deficient" />
-              <param argument="--lim" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--lim" optional="true" help="The same as --ln but with a function limSolve::lsei()" />
-              <param argument="--zc" type="float" min="0" value="" label="--zc" optional="true" help="Apply zero crossing strategy with non negative threshold for net fluxes" />
-              <param argument="--ffguess" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--ffguess" optional="true" help="Don&#x27;t use free/dependent flux definitions from FTBL file(s). Make an automatic guess." />
-              <param argument="--fseries" type="text" value="" label="--fseries" optional="true" help="File name with free parameter values for multiple starting points. Default: &#x27;&#x27; (empty, i.e. only one starting point from the FTBL file is used)" />
-              <param argument="--iseries" type="text" value="" label="--iseries" optional="true" help="Indexes of starting points to use. Format: &#x27;1:10&#x27; -- use only first ten starting points; &#x27;1,3&#x27; -- use the the first and third starting points; &#x27;1:10,15,91:100&#x27; -- a mix of both formats is allowed. Default: &#x27;&#x27; (empty, i.e. all provided starting points are used)" />
-              <param argument="--seed" type="integer" min="0" value="" label="--seed" optional="true" help="Integer (preferably a prime integer) used for reproducible random number generating. It makes reproducible random starting points (--irand) but also Monte-Carlo simulations for sensitivity analysis. Default: none, i.e. current system value is used, so random drawing will be varying at each run." />
-              <param argument="--excl_outliers" type="float" min="0" max="1" value="" label="--excl_outliers" optional="true" help="This option takes an optional argument, a p-value between 0 and 1 which is used to filter out measurement outliers. The filtering is based on Z statistics calculated on reduced residual distribution. Default: 0.01." />
-              <param argument="--nocalc" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--nocalc" optional="true" help="generate an R code but not execute it." />
-              <param argument="--addnoise" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--addnoise" optional="true" help="Add centered gaussian noise to simulated measurements written to _res.kvh file. SD of this noise is taken from FTBL file" />
-              <param argument="--TIMEIT" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--TIMEIT" optional="true" help="developer option: measure cpu time or not" />
-              <param argument="--prof" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="--prof" optional="true" help="developer option: do time profiling or not" />
-              <param argument="--tblimit" type="integer" min="0" value="0" label="--tblimit" optional="true" help="developer option: set trace back limit for python error messages" />
-              <param argument="--mtf" type="text" value="" label="--mtf MTF" optional="true" help="MTF is a coma separated list of files with following extensions: netw, linp, miso, mflux, mmet, tvar, cnstr, ftbl, vmtf. Only first 3 files are necessary to obtain a workable FTBL file, others are optional."/>
+                <param argument="--noopt" type="boolean" checked="false" truevalue="--noopt" falsevalue="" label="--noopt" optional="true" help="no optimization, just use free parameters as is (after a projection on feasibility domain), to calculate dependent fluxes, cumomers, stats and so on" />
+                <param argument="--noscale" type="boolean" checked="false" truevalue="--noscale" falsevalue="" label="--noscale" optional="true" help="no scaling factors to optimize =&gt; all scaling factors are assumed to be 1" />
+                <param argument="--fullsys" type="boolean" checked="false" truevalue="--fullsys" falsevalue="" label="--fullsys" optional="true" help="calculate all cumomer set (not just the reduced one necessary to simulate measurements)" />
+                <param argument="--emu" type="boolean" checked="false" truevalue="--emu" falsevalue="" label="--emu" optional="true" help="simulate labeling in EMU approach" />
+                <param argument="--irand" type="boolean" checked="false" truevalue="--irand" falsevalue="" label="--irand" optional="true" help="ignore initial approximation for free parameters (free fluxes and metabolite concentrations) from the FTBL file or from a dedicated file (cf --fseries and --iseries option) and use random values drawn uniformly from [0,1] interval" />
+                <param argument="--ln" type="boolean" checked="false" truevalue="--ln" falsevalue="" label="--ln" optional="true" help="Least norm solution is used for increments during the non-linear iterations when Jacobian is rank deficient" />
+                <param argument="--sln" type="boolean" checked="false" truevalue="--sln" falsevalue="" label="--sln" optional="true" help="Least norm of the solution of linearized problem (and not just of increments) is used when Jacobian is rank deficient" />
+                <param argument="--tikhreg" type="boolean" checked="false" truevalue="--tikhreg" falsevalue="" label="--tikhreg" optional="true" help="Approximate least norm solution is used for increments during the non-linear iterations when Jacobian is rank deficient" />
+                <param argument="--lim" type="boolean" checked="false" truevalue="--lim" falsevalue="" label="--lim" optional="true" help="The same as --ln but with a function limSolve::lsei()" />
+                <param argument="--ffguess" type="boolean" checked="false" truevalue="--ffguess" falsevalue="" label="--ffguess" optional="true" help="Don&#x27;t use free/dependent flux definitions from FTBL file(s). Make an automatic guess." />
+                <param argument="--nocalc" type="boolean" checked="false" truevalue="--nocalc" falsevalue="" label="--nocalc" optional="true" help="generate an R code but not execute it." />
+                <param argument="--addnoise" type="boolean" checked="false" truevalue="--addnoise" falsevalue="" label="--addnoise" optional="true" help="Add centered gaussian noise to simulated measurements written to _res.kvh file. SD of this noise is taken from FTBL file" />
+                <param argument="--TIMEIT" type="boolean" checked="false" truevalue="--TIMEIT" falsevalue="" label="--TIMEIT" optional="true" help="developer option: measure cpu time or not" />
+                <param argument="--prof" type="boolean" checked="false" truevalue="--prof" falsevalue="" label="--prof" optional="true" help="developer option: do time profiling or not" />
+
+                <param argument="--meth" type="select" label="--meth" optional="true" help="method for optimization, one of nlsic|BFGS|Nelder-Mead|pso. Default: nlsic">
+                    <option value="BFGS">BFGS</option>
+                    <option value="Nelder-Mead">Nelder-Mead</option>
+                    <option value="nlsic">nlsic</option>
+                    <option value="pso">pso</option>
+                </param>
+                <param argument="--sens" type="text" value="" label="--sens" optional="true" help="sensitivity method: SENS can be &#x27;mc[=N]&#x27;, mc stands for Monte-Carlo. N is an optional number of Monte-Carlo simulations. Default for N: 10" />
+                <param argument="--cupx" type="float" min="0" max="1" value="" label="--cupx" optional="true" help="upper limit for reverse fluxes. Must be in interval [0, 1]. Default: 0.999" />
+                <param argument="--cupn" type="float" min="0" value="" label="--cupn" optional="true" help="absolute limit for net fluxes: -cupn &lt;= netflux &lt;= cupn. Must be non negative. Value 0 means no limit. Default: 1.e3" />
+                <param argument="--cupp" type="float" min="0" value="" label="--cupp" optional="true" help="upper limit for metabolite pool. Default: 1.e5" />
+                <param argument="--clownr" type="float" min="0" value="" label="--clownr" optional="true" help="lower limit for not reversible free and dependent fluxes. Zero value (default) means no lower limit" />
+                <param argument="--cinout" type="float" min="0" value="" label="--cinout" optional="true" help="lower limit for input/output free and dependent fluxes. Must be non negative. Default: 0" />
+                <param argument="--clowp" type="float" min="0" value="" label="--clowp" optional="true" help="lower limit for free metabolite pools. Must be positive. Default 1.e-8" />
+                <param argument="--np" type="float" min="0" value="" label="--np" optional="true" help="When integer &gt;= 1, it is a number of parallel subprocesses used in Monte-Carlo (MC) simulations or for multiple FTBL inputs. When NP is a float number between 0 and 1, it gives a fraction of available cores (rounded to closest integer) to be used. Without this option or for NP=0, all available cores in a given node are used for MC simulations." />
+                <param argument="--zc" type="float" min="0" value="" label="--zc" optional="true" help="Apply zero crossing strategy with non negative threshold for net fluxes" />
+                <param argument="--fseries" type="text" value="" label="--fseries" optional="true" help="File name with free parameter values for multiple starting points. Default: &#x27;&#x27; (empty, i.e. only one starting point from the FTBL file is used)" />
+                <param argument="--iseries" type="text" value="" label="--iseries" optional="true" help="Indexes of starting points to use. Format: &#x27;1:10&#x27; -- use only first ten starting points; &#x27;1,3&#x27; -- use the the first and third starting points; &#x27;1:10,15,91:100&#x27; -- a mix of both formats is allowed. Default: &#x27;&#x27; (empty, i.e. all provided starting points are used)" />
+                <param argument="--seed" type="integer" min="0" value="" label="--seed" optional="true" help="Integer (preferably a prime integer) used for reproducible random number generating. It makes reproducible random starting points (--irand) but also Monte-Carlo simulations for sensitivity analysis. Default: none, i.e. current system value is used, so random drawing will be varying at each run." />
+                <param argument="--excl_outliers" type="float" min="0" max="1" value="" label="--excl_outliers" optional="true" help="This option takes an optional argument, a p-value between 0 and 1 which is used to filter out measurement outliers. The filtering is based on Z statistics calculated on reduced residual distribution. Default: 0.01." />
+                <param argument="--tblimit" type="integer" min="0" value="0" label="--tblimit" optional="true" help="developer option: set trace back limit for python error messages" />
+                <param argument="--mtf" type="text" value="" label="--mtf MTF" optional="true" help="MTF is a coma separated list of files with following extensions: netw, linp, miso, mflux, mmet, tvar, cnstr, ftbl, vmtf. Only first 3 files are necessary to obtain a workable FTBL file, others are optional."/>
             </section>
         </inputs>
     </xml>
     <xml name="help">
-    <help><![CDATA[
-        usage: influx_i [-h] [--noopt] [--noscale]
-                [--meth {BFGS,Nelder-Mead,nlsic,pso}] [--fullsys] [--emu]
-                [--irand] [--sens SENS] [--cupx CUPX] [--cupn CUPN]
-                [--cupp CUPP] [--clownr CLOWNR] [--cinout CINOUT]
-                [--clowp CLOWP] [--np NP] [--ln] [--sln] [--tikhreg] [--lim]
-                [--zc ZC] [--ffguess] [--fseries FSERIES] [--iseries ISERIES]
-                [--seed SEED] [--excl_outliers [EXCL_OUTLIERS]] [--nocalc]
-                [--addnoise] [--time_order {None,1,2,1,2}] [--version]
-                [--mtf MTF] [--prefix PREFIX] [--eprl EPRL] [--force FORCE]
-                [-o OUT] [--copy_doc] [--copy_test] [--install_rdep]
-                [--TIMEIT] [--prof] [--tblimit TBLIMIT]
-                [ftbl ...]
+        <help><![CDATA[
+usage: influx_i [-h] [--noopt] [--noscale]
+        [--meth {BFGS,Nelder-Mead,nlsic,pso}] [--fullsys] [--emu]
+        [--irand] [--sens SENS] [--cupx CUPX] [--cupn CUPN]
+        [--cupp CUPP] [--clownr CLOWNR] [--cinout CINOUT]
+        [--clowp CLOWP] [--np NP] [--ln] [--sln] [--tikhreg] [--lim]
+        [--zc ZC] [--ffguess] [--fseries FSERIES] [--iseries ISERIES]
+        [--seed SEED] [--excl_outliers [EXCL_OUTLIERS]] [--nocalc]
+        [--addnoise] [--time_order {None,1,2,1,2}] [--version]
+        [--mtf MTF] [--prefix PREFIX] [--eprl EPRL] [--force FORCE]
+        [-o OUT] [--copy_doc] [--copy_test] [--install_rdep]
+        [--TIMEIT] [--prof] [--tblimit TBLIMIT]
+        [ftbl ...]
 
 Optimize free fluxes and optionally metabolite concentrations of a given static
 metabolic network defined in an FTBL file to fit 13C data provided in the same
@@ -298,11 +274,12 @@ options:
   --tblimit TBLIMIT     developer option: set trace back limit for python
                         error messages
 
-]]></help>
+]]>
+        </help>
     </xml>
     <xml name="citation">
-    <citations>
-        <citation type="bibtex">
+        <citations>
+            <citation type="bibtex">
 @misc{githubinflux,
   author = {Sokol, Serguei},
   year = {2023},
@@ -311,8 +288,8 @@ options:
   journal = {GitHub repository},
   url = {https://github.com/sgsokol/influx},
 }
-        </citation>
-        <citation type="doi">10.1093/bioinformatics/btr716</citation>
-    </citations>
+            </citation>
+            <citation type="doi">10.1093/bioinformatics/btr716</citation>
+        </citations>
     </xml>
 </macros>

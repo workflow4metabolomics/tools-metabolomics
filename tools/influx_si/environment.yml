@@ -1,7 +1,0 @@
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - influx-si=7.0.1
-platforms:
-  - linux-64

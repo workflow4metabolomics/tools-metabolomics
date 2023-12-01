@@ -2,6 +2,14 @@
     <description>
         Estimate metabolic fluxes and concentrations by fitting simulated labeling in metabolites to NMR/MS measurements
     </description>
+    <creator>
+        <person givenName="Serguei" familyName="Sokol" email="sokol@insa-toulouse.fr" url="https://www.toulouse-biotechnology-institute.fr/en/plateformes-plateaux/cellule-mathematiques/" />
+        <organization name="INRAE" url="https://www.inrae.fr/" />
+        <organization name="TBI" url="https://www.toulouse-biotechnology-institute.fr/" />
+        <organization name="Mathematics Cell" url="https://www.toulouse-biotechnology-institute.fr/en/plateformes-plateaux/cellule-mathematiques/" />
+        <organization name="MetaToul-FluxoMet" url="https://www.toulouse-biotechnology-institute.fr/en/plateformes-plateaux/metatoul/" />
+        <organization name="MetaboHub2" url="https://www.metabohub.fr/" />
+    </creator>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -14,9 +22,10 @@
             unzip $inp;
         #end for
                
+        ret=0;
         influx_$si.s_i
             @COMMAND_OPT@
-            #if $si.s_i == 'i' and $si.time_order:
+            #if $si.s_i == 'i' and $si.time_order != 'None':
               --time_order='$si.time_order'
             #end if
             #for $inp in $input_main:
@@ -24,7 +33,9 @@
                 --prefix "$base"
             #end for
             @MTF_OPT@
-            > 'outdir/influx_${si.s_i}.stdout.txt' 2>'outdir/influx_${si.s_i}.stderr.txt';
+            > 'outdir/influx_${si.s_i}.stdout.txt' 2>'outdir/influx_${si.s_i}.stderr.txt' ||
+            ret=\${PIPESTATUS[0]};
+
 
         #for $inp in $input_main:
             #set base = $inp.name[:-4]
@@ -32,8 +43,9 @@
             for f in "$base"_res/*.{sim,stat}; do mv -f "\$f" "\$f".tsv || true; done;
             for f in "$base"_res/*.pdf; do [ -e "\$f" ] && mv -f "\$f" "\$f".pdf || true; done;
             rm -rf "$base"_res/tmp/;
-            mv "$base"_res/* outdir/;
+            mv -f "$base"_res/* outdir/;
         #end for
+        exit \$ret;
     ]]></command>
     <expand macro="inputs" />
     <outputs>

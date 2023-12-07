@@ -45,8 +45,8 @@
     ]]></command>
     <expand macro="inputs" />
     <outputs>
-        <collection name="influx_si_output" type="list:list" label="influx_${si.s_i}_on_${on_string}" format="auto">
-            <discover_datasets match_relative_path="true" recurse="true" pattern="(?P&lt;identifier_0&gt;[^/]+)_res/(?P&lt;identifier_1&gt;[^/]+)\.(?P&lt;file_ext&gt;[^.]+)" visible="false"/>
+        <collection name="influx_si_output" type="list:list" label="influx_${si.s_i}_on_${on_string}">
+            <discover_datasets match_relative_path="true" recurse="true" pattern="(?P&lt;identifier_0&gt;[^/]+)_res/(?P&lt;identifier_1&gt;[^/]+)\.(?P&lt;ext&gt;[^.]+)" visible="false"/>
         </collection>
     </outputs>
     <tests>

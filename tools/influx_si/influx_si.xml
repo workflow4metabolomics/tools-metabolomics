@@ -17,7 +17,6 @@
         <requirement type="package" version="@TOOL_VERSION@">influx_si</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        mkdir outdir;
         #for $inp in $input_main:
             unzip $inp;
         #end for
@@ -33,24 +32,21 @@
                 --prefix "$base"
             #end for
             @MTF_OPT@
-            > 'outdir/influx_${si.s_i}.stdout.txt' 2>'outdir/influx_${si.s_i}.stderr.txt' ||
-            ret=\${PIPESTATUS[0]};
-
+            || ret=\$?;
 
         #for $inp in $input_main:
             #set base = $inp.name[:-4]
             for f in "$base"_res/*.{err,log}; do mv -f "\$f" "\$f".txt || true; done;
             for f in "$base"_res/*.{sim,stat}; do mv -f "\$f" "\$f".tsv || true; done;
             for f in "$base"_res/*.pdf; do [ -e "\$f" ] && mv -f "\$f" "\$f".pdf || true; done;
-            rm -rf "$base"_res/tmp/;
-            mv -f "$base"_res/* outdir/;
+            rm -rf "$base"_res/tmp || true;
         #end for
         exit \$ret;
     ]]></command>
     <expand macro="inputs" />
     <outputs>
-        <collection name="influx_si_output" type="list" label="influx_${si.s_i}_on_${on_string}">
-            <discover_datasets  directory="outdir" pattern="__name_and_ext__" visible="false"/>
+        <collection name="influx_si_output" type="list:list" label="influx_${si.s_i}_on_${on_string}" format="auto">
+            <discover_datasets match_relative_path="true" recurse="true" pattern="(?P&lt;identifier_0&gt;[^/]+)_res/(?P&lt;identifier_1&gt;[^/]+)\.(?P&lt;file_ext&gt;[^.]+)" visible="false"/>
         </collection>
     </outputs>
     <tests>
@@ -59,12 +55,14 @@
             <conditional name="si">
                 <param name="s_i" value="s" />
             </conditional>
-            <output_collection name="influx_si_output" type="list" count="9">
-                <element name="e_coli.log" ftype="txt">
-                    <assert_contents>
-                        <has_n_lines n="38"/>
-                        <has_line_matching expression="^end.*"/>
-                    </assert_contents>
+            <output_collection name="influx_si_output" type="list:list" count="1">
+                <element name="e_coli" count="7">
+                    <element name="e_coli.log">
+                        <assert_contents>
+                            <has_n_lines n="38"/>
+                            <has_line_matching expression="^end.*"/>
+                        </assert_contents>
+                    </element>
                 </element>
             </output_collection>
         </test>

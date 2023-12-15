@@ -27,25 +27,31 @@
         <test>
             <param name='datafile' value='data.txt'/>
             <param name='configfile' value='config_file.yml'/>
-            <!-- <output name='recap'>
+            <output name='recap'>
                 <assert_contents>
-                    <has_size value='798' delta='150'/>
-                    <has_n_lines n='7'/>
+                    <has_text text='experiments'/>
+                    <has_text text='growth_rate'/>
+                    <has_text text='Glc_q'/>
+                    <has_text text='Glc_M0'/>
+                    <has_text text='Ace_q'/>
+                    <has_text text='Ace_M0'/>
+                    <has_text text='optimal'/>
+                    <has_text text='mean'/>
                 </assert_contents>
-            </output> -->
-            <output name='zip'>
+            </output>
+            <!-- <output name='zip'>
                 <assert_contents>
-                    <!-- <has_archive_member path='A\flux_results.tsv'/>
+                    <has_archive_member path='A\flux_results.tsv'/>
                     <has_archive_member path='./A\Ace.svg'/>
                     <has_archive_member path='./A\Glc.svg'/>
                     <has_archive_member path='./A\X.svg'/>
                     <has_archive_member path='./A\plots.pdf'/>
-                    <has_archive_member path='./A\stat_results.tsv'/> -->
+                    <has_archive_member path='./A\stat_results.tsv'/>
                     <has_archive_member path='.*\.svg' min='3'/>
                     <has_archive_member path='.*\.tsv' min='2'/>
                     <has_archive_member path='.*\.pdf' min='1'/>
                 </assert_contents>
-            </output>
+            </output> -->
         </test>
     </tests>
     <help><![CDATA[

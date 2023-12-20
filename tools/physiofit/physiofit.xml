@@ -1,13 +1,19 @@
 <tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5' profile='21.05'>
     <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
     <macros>
-        <token name='@TOOL_VERSION@'>3.3.1</token>
+        <token name='@TOOL_VERSION@'>3.3.2</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>physiofit</requirement>
     </requirements>
     <command detect_errors='exit_code'><![CDATA[
-    physiofit --galaxy --config $configfile --data $datafile -or '$recap' -oz $zip 2> $log 
+    physiofit
+    --galaxy 
+    --config $configfile 
+    --data $datafile 
+    -or '$recap' 
+    -oz $zip 
+    2> $log 
     ]]>
     </command>
     <inputs>
@@ -15,13 +21,9 @@
         <param name='configfile' type='data' format='yaml' multiple='true' label='Upload yaml configuration file containing run parameters'/>
     </inputs>
     <outputs>
-        <!-- <data name='config' label='Config_file' format='yaml'/> -->
         <data name='recap' label='Summary file' format='csv'/>
         <data name='zip' label='Results' format='zip'/>
         <data name='log' label='Log' format='txt'/>
-        <!-- <collection name='results' type='list' label='Resulting files'>
-            <discover_datasets pattern='__name_and_ext__'/>
-        </collection> -->
     </outputs>
     <tests>
         <test>
@@ -39,19 +41,13 @@
                     <has_text text='mean'/>
                 </assert_contents>
             </output>
-            <!-- <output name='zip'>
+            <output name='zip'>
                 <assert_contents>
-                    <has_archive_member path='A\flux_results.tsv'/>
-                    <has_archive_member path='./A\Ace.svg'/>
-                    <has_archive_member path='./A\Glc.svg'/>
-                    <has_archive_member path='./A\X.svg'/>
-                    <has_archive_member path='./A\plots.pdf'/>
-                    <has_archive_member path='./A\stat_results.tsv'/>
                     <has_archive_member path='.*\.svg' min='3'/>
                     <has_archive_member path='.*\.tsv' min='2'/>
                     <has_archive_member path='.*\.pdf' min='1'/>
                 </assert_contents>
-            </output> -->
+            </output>
         </test>
     </tests>
     <help><![CDATA[

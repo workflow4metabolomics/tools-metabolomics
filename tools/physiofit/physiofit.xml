@@ -1,278 +1,100 @@
-<tool id='physiofit' name='PhysioFit' profile='21.09' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5'>
-    <description>Extracellular flux analysis</description>
+<tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5' profile='21.05'>
+    <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.2.1</token>
+        <token name='@TOOL_VERSION@'>3.3.2</token>
     </macros>
     <requirements>
-        <requirement type='package' version='@TOOL_VERSION@'>physiofit4galaxy</requirement>
+        <requirement type='package' version='@TOOL_VERSION@'>physiofit</requirement>
     </requirements>
     <command detect_errors='exit_code'><![CDATA[
-
-    physiofit4galaxy --galaxy
-
-    #if $input_selection.input_selector == 'tsv':
-        --data '$input_selection.datafile'
-    #end if
-
-    #if $input_selection.input_selector == 'json':
-        --data '$input_selection.datafile'
-        --config '$input_selection.cfgfile'
-    #end if
-
-
-    #if $basic_settings.lag:
-        -l
-    #end if
-
-    #if $basic_settings.deg_select.deg == 'Yes':
-        -d '$basic_settings.deg_select.degconsts'
-    #end if
-
-    #if $basic_settings.mc_select.montecarlo == 'Yes':
-        -mc '$basic_settings.mc_select.iters'
-    #end if
-
-    --vini '$advanced_settings.vini'
-
-    #if $advanced_settings.sd_select.sd == 'Yes':
-        -s '$advanced_settings.sd_select.stddevs'
-    #end if
-
-    #if $advanced_settings.cm_select.cm == 'Yes':
-        -cm '$advanced_settings.cm_select.conc_met_bounds'
-    #end if
-
-    #if $advanced_settings.fm_select.fm == 'Yes':
-        -fm '$advanced_settings.fm_select.flux_met_bounds'
-    #end if
-
-    #if $advanced_settings.cb_select.cb == 'Yes':
-        -cb '$advanced_settings.cb_select.conc_biom_bounds'
-    #end if
-
-    #if $advanced_settings.fb_select.fb == 'Yes':
-        -fb '$advanced_settings.fb_select.flux_biom_bounds'
-    #end if
-
-    #if $advanced_settings.verbose:
-        -v
-    #end if
-
-    -op '$plots' -of '$fluxes' -os '$stats' -oc '$config' 2> $log
-
-    ]]></command>
+    physiofit
+    --galaxy 
+    --config $configfile 
+    --data $datafile 
+    -or '$recap' 
+    -oz $zip 
+    2> $log 
+    ]]>
+    </command>
     <inputs>
-
-        <conditional name='input_selection'>
-            <param name='input_selector' type='select' label='Choose the input data type to upload (tsv or json config file. For more information please check the documentation'>
-                <option value='tsv'>tsv file</option>
-                <option value='json'>config file (json)</option>
-            </param>
-            <when value='tsv'>
-                <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
-            </when>
-            <when value='json'>
-                <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
-                <param name='cfgfile' type='data' format='json' label='Upload configuration file' />
-            </when>
-        </conditional>
-
-
-        <section name='basic_settings' title='Basic Settings'>
-
-            <param name='lag' type='boolean' argument='--lag' truevalue='-l' falsevalue='' label='Flag to estimate lag phase'/>
-
-            <conditional name='deg_select'>
-                <param name='deg' type='select' label='Select yes to add degradation constants'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param type='text' name='degconsts' value='{}' label='Enter degradation constants in dictionary format (see docs for more information)'>
-                        <sanitizer>
-                            <valid>
-                                <add value='"'/>
-                                <add value='{'/>
-                                <add value='}'/>
-                            </valid>
-                        </sanitizer>
-                    </param>
-                </when>
-            </conditional>
-
-            <conditional name='mc_select'>
-                <param name='montecarlo' type='select' label='Select yes for sensitivity analysis'>
-                    <option value='Yes'>Yes</option>
-                    <option value='No'>No</option>
-                </param>
-                <when value='Yes'>
-                    <param name='iters' type='integer' value='100' label='Number of iterations for sensitivity analysis'/>
-                </when>
-            </conditional>
-
-        </section>
-
-
-        <section name='advanced_settings' title='Advanced Settings'>
-
-            <param name='vini' type='float' value='1' label='Initial value for fluxes to estimate' />
-
-            <conditional name='sd_select'>
-                <param name='sd' type='select' label='Select yes to add standard deviations'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param name='stddevs' type='text' value='{}' label='Standard deviation on measurements. Give SDs in dictionary format (see docs for more information)'>
-                        <sanitizer>
-                            <valid>
-                                <add value='"'/>
-                                <add value='{'/>
-                                <add value='}'/>
-                            </valid>
-                        </sanitizer>
-                    </param>
-                </when>
-            </conditional>
-
-            <conditional name='cm_select'>
-                <param name='cm' type='select' label='Flag to add bounds on metabolite concentrations'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param name='conc_met_bounds' type='text' value='()' label='Bounds on metabolite concentrations. Bounds should be given in tuple format (see docs for more information)'/>
-
-                </when>
-            </conditional>
-
-            <conditional name='fm_select'>
-                <param name='fm' type='select' label='Select yes to add bounds on metabolite fluxes'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param name='flux_met_bounds' type='text' value='()' label='Bounds on metabolite fluxes. Bounds should be given in tuple format (see docs for more information)' />
-                </when>
-            </conditional>
-
-            <conditional name='cb_select'>
-                <param name='cb' type='select' label='Select yes to add bounds on biomass concentrations'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param name='conc_biom_bounds' type='text' value='()' label='Bounds on biomass concentrations. Bounds should be given in tuple format (see docs for more information)' />
-                </when>
-            </conditional>
-
-            <conditional name='fb_select'>
-                <param name='fb' type='select' label='Select yes to add bounds on biomass fluxes'>
-                    <option value='No'>No</option>
-                    <option value='Yes'>Yes</option>
-                </param>
-                <when value='Yes'>
-                    <param name='flux_biom_bounds' type='text' value='()' label='Bounds on biomass fluxes. Bounds should be given in tuple format (see docs for more information)' />
-                </when>
-            </conditional>
-
-            <param name='verbose' type='boolean' argument='--verbose' truevalue='-v' falsevalue='' label='Flag to get debug information'/>
-
-        </section>
-
+        <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
+        <param name='configfile' type='data' format='yaml' multiple='true' label='Upload yaml configuration file containing run parameters'/>
     </inputs>
-
     <outputs>
-    <data name='plots' label='Plots' format='pdf'/>
-    <data name='fluxes' label='Flux_results' format='tabular'/>
-    <data name='stats' label='Stat_results' format='tabular'/>
-    <data name='config' label='Config_file' format='json'/>
-    <data name='log' label='Run_Log' format='txt'/>
+        <data name='recap' label='Summary file' format='csv'/>
+        <data name='zip' label='Results' format='zip'/>
+        <data name='log' label='Log' format='txt'/>
     </outputs>
-
     <tests>
         <test>
-            <param name='input_selection|input_selector' value='tsv' />
-            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />
-            <section name='basic_settings'>
-                <param name='lag' value='No'/>
-                <param name='deg_select|deg' value='No'/>
-                <param name='mc_select|montecarlo' value='Yes'/>
-            </section>
-            <section name='advanced_settings'>
-                <param name='vini' value='1'/>
-                <param name='sd_select|sd' value='No'/>
-                <param name='cm_select|cm' value='No'/>
-                <param name='fm_select|fm' value='No'/>
-                <param name='cb_select|cb' value='No'/>
-                <param name='fb_select|fb' value='No'/>
-                <param name='verbose' value='No'/>
-            </section>
-            <output name='fluxes'>
+            <param name='datafile' value='data.txt'/>
+            <param name='configfile' value='config_file.yml'/>
+            <output name='recap'>
                 <assert_contents>
-                    <has_n_columns n='7'/>
-                    <has_n_lines n='7'/>
-                    <has_size value='767' delta='20'/>
+                    <has_text text='experiments'/>
+                    <has_text text='growth_rate'/>
+                    <has_text text='Glc_q'/>
+                    <has_text text='Glc_M0'/>
+                    <has_text text='Ace_q'/>
+                    <has_text text='Ace_M0'/>
+                    <has_text text='optimal'/>
+                    <has_text text='mean'/>
+                </assert_contents>
+            </output>
+            <output name='zip'>
+                <assert_contents>
+                    <has_archive_member path='.*\.svg' min='3'/>
+                    <has_archive_member path='.*\.tsv' min='2'/>
+                    <has_archive_member path='.*\.pdf' min='1'/>
                 </assert_contents>
             </output>
         </test>
-<!--        <test>-->
-<!--            <param name='input_selection|input_selector' value='tsv' />-->
-<!--            <param name='input_selection|datafile' value='KEIO_ROBOT6_1.tsv' />-->
-<!--            <section name='basic_settings'>-->
-<!--                <param name='lag' value='No'/>-->
-<!--                <param name='deg_select|deg' value='No'/>-->
-<!--                <param name='mc_select|montecarlo' value='No'/>-->
-<!--            </section>-->
-<!--            <section name='advanced_settings'>-->
-<!--                <param name='vini' value='1'/>-->
-<!--                <param name='sd_select|sd' value='No'/>-->
-<!--                <param name='cm_select|cm' value='No'/>-->
-<!--                <param name='fm_select|fm' value='No'/>-->
-<!--                <param name='cb_select|cb' value='No'/>-->
-<!--                <param name='fb_select|fb' value='No'/>-->
-<!--                <param name='verbose' value='No'/>-->
-<!--            </section>-->
-<!--            <output name='fluxes' file='flux_results.tsv'/>-->
-<!--        </test>-->
     </tests>
-
     <help><![CDATA[
-.. class:: warningmark
-
-**PhysioFit is a scientific tool designed to i) quantify exchange (production and consumption) fluxes and ii) cell growth
-rate during (batch) cultivations of microorganisms.**
-
-Fluxes are estimated from time-course measurements of extracellular metabolites and biomass concentrations. PhysioFit has been designed to
-calculate fluxes in batch experiments, assuming cells are in metabolic (pseudo) steady-state (i.e. fluxes are constant during the experiment).
-
-**PhysioFit includes the following features:**
-
-   * **calculation of growth rate and extracellular (uptake and production) fluxes**.
-   * if cell growth has some **lag** (e.g. due to adaptation to a novel environment), lag can be taken into account and lag time estimated.
-   * **non-enzymatic degradation** of some metabolites (e.g. DHA or glutamine) can be estimated and taken into account when calculating fluxes.
-   * sensitivity analyses are performed to **estimate the precision of the calculated fluxes**.
-   * **evaluation of the goodness of fit and visual inspection of the fitted curves**.
-   * shipped as a **library** with both a **graphical** and **command line** interface,
-   * open-source, free and easy to install everywhere where Python 3 and pip run,
-   * biologist-friendly.
-
-It is one of the routine tools that we use at the MetaSys team and `MetaToul platform <http://www.metatoul.fr>`_ to calculate fluxes.
-
-The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
-
-We strongly encourage you to read the `documentation <https://physiofit.readthedocs.io/en/latest/>`_ before using PhysioFit.
-
-    ]]></help>
+        **PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake & production fluxes**
+    
+        Fluxes are estimated using mathematical models by fitting time-course measurements of the concentration of
+        cells and extracellular substrates and products. PhysioFit is shipped with some common growth models, and
+        additional tailor-made models can be implemented by users.
+        
+        **PhysioFit includes the following features:**
+        
+            * **calculation of growth rate and extracellular (uptake and production) fluxes**,
+            * **a set of steady-state and dynamic models** are shipped with PhysioFit,
+            * **tailor-made models** can be constructed by users,
+            * Monte-Carlo sensitivity analysis to **estimate the precision of the calculated fluxes**,
+            * **evaluation of the goodness of fit and visual inspection of the fitted curves**,
+            * shipped as a **library** with both a **graphical** and a **command line** interface,
+            * **open-source, free and easy to install** everywhere where Python 3 and pip run,
+            * **biologist-friendly**.
+        
+        It is one of the routine tools that we use at the
+        `MetaSys team <https://www.toulouse-biotechnology-institute.fr/en/poles/equipe-metasys/>`_
+        and `MetaToul platform <https://mth-metatoul.com/>`_ to calculate fluxes.
+        
+        The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
+        
+        This documentation is available on Read the Docs (`https://physiofit.readthedocs.io <https://physiofit.readthedocs.io/>`_)
+        and can be downloaded as a `PDF file <https://readthedocs.org/projects/physiofit/downloads/pdf/latest/>`_.
+        
+]]></help>
     <citations>
-        <citation type='bibtex'>
-    @misc{githubphysiofit,
-      author = {Le Gregam, Loic},
-      year = {2022},
-      title = {PhysioFit},
-      publisher = {Peiro et al.},
-      journal = {Appl Environ Microbiol},
-      url = {https://journals.asm.org/doi/10.1128/AEM.00768-19},
-    }</citation>
-        </citations>
+        <citation type='bibtex'>@article{10.1101/2023.10.12.561695,
+            author = {Le Grégam, Loïc and Guitton, Yann and Bellvert, Floriant and Heux, Stéphanie and Jourdan, Fabien and Portais, Jean-Charles and Millard, Pierre},
+            title = "{Physiofit: a software to quantify cell growth parameters and extracellular fluxes}",
+            year = {2023},
+            month = {10},
+            abstract = '{Quantification of growth parameters and extracellular uptake and production fluxes is central in systems and synthetic biology. 
+                Fluxes can be estimated using various mathematical models by fitting time-course measurements of the concentration of cells and 
+                extracellular substrates and products. A single tool is available to calculate extracellular fluxes, but it is hardly interoperable and 
+                includes a single hard-coded growth model. We present our open-source flux calculation software, PhysioFit, which can be used with any 
+                growth model and is interoperable by design. PhysioFit includes by default the most common growth models, and additional models can be 
+                implemented by users to calculate fluxes and other growth parameters for metabolic systems or experimental setups that follow alternative 
+                kinetics. PhysioFit can be used as a Python library and includes a graphical user interface for intuitive use by end-users and a 
+                command-line interface to streamline integration into existing pipelines.}',
+            doi = {10.1101/2023.10.12.561695},
+            url = {https://doi.org/10.1101/2023.10.12.561695},
+        }
+        </citation>
+    </citations>
 </tool>

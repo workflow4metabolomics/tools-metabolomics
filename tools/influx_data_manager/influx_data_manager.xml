@@ -22,14 +22,14 @@
     2> $err_out
     ]]></command>
     <inputs>
-        <param type='data' name='in_netw' label='netw' help='File containing network for experiments (.netw file)' optional='false'/>
-        <param type='data' name='in_isocor' label='miso' help='Output of isocor which corresponds to the .miso input' optional='false'/>
-        <param type='data' name='in_tvar' label='tvar' help='File containing types of variables for experiments (.tvar file)' optional='false'/>
-        <param type='data' name='in_physiofit' label='mflux' help='Output of physiofit which corresponds to the .mflux input' optional='true'/>
-        <param type='data' name='in_linp' label='linp' help='File contianing label inputs for experiments (.linp file)' optional='true'/>
-        <param type='data' name='in_mmet' label='mmet' help='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
-        <param type='data' name='in_cnstr' label='cnstr' help='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
-        <param type='data' name='in_opt' label='opt' help='File containing options for influx_si (.opt  file)' optional='true'/>
+        <param type='data' format='tabular, txt' name='in_netw' label='netw' help='File containing network for experiments (.netw file)' optional='false'/>
+        <param type='data' format='tabular, txt' name='in_isocor' label='miso' help='Output of isocor which corresponds to the .miso input' optional='false'/>
+        <param type='data' format='tabular, txt' name='in_tvar' label='tvar' help='File containing types of variables for experiments (.tvar file)' optional='false'/>
+        <param type='data' format='tabular, txt' name='in_physiofit' label='mflux' help='Output of physiofit which corresponds to the .mflux input' optional='true'/>
+        <param type='data' format='tabular, txt' name='in_linp' label='linp' help='File contianing label inputs for experiments (.linp file)' optional='true'/>
+        <param type='data' format='tabular, txt' name='in_mmet' label='mmet' help='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
+        <param type='data' format='tabular, txt' name='in_cnstr' label='cnstr' help='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
+        <param type='data' format='tabular, txt' name='in_opt' label='opt' help='File containing options for influx_si (.opt  file)' optional='true'/>
         <param name='verbose' type='select' label='Debug mode' help='Select "Yes" to have debug logs be printed out'>
             <option value='true'>Yes</option>
             <option value='false'>No</option>
@@ -44,7 +44,7 @@
     </outputs>
     <tests>
         <test>
-            <param name='in_netw' value='galaxy_test.netw'/>
+            <param name='in_netw'  value='galaxy_test.netw'/>
             <param name='in_isocor' value='galaxy_test.tsv'/>
             <param name='in_tvar' value='galaxy_test.tvar'/>
             <param name='in_physiofit' value='galaxy_test.csv'/>

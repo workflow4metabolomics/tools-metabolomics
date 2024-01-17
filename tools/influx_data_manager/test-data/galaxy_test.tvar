@@ -1,0 +1,102 @@
+# Created by 'ftbl2mtf e_coli.ftbl -o mtf/' at 2022-05-25 17:04:34 CEST +0200
+Id	Comment	Name	Kind	Type	Value
+		Glucupt_1	NET	F	0.7
+		Glucupt_U	NET	D	
+		pgi	NET	D	
+		pfk	NET	D	
+		ald	NET	D	
+		pgk	NET	D	
+		eno	NET	D	
+		pyk	NET	F	1.4
+		zwf	NET	F	0.2
+		gnd	NET	F	0.15062
+		edd	NET	D	
+		ta	NET	D	
+		tk1	NET	D	
+		tk2	NET	D	
+		pdh	NET	D	
+		citsynth	NET	D	
+		idh	NET	D	
+		akgdh	NET	D	
+		fum_a	NET	D	
+		fum_b	NET	D	
+		maldh	NET	D	
+		ppc	NET	D	
+		mae	NET	D	
+		bs_glc6P	NET	C	0.0109
+		bs_fru6P	NET	C	0.0038
+		bs_pga	NET	C	0.0791
+		bs_pga_aux	NET	D	
+		bs_pga1	NET	D	
+		bs_pga1_aux	NET	C	0.0109
+		bs_pga2	NET	D	
+		bs_pga2_aux	NET	C	0.0046
+		bs_pga3	NET	D	
+		bs_pga3_aux	NET	C	0.0308
+		bs_DHAP	NET	C	0.0068
+		bs_pyr	NET	C	0.1501
+		bs_pyr1	NET	D	
+		bs_pyr1_aux	NET	D	
+		bs_pyr2	NET	D	
+		bs_pyr4	NET	D	
+		bs_pyr4_aux	NET	C	0.0213
+		bs_pyr3	NET	D	
+		bs_pyr3_aux	NET	C	0.0227
+		bs_e4p	NET	D	
+		bs_rib5p	NET	C	0.0476
+		bs_rib5p1	NET	D	
+		bs_rib5p1_aux	NET	C	0.0048
+		bs_rib5p2	NET	D	
+		bs_pep	NET	C	0.0381
+		bs_pep1	NET	D	
+		bs_pep2	NET	D	
+		bs_pep3a	NET	D	
+		bs_pep3b	NET	D	
+		bs_pep3_aux	NET	C	0.0093
+		bs_pep4a	NET	D	
+		bs_pep4b	NET	D	
+		bs_pep4_aux	NET	C	0.0069
+		bs_pep5	NET	C	0.0027
+		bs_pep6	NET	D	
+		bs_pep6_aux	NET	D	
+		bs_pep7	NET	D	
+		bs_accoa	NET	C	0.1565
+		bs_accoa_aux	NET	D	
+		bs_akg	NET	C	0.0571
+		bs_akg1	NET	D	
+		bs_akg2	NET	C	0.0111
+		bs_akg3	NET	C	0.0132
+		bs_akg4	NET	D	
+		bs_akg4_aux	NET	D	
+		bs_oaa	NET	C	0.0947
+		bs_oaa1	NET	D	
+		bs_oaa1_aux	NET	C	0.0121
+		bs_oaa2	NET	D	
+		bs_oaa2_aux	NET	C	0.0146
+		bs_oaa3a	NET	D	
+		bs_oaa3b	NET	D	
+		bs_oaa3_aux	NET	C	0.0173
+		bs_oaa4	NET	D	
+		bs_oaa5	NET	D	
+		bs_oaa5_aux	NET	C	0.0128
+		bs_oaa6	NET	D	
+		bs_oaa6_aux	NET	C	0.0077
+		bs_oaa7	NET	D	
+		bs_oaa7_aux	NET	C	0.0121
+		out_co2	NET	D	
+		out_Ac	NET	F	0.213
+		out_FTHF	NET	D	
+		pgi	XCH	C	0.752386
+		ald	XCH	F	0.413926
+		pgk	XCH	C	0.984718
+		eno	XCH	F	0.800962
+		pyk	XCH	C	0.0109591
+		ta	XCH	F	0.359468
+		tk1	XCH	F	0.166316
+		tk2	XCH	F	2.11559e-03
+		pdh	XCH	C	0.0322745
+		fum_a	XCH	F	0.395958
+		fum_b	XCH	D	
+		maldh	XCH	C	0.647115
+		ppc	XCH	F	0.256772
+		bs_pga3	XCH	C	0.011799

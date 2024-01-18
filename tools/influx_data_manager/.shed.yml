@@ -1,4 +1,4 @@
-name: influx-si-data-manager
+name: influx_si_data_manager
 owner: workflow4metabolomics
 description: Handling influx_si data inputs in Galaxy workflows
 long_description: This tool is mean to handle the input files for influx_si within workflows. It is not meant to be used as a stand-alone within the platform.

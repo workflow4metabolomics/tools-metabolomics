@@ -4,31 +4,30 @@
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>influx-si-data-manager</requirement>
-        <!-- <requirement type='package' version='2.2.0'>pandas</requirement> FOR TESTING PURPOSES -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
     influx_data_manager
-    --physiofit $physiofit 
-    --isocor $isocor 
-    --linp $linp 
-    --netw $netw 
-    --mmet $mmet 
-    --cnstr $cnstr 
-    --tvar $tvar 
-    --opt $opt 
-    --log $stdout
+    --physiofit '$physiofit' 
+    --isocor '$isocor'
+    --linp '$linp'
+    --netw '$netw'
+    --mmet '$mmet'
+    --cnstr '$cnstr' 
+    --tvar '$tvar'
+    --opt '$opt'
+    --log '$stdout'
     $verbose
-    2> $stderr
+    2> '$stderr'
     ]]></command>
     <inputs>
-        <param type='data' format='tabular, txt' argument='--netw' label='netw' help='File containing network for experiments (.netw file)' optional='false'/>
-        <param type='data' format='tabular, txt' argument='--isocor' label='miso' help='Output of isocor which corresponds to the .miso input' optional='false'/>
-        <param type='data' format='tabular, txt' argument='--tvar' label='tvar' help='File containing types of variables for experiments (.tvar file)' optional='false'/>
-        <param type='data' format='tabular, txt' argument='--physiofit' label='mflux' help='Output of physiofit which corresponds to the .mflux input' optional='true'/>
-        <param type='data' format='tabular, txt' argument='--linp' label='linp' help='File contianing label inputs for experiments (.linp file)' optional='true'/>
-        <param type='data' format='tabular, txt' argument='--mmet' label='mmet' help='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
-        <param type='data' format='tabular, txt' argument='--cnstr' label='cnstr' help='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
-        <param type='data' format='tabular, txt' argument='--opt' label='opt' help='File containing options for influx_si (.opt  file)' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--netw' label='netw' help='File containing network for experiments (.netw file)' optional='false'/>
+        <param type='data' format='tabular,txt' argument='--isocor' label='miso' help='Output of isocor which corresponds to the .miso input' optional='false'/>
+        <param type='data' format='tabular,txt' argument='--tvar' label='tvar' help='File containing types of variables for experiments (.tvar file)' optional='false'/>
+        <param type='data' format='tabular,txt' argument='--physiofit' label='mflux' help='Output of physiofit which corresponds to the .mflux input' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--linp' label='linp' help='File contianing label inputs for experiments (.linp file)' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--mmet' label='mmet' help='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--cnstr' label='cnstr' help='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--opt' label='opt' help='File containing options for influx_si (.opt  file)' optional='true'/>
         <param name='verbose' type='boolean' truevalue='--verbose' falsevalue='' label='Debug mode' help='Select "Yes" to have debug logs be printed out'/>
     </inputs>
     <outputs>
@@ -74,7 +73,7 @@
         </test>
     </tests>
     <help><![CDATA[
-    This tool is mean to handle the input files for influx_si within workflows. It is not meant to be used as a stand-alone within the platform.
+    This tool is meant to handle the input files for influx_si within workflows. It is not meant to be used as a stand-alone within the platform.
     ]]></help>
     <citations>
         <citation type='bibtex'>

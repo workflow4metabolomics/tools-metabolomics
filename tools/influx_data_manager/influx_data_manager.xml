@@ -1,9 +1,10 @@
-<tool id="influx_data_manager" name="Influx Data Manager: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy0" profile="21.09">
+<tool id="influx_data_manager" name="Influx Data Manager: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy0" profile="23.0">
     <macros>
         <token name='@TOOL_VERSION@'>1.0.0</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>influx-si-data-manager</requirement>
+        <!-- <requirement type='package' version='2.2.0'>pandas</requirement> FOR TESTING PURPOSES -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
     influx_data_manager

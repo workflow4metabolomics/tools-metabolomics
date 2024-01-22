@@ -51,9 +51,18 @@
             <output_collection name='list_output' type='list'>
                 <element name='Sample_1'>
                     <assert_contents>
-                        <has_archive_member path='Sample_1.miso'/>
-                        <has_archive_member path='Sample_1.mflux'/>
-                        <has_archive_member path='Sample_1.netw'/>
+                        <has_archive_member path='Sample_1.miso'>
+                            <has_text_matching expression='sample\tId\tComment\tSpecie\tFragment\tDataset\tIsospecies\tSD\tTime'/>
+                            <has_n_lines n='30'/>
+                        </has_archive_member>
+                        <has_archive_member path='Sample_1.mflux'>
+                            <has_text_matching expression='Id\tComment\tFlux\tValue\tSD'/>
+                            <has_text_matching expression='Glc_q'/>
+                            <has_n_lines n='4'/>
+                        </has_archive_member>
+                        <has_archive_member path='Sample_1.netw'>
+                            <has_n_lines n='87'/>
+                        </has_archive_member>
                         <has_archive_member path='Sample_1.tvar'/>
                         <has_archive_member path='Sample_1.linp'/>
                         <has_archive_member path='Sample_1.cnstr'/>

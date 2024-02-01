@@ -17,7 +17,7 @@
     --opt '$opt'
     --log '$stdout'
     $verbose
-    2> '$stderr'
+    2> '$stderr' && cat '$stdout'
     ]]></command>
     <inputs>
         <param type='data' format='tabular,txt' argument='--netw' label='netw' help='File containing network for experiments (.netw file)' optional='false'/>

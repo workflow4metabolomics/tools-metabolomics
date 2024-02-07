@@ -3,4 +3,5 @@ owner: workflow4metabolomics
 description: Converting skyline output to IsoCor input
 long_description: Preparing skyline output data for use in IsoCor software for natural abundance isotope correction.
 categories: [Metabolomics]
-remote_repository_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/Skyline2IsoCor
+remote_repository_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/tools_w4m
+homepage_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/Skyline2IsoCor

@@ -1,4 +1,4 @@
-<tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION+galaxy0' profile='23.0'>
+<tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION@+galaxy0' profile='23.0'>
     <macros>
         <token name='@TOOL_VERSION@'>0.1.2</token>
     </macros>
@@ -8,14 +8,20 @@
     <command detect_errors='exit_code'><![CDATA[
     skyline2isocor '$skyline_output' '$isocor_input' > '$stdout' 2> '$stderr'
     ]]></command>
-    <input>
+    <inputs>
         <param type='data' format='tabular, txt' name='skyline_output' label='Skyline output file' help='Skyline output to convert'/>
-    </input>
+    </inputs>
     <outputs>
         <data format='txt' name='stdout' label='Log'/>
         <data format='txt' name='stderr' label='Error log' />
         <data format='tabular, txt' name='isocor_input' label='IsoCor input file' />
     </outputs>
+    <tests>
+        <test>
+            <param name='skyline_output' value='skyline_output.csv' />
+            <output name='isocor_input' value='test_output.tsv' />
+        </test>
+    </tests>
     <help><![CDATA[
         Preparing skyline output data for use in IsoCor software for natural abundance isotope correction. Can be directly linked to Isocor in a workflow. Input is the skyline output. Necessary columns: File Name, Molecule Name, Product Adduct, Total Area.
         ]]></help>

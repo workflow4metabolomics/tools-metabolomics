@@ -14,7 +14,7 @@
     <outputs>
         <data format='txt' name='stdout' label='Log'/>
         <data format='txt' name='stderr' label='Error log' />
-        <data format='tabular, txt' name='isocor_input' label='IsoCor input file' />
+        <data format='tabular,txt' name='isocor_input' label='IsoCor input file' />
     </outputs>
     <tests>
         <test>
@@ -23,16 +23,17 @@
         </test>
     </tests>
     <help><![CDATA[
-        Preparing skyline output data for use in IsoCor software for natural abundance isotope correction. Can be directly linked to Isocor in a workflow. Input is the skyline output. Necessary columns: File Name, Molecule Name, Product Adduct, Total Area.
+        Preparing skyline output data for use in IsoCor software for natural abundance isotope correction. Can be directly linked to Isocor in a workflow.
+        Input is the skyline output. Necessary columns: File Name, Molecule Name, Product Adduct, Total Area.
         ]]></help>
-        <citations>
-            <citation type='bibtex'>
+    <citations>
+        <citation type='bibtex'>
                 @misc{
                 githubskyline2isocor,
                 author = {Le Gregam, Loic},
                 year = {2024},
                 title = {Skyline2IsoCor,
             }
-            </citation>
-            </citations>
+        </citation>
+    </citations>
 </tool>

@@ -1,12 +1,12 @@
 <tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION@+galaxy0' profile='23.0'>
     <macros>
-        <token name='@TOOL_VERSION@'>0.1.2</token>
+        <token name='@TOOL_VERSION@'>0.3.0</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>skyline2isocor</requirement>
     </requirements>
     <command detect_errors='exit_code'><![CDATA[
-    skyline2isocor '$skyline_output' '$isocor_input' > '$stdout' 2> '$stderr'
+    skyline2isocor -i '$skyline_output' -o '$isocor_input' > '$stdout' 2> '$stderr'
     ]]></command>
     <inputs>
         <param type='data' format='tabular, txt' name='skyline_output' label='Skyline output file' help='Skyline output to convert'/>

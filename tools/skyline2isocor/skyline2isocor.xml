@@ -1,4 +1,4 @@
-<tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION@+galaxy0' profile='23.0'>
+<tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION@+galaxy0' profile='20.5'>
     <macros>
         <token name='@TOOL_VERSION@'>0.3.0</token>
     </macros>

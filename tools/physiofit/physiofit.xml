@@ -5,7 +5,7 @@
     </macros>
 
     <requirements>
-        <requirement type='package' version='@TOOL_VERSION@'>physiofit</requirement>
+        <requirement type='package' version="@TOOL_VERSION@">physiofit</requirement>
     </requirements>
     
     <command detect_errors='exit_code'><![CDATA[

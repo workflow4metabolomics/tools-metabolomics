@@ -18,7 +18,7 @@
     </outputs>
     <tests>
         <test>
-            <param name='skyline_output' value='skyline_output.csv' />
+            <param name='skyline_output' value='skyline_output.txt' />
             <output name='isocor_input' value='test_output.tsv' />
         </test>
     </tests>

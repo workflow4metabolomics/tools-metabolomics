@@ -61,7 +61,7 @@
                             <has_n_lines n='4'/>
                         </has_archive_member>
                         <has_archive_member path='Sample_1.netw'>
-                            <has_n_lines n='87'/>
+                            <has_n_lines n='86'/>
                         </has_archive_member>
                         <has_archive_member path='Sample_1.tvar'/>
                         <has_archive_member path='Sample_1.linp'/>

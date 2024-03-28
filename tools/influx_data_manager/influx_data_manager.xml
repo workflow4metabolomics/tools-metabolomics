@@ -1,6 +1,6 @@
 <tool id="influx_data_manager" name="Influx Data Connector: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy0" profile="23.0">
     <macros>
-        <token name='@TOOL_VERSION@'>1.0.0</token>
+        <token name='@TOOL_VERSION@'>1.0.2</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>influx-si-data-manager</requirement>
@@ -61,7 +61,7 @@
                             <has_n_lines n='4'/>
                         </has_archive_member>
                         <has_archive_member path='Sample_1.netw'>
-                            <has_n_lines n='87'/>
+                            <has_n_lines n='86'/>
                         </has_archive_member>
                         <has_archive_member path='Sample_1.tvar'/>
                         <has_archive_member path='Sample_1.linp'/>

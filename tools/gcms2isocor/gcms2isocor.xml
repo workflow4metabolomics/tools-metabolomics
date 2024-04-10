@@ -18,7 +18,7 @@
     <tests>
         <test>
             <param name="input_gcms_files" value="13CPROT1.txt,13CPROT2.txt"/>
-            <output name="output_isocor" file="input_isocor.tsv"/>
+            <output name="output_isocor" file="input_isocor.tsv" ftype="tabular"/>
         </test>
     </tests>
     <help><![CDATA[

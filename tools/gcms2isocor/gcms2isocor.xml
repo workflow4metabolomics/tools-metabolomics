@@ -5,9 +5,7 @@
     <command detect_errors="exit_code"><![CDATA[
         p2m2tools fr.inrae.metabolomics.p2m2.command.GCMS2IsocorCommand
             #for $input in $input_gcms_files
-                #if $input
-                    $input
-                #end if
+                '$input'
             #end for
             --out '$output_isocor'
     ]]></command>

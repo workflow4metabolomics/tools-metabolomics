@@ -36,4 +36,8 @@
 	Example: the name “ProlineC2C5_TMS_m0” is for the GC-MS fragment m/z 142 (integrated peak) containing the C2-C3-C4-C5 carbon skeleton of proline and 1 TMS derivative. m0 refers to the carbon isotopologue
 	monitored (m0 for m/z = 142, m1 for m/z = 143, m2 for m/z = 144, m3 for m/z = 145, m4 for m/z = 146).
     ]]></help>
+     <citations>
+        <citation type="doi">10.15454/1I9PET</citation>
+        <citation type="doi">10.3389/fpls.2022.885051</citation>
+    </citations>
 </tool>

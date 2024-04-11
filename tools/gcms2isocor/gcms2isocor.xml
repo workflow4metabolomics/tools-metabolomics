@@ -1,6 +1,7 @@
 <tool id="gcms2isocor" name="Conversion GCMS PostRun Analysis to IsoCor format" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.09">
     <macros>
         <token name="@TOOL_VERSION@">0.2.1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <requirements>
         <container type="docker" >inraep2m2/p2m2tools:@TOOL_VERSION@</container>

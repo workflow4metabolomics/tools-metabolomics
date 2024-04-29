@@ -1,0 +1,55 @@
+<tool id="xcms_plot_raw" name = "xcms plot raw" version="@TOOL_VERSION@+galaxy0" profile="21.09">
+    <description>Plot raw data filtered by m/z range and retention time (RT) range</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="bio.tools"/>
+    <expand macro="creator"/>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript -e 'source("${plot_raw}")'
+    ]]></command>
+    <configfiles>
+        <configfile name="plot_raw">
+library(xcms)
+library(MsExperiment)
+library(Spectra)
+mse = readMsExperiment(file.path('${input}'))
+mz_offset = ${tolerance_ppm} * 1e-6 * ${mz_value}
+rt_offset = ${rt_range} / 2
+raw = mse |>
+    filterRt(rt = ${rt} + c(-rt_offset, rt_offset)) |>
+    filterMzRange(mz = ${mz_value} + c(-mz_offset, mz_offset))
+png(filename = '${output_filename}')
+par(oma = c(0.5, 2, 0.5, 1))
+plot(raw)
+dev.off()
+        </configfile>
+    </configfiles>
+    <inputs>
+        <expand macro="base_params"/>
+        <param type="float" name="rt" label="Retention Time" min="0.0" value="0.0" help="Retention time for the plot"/>
+        <param type="float" name="rt_range" value="5.0" min="0.0" label="Retention Time Range" help="Retention time range for the plot"/>
+    </inputs>
+    <outputs>
+        <data name="output_filename" format="png" label="PLot at m/z=$mz_value and rt=$rt of $input.element_identifier"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="input" value="xcms_plot_raw_testdata.mzML"/>
+            <param name="mz_value" value="153.06583"/>
+            <param name="tolerance_ppm" value="10"/>
+            <param name="rt" value="171.922"/>
+            <param name="rt_range" value="0.1"/>
+            <output name="output_filename" file="raw_plot.png" compare="sim_size" delta="5000"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+        This tool plots the raw data filtered by m/z range and retention time (RT) range from an mzML file. 
+        It uses a default tolerance of 10 ppm and retention time range of 5 s. 
+        More information and detailed instructions can be found in the tutorial at: https://jorainer.github.io/xcmsTutorials/articles/xcms-preprocessing.html#data-visualization
+    ]]></help>
+    <expand macro="citations"/>
+</tool>

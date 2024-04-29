@@ -1,7 +1,7 @@
 <tool id="xcms_plot_raw" name = "xcms plot raw" version="@TOOL_VERSION@+galaxy0" profile="21.09">
     <description>Plot raw data filtered by m/z range and retention time (RT) range</description>
     <macros>
-        <import>macros.xml</import>
+        <import>macros_xcms_plot.xml</import>
     </macros>
     <expand macro="bio.tools"/>
     <expand macro="creator"/>

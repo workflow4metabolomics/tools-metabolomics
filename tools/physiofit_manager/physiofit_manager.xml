@@ -1,4 +1,4 @@
-<tool id='physiofit_data_manager' name='PhysioFit data connector' profile='21.09' version='@TOOL_VERSION@+galaxy0'>
+<tool id='physiofit_data_manager' name='PhysioFit data connector' profile='21.09' version='@TOOL_VERSION@+galaxy1'>
     <description>Managing inputs for PhysioFit</description>
     <macros>
         <token name="@TOOL_VERSION@">1.0.1</token>

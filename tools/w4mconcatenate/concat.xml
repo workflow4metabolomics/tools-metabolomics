@@ -27,10 +27,10 @@
     concatenation "$concatenation"
     
     choice_keep "$choice.choice_keep"
-    #if str($choice.choice_keep) == 'oui':
+    #if str($choice.choice_keep) == 'yes':
     keep 0
     #end if
-    #if str($choice.choice_keep) == 'non':
+    #if str($choice.choice_keep) == 'no':
     keep "$choice.keep"
     #end if
     
@@ -63,16 +63,16 @@
   
    <conditional name="choice">
     <param name="choice_keep" type="select" display="radio" label="Keep all or just one">
-     <option value="oui">Keep all</option>
-     <option value="non">Keep one</option>
+     <option value="yes">Keep all</option>
+     <option value="no">Keep one</option>
     </param>
-    <when value="non">
+    <when value="no">
      <param name="keep" type="select" display="radio" label="Which Metadata to keep">
       <option value="1">Metadata 1</option>
       <option value="2">Metadata 2</option>
      </param>
     </when>
-    <when value="oui">
+    <when value="yes">
     </when>
    </conditional>
   
@@ -98,7 +98,7 @@
     <param name="metadata_1" value="Input_Unique_Test_1_SM1.txt"/>
     <param name="metadata_2" value="Input_Unique_Test_1_SM2.txt"/>
     <param name="concatenation" value="unique"/>
-    <param name="choice_keep" value="oui"/>
+    <param name="choice_keep" value="yes"/>
     <param name="tab1" value="Tab1"/>
     <param name="tab2" value="Tab2"/>
   
@@ -116,7 +116,7 @@
     <param name="metadata_1" value="Input_Unique_Test_4_SM1.txt"/>
     <param name="metadata_2" value="Input_Unique_Test_4_SM2.txt"/>
     <param name="concatenation" value="unique"/>
-    <param name="choice_keep" value="oui"/>
+    <param name="choice_keep" value="yes"/>
     <param name="tab1" value="Tab1"/>
     <param name="tab2" value="Tab2"/>
   

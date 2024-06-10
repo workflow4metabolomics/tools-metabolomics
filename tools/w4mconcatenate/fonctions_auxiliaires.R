@@ -89,7 +89,7 @@ compare_same_columns <- function(M1, M2, same, choice_keep, Keep, tab1, tab2) {
         
       # If we decide to keep the 2 columns and they do not take the same values, we change their names by adding a suffix.
         
-      if (choice_keep == "oui") { # keep both columns and give them a new name 
+      if (choice_keep == "yes") { # keep both columns and give them a new name 
          
         new_name <- paste(tab1, non_identical_columns, sep = "_")
         colnames(M1)[colnames(M1) == non_identical_columns] <- new_name 
@@ -99,7 +99,7 @@ compare_same_columns <- function(M1, M2, same, choice_keep, Keep, tab1, tab2) {
         
       }
       
-      if (choice_keep == "non") { # Keep only one and delete the other
+      if (choice_keep == "no") { # Keep only one and delete the other
         if (Keep == 1) {
           M2 <- M2[,-which(colnames(M2) == non_identical_columns)] 
           new_name <- paste(tab1, non_identical_columns, sep = "_")

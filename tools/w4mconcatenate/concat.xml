@@ -1,4 +1,4 @@
-<tool id="W4Mconcatenate" name="W4M concatenate" version="1.0.0">
+<tool id="W4Mconcatenate" name="W4M concatenate" version="1.0.0+galaxy0">
   <description>to merge two metadata tables</description>
   <requirements>
    <requirement type="package" version="4.3.3">r-base</requirement>

@@ -70,7 +70,7 @@ compare_same_columns <- function(M1, M2, same, choice_keep, Keep, tab1, tab2) {
       
     }
     
-    }
+  }
 
   # if the list of columns that do not take the same values is null, we return M1/M2
   if (is.null(non_identical_columns_v)) {
@@ -80,10 +80,7 @@ compare_same_columns <- function(M1, M2, same, choice_keep, Keep, tab1, tab2) {
     return(result)
     
     
-  }
-   
-
-    else{
+  } else{
      
       for (non_identical_columns in non_identical_columns_v) {
         

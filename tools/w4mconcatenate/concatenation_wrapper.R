@@ -26,8 +26,6 @@ print(para)
 cat('--------------------------------------------------------------------\n\n')
 
 
-
-
 #Lancement de l'outil
 
 A <- W4MRUtils::import2(para$dataMatrix_1, para$metadata_1, para$type, disable_comm = FALSE)
@@ -42,11 +40,6 @@ M2 <- B$metadata
 #para = list(dataMatrix_1 = "Input_Unique_Test_1-2-3-4-5_DM1.txt" , dataMatrix_2 = "Input_Unique_Test_1-2-3_DM2.txt", Metadata_1 = "Input_Unique_Test_1_M1.txt", Metadata_2 = "Input_Unique_Test_1_M1.txt", 
 #            type = "sample", tab1 = "Tab1", tab2= "Tab2", concatenations = "unique", choice_keep = "oui", Keep = 0)
 
-
-
-
-
-
 result_tables <- concat(DM1, M1, DM2, M2, para$type, para$tab1, 
               para$tab2, para$concatenation, para$choice_keep, para$keep)
 
@@ -59,30 +52,3 @@ cat('\n--------------------------------------------------------------------',
 sessionInfo()
 cat('--------------------------------------------------------------------\n',
     '\nJob ending time:\n',format(Sys.time(), "%a %d %b %Y %X"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

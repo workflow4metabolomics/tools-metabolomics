@@ -109,7 +109,6 @@
   
    </test>
   
-  
    <test expect_failure="true">
     <param name="dataMatrix_1" value="Input_Unique_Test_1-2-3-4-5_DM1.txt"/>
     <param name="dataMatrix_2" value="Input_Unique_Test_4_DM2.txt"/>
@@ -120,15 +119,9 @@
     <param name="tab1" value="Tab1"/>
     <param name="tab2" value="Tab2"/>
   
-  
-  
-  
    </test>
   
   </tests>
-  
-  
-  
   
   <help><![CDATA[
     
@@ -264,12 +257,3 @@ If common variables exist with no differences between the common individuals, th
     <person givenName="Mélanie" familyName="Petera"></person>
   </creator>
 </tool>
-
-
-
-
-
-
-
-
-

@@ -14,10 +14,6 @@ source_local("fonctions_auxiliaires.R")
 
 para <- W4MRUtils::parse_args(args = commandArgs()) 
 
-#para <- list(dataMatrix_1 = "Input_Unique_Test_1-2-3-4-5_DM1.txt", dataMatrix_2 = "Input_Unique_Test_1-2-3_DM2.txt", metadata_1 = "Input_Unique_Test_1_M1.txt", metadata_2 = "Input_Unique_Test_1_M2.txt", 
-#            type = "sample", tab1 = "Tab1", tab2 = "Tab2", concatenation = "unique", choice_keep = "oui", keep = 0, dataMatrix_1_out = "Datamatrix_1.file.tsv", dataMatrix_2_out = "Datamatrix_2.file.tsv",
-#            metadata_out = "Metadata_concatenate.tsv")
-
 
 cat('\nJob starting time:\n',format(Sys.time(), "%a %d %b %Y %X"),
     '\n\n--------------------------------------------------------------------', 
@@ -37,8 +33,6 @@ M1 <- A$metadata
 DM2 <- B$dataMatrix
 M2 <- B$metadata
 
-#para = list(dataMatrix_1 = "Input_Unique_Test_1-2-3-4-5_DM1.txt" , dataMatrix_2 = "Input_Unique_Test_1-2-3_DM2.txt", Metadata_1 = "Input_Unique_Test_1_M1.txt", Metadata_2 = "Input_Unique_Test_1_M1.txt", 
-#            type = "sample", tab1 = "Tab1", tab2= "Tab2", concatenations = "unique", choice_keep = "oui", Keep = 0)
 
 result_tables <- concat(DM1, M1, DM2, M2, para$type, para$tab1, 
               para$tab2, para$concatenation, para$choice_keep, para$keep)

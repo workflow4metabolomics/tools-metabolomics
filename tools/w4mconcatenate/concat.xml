@@ -147,7 +147,7 @@ Concatenation
 DESCRIPTION
 ===========        
       
-Allows concatenation of two matrix Metadata and returns a matrix of Metadata and two DataMatrix
+Concatenate two Metadata tables
     
     
 ---------------------------------------------------
@@ -156,7 +156,8 @@ Allows concatenation of two matrix Metadata and returns a matrix of Metadata and
 ALIGNMENT WITH OTHER TOOLS
 ==========================
      
-This tool is designed to work with any type of dataset. 
+This tool is designed to work with the W4M 3-tables format. Inputs are supposed to follow this standard. 
+Outputs follows the standard and thus can be used in further W4M-supported workflows.
 
 -----------
 Input files
@@ -197,50 +198,53 @@ TOOL PARAMETERS
       
 
 Data matrix 
- | contains the intensity values of the variables.
+ | contains the intensity values of the analytical variables. 
+ | First line is the sample identifiers and first column the variable identifiers.
  |
       
       
-Variable metadata file
- | contains variable information.
+Metadata file
+ | contains metadata about samples OR variables (only one type possible at a time). 
+ | Each metadata file must match its corresponding data matrix file regarding identifiers.
  |
       
 Type of metadata
- | Specify which type of metadata table is given as Metadata file
+ | Specify which type of metadata table is given as metadata file
  | 
       
       
 Type of concatenation 
  | Selects the type of concatenation
- | Unique: individuals are the same in both tables
- | Intersection: keep only individuals in common 
- | Union: keep all individuals in both tables
+ | Unique: identifiers are the same in both datasets (i.e. metadata file 1 and metadata file 2 are expected to match perfectly regarding identifiers)
+ | Intersection: keep only identifiers in common 
+ | Union: keep all identifiers in both datasets
  |
       
-Choice 
- | Favor a matrix in case of matrix with the same name and differents value or keep both
- | keep both columns and change their names by adding a suffix
- | keep the column belonging to metadata matrix 1 or metadata 2
+Choice_keep 
+ | Determine what to do in case a column name is found in the two metadata files
+ | - Keep all: both columns and change their names by adding a prefix
+ | - Keep one: the column belonging to metadata 1 or metadata 2
  |
       
-Suffixe of the column
- | By default, the suffixes are Tab1 and Tab2
+Prefixes for redundant columns
+ | By default, the prefixes are Tab1 and Tab2
  |
       
 ==================
 OUTPUT DESCRIPTION
 ==================
       
-**Unique**: the tables must have the same identifiers otherwise, a warning will be generated. 
-In this case, you will return the merged metadata without modifying the DataMatrix.
+**Unique**: the tables must have the same identifiers, otherwise a warning will be generated. 
+The output returned is a unique merged metadata file without modifying the DataMatrices.
     
-**Intersection**: there must be individuals in common between the two metadata, otherwise an error will be displayed. 
-Moreover, if the number of individuals in common is less than 5, a warning will be generated. 
-The DataMatrix will only keep common individuals.
+**Intersection**: there must be identifiers in common between the two metadata tables, otherwise an error will be displayed. 
+Moreover, if the number of identifiers in common is less than 5, a warning will be generated. 
+The DataMatrix outputs will only keep common identifiers.
     
-**Union**: the individuals don't necessarily have to be the same between the metadata. If no individuals are common, a warning will be generated. 
+**Union**: the identifiers don't necessarily have to be the same between the metadata tables. If no identifiers are common, a warning will be generated. 
 The modified DataMatrix will then include all the individuals, adding NA values for those that are missing.
-If common variables exist with no differences between the common individuals, the intersections will be added to the missing individuals.
+If common pairs of sample and variable exist between the dataset 1 and dataset 2 with no difference in the intensity values, 
+the intersections will be added instead of NA.
 
 
 

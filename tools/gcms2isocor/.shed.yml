@@ -1,0 +1,7 @@
+name: gcms2isocor
+owner: workflow4metabolomics
+categories: [Metabolomics]
+description: Corrective method dedicated to Isocor for calculating carbon isotopologue distribution from GCMS runs
+long_description: gcms2isocor allows to convert GCMS raw data into a table suitable for IsoCor. Input files must contain a column "Name" filled with each carbon isotopologue of each fragment considered and a column "Area" filled with the area of the integrated peak. The name of each mass fragment analysed in the method file must be written exactly as depicted in the GCMS_example_file . This will ensure that the combination between the chemical formula of the metabolite backbone and the chemical formula of the TMS backbone is correct and clearly identified by IsoCor. The identification of chemical structures for each fragment reported in the dataset has been manually curated with respect to known fragmentation patterns and 13C positional studies (see the reference publication).
+homepage_url: https://github.com/p2m2/p2m2tools
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/blob/master/tools/gcms2isocor/

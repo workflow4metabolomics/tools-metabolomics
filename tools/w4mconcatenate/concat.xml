@@ -8,37 +8,35 @@
   <command detect_errors="exit_code">
   <![CDATA[
     
-    Rscript $__tool_directory__/concatenation_wrapper.R
+    Rscript '$__tool_directory__/concatenation_wrapper.R'
     
-    dataMatrix_1 "$dataMatrix_1" 
+    dataMatrix_1 '$dataMatrix_1'
     
-    dataMatrix_2 "$dataMatrix_2"
+    dataMatrix_2 '$dataMatrix_2'
     
-    metadata_1 "$metadata_1"
+    metadata_1 '$metadata_1'
     
-    metadata_2 "$metadata_2"
+    metadata_2 '$metadata_2'
     
-    type "$type"
+    type '$type'
     
-    tab1 "$tab1"
+    tab1 '$tab1'
     
-    tab2 "$tab2"
+    tab2 '$tab2'
     
-    concatenation "$concatenation"
+    concatenation '$concatenation'
     
-    choice_keep "$choice.choice_keep"
+    choice_keep '$choice.choice_keep'
     #if str($choice.choice_keep) == 'yes':
-    keep 0
+        keep 0
     #end if
     #if str($choice.choice_keep) == 'no':
-    keep "$choice.keep"
+        keep "$choice.keep"
     #end if
     
-    dataMatrix_1_out "$dataMatrix_1_out"
-    
-    dataMatrix_2_out "$dataMatrix_2_out"
-    
-    metadata_out "$metadata_out"
+    dataMatrix_1_out '$dataMatrix_1_out'
+    dataMatrix_2_out '$dataMatrix_2_out'
+    metadata_out '$metadata_out'
     
   ]]></command>
   

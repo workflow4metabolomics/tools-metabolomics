@@ -2,18 +2,18 @@ if (FALSE) {
   rm(list = ls())
 
   DM1 <- data.frame(data = c("5d_-kkcùf", "npèt", "5PY4(*3"),
-                   `j 785` = c(0.356426723610756, 0.801750949101246, 0.875199970420953),
-                   `y54j 68y4j6` = c(0.380152310071702, 0.535593104115636, 0.0825428101366147),
-                   `5-6 4` = c(0.0306944207412024, 0.258351312473067, 0.253659010703906),
-                   hrrrrh = c(0.334137638848017, 0.599475573145688, 0.507762246807195),
-                   `5h -` = c(0.298147485608469, 0.0763319665667417, 0.856444177031262))
-
-  DM2 <-  data.frame(data = c("5d_-kkcùf", "npèt", "5PY4(*3"),
                     `j 785` = c(0.356426723610756, 0.801750949101246, 0.875199970420953),
                     `y54j 68y4j6` = c(0.380152310071702, 0.535593104115636, 0.0825428101366147),
                     `5-6 4` = c(0.0306944207412024, 0.258351312473067, 0.253659010703906),
                     hrrrrh = c(0.334137638848017, 0.599475573145688, 0.507762246807195),
                     `5h -` = c(0.298147485608469, 0.0763319665667417, 0.856444177031262))
+
+  DM2 <-  data.frame(data = c("5d_-kkcùf", "npèt", "5PY4(*3"),
+                     `j 785` = c(0.356426723610756, 0.801750949101246, 0.875199970420953),
+                     `y54j 68y4j6` = c(0.380152310071702, 0.535593104115636, 0.0825428101366147),
+                     `5-6 4` = c(0.0306944207412024, 0.258351312473067, 0.253659010703906),
+                     hrrrrh = c(0.334137638848017, 0.599475573145688, 0.507762246807195),
+                     `5h -` = c(0.298147485608469, 0.0763319665667417, 0.856444177031262))
 
   M1 <-  data.frame(samplename = c("j 785", "y54j 68y4j6", "5-6 4", "hrrrrh", "5h -"),
                     ABD = c(19, 24, 2, 3, "y"), E = c(9, "p0", 45, 24, 29),
@@ -56,7 +56,7 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
 
   err.stock <- NULL
 
-#Concatenation------------------------------------------------------------------
+  #Concatenation------------------------------------------------------------------
 
   #If Metadatas is Sample_Metadata we transpose
   if (type == "sample") {
@@ -86,51 +86,51 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
   M2_bf <- M2[order(M2[, 1]), ]
 
 
-#Check the variables in common and extract them.
+  #Check the variables in common and extract them.
 
 
   same <- check_features(M1_bf, M2_bf)
   same <- same[- which(same == identifiers_1)]
 
-#Check that shared variables have the same values.
-#If not, they are renamed or deleted according to the parameters chosen by the user.
+  #Check that shared variables have the same values.
+  #If not, they are renamed or deleted according to the parameters chosen by the user.
   result2 <- compare_same_columns(M1_bf, M2_bf, same, choice_keep, keep, tab1, tab2)
   M1 <- result2$M1
   M2 <- result2$M2
 
-#Unique--------------------------------------------------------------------------
+  #Unique--------------------------------------------------------------------------
   if (concatenation == "unique") {
-#Table match check
-#We verify that the individuals are all the same
+    #Table match check
+    #We verify that the individuals are all the same
     err.stock <- match2_bis(M1, M2, type)
     check_err(err.stock)
     M_merge <- merge(M1, M2, by = 1)
   }
 
 
-#Intersection--------------------------------------------------------------------
+  #Intersection--------------------------------------------------------------------
 
   if (concatenation == "intersection") {
 
-#select individuals in common
+    #select individuals in common
     sample_common <- intersect(M1[, 1], M2[, 1])
 
-#if the list of individuals in common is null, an error message is sent
+    #if the list of individuals in common is null, an error message is sent
     if (length(sample_common) == 0) {
       err.stock <- c(err.stock, "\nThere are no individuals in common \n")
       check_err(err.stock)
     }
-#if the list of individuals in common is less than 5, then a Warning message is sent
+    #if the list of individuals in common is less than 5, then a Warning message is sent
     if (length(sample_common) < 5) {
       cat("\nWarning: Less than 5 individuals in common\n")
     }
     M_merge <- merge(M1, M2, by = 1)
   }
 
-#Union --------------------------------------------------------------------------
+  #Union --------------------------------------------------------------------------
   if (concatenation == "union") {
 
-#select common ids
+    #select common ids
     id_common <- intersect(M1[, 1], M2[, 1])
 
     if (is.null(id_common)) {
@@ -138,18 +138,18 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
     }
 
     M2_common <- M2[M2[, 1] %in% id_common, ]
-#Store rows with individuals belonging only to M2
+    #Store rows with individuals belonging only to M2
     M2_specifique <- M2[! M2[, 1] %in% id_common, ]
-#Merge the two tables only with the samples not in common
+    #Merge the two tables only with the samples not in common
     M_merge <- bind_rows(M1, M2_specifique)
     col_names <- colnames(M2_common)
     col_names <- col_names[- which(col_names == identifiers_2)]
     feature_common <- check_features(M_merge, M2_bf)
-#Check if M_merge and M2_bf have columns in common. If so, complete the table with the values not taken.
+    #Check if M_merge and M2_bf have columns in common. If so, complete the table with the values not taken.
     if (!is.null(feature_common)) {
 
       identifiers_3 <- M2_specifique[, 1]
-#We select the value in M2_bf, the M2 table before undergoing any changes, then insert it in the M_merge table.
+      #We select the value in M2_bf, the M2 table before undergoing any changes, then insert it in the M_merge table.
       for (feature in feature_common) {
         for (id in identifiers_3) {
 
@@ -163,7 +163,7 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
         }
       }
     }
-#Fill in the table with common values
+    #Fill in the table with common values
     for (col in col_names) {
       for (id in id_common) {
         index_row <- which(M2_common[, 1] == id)
@@ -179,11 +179,11 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
   M_merge_sort <- M_merge[order(M_merge$order1, M_merge$order2), ]
   M_merge_sort <- M_merge_sort[, - which(colnames(M_merge_sort) == "order1")]
   M_merge_sort <- M_merge_sort[, - which(colnames(M_merge_sort) == "order2")]
-#DataMatrix ---------------------------------------------------------------------
+  #DataMatrix ---------------------------------------------------------------------
 
   colnames_1 <- colnames(DM1)
   colnames_2 <- colnames(DM2)
-#Unique -------------------------------------------------------------------------
+  #Unique -------------------------------------------------------------------------
 
   if (concatenation == "unique") {
 
@@ -207,7 +207,7 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
     return(result)
   }
 
-#Intersection--------------------------------------------------------------------
+  #Intersection--------------------------------------------------------------------
 
   if (concatenation == "intersection") {
 
@@ -236,17 +236,17 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
     return(result)
   }
 
-#Union --------------------------------------------------------------------------
+  #Union --------------------------------------------------------------------------
 
   if (concatenation == "union") {
 
     common_individuals <- intersect(DM1[, 1], DM2[, 1])
     common_columns <- intersect(colnames_1, colnames_2)
-#check whether there are individuals or variables in common
+    #check whether there are individuals or variables in common
     if (is.null(common_individuals) || is.null(common_columns)) {
 
       comparison_result <- FALSE
-#If the individuals in common take the same values for all variables, then comparison_result=TRUE
+      #If the individuals in common take the same values for all variables, then comparison_result=TRUE
     } else {
 
       DM1_common <- subset(DM1, DM1[, 1] %in% common_individuals)
@@ -345,7 +345,7 @@ concat <- function(DM1, M1, DM2, M2, type, tab1, tab2, concatenation, choice_kee
         rownames(DM2_add) <- NULL
       }
       result <- list(M_merge_sort = M_merge_sort, DM1 = DM1_add, DM2 = DM2_add)
-      return (result)
+      return(result)
 
     }
   }

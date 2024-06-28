@@ -37,7 +37,7 @@ write.table(result_tables[[1]], file = para$metadata_out, sep = "\t", row.names 
 write.table(result_tables[[2]], file = para$dataMatrix_1_out, sep = "\t", row.names = FALSE, quote = FALSE)
 write.table(result_tables[[3]], file = para$dataMatrix_2_out, sep = "\t", row.names = FALSE, quote = FALSE)
 
-cat("\n--------------------------------------------------------------------", 
+cat("\n--------------------------------------------------------------------",
     "\nInformation about R (version, Operating System, attached or loaded packages):\n\n")
 sessionInfo()
 cat("--------------------------------------------------------------------\n",

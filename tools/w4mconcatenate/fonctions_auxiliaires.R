@@ -132,10 +132,10 @@ match2_bis <- function(Metadata_1, Metadata_2, Mtype) {
       if (length(which(! (id1 %in% id2))) < 4) {
         err.stock <- c(err.stock, "\n    The ")
       } else {
-              err.stock <- c(err.stock, "\n    For example, the ") 
-              }
+        err.stock <- c(err.stock, "\n    For example, the ")
+      }
       err.stock <- c(err.stock, "following identifiers found in the ", Mtype, "Metadata_1 file\n",
-                       "    do not appear in the ", Mtype, " Metadata_2 file:\n")
+                     "    do not appear in the ", Mtype, " Metadata_2 file:\n")
       identif <- id1[which(! (id1 %in% id2))][seq_len(min(3, length(which(! (id1 %in% id2)))))]
       err.stock <- c(err.stock, "    ", paste(identif, collapse = "\n    "), "\n")
     }
@@ -143,8 +143,8 @@ match2_bis <- function(Metadata_1, Metadata_2, Mtype) {
       if (length(which(! (id2 %in% id1))) < 4) {
         err.stock <- c(err.stock, "\n    The ")
       } else {
-              err.stock <- c(err.stock, "\n    For example, the ")
-              }
+        err.stock <- c(err.stock, "\n    For example, the ")
+      }
       err.stock <- c(err.stock, "following identifiers found in the ", Mtype, " Metadata_2 file\n",
                      "    do not appear in the", Mtype, " Metadata_1 file:\n")
       identif <- id2[which(! (id2 %in% id1))][seq_len(min(3, length(which(! (id2 %in% id1)))))]

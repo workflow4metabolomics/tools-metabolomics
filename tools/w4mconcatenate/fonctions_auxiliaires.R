@@ -103,7 +103,7 @@ compare_same_columns <- function(M1, M2, same, choice_keep, Keep, tab1, tab2) {
 
       }
     }
-    }
+  }
 
 
   result <- list(M1 = M1, M2 = M2)
@@ -125,25 +125,25 @@ match2_bis <- function(Metadata_1, Metadata_2, Mtype) {
 
   id2 <- Metadata_1[, 1]
   id1 <- Metadata_2[, 1]
-  
+
   if (length(which(id1 %in% id2)) != length(id1) || length(which(id2 %in% id1)) != length(id2)) {
     err.stock <- c("\n", Mtype, "Metadata_1 and ", Mtype, "Metadata_2 do not match regarding Metadata_2 identifiers.")
     if (length(which(id1 %in% id2)) != length(id1)) {
       if (length(which(! (id1 %in% id2))) < 4) {
         err.stock <- c(err.stock, "\n    The ")
       } else {
-                err.stock <- c(err.stock, "\n    For example, the ") }
-
-        err.stock <- c(err.stock, "following identifiers found in the ", Mtype, "Metadata_1 file\n",
+              err.stock <- c(err.stock, "\n    For example, the ") 
+              }
+      err.stock <- c(err.stock, "following identifiers found in the ", Mtype, "Metadata_1 file\n",
                        "    do not appear in the ", Mtype, " Metadata_2 file:\n")
-        identif <- id1[which(! (id1 %in% id2))][seq_len(min(3, length(which(! (id1 %in% id2)))))]
-        err.stock <- c(err.stock, "    ", paste(identif, collapse = "\n    "), "\n")
+      identif <- id1[which(! (id1 %in% id2))][seq_len(min(3, length(which(! (id1 %in% id2)))))]
+      err.stock <- c(err.stock, "    ", paste(identif, collapse = "\n    "), "\n")
     }
     if (length(which(id2 %in% id1)) != length(id2)) {
       if (length(which(! (id2 %in% id1))) < 4) {
         err.stock <- c(err.stock, "\n    The ")
       } else {
-              err.stock <- c(err.stock, "\n    For example, the ") 
+              err.stock <- c(err.stock, "\n    For example, the ")
               }
       err.stock <- c(err.stock, "following identifiers found in the ", Mtype, " Metadata_2 file\n",
                      "    do not appear in the", Mtype, " Metadata_1 file:\n")

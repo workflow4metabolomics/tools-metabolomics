@@ -97,8 +97,8 @@
     <param name="metadata_2" value="Input_Unique_Test_1_SM2.txt"/>
     <param name="concatenation" value="unique"/>
     <param name="choice_keep" value="yes"/>
-    <param name="tab1" value="Tab1"/>
-    <param name="tab2" value="Tab2"/>
+    <param name="tab1" value="tab1"/>
+    <param name="tab2" value="tab2"/>
   
     <output name="dataMatrix_1_out" file="Output_Attendu_Unique_Test_1-2-3_DM1.txt"/>
     <output name="dataMatrix_2_out" file="Output_Attendu_Unique_Test_1-2-3_DM2.txt"/>
@@ -114,8 +114,8 @@
     <param name="metadata_2" value="Input_Unique_Test_4_SM2.txt"/>
     <param name="concatenation" value="unique"/>
     <param name="choice_keep" value="yes"/>
-    <param name="tab1" value="Tab1"/>
-    <param name="tab2" value="Tab2"/>
+    <param name="tab1" value="tab1"/>
+    <param name="tab2" value="tab2"/>
   
    </test>
   

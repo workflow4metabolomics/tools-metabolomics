@@ -14,7 +14,7 @@ para <- W4MRUtils::parse_args(args = commandArgs())
 
 cat("\nJob starting time:\n", format(Sys.time(), "%a %d %b %Y %X"),
     "\n\n--------------------------------------------------------------------",
-    "\nParameters used in", concatenation, ":\n\n")
+    "\nParameters used by the 'W4M concatenate' tool:\n\n")
 print(para)
 cat("--------------------------------------------------------------------\n\n")
 

@@ -1,0 +1,9 @@
+categories: [Metabolomics]
+description: '[W4M][Utils] concatenate two Metadata tables'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The
+  R script concatenates two metadata file (sample metadata or
+  variable metadata) and returns a metadata file and two data matrix files.'
+name: w4mconcatenate
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

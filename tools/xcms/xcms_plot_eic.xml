@@ -37,7 +37,7 @@ dev.off()
             <param name="mz_value" value="153.06614"/>
             <param name="tolerance_ppm" value="10"/>
             <param name="mslevel" value="1"/>
-            <output name="output_filename" file="eic_plot.png"/>
+            <output name="output_filename" file="eic_plot.png" compare="sim_size"/>
         </test>
     </tests>
     <help><![CDATA[

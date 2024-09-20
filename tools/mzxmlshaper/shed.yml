@@ -1,0 +1,8 @@
+categories: [Metabolomics]
+description: 'Convert mzML, mzXML or netCDF files to mzML or mzXML'
+homepage_url: https://rdrr.io/bioc/mzR/
+long_description: 'The R script uses the R package mzR to convert MS files into formats compatible
+with XCMS-like workflows and software, especially XCMS tools of W4M'
+name: mzxmlshaper
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

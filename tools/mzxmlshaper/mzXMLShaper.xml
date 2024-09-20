@@ -1,0 +1,152 @@
+<tool id="mzxmlshaper" name="Mz(X)ML Shaper" version="1.0.0+galaxy0" profile="21.01">
+  <description>
+    enables the conversion of open format files into XCMS-supported mz(X)ML file formats
+  </description>
+  <requirements>
+    <requirement type="package" version="4.3.3">r-base</requirement>
+    <requirement type="package" version="0.42.0">bioconductor-msdata</requirement>
+    <requirement type="package" version="2.36.0">bioconductor-mzr</requirement>
+    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
+  </requirements>
+  <command detect_errors="aggressive"><![CDATA[
+    Rscript '$__tool_directory__/mzXMLShaper.R'
+      inputfilename '$infile'
+      outputfileformat '$outformat'
+      #if str($outformat) == 'mzml':
+        outputfilename '$mzml_file'
+      #end if
+      #if str($outformat) == 'mzXml':
+        outputfilename '$mzXml_file'
+      #end if
+  ]]></command>
+  <inputs>
+    <param name="infile" type="data" format="mzml,mzxml,netcdf" label="File(s) to convert" help="file or collection"/>
+    <param name="outformat" type="select" label="Desired output format">
+      <option value="mzml">mzML</option>
+      <option value="mzXml">mzXML</option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="mzml" label="${infile.name.rsplit('.',1)[0]}.mzml" name="mzml_file">
+      <filter> outformat=="mzml"</filter>
+    </data>
+    <data format="mzxml" label="${infile.name.rsplit('.',1)[0]}.mzXml" name="mzXml_file">
+      <filter> outformat=="mzXml"</filter>
+    </data>
+  </outputs>
+  <tests>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/111-1_POS01.CDF"/>
+      <param name="outformat" value="mzml"/>
+      <output name="mzml_file" file="conversion_result_cdf_to_mzml.mzml" />
+    </test>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/111-1_POS01.CDF"/>
+      <param name="outformat" value="mzXml"/>
+      <output name="mzXml_file" file="conversion_result_cdf_to_mzxml.mzxml"/>
+    </test>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/example.mzXML"/>
+      <param name="outformat" value="mzml"/>
+      <output name="mzml_file" file="conversion_result_mzxml_to_mzml.mzml" />
+    </test>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/example.mzXML"/>
+      <param name="outformat" value="mzXml"/>
+      <output name="mzXml_file" file="conversion_result_mzxml_to_mzxml.mzxml"/>
+    </test>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/BlancFin_POS_RA1_1_6869.mzML"/>
+      <param name="outformat" value="mzml"/>
+      <output name="mzml_file" file="conversion_result_mzml_to_mzml.mzml" />
+    </test>
+    <test expect_num_outputs="1">
+      <param name="infile" value="original_data/BlancFin_POS_RA1_1_6869.mzML"/>
+      <param name="outformat" value="mzXml"/>
+      <output name="mzXml_file" file="conversion_result_mzml_to_mzxml.mzxml"/>
+    </test>
+  </tests>
+  <help><![CDATA[
+.. class:: infomark
+
+**Credits**
+  | **Original tool wrapping:** Quentin Ruin - INRAE - MetaboHUB
+  | **Tool maintainer:** Mélanie Pétéra - INRAE - MetaboHUB
+
+.. class:: infomark
+
+**Help and support:** https://community.france-bioinformatique.fr/c/workflow4metabolomics/10
+
+---------------------------------------------------
+
+******************
+Mz(X)ML Shaper
+******************
+===========
+DESCRIPTION
+===========
+
+This tool unables the user to convert any mass spectrometry file from netCDF (.cdf), .mzml or .mzxml format to "Pwiz-style" .mzml or .mzXml, as these are more often supported by the latest software. Files must be standard MS format (see Note below).
+It is based on the R package mzR. This package (https://github.com/sneumann/mzR/) allows the user to access, read and copy the content of common MS file formats such as netCDF, mzML and mzXML. The output copy can be made in a different format, thus converting the file.
+For more information about this package, see the related documentation (https://bioconductor.org/packages/release/bioc/html/mzR.html)
+
+---------------------------------------------------
+
+==========================
+ALIGNMENT WITH OTHER TOOLS
+==========================
+
+-----------
+INPUT FILES
+-----------
+
+Open format MS files (.netCDF, .mzML, .mzXML)
+
+------------
+OUTPUT FILES
+------------
+
+A file (or collection of files) converted in mzML or mzXML with the same name as the input file (except for the extension)
+
+----------------------------
+EXAMPLE OF WORKFLOW POSITION
+----------------------------
+
+Used as first step in any workflow supporting mzML or mzXML formats just before ReadMSData. 
+
+---------------------------------------------------
+
+===============
+TOOL PARAMETERS
+===============
+
+- Desired output format: mzML or MZXML 
+
+---------------------------------------------------
+
+==================
+OUTPUT DESCRIPTION
+==================
+
+Standardized MzML or mzXML files (depending on the user's configuration of the tool) 
+
+---------------------------------------------------
+
+==============
+EXAMPLE OF USE
+==============
+
+.netCDF file upload -> Mz(X)MLShaper -> ReadMSData -> any workflow
+
+------------
+KNOWN ISSUES
+------------
+
+MzR does not read Bruker's DataAnalysis mzML or mzXML files, as they are not "standard" or "Pwiz-style" files (August 2024). This might also be the case for other constructor-converted mzML/mzXML, in that case an "unsupported file format" error will happen. However, this tool is functional for ProteoWizard's MSConvert mzML/mzXML files.
+    
+  ]]>
+  </help>
+  <citations>
+    <citation type="doi">10.18129/B9.bioc.mzR</citation>
+  </citations>
+  </tool>

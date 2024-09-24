@@ -3,7 +3,7 @@
 # R version 4.3.3
 # Conversion tool mzXMLShaper.R (former cdf2mzml)
 # Author: Quentin RUIN
-# Creation: 25/04/2023
+# Creation date: 25/04/2023
 # Last updated: 09/09/2024
 
 cat("\nJob starting time:\n", format(Sys.time(), "%a %d %b %Y %X"), "\n\n")
@@ -31,15 +31,11 @@ pks <- mzR::spectra(spectrum)
 ## Get the header
 hdr <- mzR::header(spectrum)
 
-  if (outputfileformat == 'mzml') 
-  {  
-    writeMSData(pks, file = outputfilename, outformat = 'mzml', header = hdr)
-  }
+if (outputfileformat=="mzml") 
+{writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)}
 
-  if (outputfileformat == 'mzXml') 
-  { 
-    writeMSData(pks, file = outputfilename, outformat = 'mzxml', header = hdr)
-  }
+if (outputfileformat=="mzXml") 
+{writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)}
 
 
 cat("\n--------------------------------------------------------------------",

@@ -35,8 +35,8 @@ cat("\n\n")
 cat("\tARGUMENTS PROCESSING INFO\n")
 
 # Save arguments to generate a report
-if (!exists("listOFargs")) listOFargs <- list()
-listOFargs[[format(Sys.time(), "%y%m%d-%H:%M:%S_annotatediff")]] <- args
+if (!exists("listOFlistArguments")) listOFlistArguments <- list()
+listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_annotatediff")]] <- args
 
 # We unzip automatically the chromatograms from the zip files.
 if (!exists("zipfile")) zipfile <- NULL
@@ -73,7 +73,7 @@ print(xa)
 cat("\n\n")
 
 # saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFargs", "zipfile", "singlefile")
+objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFlistArguments", "zipfile", "singlefile")
 save(list = objects2save[objects2save %in% ls()], file = "annotatediff.RData")
 
 cat("\n\n")

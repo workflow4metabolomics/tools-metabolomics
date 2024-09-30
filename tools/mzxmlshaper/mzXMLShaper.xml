@@ -30,7 +30,7 @@
     <data format="mzml" label="${infile.name}_converted.mzml" name="mzml_file">
       <filter>outformat=="mzml"</filter>
     </data>
-    <data format="mzxml" label="${infile.name}_converted.mzml" name="mzXml_file">
+    <data format="mzxml" label="${infile.name}_converted.mzxml" name="mzXml_file">
       <filter>outformat=="mzXml"</filter>
     </data>
   </outputs>

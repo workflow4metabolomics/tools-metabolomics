@@ -1,6 +1,6 @@
 <tool id="mzxmlshaper" name="Mz(X)ML Shaper" version="1.0.0+galaxy0" profile="21.01">
   <description>
-    enables the conversion of open format files into XCMS-supported mz(X)ML file formats
+    conversion into XCMS-supported mz(X)ML file formats
   </description>
   <requirements>
     <requirement type="package" version="4.3.3">r-base</requirement>
@@ -14,8 +14,7 @@
       outputfileformat '$outformat'
       #if str($outformat) == 'mzml':
         outputfilename '$mzml_file'
-      #end if
-      #if str($outformat) == 'mzXml':
+      #elif str($outformat) == 'mzXml':
         outputfilename '$mzXml_file'
       #end if
   ]]></command>
@@ -27,18 +26,18 @@
     </param>
   </inputs>
   <outputs>
-    <data format="mzml" label="${infile.name.rsplit('.',1)[0]}.mzml" name="mzml_file">
-      <filter> outformat=="mzml"</filter>
+    <data format="mzml" label="${infile.name}_converted.mzml" name="mzml_file">
+      <filter>outformat=="mzml"</filter>
     </data>
-    <data format="mzxml" label="${infile.name.rsplit('.',1)[0]}.mzXml" name="mzXml_file">
-      <filter> outformat=="mzXml"</filter>
+    <data format="mzxml" label="${infile.name}_converted.mzxml" name="mzXml_file">
+      <filter>outformat=="mzXml"</filter>
     </data>
   </outputs>
   <tests>
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/111-1_POS01.CDF"/>
       <param name="outformat" value="mzml"/>
-      <output name="mzml_file" file="conversion_result_cdf_to_mzml.mzml" />
+      <output name="mzml_file" file="conversion_result_cdf_to_mzml.mzml"/>
     </test>
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/111-1_POS01.CDF"/>
@@ -48,7 +47,7 @@
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/example.mzXML"/>
       <param name="outformat" value="mzml"/>
-      <output name="mzml_file" file="conversion_result_mzxml_to_mzml.mzml" />
+      <output name="mzml_file" file="conversion_result_mzxml_to_mzml.mzml"/>
     </test>
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/example.mzXML"/>
@@ -58,7 +57,7 @@
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/BlancFin_POS_RA1_1_6869.mzML"/>
       <param name="outformat" value="mzml"/>
-      <output name="mzml_file" file="conversion_result_mzml_to_mzml.mzml" />
+      <output name="mzml_file" file="conversion_result_mzml_to_mzml.mzml"/>
     </test>
     <test expect_num_outputs="1">
       <param name="infile" value="original_data/BlancFin_POS_RA1_1_6869.mzML"/>

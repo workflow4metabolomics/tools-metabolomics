@@ -32,11 +32,11 @@ pks <- mzR::spectra(spectrum)
 hdr <- mzR::header(spectrum)
 
 if (outputfileformat == "mzml") {
-writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)
+  writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)
 }
 
 if (outputfileformat == "mzXml") {
-writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)
+  writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)
 }
 
 cat("\n--------------------------------------------------------------------",

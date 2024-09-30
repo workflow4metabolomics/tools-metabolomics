@@ -35,7 +35,7 @@ Configuration
 Technical description
 -----------
 
-Main files: ## à modifier
+Main files:
 
 - mzXMLShaper.R: R function (core script)
 - mzXMLShaper.xml: XML wrapper (interface for Galaxy)

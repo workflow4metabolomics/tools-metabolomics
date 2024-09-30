@@ -31,12 +31,13 @@ pks <- mzR::spectra(spectrum)
 ## Get the header
 hdr <- mzR::header(spectrum)
 
-if (outputfileformat=="mzml") 
-{writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)}
+if (outputfileformat == "mzml") {
+writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)
+}
 
-if (outputfileformat=="mzXml") 
-{writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)}
-
+if (outputfileformat == "mzXml") {
+writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)
+}
 
 cat("\n--------------------------------------------------------------------",
     "\nInformation about R (version, Operating System, attached or loaded packages):\n\n")

@@ -35,14 +35,13 @@ Configuration
 Technical description
 -----------
 
-Main files:
+Main files: ## à modifier
 
 - mzXMLShaper.R: R function (core script)
 - mzXMLShaper.xml: XML wrapper (interface for Galaxy)
-- 111-1_POS01.CDF (test file): Riker Metabolome Database (http://metabobank.riken.jp/metabo/db/plantMetabolomics/http:/metadb.riken.jp/db/plantMetabolomics/0.1/File/RPMM0054_111-1)
-- BlancFin_POS_RA1_1_6869.mzML (test file): Internal blank sample, PFEM - INRAE (https://pfem.isc.inrae.fr/)
-- example.mzXML (test file): PRIDE Toolsuite (https://github.com/PRIDE-Toolsuite/inspector-example-files/blob/master/peak-files/example.mzXML.gz)
-
+- ko16.CDF: netCDF test file from faahKO Bioconductor package (https://www.bioconductor.org/packages/release/data/experiment/html/faahKO.html)
+- ko16.mzml: ko.CDF file converted to mzML using mzR R package
+- ko16.mzXml: ko.CDF file converted to mzXML using mzR R package
 
 Services provided
 -----------

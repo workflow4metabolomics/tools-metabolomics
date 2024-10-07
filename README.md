@@ -138,6 +138,10 @@ provided by the ‘mzR’ package to access data and meta data in
 ‘mzData’, ‘mzXML’ and ‘mzML’.
 
 
+### [mz(X)MLShaper] (tools/mzxmlshaper)
+The tool was created to cope with unsupported file formats that may not be read by W4M's Galaxy XCMS.
+It can be used for any purpose necessitating standardized mzML or mzXML files, be it visualization in a third-party software, local workflows or W4M XCMS workflows.  
+
 ### [nmr_annotation](tools/nmr_annotation)
 ASICS, based on a strong statistical theory, handles automatically the metabolite identification and quantification
 

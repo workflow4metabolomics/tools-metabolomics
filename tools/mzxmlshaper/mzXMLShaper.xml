@@ -15,7 +15,6 @@
       #if str($outformat) == 'mzml':
         outputfilename '$mzml_file'
       #elif str($outformat) == 'mzXml':
-        str($outformat) == 'mzXml':
         outputfilename '$mzXml_file'
       #end if
   ]]></command>

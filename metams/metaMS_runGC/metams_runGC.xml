@@ -207,14 +207,14 @@ Current version for metaMS R package: 1.18.1
 
 **Process:** 
 Each of the converted data (cdf, mzML...)  is profiled by a combination of xcms and CAMERA functions. Then all the mass spectra of detected peaks are compared and clustered.
-For more details see metaMS : Wehrens, R.; Weingart, G.; Mattivi, F. Journal of Chromatography B [10.1016/j.jchromb.2014.02.051](http://www.sciencedirect.com/science/article/pii/S1570023214001548).
+For more details see metaMS : Wehrens, R.; Weingart, G.; Mattivi, F. Journal of Chromatography B [10.1016/j.jchromb.2014.02.051](https://pubmed.ncbi.nlm.nih.gov/24656939/).
 
 
 **Main outputs:**
 A PeakTable is generated with one line per "compound" and one column per sample. 
 A dataMatrix.csv file is generated and can be used for PCA or for further analysis.
 A peakspectra.mps file is generated that contains all the spectra of the detected compounds in MSP format. That file can be used for database search online (Golm, MassBank) or locally (NIST MSSEARCH)
-for NIST search a tutorial is available [here](http://web11.sb-roscoff.fr/download/w4m/howto/w4m_HowToUseNIST_V01.pdf).
+for NIST search a tutorial is available [here](https://workflow4metabolomics.org/sites/default/files/fichiers/documents/w4m_HowToUseNIST_V01.pdf).
 
 
 -----------------
@@ -282,7 +282,7 @@ Outputs
 ----------
 
 - The output file **dataMatrix.tsv** is a tabular file. You can continue your analysis using it in the statistical tools.
-- The output file **peakspectra.msp** is a text file. You can continue your analysis using it in the golm search tool. Or you can load it in your personnal NIST MSsearch program (c:/NISTXX/mssearch/nistms.exe) that tool is in general installed by default on GCMS apparatus. Tutorial available [here](http://web11.sb-roscoff.fr/download/w4m/howto/w4m_HowToUseNIST_V01.pdf).
+- The output file **peakspectra.msp** is a text file. You can continue your analysis using it in the golm search tool. Or you can load it in your personnal NIST MSsearch program (c:/NISTXX/mssearch/nistms.exe) that tool is in general installed by default on GCMS apparatus. Tutorial available [here](https://workflow4metabolomics.org/sites/default/files/fichiers/documents/w4m_HowToUseNIST_V01.pdf).
 
 
 ----------------

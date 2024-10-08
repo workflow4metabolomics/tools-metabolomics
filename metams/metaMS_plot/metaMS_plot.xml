@@ -36,12 +36,12 @@
 
         <param name="metaMS" type="data" format="rdata" label="Rdata from new_metaMS_runGC" help="Rdata file containing a metaMS preprocess object" />
         <param name="selectedtic" type="boolean" checked="false" falsevalue="false" truevalue="true" label="Do you want to process for TIC(s) ?" />
-        <param name="selectedbpc" checked="false" falsevalue="false" truevalue="true" label="Do you want to process for BPC(s) ?"  type="boolean" />
+        <param name="selectedbpc" type="boolean" checked="false" falsevalue="false" truevalue="true" label="Do you want to process for BPC(s) ?" />
 
         <conditional name="selectedeic">
-            <param name="EIC" checked="false" falsevalue="false" truevalue="true" label="Do you want to process for EIC(s) ?"  type="boolean">
-                <option value="false">no</option>
-                <option value="true">yes</option>
+            <param name="EIC" type="select" label="Do you want to process for EIC(s) ?">
+                <option value="false">NO</option>
+                <option value="true">YES</option>
             </param>
             <when value="true">
                 <param name="unkn" type="text" value="1:5" label="EIC_Unknown" help="vector of peaks number to be plotted, for example 1:5 (mean 1 to 5) or 1,4,12  (means 1 4 and 12). For all EIC use 0" /> 
@@ -73,21 +73,21 @@
     <tests>
 
         <!-- Test TIC -->
-        <test>
+        <test expect_num_outputs="1">
             <param name="metaMS" value="runGC_test.RData"  ftype="rdata" />
             <expand macro="test_file_load_alg_symlink" />
             <param name="selectedtic" value="true"/>
             <output name="ticsRawPdf" value="TICs_raw.pdf" ftype="pdf" compare="sim_size" delta="600"/>
         </test>
         <!-- Test BPC -->
-        <test>
+        <test expect_num_outputs="1">
             <param name="metaMS" value="runGC_noDB.RData"  ftype="rdata" />
             <expand macro="test_file_load_alg_symlink" />
             <param name="selectedbpc" value="true"/>
             <output name="bpcsRawPdf" value="BPCs_raw.pdf" ftype="pdf" compare="sim_size" delta="2000"/>
         </test>
         <!-- Test EICs -->
-        <test>
+        <test expect_num_outputs="5">
             <param name="metaMS" value="runGC_noDB.RData"  ftype="rdata" />
             <expand macro="test_file_load_alg_symlink" />
             <conditional name="selectedeic">

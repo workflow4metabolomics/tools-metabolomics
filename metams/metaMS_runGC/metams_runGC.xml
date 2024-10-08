@@ -1,4 +1,4 @@
- <tool id="metams_runGC" name="metaMS.runGC" version="metaMS@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
+ <tool id="metams_runGC" name="metaMS.runGC" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
 
     <description>GC-MS data preprocessing using metaMS package</description>
 

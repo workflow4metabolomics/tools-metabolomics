@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+	<repositories>
+	<!--metaMS tools -->
+        <repository name="metams_rungc" owner="yguitton"/>
+		<repository name="metams_plot" owner="workflow4metabolomics"/>
+	</repositories>

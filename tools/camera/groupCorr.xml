@@ -1,1 +1,154 @@
-/home/laberca/galaxy/tools/SUITE_CAMERA/groupCorr.xml
+<tool id="CAMERA_groupCorr" name="CAMERA.groupCorr" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
+
+	<description>EIC correlation grouping of LC/ESI-MS data</description>
+
+	<macros>
+		<import>macros.xml</import>
+	</macros>
+
+	<expand macro="requirements"/>
+	<expand macro="stdio"/>
+
+	<command detect_errors="exit_code"><![CDATA[
+		@COMMAND_RSCRIPT@/CAMERA_groupCorr.R
+		'$image'
+		$groupcorr.cor_eic_th
+		$groupcorr.pval
+		$groupcorr.graphMethod
+		$groupcorr.calcIso
+		$groupcorr.calcCiS
+		$groupcorr.calcCaS
+		$groupcorr.cor_exp_th
+		$groupcorr.intval
+		$groupcorr.numDigitsMZ
+		$groupcorr.numDigitsRT
+		$groupcorr.convertRTMinute
+		]]>
+	</command>
+
+	<inputs>
+		<param name="image" type="data" label="RData file" format="rdata" help="output file from another function xcms (fillPeaks)" />
+		<section name="groupcorr" title="Verifying grouping co-eluted peaks"  expanded="True">
+			<param name="cor_eic_th" type="float" value="0.75" max="1" min="0" label="Correlation threshold (0..1)" />
+			<param name="pval" type="float" value="0.05" max="1" min="0" label="Significant correlation threshold" />
+			<param name="graphMethod" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra" >
+				<option value="hcs" selected="true">hcs</option>
+				<option value="lpc">lpc</option>
+			</param>
+			<param name="calcIso" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use isotopic relationship for peak grouping" />
+			<param name="calcCiS" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Use correlation inside samples for peak grouping" />
+			<param name="calcCaS" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use correlation across samples for peak grouping" />
+			<param name="cor_exp_th" type="float" value="0.75" max="1" min="0" label="Threshold for intensity correlations across samples (0..1)" />
+			<param name="intval" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra" >
+				<option value="into" selected="true">into</option>
+				<option value="maxo">maxo</option>
+				<option value="intb">intb</option>
+				<!-- <option value="intf">intf</option>
+					<option value="maxf">maxf</option>
+				<option value="area">area</option> -->
+			</param>
+			<param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+                        <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+			<param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+		</section>
+	</inputs>
+	<outputs>
+		<data name="variableMetadata" format="tabular" label="${image.name[:-6]}.groupCorr.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+		<data name="camera_groupCorr_rdata" format="rdata" label="${image.name[:-6]}.groupCorr.RData" from_work_dir="camera_groupCorr.RData" />
+	</outputs>
+        <tests>
+                <test>
+                        <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.RData" />
+                        <param name="cor_eic_th" value="0.75" />
+                        <param name="pval" value="0.05" />
+                        <param name="graphMethod" value="hcs" />
+			<param name="calcIso" value="FALSE" />
+			<param name="calcCiS" value="TRUE" />
+			<param name="calcCaS" value="FALSE" />
+			<param name="cor_exp_th" value="0.75" />
+			<param name="intval" value="into" />
+
+                        <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.variableMetadata.tsv" />
+                        <output name="camera_groupCorr_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.RData" />
+                </test>
+        </tests>	
+<help><![CDATA[
+
+@HELP_AUTHORS@
+
+================
+CAMERA.groupCorr
+================
+
+-----------
+Description
+-----------
+
+.. _link: https://bioconductor.org/packages/release/bioc/manuals/CAMERA/man/CAMERA.pdf
+
+Peak grouping after correlation information into pseudospectrum groups for an xsAnnotate object.
+Return an xsAnnotate object with grouping information. Click on the link to see the "Reference Manual" : link_ .
+
+---------------------------------------------------
+
+---------
+Arguments
+---------
+
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| Variables      | Descriptions                                                                                                                                |
++================+=============================================================================================================================================+
+| object         | the xsAnnotate object                                                                                                                       |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| cor_eic_th     | Correlation threshold for EIC correlation                                                                                                   |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| pval           | p-value threshold for testing correlation of significance                                                                                   |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| graphMethod    | Clustering method for resulting correlation graph. See calcPC for more details.                                                             |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| calcIso        | Include isotope detection information for graph clustering                                                                                  |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| calcCiS        | Calculate correlation inside samples                                                                                                        |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| calcCaS        | Calculate correlation across samples                                                                                                        |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| psg_list       | Vector of pseudospectra indices. The correlation analysis will be only done for those groups                                                |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| xraw           | Optional xcmsRaw object, which should be used for raw data extraction                                                                       |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| cor_exp_th     | Threshold for intensity correlations across samples                                                                                         |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| intval         | Selection of the intensity values (such as "into") that should be used in the correlation analysis. See getPeaklist for all allowed values. |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+
+---------------------------------------------------
+
+------------------------------------------
+General schema of the metabolomic workflow
+------------------------------------------
+
+.. image:: groupCorr.png
+
+---------------------------------------------------
+
+-------
+Details
+-------
+
+The algorithm calculates different informations for group peaks into so called pseudospectra. This pseudospectra contains peaks, with have a high correlation between each other. So far three different kind of information are available. Correlation of intensities across samples (need more than 3 samples), EIC correlation between peaks inside a sample and additional the informationen about recognized isotope cluster can be included. After calculation of all these informations, they are combined as edge value into a graph object. A following graph clustering algorithm separate the peaks (nodes in the graph) into the pseudospectra.
+
+---------------------------------------------------
+
+--------------
+Changelog/News
+--------------
+
+.. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
+
+@HELP_CAMERA_SUITE@
+
+]]></help>
+
+	<expand macro="citation"/>
+	<expand macro="creator"/>
+</tool>

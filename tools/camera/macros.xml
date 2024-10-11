@@ -188,4 +188,15 @@
             <citation type="doi">10.1093/bioinformatics/btu813</citation>
         </citations>
     </xml>
+
+    <xml name="creator">
+         <creator>
+            <organization name="MELISA" url="https://www.laberca.org/plateforme-melisa/presentation"></organization>
+            <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
+
+            <person givenName="Yann" familyName="Guitton" url="https://github.com/yguitton"></person>
+            <person givenName="Damien" familyName="Rat" url="https://github.com/DamienCode404"></person>
+            <person givenName="Julien" familyName="Saint-Vanne" url="https://github.com/jsaintvanne"></person>
+        </creator>
+    </xml>
 </macros>

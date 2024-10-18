@@ -148,7 +148,7 @@ print("calcIsotopeMatrix")
 calcIsotopeMatrix <- function(maxiso = 4) {
   if (!is.numeric(maxiso)) {
     stop("Parameter maxiso is not numeric!\n")
-  } else if (maxiso < 1 | maxiso > 8) {
+  } else if (maxiso < 1 || maxiso > 8) {
     stop(paste(
       "Parameter maxiso must be between 1 and 8. ",
       "Otherwise, use your own IsotopeMatrix.\n"

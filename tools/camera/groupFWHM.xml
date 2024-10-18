@@ -1,14 +1,14 @@
-<tool id="CAMERA_groupFWHM" name="CAMERA.groupFWHM" version="1.0.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
-	<description>Group peaks of a xsAnnotate object according to their retention time into pseudospectra-groups.</description>
+<tool id="CAMERA_groupFWHM" name="CAMERA.groupFWHM" version="1.0.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+    <description>Group peaks of a xsAnnotate object according to their retention time into pseudospectra-groups.</description>
 
-	<macros>
-		<import>macros.xml</import>
-	</macros> 
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 
-	<expand macro="requirements"/>
-	<expand macro="stdio"/>
+    <expand macro="requirements"/>
+    <expand macro="stdio"/>
 
-	<command detect_errors="exit_code"><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@/CAMERA_groupFWHM.R 
 		'$image' 
 		$groupfwhm.sigma 
@@ -18,41 +18,41 @@
 		$groupfwhm.numDigitsMZ
 		$groupfwhm.numDigitsRT
 		]]>
-	</command>
+    </command>
 
-	<inputs>
-		<param name="image" type="data" label="RData file" format="rdata.xcms.fillpeaks,rdata" help="output file from another function xcms (fillPeaks)" />
-		<section name="groupfwhm" title="Group co-eluted peals based on RT" expanded="True">
-			<param name="sigma" type="integer" value="6" label="the multiplier of the standard deviation"/>
-			<param name="perfwhm" type="float" value="0.6" max="1" min="0" label="percentage of the width of the FWHM"/>
-			<param name="intval" type="select" label="intensity values for ordering. Allowed values are into, maxo, intb">
-				<option value="into" selected="true">into</option>
-				<option value="maxo">maxo</option>
-				<option value="intb">intb</option>
-			</param>
-			<param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
-			<param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
-			<param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
-		</section>
-	</inputs>
+    <inputs>
+        <param name="image" type="data" label="RData file" format="rdata.xcms.fillpeaks,rdata" help="output file from another function xcms (fillPeaks)" />
+        <section name="groupfwhm" title="Group co-eluted peals based on RT" expanded="True">
+            <param name="sigma" type="integer" value="6" label="the multiplier of the standard deviation"/>
+            <param name="perfwhm" type="float" value="0.6" max="1" min="0" label="percentage of the width of the FWHM"/>
+            <param name="intval" type="select" label="intensity values for ordering. Allowed values are into, maxo, intb">
+                <option value="into" selected="true">into</option>
+                <option value="maxo">maxo</option>
+                <option value="intb">intb</option>
+            </param>
+            <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+            <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+            <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        </section>
+    </inputs>
 
-	<outputs>
-		<data name="variableMetadata" format="tabular" label="${image.name[:-6]}.fwhm.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
-		<data name="camera_fwhm" format="rdata" label="${image.name[:-6]}.fwhm.rdata" from_work_dir="camera_fwhm.RData"/>
-	</outputs>
+    <outputs>
+        <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.fwhm.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="camera_fwhm" format="rdata" label="${image.name[:-6]}.fwhm.rdata" from_work_dir="camera_fwhm.RData"/>
+    </outputs>
 
-	<tests>
-		<test>
-			<param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.RData" />
-			<param name="sigma" value="6" />
-			<param name="perfwhm" value="0.6" />
-			<param name="intval" value="into" />
+    <tests>
+        <test>
+            <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.RData" />
+            <param name="sigma" value="6" />
+            <param name="perfwhm" value="0.6" />
+            <param name="intval" value="into" />
 
-			<output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.variableMetadata.tsv" />
-			<output name="camera_fwhm" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.rdata" />
-		</test>
-	</tests>
-<help><![CDATA[
+            <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.variableMetadata.tsv" />
+            <output name="camera_fwhm" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.rdata" />
+        </test>
+    </tests>
+    <help><![CDATA[
 
 @HELP_AUTHORS@
 
@@ -113,8 +113,8 @@ Changelog/News
 
 @HELP_CAMERA_SUITE@
 
-]]></help>
+]]>    </help>
 
-	<expand macro="citation"/>
-	<expand macro="creator"/>   
+    <expand macro="citation"/>
+    <expand macro="creator"/>
 </tool>

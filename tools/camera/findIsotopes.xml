@@ -1,6 +1,6 @@
 <tool id="CAMERA_findIsotopes" name="CAMERA.findIsotopes" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
-    <description>Annotate isotope peaks for a xsAnnotate object. Returns a xsAnnotate object with annotated isotopes.</description>
+    <description>Annotate isotope peaks</description>
 
     <macros>
         <import>macros.xml</import>

@@ -1,6 +1,6 @@
 <tool id="CAMERA_findAdducts" name="CAMERA.findAdducts" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
-    <description>Annotate adducts (and fragments) for a xsAnnotate object. Returns a xsAnnotate object with annotated pseudospectra.</description>
+    <description>Annotate adducts</description>
 
     <macros>
         <import>macros.xml</import>

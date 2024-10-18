@@ -1,5 +1,5 @@
 <tool id="CAMERA_groupFWHM" name="CAMERA.groupFWHM" version="1.0.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
-    <description>Group peaks of a xsAnnotate object according to their retention time into pseudospectra-groups.</description>
+    <description>Group peaks into pseudospectra-groups</description>
 
     <macros>
         <import>macros.xml</import>

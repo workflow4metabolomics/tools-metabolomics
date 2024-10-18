@@ -12,45 +12,43 @@
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@/CAMERA_groupCorr.R
 		'$image'
-		$groupcorr.cor_eic_th
-		$groupcorr.pval
-		$groupcorr.graphMethod
-		$groupcorr.calcIso
-		$groupcorr.calcCiS
-		$groupcorr.calcCaS
-		$groupcorr.cor_exp_th
-		$groupcorr.intval
-		$groupcorr.numDigitsMZ
-		$groupcorr.numDigitsRT
-		$groupcorr.convertRTMinute
+		$cor_eic_th
+		$pval
+		$graphMethod
+		$calcIso
+		$calcCiS
+		$calcCaS
+		$cor_exp_th
+		$intval
+		$numDigitsMZ
+		$numDigitsRT
+		$convertRTMinute
 		]]>
     </command>
 
     <inputs>
         <param name="image" type="data" label="RData file" format="rdata" help="output file from another function xcms (fillPeaks)" />
-        <section name="groupcorr" title="Verifying grouping co-eluted peaks" expanded="True">
-            <param name="cor_eic_th" type="float" value="0.75" max="1" min="0" label="Correlation threshold (0..1)" />
-            <param name="pval" type="float" value="0.05" max="1" min="0" label="Significant correlation threshold" />
-            <param name="graphMethod" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra">
-                <option value="hcs" selected="true">hcs</option>
-                <option value="lpc">lpc</option>
-            </param>
-            <param name="calcIso" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use isotopic relationship for peak grouping" />
-            <param name="calcCiS" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Use correlation inside samples for peak grouping" />
-            <param name="calcCaS" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use correlation across samples for peak grouping" />
-            <param name="cor_exp_th" type="float" value="0.75" max="1" min="0" label="Threshold for intensity correlations across samples (0..1)" />
-            <param name="intval" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra">
-                <option value="into" selected="true">into</option>
-                <option value="maxo">maxo</option>
-                <option value="intb">intb</option>
-                <!-- <option value="intf">intf</option>
-					<option value="maxf">maxf</option>
-				<option value="area">area</option> -->
-            </param>
-            <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
-            <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
-            <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
-        </section>
+        <param name="cor_eic_th" type="float" value="0.75" max="1" min="0" label="Correlation threshold (0..1)" />
+        <param name="pval" type="float" value="0.05" max="1" min="0" label="Significant correlation threshold" />
+        <param name="graphMethod" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra">
+            <option value="hcs" selected="true">hcs</option>
+            <option value="lpc">lpc</option>
+        </param>
+        <param name="calcIso" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use isotopic relationship for peak grouping" />
+        <param name="calcCiS" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Use correlation inside samples for peak grouping" />
+        <param name="calcCaS" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Use correlation across samples for peak grouping" />
+        <param name="cor_exp_th" type="float" value="0.75" max="1" min="0" label="Threshold for intensity correlations across samples (0..1)" />
+        <param name="intval" type="select" label="Method selection for grouping peaks after correlation analysis into pseudospectra">
+            <option value="into" selected="true">into</option>
+            <option value="maxo">maxo</option>
+            <option value="intb">intb</option>
+            <!-- <option value="intf">intf</option>
+                <option value="maxf">maxf</option>
+            <option value="area">area</option> -->
+        </param>
+        <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+        <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
     </inputs>
     <outputs>
         <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.groupCorr.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />

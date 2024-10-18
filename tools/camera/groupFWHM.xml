@@ -11,29 +11,27 @@
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@/CAMERA_groupFWHM.R 
 		'$image' 
-		$groupfwhm.sigma 
-		$groupfwhm.perfwhm 
-		$groupfwhm.intval
-		$groupfwhm.convertRTMinute
-		$groupfwhm.numDigitsMZ
-		$groupfwhm.numDigitsRT
+		$sigma 
+		$perfwhm 
+		$intval
+		$convertRTMinute
+		$numDigitsMZ
+		$numDigitsRT
 		]]>
     </command>
 
     <inputs>
         <param name="image" type="data" label="RData file" format="rdata.xcms.fillpeaks,rdata" help="output file from another function xcms (fillPeaks)" />
-        <section name="groupfwhm" title="Group co-eluted peals based on RT" expanded="True">
-            <param name="sigma" type="integer" value="6" label="the multiplier of the standard deviation"/>
-            <param name="perfwhm" type="float" value="0.6" max="1" min="0" label="percentage of the width of the FWHM"/>
-            <param name="intval" type="select" label="intensity values for ordering. Allowed values are into, maxo, intb">
-                <option value="into" selected="true">into</option>
-                <option value="maxo">maxo</option>
-                <option value="intb">intb</option>
-            </param>
-            <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
-            <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
-            <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
-        </section>
+        <param name="sigma" type="integer" value="6" label="the multiplier of the standard deviation"/>
+        <param name="perfwhm" type="float" value="0.6" max="1" min="0" label="percentage of the width of the FWHM"/>
+        <param name="intval" type="select" label="intensity values for ordering. Allowed values are into, maxo, intb">
+            <option value="into" selected="true">into</option>
+            <option value="maxo">maxo</option>
+            <option value="intb">intb</option>
+        </param>
+        <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+        <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+        <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
     </inputs>
 
     <outputs>

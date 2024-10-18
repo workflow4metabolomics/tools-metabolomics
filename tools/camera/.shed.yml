@@ -7,8 +7,8 @@ definitions:
 
 name: camera
 owner: workflow4metabolomics
-remote_repository_url: 
-homepage_url: 
+remote_repository_url:
+homepage_url:
 categories:
 - Metabolomics
 
@@ -41,10 +41,51 @@ repositories:
     owner: workflow4metabolomics
     include:
       [*default-includes, abims_CAMERA_combinexsAnnos.xml, CAMERA_combinexsAnnos.r]
+  camera_groupfwhm:
+    description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Peak Grouping by Full Width at Half Maximum (FWHM)'
+    long_description: |
+      Group peaks within a defined retention time window using Full Width at Half Maximum (FWHM).
+      Facilitates the detection of chromatographic features across different samples for LC-MS data.
+      Part of the W4M project: http://workflow4metabolomics.org
+      CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, camera_groupfwhm.xml, camera_groupfwhm.r]
+  camera_groupcorr:
+    description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Peak Grouping by Correlation'
+    long_description: |
+      Group peaks based on their retention time and intensity correlations across samples,
+      identifying peaks likely to originate from the same compound. This helps enhance feature annotation
+      and identification in LC-MS data.
+      Part of the W4M project: http://workflow4metabolomics.org
+      CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, groupCorr.xml, CAMERA_groupCorr.R]
+  camera_findisotopes:
+    description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Isotope Detection'
+    long_description: |
+      Detect isotope patterns in LC-MS peak lists based on mass differences and expected isotope ratios,
+      annotating isotopes for use in downstream metabolomic analysis.
+      Part of the W4M project: http://workflow4metabolomics.org
+      CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, findIsotopes.xml, CAMERA_findIsotopes.R]
+  camera_findadducts:
+    description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Adduct Detection'
+    long_description: |
+      Identify possible adducts in mass spectrometry data by detecting characteristic mass shifts between peaks,
+      facilitating the determination of molecular ions and their adducts for more accurate metabolite identification.
+      Part of the W4M project: http://workflow4metabolomics.org
+      CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, findAdducts.xml, CAMERA_findAdducts.R]
 
 suite:
   name: suite_camera
-  owner: lecorguille
+  owner: workflow4metabolomics
   homepage_url: http://workflow4metabolomics.org
   description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Annotation - Collection of annotation related methods for mass spectrometry data'
   long_description: |

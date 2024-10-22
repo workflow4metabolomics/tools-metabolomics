@@ -9,19 +9,39 @@
     <expand macro="requirements"/>
 
     <command detect_errors="exit_code"><![CDATA[
-		@COMMAND_RSCRIPT@/CAMERA_findAdducts.R
+		@COMMAND_RSCRIPT@CAMERA_findAdducts.R
 		'$image'
 		$ppm
 		$mzabs
 		$multiplier
 		$polarity
-		$rules
-		$max_peaks
-		$psg_list
+
+		#if $rules_select == "FALSE":
+            $rules NULL
+        #else
+            $rules
+        #end if
+
+        #if $advanced_select == "FALSE":
+            $multiplier 3
+            $max_peaks 100
+            $psg_list NULL
+        #else
+            $multiplier
+            $max_peaks
+            #if $psg_list_block == "FALSE":
+                $psg_list = NULL
+            #else
+                $psg_list
+            #end if
+        #end if
+
 		$intval
 		$convertRTMinute
 		$numDigitsMZ
 		$numDigitsRT
+        
+        @COMMAND_FILE_LOAD@
 		]]>
     </command>
     <inputs>
@@ -39,7 +59,7 @@
                 <option value="FALSE" selected="true">FALSE</option>
             </param>
             <when value="FALSE">
-                <param name="rules" type="text" value="NULL" label="No personal ruleset file (using default ruleset)" optional="true" />
+                <!--<param name="rules" type="text" value="NULL" label="No personal ruleset file (using default ruleset)" optional="true" />-->
             </when>
             <when value="TRUE">
                 <param name="rules" type="data" format="csv" label="User defined ruleset" />
@@ -58,9 +78,9 @@
                 <option value="FALSE" selected="true">FALSE</option>
             </param>
             <when value="FALSE">
-                <param name="multiplier" type="integer" value="3" label="Highest number(n) of allowed clusterion [nM+ion]" optional="true" />
+                <!--<param name="multiplier" type="integer" value="3" label="Highest number(n) of allowed clusterion [nM+ion]" optional="true" />
                 <param name="max_peaks" type="integer" value="100" label="How many peaks will be calculated in every thread (parallel mode)" optional="true" />
-                <param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />
+                <param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />-->
             </when>
             <when value="TRUE">
                 <param name="multiplier" type="integer" value="3" label="Highest number(n) of allowed clusterion [nM+ion]" />
@@ -72,7 +92,7 @@
                         <option value="FALSE" selected="true">FALSE</option>
                     </param>
                     <when value="FALSE">
-                        <param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />
+                        <!--<param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />-->
                     </when>
                     <when value="TRUE">
                         <param name="psg_list" type="text" optional="true" label="Pseudospectra indices (optional)" help="Provide a comma-separated list of pseudospectra indices (e.g. 1,2,3)." />
@@ -83,6 +103,7 @@
         <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
         <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
         <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <expand macro="input_file_load"/>
     </inputs>
     <outputs>
         <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.findAdducts.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
@@ -91,15 +112,15 @@
     <tests>
         <test>
             <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.RData" />
-            <param name="ppm" value="5" />
+            <!--<param name="ppm" value="5" />
             <param name="mzabs" value="0.015" />
             <param name="polarity" value="positive" />
             <param name="rules" value="NULL" />
             <param name="intval" value="into" />
             <param name="multiplier" value="3" />
             <param name="max_peaks" value="100" />
-            <param name="psg_list" value="NULL" />
-
+            <param name="psg_list" value="NULL" />-->
+            <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.findAdducts.variableMetadata.tsv" />
             <output name="camera_findAdducts_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.findAdducts.RData" />
         </test>

@@ -21,6 +21,9 @@ args <- list(
   numDigitsRT     = as.numeric(args_vec[7]) # Number of digits RT
 )
 
+print("Converted arguments:")
+print(args)
+
 # Check if the image file exists
 if (!file.exists(args$image)) {
   stop("The RData file does not exist: ", args$image)

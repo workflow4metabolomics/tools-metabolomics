@@ -9,7 +9,7 @@
     <expand macro="requirements"/>
 
     <command detect_errors="exit_code"><![CDATA[
-		@COMMAND_RSCRIPT@/CAMERA_findIsotopes.R
+		@COMMAND_RSCRIPT@CAMERA_findIsotopes.R
 		'$image'
 		$maxcharge
 		$maxiso
@@ -21,6 +21,8 @@
 		$convertRTMinute
 		$numDigitsMZ
 		$numDigitsRTF
+        
+        @COMMAND_FILE_LOAD@
 		]]>
     </command>
 
@@ -40,6 +42,7 @@
         <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
         <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
         <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <expand macro="input_file_load"/>
     </inputs>
     <outputs>
         <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.findIsotopes.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
@@ -48,14 +51,14 @@
     <tests>
         <test>
             <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.RData" />
-            <param name="maxcharge" value="3" />
+            <!--<param name="maxcharge" value="3" />
             <param name="maxiso" value="4" />
             <param name="ppm" value="5" />
             <param name="mzabs" value="0.01" />
             <param name="intval" value="into" />
             <param name="minfrac" value="0.5" />
-            <param name="filter" value="FALSE" />
-
+            <param name="filter" value="FALSE" />-->
+            <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.variableMetadata.tsv" />
             <output name="camera_findIsotopes_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.RData" />
         </test>

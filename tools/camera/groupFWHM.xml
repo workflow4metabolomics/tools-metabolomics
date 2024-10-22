@@ -8,7 +8,7 @@
     <expand macro="requirements"/>
 
     <command detect_errors="exit_code"><![CDATA[
-		@COMMAND_RSCRIPT@/CAMERA_groupFWHM.R 
+		@COMMAND_RSCRIPT@CAMERA_groupFWHM.R 
 		'$image' 
 		$sigma 
 		$perfwhm 
@@ -16,6 +16,8 @@
 		$convertRTMinute
 		$numDigitsMZ
 		$numDigitsRT
+
+        @COMMAND_FILE_LOAD@
 		]]>
     </command>
 
@@ -31,6 +33,7 @@
         <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
         <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
         <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <expand macro="input_file_load"/>
     </inputs>
 
     <outputs>
@@ -41,10 +44,10 @@
     <tests>
         <test>
             <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.RData" />
-            <param name="sigma" value="6" />
+            <!--<param name="sigma" value="6" />
             <param name="perfwhm" value="0.6" />
-            <param name="intval" value="into" />
-
+            <param name="intval" value="into" />-->
+            <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.variableMetadata.tsv" />
             <output name="camera_fwhm" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.rdata" />
         </test>

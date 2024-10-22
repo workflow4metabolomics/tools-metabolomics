@@ -10,13 +10,13 @@ args_vec <- commandArgs(trailingOnly = TRUE)
 print("Arguments retrieved from the command line:")
 print(args_vec)
 
-# Function to convert "NULL" strings to actual NULL values
-convertNullString <- function(x) {
-  if (x == "NULL") {
-    return(NULL)
-  }
-  return(x)
-}
+# # Function to convert "NULL" strings to actual NULL values
+# convertNullString <- function(x) {
+#   if (x == "NULL") {
+#     return(NULL)
+#   }
+#   return(x)
+# }
 
 args <- list(
   image           = args_vec[1], # the xsAnnotate object
@@ -26,23 +26,39 @@ args <- list(
   polarity        = args_vec[5], # Which polarity mode was used for measuring of the MS sample
   rules           = args_vec[6], # custom ruleset or NULL for default ruleset
   max_peaks       = as.numeric(args_vec[7]), # If run in parallel mode, this number defines how many peaks will be calculated in each thread
-  psg_list        = convertNullString(args_vec[8]), # Vector of pseudospectra indices; correlation analysis will only be done for those groups
+  psg_list        = args_vec[8], # Vector of pseudospectra indices; correlation analysis will only be done for those groups
   intval          = args_vec[9], # choose intensity values. Allowed values are "into", "maxo", "intb" (string)
   convertRTMinute = as.logical(args_vec[10]), # TRUE - FALSE
   numDigitsMZ     = as.numeric(args_vec[11]), # Number of digits MZ
   numDigitsRT     = as.numeric(args_vec[12]) # Number of digits RT
 )
-# Convert "NULL" to actual NULL or convert to data frame
-if (args$rules == "NULL") {
-  args$rulset <- convertNullString(args$rules) # Return NULL
+
+# Check if the 'rules' argument in 'args' is NULL
+if (is.null(args$rules)) {
+  # If 'args$rules' is NULL, set 'rulset' to NULL
+  args$rulset <- NULL 
 } else {
-  args$rulset <- read.table(args$rules, h = TRUE, sep = ",")
-  if (ncol(args$rulset) < 4) rulset <- read.table(args$rules, h = TRUE, sep = "\t")
-  if (ncol(args$rulset) < 4) rulset <- read.table(args$rules, h = TRUE, sep = ",")
-  if (ncol(args$rulset) < 4) {
-    error_message <- "Your ruleset file seems not well formatted. The column separators accepted are ; , and tabulation"
+  # Try to read the rules file with different delimiters
+  delimiters <- c(";", "\t", ",")  # List of possible delimiters
+  success <- FALSE  # Flag to check if reading was successful
+
+  for (sep in delimiters) {
+    # Attempt to read the rules file with the current separator
+    args$rulset <- read.table(args$rules, header = TRUE, sep = sep)
+
+    # Check if the number of columns is at least 4
+    if (ncol(args$rulset) >= 4) {
+      success <- TRUE  # Mark success if the format is correct
+      break  # Exit the loop if the file was read successfully
+    }
+  }
+
+  # If reading the rules file failed for all delimiters
+  if (!success) {
+    # Display an error message if the file is not well formatted
+    error_message <- "The rules file appears to be improperly formatted. Accepted column separators are ;, tab, and ,."
     print(error_message)
-    stop(error_message)
+    stop(error_message)  # Stop execution with an error
   }
 }
 

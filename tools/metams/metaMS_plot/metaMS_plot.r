@@ -3,12 +3,6 @@
 # created by Yann GUITTON and updated by Julien SAINT-VANNE
 
 
-# ----- LOG FILE -----
-# log_file <- file("log.txt", open = "wt")
-# sink(log_file)
-# sink(log_file, type = "output")
-
-
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
@@ -33,7 +27,6 @@ cat("\nStart of the '", modNamC, "' Galaxy module call: ", format(Sys.time(), "%
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n\n")
 args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
-# write.table(as.matrix(args), col.names=F, quote=F, sep='\t\t')
 print(cbind(value = unlist(args)))
 
 
@@ -49,7 +42,7 @@ if (args$selecteic) {
   if (args$unkn[1] != "NULL") {
     # When unkn = 0 user want to process all unknowns
     if (args$unkn[1] == 0) {
-      args$unkn <- c(1:nrow(resGC$PeakTable))
+      args$unkn <- seq_len(nrow(resGC$PeakTable))
       print("User want to process on all unknown(s) found in metaMS process")
     }
     # TODO find the biggest number of unkn ask by user cause it can write "1,15,9,8" with a max of 11 unkn. With this code it finds the 8 and it will pass
@@ -83,7 +76,7 @@ if (!exists("zipfile")) zipfile <- NULL
 rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
-directory <- retrieveRawfileInTheWorkingDirectory(singlefile, zipfile)
+directory <- retrieveRawfile(singlefile, zipfile)
 
 
 # ----- MAIN PROCESSING INFO -----

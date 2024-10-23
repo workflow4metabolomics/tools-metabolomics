@@ -71,7 +71,7 @@ getCorrectFileName <- function(peaktable, sampleMetadata) {
     }
   }
   # i now correspond to the first column with a sample
-  for (j in 1:(nrow(sampleMetadata))) {
+  for (j in seq_len(nrow(sampleMetadata))) {
     col <- j + i - 1 # minus 1 cause i is the good column to start and j start at 1
     if (col <= length(colnames(peaktable))) {
       newname <- gsub("(^.*)(\\..*$)", "\\1", colnames(peaktable)[col])
@@ -112,7 +112,7 @@ getRawfilePathFromArguments <- function(singlefile, zipfile, listArguments) {
     singlefile_sampleNames <- unlist(strsplit(singlefile_sampleNames, ","))
 
     singlefile <- NULL
-    for (singlefile_galaxyPath_i in seq(1:length(singlefile_galaxyPaths))) {
+    for (singlefile_galaxyPath_i in seq_along(singlefile_galaxyPaths)) {
       singlefile_galaxyPath <- singlefile_galaxyPaths[singlefile_galaxyPath_i]
       singlefile_sampleName <- singlefile_sampleNames[singlefile_galaxyPath_i]
       singlefile[[singlefile_sampleName]] <- singlefile_galaxyPath
@@ -129,7 +129,7 @@ getRawfilePathFromArguments <- function(singlefile, zipfile, listArguments) {
 # This function retrieve the raw file in the working directory
 #   - if zipfile: unzip the file with its directory tree
 #   - if singlefiles: set symlink with the good filename
-retrieveRawfileInTheWorkingDirectory <- function(singlefile, zipfile) {
+retrieveRawfile <- function(singlefile, zipfile) {
   if (!is.null(singlefile) && (length("singlefile") > 0)) {
     for (singlefile_sampleName in names(singlefile)) {
       singlefile_galaxyPath <- singlefile[[singlefile_sampleName]]
@@ -149,14 +149,11 @@ retrieveRawfileInTheWorkingDirectory <- function(singlefile, zipfile) {
       stop(error_message)
     }
 
-    # list all file in the zip file
-    # zip_files=unzip(zipfile,list=T)[,"Name"]
-
     # unzip
     suppressWarnings(unzip(zipfile, unzip = "unzip"))
 
     # get the directory name
-    filesInZip <- unzip(zipfile, list = T)
+    filesInZip <- unzip(zipfile, list = TRUE)
     directories <- unique(unlist(lapply(strsplit(filesInZip$Name, "/"), function(x) x[1])))
     directories <- directories[!(directories %in% c("__MACOSX")) & file.info(directories)$isdir]
     directory <- "."
@@ -187,7 +184,7 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
   }
   class <- unique(sampleMetadata[, "class"]) # create phenoData like table
   classnames <- vector("list", length(class))
-  for (i in 1:length(class)) {
+  for (i in seq_along(class)) {
     classnames[[i]] <- which(sampleMetadata[, "class"] == class[i])
   }
 
@@ -225,13 +222,13 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
         cat(paste(class[k], "vs", class[l], sep = " ", "\n"))
         plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Base Peak Chromatograms \n", "BPCs_", class[k], " vs ", class[l], sep = ""), xlab = "Retention Time (min)", ylab = "BPC")
         colvect <- NULL
-        for (j in 1:length(classnames[[k]])) {
+        for (j in seq_along(classnames[[k]])) {
           bpc <- BPC[[classnames[[k]][j]]]
           # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
           points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
-        for (j in 1:length(classnames[[l]])) {
+        for (j in seq_along(classnames[[l]])) {
           # i=class2names[j]
           bpc <- BPC[[classnames[[l]][j]]]
           points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
@@ -248,13 +245,13 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
     colvect <- NULL
     plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Base Peak Chromatograms \n", "BPCs_", class[k], "vs", class[l], sep = ""), xlab = "Retention Time (min)", ylab = "BPC")
 
-    for (j in 1:length(classnames[[k]])) {
+    for (j in seq_along(classnames[[k]])) {
       bpc <- BPC[[classnames[[k]][j]]]
       # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
       points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
-    for (j in 1:length(classnames[[l]])) {
+    for (j in seq_along(classnames[[l]])) {
       # i=class2names[j]
       bpc <- BPC[[classnames[[l]][j]]]
       points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
@@ -271,7 +268,7 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
     colvect <- NULL
     plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Base Peak Chromatograms \n", "BPCs_", class[k], sep = ""), xlab = "Retention Time (min)", ylab = "BPC")
 
-    for (j in 1:length(classnames[[k]])) {
+    for (j in seq_along(classnames[[k]])) {
       bpc <- BPC[[classnames[[k]][j]]]
       # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
       points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
@@ -301,7 +298,7 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
   }
   class <- as.vector(levels(sampleMetadata[, "class"])) # create phenoData like table
   classnames <- vector("list", length(class))
-  for (i in 1:length(class)) {
+  for (i in seq_along(class)) {
     classnames[[i]] <- which(sampleMetadata[, "class"] == class[i])
   }
 
@@ -333,13 +330,13 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
         cat(paste(class[k], "vs", class[l], "\n", sep = " "))
         plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Total Ion Chromatograms \n", "TICs_", class[k], " vs ", class[l], sep = ""), xlab = "Retention Time (min)", ylab = "TIC")
         colvect <- NULL
-        for (j in 1:length(classnames[[k]])) {
+        for (j in seq_along(classnames[[k]])) {
           tic <- TIC[[classnames[[k]][j]]]
           # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
           points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
-        for (j in 1:length(classnames[[l]])) {
+        for (j in seq_along(classnames[[l]])) {
           # i=class2names[j]
           tic <- TIC[[classnames[[l]][j]]]
           points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
@@ -355,13 +352,13 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
     l <- 2
     plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Total Ion Chromatograms \n", "TICs_", class[k], "vs", class[l], sep = ""), xlab = "Retention Time (min)", ylab = "TIC")
     colvect <- NULL
-    for (j in 1:length(classnames[[k]])) {
+    for (j in seq_along(classnames[[k]])) {
       tic <- TIC[[classnames[[k]][j]]]
       # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
       points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
-    for (j in 1:length(classnames[[l]])) {
+    for (j in seq_along(classnames[[l]])) {
       # i=class2names[j]
       tic <- TIC[[classnames[[l]][j]]]
       points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
@@ -375,7 +372,7 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
     ylim <- range(sapply(TIC, function(x) range(x[, 2])))
     plot(0, 0, type = "n", xlim = xlim / 60, ylim = ylim, main = paste("Total Ion Chromatograms \n", "TICs_", class[k], sep = ""), xlab = "Retention Time (min)", ylab = "TIC")
     colvect <- NULL
-    for (j in 1:length(classnames[[k]])) {
+    for (j in seq_along(classnames[[k]])) {
       tic <- TIC[[classnames[[k]][j]]]
       # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
       points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
@@ -402,7 +399,7 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
   # Select only pspectra which correpond to them select in metaMS
   # col1 = filtered spectra from runGC and col2 = an@spectra
   allPCGRPs <- lapply(
-    1:length(resGC$xset),
+    seq_along(resGC$xset),
     function(i) {
       an <- resGC$xset[[i]]
       huhn <- an@pspectra[which(sapply(an@pspectra, length) >=
@@ -410,15 +407,15 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
           resGC$settings,
           "DBconstruction.minfeat"
         ))]
-      matCORR <- cbind(1:length(huhn), match(huhn, an@pspectra))
+      matCORR <- cbind(seq_along(huhn), match(huhn, an@pspectra))
     }
   )
   # Build a new annotation list with sampnames and pseudospectra number from xset
   helpannotation <- list()
-  for (j in 1:length(resGC$xset)) {
+  for (j in seq_along(resGC$xset)) {
     helpannotation[[j]] <- resGC$annotation[[j]][1:2]
     pspvector <- vector()
-    for (i in 1:nrow(helpannotation[[j]])) {
+    for (i in seq_len(nrow(helpannotation[[j]]))) {
       # Find corresponding pspec
       psplink <- allPCGRPs[[j]][match(helpannotation[[j]][i, 1], allPCGRPs[[j]]), 2]
       pspvector <- c(pspvector, psplink)
@@ -429,7 +426,7 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
         helpannotation[[j]][i, 2] <- new_name
       } else {
         # It has been found in local database
-        for (k in 1:length(DB)) {
+        for (k in seq_along(DB)) {
           if (helpannotation[[j]][i, 2] == k) {
             helpannotation[[j]][i, 2] <- DB[[k]]$Name
             break
@@ -444,7 +441,7 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
 
   par(mar = c(5, 4, 4, 2) + 0.1)
   # For each unknown
-  for (l in 1:length(unkn)) {
+  for (l in seq_along(unkn)) {
     # recordPlot
     perpage <- 3 # if change change layout also!
     dev.new(width = 21 / 2.54, height = 29.7 / 2.54, file = paste("Unknown_", unkn[l], ".pdf", sep = "")) # A4 pdf
@@ -457,7 +454,7 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
     o.par <- par(mar = rep.int(0, 4))
     on.exit(par(o.par))
     # For each sample
-    for (c in 1:length(resGC$xset)) {
+    for (c in seq_along(resGC$xset)) {
       # get sample name
       sampname <- basename(resGC$xset[[c]]@xcmsSet@filepaths)
       # remove .cdf, .mzXML filepattern
@@ -476,11 +473,11 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
       # an@xcmsSet@filepaths <- paste0("./",basename(an@xcmsSet@filepaths))
       # }
       # Find the good annotation for this sample
-      for (a in 1:length(helpannotation)) {
+      for (a in seq_len(length(helpannotation))) {
         if (gsub(filepattern, "", names(helpannotation)[a]) == paste0("./", sampname)) {
           # Find the unkn or the matched std in this sample
           findunkn <- FALSE
-          for (r in 1:nrow(helpannotation[[a]])) {
+          for (r in seq_len(nrow(helpannotation[[a]]))) {
             if (helpannotation[[a]][r, "annotation"] == peaktable[unkn[l], 1]) {
               findunkn <- TRUE
               pcgrp <- helpannotation[[a]][r, "pspvector"]

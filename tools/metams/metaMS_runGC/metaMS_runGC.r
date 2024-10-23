@@ -5,12 +5,6 @@
 # use make.names in sampleMetadata to avoid issues with files names
 
 
-# ----- LOG FILE -----
-# log_file=file("log.txt", open = "wt")
-# sink(log_file)
-# sink(log_file, type = "output")
-
-
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n\n")
 
@@ -44,9 +38,9 @@ cat("\n\n\tARGUMENTS PROCESSING INFO\n\n")
 # RI parameter
 if (args$ri != "NULL") {
   RIarg <- read.table(args$ri)
-  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = T, sep = ";")
-  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = T, sep = "\t")
-  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = T, sep = ",")
+  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = TRUE, sep = ";")
+  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = TRUE, sep = "\t")
+  if (ncol(RIarg) < 2) RIarg <- read.table(args$ri, h = TRUE, sep = ",")
   if (ncol(RIarg) < 2) {
     error_message <- "Your RI file seems not well formatted. The column separators accepted are ; , and tabulation"
     print(error_message)
@@ -145,16 +139,6 @@ if (args$settings == "User_defined") {
     RIdiff = 5,
     minfeat = minfeatparam
   )
-
-  # to used if contaminant filter
-
-  # metaSetting(GALAXY.GC, "matchIrrelevants") <- list(
-  # irrelevantClasses = c("Bleeding", "Plasticizers"),
-  # timeComparison = "RI",
-  # RIdiff = RIdiffparam,
-  # rtdiff = rtdiffparam,
-  # simthresh = simthreshparam)
-
   metaSetting(GALAXY.GC, "betweenSamples") <- list(
     min.class.fraction = minclassfractionparam,
     min.class.size = minclasssizeparam,
@@ -188,7 +172,7 @@ if (!exists("zipfile")) zipfile <- NULL
 rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
-directory <- retrieveRawfileInTheWorkingDirectory(singlefile, zipfile)
+directory <- retrieveRawfile(singlefile, zipfile)
 
 
 # ----- MAIN PROCESSING INFO -----

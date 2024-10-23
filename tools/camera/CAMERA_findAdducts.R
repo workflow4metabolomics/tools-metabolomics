@@ -116,6 +116,8 @@ if (!exists("listOFlistArguments")) listOFlistArguments <- list()
 listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_findAdducts")]] <- args
 
 # Retrieve raw files
+if (!exists("zipfile")) zipfile <- NULL
+if (!exists("singlefile")) singlefile <- NULL
 rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile

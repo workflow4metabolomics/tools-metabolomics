@@ -1,0 +1,344 @@
+ <tool id="metams_runGC" name="metaMS.runGC" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
+
+    <description>GC-MS data preprocessing using metaMS package</description>
+
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+    <expand macro="stdio"/>
+    
+    <command><![CDATA[
+    @COMMAND_RSCRIPT@//metaMS_runGC.r
+
+        singlefile_galaxyPath '$input' 
+        singlefile_sampleName '$input.name'
+        
+        #if $settings.setting == "gcdefault":
+            settings "default"
+        #elif $settings.setting == "usersettings":
+            settings "User_defined"
+            rtdiff $settings.rtdiff
+            minfeat $settings.minfeat
+            simthreshold $settings.simthreshold
+            minclassfraction $settings.minclassfraction
+            minclasssize $settings.minclasssize
+        #end if
+        #if $settings.options_rtrange.option == "show":
+            rtrange "c($settings.options_rtrange.rtrange)"
+        #end if 
+        #if $settings.options_rtrange.option == "hide":
+            rtrange "NULL"
+        #end if
+        #if $settings.options_ri.option == "show":
+            ri $settings.options_ri.ri_input
+        #end if 
+        #if $settings.options_ri.option == "hide":
+            ri "NULL"
+        #end if
+        #if $options_rifilter.option == "true":
+            rishift $options_rifilter.ri_shift
+        #end if 
+        #if $options_rifilter.option == "false":
+            rishift "none"
+        #end if
+        #if $settings.options_db.option == "show":
+            db '$settings.options_db.db_input'
+        #end if 
+        #if $settings.options_db.option == "hide":
+            db "NULL"
+        #end if
+        nSlaves \${GALAXY_SLOTS:-1}
+                 
+    ]]></command>
+    
+    <inputs>
+
+        <param name="input" type="data" format="rdata,rdata.xcms.findchrompeaks,rdata.xcms.group" label="Rdata from xcms and merged" help="Rdata file containing a xset object"/>
+        <conditional name="settings">
+            <param name="setting" type="select" label="Settings" help="Choose the settings used for finding peaks" >
+                <option value="gcdefault" selected="true">GC_Default</option>
+                <option value="usersettings" >User_Defined</option>
+            </param>
+            <when value="gcdefault">
+                <conditional name="options_rtrange">
+                    <param name="option" type="select" label="RT range option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                         <param name="rtrange" type="text" value="" label="RTrange" help="RT range to process in minutes, for example 5,25" >
+                            <validator type="empty_field"/> 
+                        </param>
+                    </when>
+                    <when value="hide" />
+                </conditional>
+                <conditional name="options_db">
+                    <param name="option" type="select" label="Use Personnal DataBase option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                        <param name="db_input" type="data" format="msp,txt" label=" DB file" help="A database file as needed for DB option in runGC" />
+                    </when>
+                    <when value="hide" />
+                </conditional>
+                <conditional name="options_ri">
+                    <param name="option" type="select" label="Use RI option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                        <param name="ri_input" type="data" format="tabular,txt,csv,tsv,gg" label=" RI file" help="A file with two column (rt and RI) with rt in minutes as needed for RI option in runGC" />
+                    </when>
+                    <when value="hide" />
+                </conditional>
+            </when>
+            <when value="usersettings">
+                <conditional name="options_rtrange">
+                    <param name="option" type="select" label="RT range option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                         <param name="rtrange" type="text" value="" label="RTrange" help="RT range to process in minutes, for example 5,25" >
+                            <validator type="empty_field"/> 
+                        </param>
+                    </when>
+                    <when value="hide" />
+                </conditional>
+
+                <param name="rtdiff" type="float" value="0.05" label="RT_Diff" help="The allowed RT shift in minutes between same molecule in different sample" />
+                <param name="minfeat" type="integer" value="5" label="Min_Features" help="The minimum number of ion in a mass spectra to consider it a molecule" />
+                <param name="simthreshold" type="float" value="0.70" label="similarity_threshold" help="The minimum similarity allowed between peaks mass spectra to be considered as equal" />
+                <param name="minclassfraction" type="float" value="0.5" label="min.class.fract" help="The fraction of samples in which a pseudospectrum is present before it is regarded as an unknown" />
+                <param name="minclasssize" type="integer" value="3" label="min.class.size" help="The absolute number of samples in which a pseudospectrum is present before it is regarded as an unknown" />
+                <conditional name="options_db">
+                    <param name="option" type="select" label="Use Personnal DataBase option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                        <param name="db_input" type="data" format="msp,txt" label=" DB file" help="A database file as needed for DB option in runGC" />
+                    </when>
+                    <when value="hide" />
+                </conditional>
+                <conditional name="options_ri">
+                    <param name="option" type="select" label="Use RI option " >
+                        <option value="show">show</option>
+                        <option value="hide" selected="true">hide</option>
+                    </param>
+                    <when value="show">
+                        <param name="ri_input" type="data" format="tabular,txt,csv,tsv,gg" label=" RI file" help="A file with two column (rt and RI) with rt in minutes as needed for RI option in runGC" />
+                    </when>
+                    <when value="hide" />
+                </conditional>
+            </when>
+        </conditional>
+        <conditional name="options_rifilter">
+            <param name="option" type="select" label="Use RI as filter" >
+                <option value="false" selected="true">FALSE</option>
+                <option value="true" >TRUE</option>
+            </param>
+            <when value="true">
+                <param name="ri_shift" type="integer" value="5" label="RIshift" help="RI shift accepted" />
+            </when>
+            <when value="false" />
+        </conditional>       
+        <!-- pour !is.null(DB) il faut un conditionnal avec un input type="text" pour charger la db au format msp et donc il faut définir un datatype (cf Misharl) -->
+    </inputs>
+
+    <outputs>
+
+        <data name="peaktable" format="tabular" from_work_dir="peaktable.tsv" label="peaktable.tsv" />
+        <data name="sampleMetadata" format="tabular" from_work_dir="sampleMetadata.tsv" label="sampleMetadata.tsv" />
+        <data name="variableMetadata" format="tabular" from_work_dir="variableMetadata.tsv" label="variableMetadata.tsv" />
+        <data name="dataMatrix" format="tabular" from_work_dir="dataMatrix.tsv" label="dataMatrix.tsv" />
+        <data name="peakspectra" format="txt" from_work_dir="peakspectra.msp" label="peakspectra.msp" />
+        <data name="rungcRData" format="rdata" from_work_dir="runGC.RData" label="runGC.RData" />
+
+    </outputs>
+
+    <tests>
+        <!-- Test without DB -->
+        <test>
+            <param name="input" value="xset_merged.RData"  ftype="rdata" />
+            <conditional name="settings">
+                <param name="setting" value="gcdefault" />
+            </conditional>
+            <!--<output name="peaktable" file="peaktable_noDB.tsv" lines_diff="4"/>-->
+            <output name="sampleMetadata" file="sampleMetadata_noDB.tsv" lines_diff="4"/>
+            <output name="variableMetadata" file="variableMetadata_noDB.tsv" lines_diff="4"/>
+            <!--<output name="dataMatrix" file="dataMatrix_noDB.tsv" lines_diff="4" />-->
+            <output name="peakspectra" file="peakspectra_noDB.msp" lines_diff="4"/>
+        </test>
+        <!-- Test with DB -->
+        <test>
+            <param name="input" value="xset_merged.RData"  ftype="rdata" />
+            <conditional name="settings">
+                <param name="setting" value="gcdefault" />
+                <conditional name="options_db">
+                    <param name="option" value="show" />
+                    <param name="db_input" value="W4M0004_database_small.msp" ftype="msp" />
+                </conditional>
+            </conditional>
+            <!--<output name="peaktable" file="peaktable.tsv" lines_diff="4"/>-->
+            <output name="sampleMetadata" file="sampleMetadata.tsv" lines_diff="4"/>
+            <output name="variableMetadata" file="variableMetadata.tsv" lines_diff="4"/>
+            <!--<output name="dataMatrix" file="dataMatrix.tsv" lines_diff="4" />-->
+            <output name="peakspectra" file="peakspectra.msp" lines_diff="4"/>
+        </test>
+    </tests>
+    
+    <help><![CDATA[
+
+@HELP_AUTHORS@
+
+====================
+metaMS.runGC
+====================
+
+-----------
+Description
+-----------
+metaMS.runGC is a function dedicated to GCMS data processing from converted files to the generation of pseudospectra (compounds) table.
+Current version for metaMS R package: 1.18.1
+
+**Process:** 
+Each of the converted data (cdf, mzML...)  is profiled by a combination of xcms and CAMERA functions. Then all the mass spectra of detected peaks are compared and clustered.
+For more details see metaMS : Wehrens, R.; Weingart, G.; Mattivi, F. Journal of Chromatography B [10.1016/j.jchromb.2014.02.051](https://pubmed.ncbi.nlm.nih.gov/24656939/).
+
+
+**Main outputs:**
+A PeakTable is generated with one line per "compound" and one column per sample. 
+A dataMatrix.csv file is generated and can be used for PCA or for further analysis.
+A peakspectra.mps file is generated that contains all the spectra of the detected compounds in MSP format. That file can be used for database search online (Golm, MassBank) or locally (NIST MSSEARCH)
+for NIST search a tutorial is available [here](https://workflow4metabolomics.org/sites/default/files/fichiers/documents/w4m_HowToUseNIST_V01.pdf).
+
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+You can start from here (XCMS 1.x) or use result file from (XCMS 3.x) :
+
+========================= ==================== ======= ==========
+Name                      output file          format  parameter
+========================= ==================== ======= ==========
+xcms.xcmsSet              xset.RData RData     RData   file            			
+========================= ==================== ======= ==========
+
+**Downstream tools**
+
++---------------------------+---------------------------------------+--------+
+| Name                      | Output file                           | Format |
++===========================+=======================================+========+
+|Determine Vdk or Lowess    |                        dataMatrix.tsv | Tabular|
++---------------------------+---------------------------------------+--------+
+|Normalization Vdk/Lowess   |                        dataMatrix.tsv | Tabular|
++---------------------------+---------------------------------------+--------+
+|Anova                      |                        dataMatrix.tsv | Tabular|
++---------------------------+---------------------------------------+--------+
+|PCA                        |                        dataMatrix.tsv | Tabular|
++---------------------------+---------------------------------------+--------+
+|Hierarchical Clustering    |                        dataMatrix.tsv | Tabular|
++---------------------------+---------------------------------------+--------+
+|Golm Metabolome Search     |                       peakspectra.msp | Text   |
++---------------------------+---------------------------------------+--------+
+
+**General schema of the metabolomic workflow for GCMS**
+
+.. image:: workflow_metaMS_runGC.png
+
+-----------
+Input files
+-----------
+
+If you choose to use results from xcms.xcmsSet with XCMS > 3.0
+
++---------------------------+------------+
+| Parameter : num + label   |   Format   |
++===========================+============+
+| 1 : RData file from XCMS  |   RData    |
++---------------------------+------------+
+
+
+.. |lt|     unicode:: U+0003C .. LESS-THAN SIGN
+
+Or converted GCMS files (mzML, CDF...) in your local libray with XCMS |lt| 3.0 (from metaMS) 
+
+
+----------
+Parameters
+----------
+
+Parameters are described in metaMS R package and mainly correspond to those of xcms.xcmsSet
+
+----------
+Outputs
+----------
+
+- The output file **dataMatrix.tsv** is a tabular file. You can continue your analysis using it in the statistical tools.
+- The output file **peakspectra.msp** is a text file. You can continue your analysis using it in the golm search tool. Or you can load it in your personnal NIST MSsearch program (c:/NISTXX/mssearch/nistms.exe) that tool is in general installed by default on GCMS apparatus. Tutorial available [here](https://workflow4metabolomics.org/sites/default/files/fichiers/documents/w4m_HowToUseNIST_V01.pdf).
+
+
+----------------
+Working Example
+----------------
+.. class:: warningmark  
+
+**Reference Data for testing are taken from:**
+
+Dittami,S.M. et al. (2012) *Towards deciphering dynamic changes and evolutionary mechanisms involved in the adaptation to low salinities in Ectocarpus (brown algae): Adaptation to low salinities in Ectocarpus.* The Plant Journal
+
+Input files
+-----------
+
+    | **RData file from XCMS** -> xset_merged.RData
+
+Parameters
+----------
+
+    | Settings -> **Default**
+    | DB option -> **show**
+        | DB file: -> **W4M0004_database_small.msp**
+    | ...all default option values
+
+
+Output files
+------------
+
+    | **RData file** -> rungc.RData
+
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+**Version 3.0 - 20/05/2019**
+
+- Divided tool into two new. One will be metaMS_plot and this one stay the same without plotting chromatograms and without zip files
+
+**Version 2.1 - 08/06/2017**
+
+- Quality: add sessionInfo logs with packages versions
+- Processing: add RI usage 
+
+**Version 1.1 - 11/07/2016**
+
+- TEST: refactoring to pass planemo test using conda dependencies
+
+
+**Version 1.0 - 01/06/2015**
+
+- NEW: new tool
+
+    ]]></help>
+    
+    <expand macro="citation" />
+
+</tool>

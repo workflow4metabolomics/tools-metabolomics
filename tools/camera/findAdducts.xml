@@ -111,7 +111,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.RData" />
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.RData" />
             <!--<param name="ppm" value="5" />
             <param name="mzabs" value="0.015" />
             <param name="polarity" value="positive" />
@@ -121,8 +121,8 @@
             <param name="max_peaks" value="100" />
             <param name="psg_list" value="NULL" />-->
             <expand macro="test_file_load_single"/>
-            <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.findAdducts.variableMetadata.tsv" />
-            <output name="camera_findAdducts_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.findAdducts.RData" />
+            <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.findAdducts.variableMetadata.tsv" />
+            <output name="camera_findAdducts_rdata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.findAdducts.RData" />
         </test>
     </tests>
     <help><![CDATA[

@@ -22,8 +22,8 @@ args <- list(
   convertRTMinute = as.logical(args_vec[9]), # TRUE - FALSE
   numDigitsMZ = as.numeric(args_vec[10]), # Number of digits MZ
   numDigitsRT = as.numeric(args_vec[11]), # Number of digits RT
-  singlefile_galaxyPath = args_vec[12], # @COMMAND_FILE_LOAD@
-  singlefile_sampleName = args_vec[13] # @COMMAND_FILE_LOAD@
+  singlefile_galaxyPath = args_vec[13], # @COMMAND_FILE_LOAD@
+  singlefile_sampleName = args_vec[15] # @COMMAND_FILE_LOAD@
 )
 
 print("Converted arguments:")
@@ -196,7 +196,7 @@ ncols <- length(colnames(peakList))
 sample_cols <- length(xa@sample) # Number of samples
 
 # Indices for the columns of interest
-main_cols <- 1:(ncols - (3 + sample_cols)) # Main columns before sample columns
+main_cols <- 1:(ncols - (6 + sample_cols)) # Main columns before sample columns
 tail_cols <- (ncols - 2):ncols # The last 3 columns (adduct, isotope, pcgroup)
 
 # Combine the selected columns from matgrp with the group names

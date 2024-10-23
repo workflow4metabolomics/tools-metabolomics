@@ -50,7 +50,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.RData" />
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.RData" />
             <!--<param name="maxcharge" value="3" />
             <param name="maxiso" value="4" />
             <param name="ppm" value="5" />
@@ -59,8 +59,8 @@
             <param name="minfrac" value="0.5" />
             <param name="filter" value="FALSE" />-->
             <expand macro="test_file_load_single"/>
-            <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.variableMetadata.tsv" />
-            <output name="camera_findIsotopes_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.findIsotopes.RData" />
+            <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.variableMetadata.tsv" />
+            <output name="camera_findIsotopes_rdata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.RData" />
         </test>
     </tests>
     <help><![CDATA[

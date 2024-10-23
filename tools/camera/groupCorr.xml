@@ -58,7 +58,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.RData" />
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.RData" />
             <!--<param name="cor_eic_th" value="0.75" />
             <param name="pval" value="0.05" />
             <param name="graphMethod" value="hcs" />
@@ -68,8 +68,8 @@
             <param name="cor_exp_th" value="0.75" />
             <param name="intval" value="into" />-->
             <expand macro="test_file_load_single"/>
-            <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.variableMetadata.tsv" />
-            <output name="camera_groupCorr_rdata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.groupCorr.RData" />
+            <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.variableMetadata.tsv" />
+            <output name="camera_groupCorr_rdata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.RData" />
         </test>
     </tests>
     <help><![CDATA[

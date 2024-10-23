@@ -28,7 +28,7 @@ cat("\nStart of the '", modNamC, "' Galaxy module call: ", format(Sys.time(), "%
 # ----- PROCESSING INFILE -----
 cat("\n\n\tARGUMENTS PROCESSING INFO\n\n")
 args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
-# write.table(as.matrix(args), col.names=F, quote=F, sep='\t\t')
+
 print(cbind(value = unlist(args)))
 
 # ----- PROCESSING INFILE -----
@@ -208,7 +208,7 @@ if (!is.null(args$singlefile_galaxyPath)) {
     if (length(xset@rt$raw) > 1) {
       # create an exceptable list of xset for metaMS
       xset.l <- vector("list", length(xset@rt$raw))
-      for (i in 1:length(xset@rt$raw)) {
+      for (i in seq_along(xset@rt$raw)) {
         xset.l[[i]] <- new("xcmsSet")
         xset.l[[i]]@peaks <- xset@peaks[which(xset@peaks[, "sample"] == i), ]
         df <- data.frame(class = xset@phenoData[i, ])

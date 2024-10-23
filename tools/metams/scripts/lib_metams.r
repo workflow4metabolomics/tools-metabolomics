@@ -224,12 +224,12 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
         colvect <- NULL
         for (j in seq_along(classnames[[k]])) {
           bpc <- BPC[[classnames[[k]][j]]]
-          # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
+
           points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
         for (j in seq_along(classnames[[l]])) {
-          # i=class2names[j]
+
           bpc <- BPC[[classnames[[l]][j]]]
           points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -247,12 +247,12 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
 
     for (j in seq_along(classnames[[k]])) {
       bpc <- BPC[[classnames[[k]][j]]]
-      # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
+
       points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
     for (j in seq_along(classnames[[l]])) {
-      # i=class2names[j]
+
       bpc <- BPC[[classnames[[l]][j]]]
       points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -270,7 +270,7 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
 
     for (j in seq_along(classnames[[k]])) {
       bpc <- BPC[[classnames[[k]][j]]]
-      # points(bpc[,1]/60, bpc[,2], col = cols[i], pch = pch[i], type="l")
+
       points(bpc[, 1] / 60, bpc[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
@@ -332,12 +332,12 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
         colvect <- NULL
         for (j in seq_along(classnames[[k]])) {
           tic <- TIC[[classnames[[k]][j]]]
-          # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
+
           points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
         for (j in seq_along(classnames[[l]])) {
-          # i=class2names[j]
+
           tic <- TIC[[classnames[[l]][j]]]
           points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -354,12 +354,12 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
     colvect <- NULL
     for (j in seq_along(classnames[[k]])) {
       tic <- TIC[[classnames[[k]][j]]]
-      # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
+
       points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
     for (j in seq_along(classnames[[l]])) {
-      # i=class2names[j]
+
       tic <- TIC[[classnames[[l]][j]]]
       points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -374,7 +374,7 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
     colvect <- NULL
     for (j in seq_along(classnames[[k]])) {
       tic <- TIC[[classnames[[k]][j]]]
-      # points(tic[,1]/60, tic[,2], col = cols[i], pch = pch[i], type="l")
+
       points(tic[, 1] / 60, tic[, 2], col = cols[classnames[[k]][j]], pch = pch[classnames[[k]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
@@ -445,9 +445,9 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
     # recordPlot
     perpage <- 3 # if change change layout also!
     dev.new(width = 21 / 2.54, height = 29.7 / 2.54, file = paste("Unknown_", unkn[l], ".pdf", sep = "")) # A4 pdf
-    # par(mfrow=c(perpage,2))
+
     layout(matrix(c(1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 9), 6, 2, byrow = TRUE), widths = rep(c(1, 1), perpage), heights = rep(c(1, 5), perpage))
-    # layout.show(6)
+
     oma.saved <- par("oma")
     par(oma = rep.int(0, 4))
     par(oma = oma.saved)
@@ -468,10 +468,10 @@ plotUnknowns <- function(resGC, unkn = "", DB = NULL, fileFrom = NULL) {
       an <- resGC$xset[[c]]
       if (fileFrom == "zipfile") {
         an@xcmsSet@filepaths <- paste0("./", an@xcmsSet@phenoData[, "class"], "/", basename(an@xcmsSet@filepaths))
-      } # else {
-      # print(an@xcmsSet@filepaths)
-      # an@xcmsSet@filepaths <- paste0("./",basename(an@xcmsSet@filepaths))
-      # }
+      }
+
+
+
       # Find the good annotation for this sample
       for (a in seq_len(length(helpannotation))) {
         if (gsub(filepattern, "", names(helpannotation)[a]) == paste0("./", sampname)) {

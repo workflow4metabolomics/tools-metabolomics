@@ -11,17 +11,19 @@ print("Arguments retrieved from command line:")
 print(args_vec)
 
 args <- list(
-  image           = args_vec[1], # the xsAnnotate object
-  maxcharge       = as.numeric(args_vec[2]), # max. number of the isotope charge
-  maxiso          = as.numeric(args_vec[3]), # max. number of the isotope peaks
-  ppm             = as.numeric(args_vec[4]), # ppm error for the search
-  mzabs           = as.numeric(args_vec[5]), # allowed variance for the search
-  intval          = args_vec[6], # Intensity parameter ("into", "maxo", "intb")
-  minfrac         = as.numeric(args_vec[7]), # In case of multiple samples, percentage value of samples, which must contain the correct C12/C13 ratio and are not NA
-  filter          = as.logical(args_vec[8]), # Should C12/C13 filter be applied?
+  image = args_vec[1], # the xsAnnotate object
+  maxcharge = as.numeric(args_vec[2]), # max. number of the isotope charge
+  maxiso = as.numeric(args_vec[3]), # max. number of the isotope peaks
+  ppm = as.numeric(args_vec[4]), # ppm error for the search
+  mzabs = as.numeric(args_vec[5]), # allowed variance for the search
+  intval = args_vec[6], # Intensity parameter ("into", "maxo", "intb")
+  minfrac = as.numeric(args_vec[7]), # In case of multiple samples, percentage value of samples, which must contain the correct C12/C13 ratio and are not NA
+  filter = as.logical(args_vec[8]), # Should C12/C13 filter be applied?
   convertRTMinute = as.logical(args_vec[9]), # TRUE - FALSE
-  numDigitsMZ     = as.numeric(args_vec[10]), # Number of digits MZ
-  numDigitsRT     = as.numeric(args_vec[11]) # Number of digits RT
+  numDigitsMZ = as.numeric(args_vec[10]), # Number of digits MZ
+  numDigitsRT = as.numeric(args_vec[11]), # Number of digits RT
+  singlefile_galaxyPath = args_vec[12], # @COMMAND_FILE_LOAD@
+  singlefile_sampleName = args_vec[13] # @COMMAND_FILE_LOAD@
 )
 
 print("Converted arguments:")

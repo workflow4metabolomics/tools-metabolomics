@@ -12,13 +12,15 @@ print(args_vec)
 
 # Convert arguments to appropriate types
 args <- list(
-  image           = args_vec[1], # RData input file
-  sigma           = as.numeric(args_vec[2]), # Convert sigma to numeric
-  perfwhm         = as.numeric(args_vec[3]), # Convert perfwhm to numeric
-  intval          = args_vec[4], # intval parameter ("into", "maxo", "intb")
+  image = args_vec[1], # RData input file
+  sigma = as.numeric(args_vec[2]), # Convert sigma to numeric
+  perfwhm = as.numeric(args_vec[3]), # Convert perfwhm to numeric
+  intval = args_vec[4], # intval parameter ("into", "maxo", "intb")
   convertRTMinute = as.logical(args_vec[5]), # TRUE - FALSE
-  numDigitsMZ     = as.numeric(args_vec[6]), # Number of digits MZ
-  numDigitsRT     = as.numeric(args_vec[7]) # Number of digits RT
+  numDigitsMZ = as.numeric(args_vec[6]), # Number of digits MZ
+  numDigitsRT = as.numeric(args_vec[7]), # Number of digits RT
+  singlefile_galaxyPath = args_vec[8], # @COMMAND_FILE_LOAD@
+  singlefile_sampleName = args_vec[9] # @COMMAND_FILE_LOAD@
 )
 
 print("Converted arguments:")

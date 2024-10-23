@@ -10,37 +10,31 @@ args_vec <- commandArgs(trailingOnly = TRUE)
 print("Arguments retrieved from the command line:")
 print(args_vec)
 
-# # Function to convert "NULL" strings to actual NULL values
-# convertNullString <- function(x) {
-#   if (x == "NULL") {
-#     return(NULL)
-#   }
-#   return(x)
-# }
-
 args <- list(
-  image           = args_vec[1], # the xsAnnotate object
-  ppm             = as.numeric(args_vec[2]), # ppm error for the search
-  mzabs           = as.numeric(args_vec[3]), # allowed variance for the search
-  multiplier      = as.numeric(args_vec[4]), # highest number(n) of allowed clusterion [nM+ion]
-  polarity        = args_vec[5], # Which polarity mode was used for measuring of the MS sample
-  rules           = args_vec[6], # custom ruleset or NULL for default ruleset
-  max_peaks       = as.numeric(args_vec[7]), # If run in parallel mode, this number defines how many peaks will be calculated in each thread
-  psg_list        = args_vec[8], # Vector of pseudospectra indices; correlation analysis will only be done for those groups
-  intval          = args_vec[9], # choose intensity values. Allowed values are "into", "maxo", "intb" (string)
+  image = args_vec[1], # the xsAnnotate object
+  ppm = as.numeric(args_vec[2]), # ppm error for the search
+  mzabs = as.numeric(args_vec[3]), # allowed variance for the search
+  multiplier = as.numeric(args_vec[4]), # highest number(n) of allowed clusterion [nM+ion]
+  polarity = args_vec[5], # Which polarity mode was used for measuring of the MS sample
+  rules = args_vec[6], # custom ruleset or NULL for default ruleset
+  max_peaks = as.numeric(args_vec[7]), # If run in parallel mode, this number defines how many peaks will be calculated in each thread
+  psg_list = args_vec[8], # Vector of pseudospectra indices; correlation analysis will only be done for those groups
+  intval = args_vec[9], # choose intensity values. Allowed values are "into", "maxo", "intb" (string)
   convertRTMinute = as.logical(args_vec[10]), # TRUE - FALSE
-  numDigitsMZ     = as.numeric(args_vec[11]), # Number of digits MZ
-  numDigitsRT     = as.numeric(args_vec[12]) # Number of digits RT
+  numDigitsMZ = as.numeric(args_vec[11]), # Number of digits MZ
+  numDigitsRT = as.numeric(args_vec[12]), # Number of digits RT
+  singlefile_galaxyPath = args_vec[13], # @COMMAND_FILE_LOAD@
+  singlefile_sampleName = args_vec[14] # @COMMAND_FILE_LOAD@
 )
 
 # Check if the 'rules' argument in 'args' is NULL
 if (is.null(args$rules)) {
   # If 'args$rules' is NULL, set 'rulset' to NULL
-  args$rulset <- NULL 
+  args$rulset <- NULL
 } else {
   # Try to read the rules file with different delimiters
-  delimiters <- c(";", "\t", ",")  # List of possible delimiters
-  success <- FALSE  # Flag to check if reading was successful
+  delimiters <- c(";", "\t", ",") # List of possible delimiters
+  success <- FALSE # Flag to check if reading was successful
 
   for (sep in delimiters) {
     # Attempt to read the rules file with the current separator
@@ -48,8 +42,8 @@ if (is.null(args$rules)) {
 
     # Check if the number of columns is at least 4
     if (ncol(args$rulset) >= 4) {
-      success <- TRUE  # Mark success if the format is correct
-      break  # Exit the loop if the file was read successfully
+      success <- TRUE # Mark success if the format is correct
+      break # Exit the loop if the file was read successfully
     }
   }
 
@@ -58,7 +52,7 @@ if (is.null(args$rules)) {
     # Display an error message if the file is not well formatted
     error_message <- "The rules file appears to be improperly formatted. Accepted column separators are ;, tab, and ,."
     print(error_message)
-    stop(error_message)  # Stop execution with an error
+    stop(error_message) # Stop execution with an error
   }
 }
 

@@ -11,18 +11,20 @@ print("Command-line arguments retrieved:")
 print(args_vec)
 
 args <- list(
-  image           = args_vec[1], # the xsAnnotate object
-  cor_eic_th      = as.numeric(args_vec[2]), # Correlation threshold for EIC correlation
-  pval            = as.numeric(args_vec[3]), # p-value threshold for testing correlation significance
-  graphMethod     = args_vec[4], # Clustering method for resulting correlation graph. See calcPC for more details.
-  calcIso         = as.logical(args_vec[5]), # Include isotope detection information for graph clustering
-  calcCiS         = as.logical(args_vec[6]), # Calculate correlation inside samples
-  calcCaS         = as.logical(args_vec[7]), # Calculate correlation across samples
-  cor_exp_th      = as.numeric(args_vec[8]), # Threshold for intensity correlations across samples
-  intval          = args_vec[9], # Selection of the intensity values (such as "into") used in the correlation analysis. See getPeaklist for all allowed values.
-  numDigitsMZ     = as.numeric(args_vec[10]), # Digits for MZ "customname"
-  numDigitsRT     = as.numeric(args_vec[11]), # Digits for RT "customname"
-  convertRTMinute = as.logical(args_vec[12]) # TRUE - FALSE
+  image = args_vec[1], # the xsAnnotate object
+  cor_eic_th = as.numeric(args_vec[2]), # Correlation threshold for EIC correlation
+  pval = as.numeric(args_vec[3]), # p-value threshold for testing correlation significance
+  graphMethod = args_vec[4], # Clustering method for resulting correlation graph. See calcPC for more details.
+  calcIso = as.logical(args_vec[5]), # Include isotope detection information for graph clustering
+  calcCiS = as.logical(args_vec[6]), # Calculate correlation inside samples
+  calcCaS = as.logical(args_vec[7]), # Calculate correlation across samples
+  cor_exp_th = as.numeric(args_vec[8]), # Threshold for intensity correlations across samples
+  intval = args_vec[9], # Selection of the intensity values (such as "into") used in the correlation analysis. See getPeaklist for all allowed values.
+  numDigitsMZ = as.numeric(args_vec[10]), # Digits for MZ "customname"
+  numDigitsRT = as.numeric(args_vec[11]), # Digits for RT "customname"
+  convertRTMinute = as.logical(args_vec[12]), # TRUE - FALSE
+  singlefile_galaxyPath = args_vec[13], # @COMMAND_FILE_LOAD@
+  singlefile_sampleName = args_vec[14] # @COMMAND_FILE_LOAD@
 )
 
 print("Converted arguments:")

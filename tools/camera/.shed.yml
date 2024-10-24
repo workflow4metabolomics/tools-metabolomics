@@ -50,7 +50,7 @@ repositories:
       CAMERA: http://bioconductor.org/packages/release/bioc/html/CAMERA.html
     owner: workflow4metabolomics
     include:
-      [*default-includes, camera_groupfwhm.xml, camera_groupfwhm.r]
+      [*default-includes, groupFWHM.xml, CAMERA_groupFWHM.R]
   camera_groupcorr:
     description: '[Metabolomics][W4M][LC-MS] CAMERA R Package - Peak Grouping by Correlation'
     long_description: |

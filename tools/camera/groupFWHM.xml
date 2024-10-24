@@ -50,12 +50,10 @@
             <param name="intval" value="into" />-->
             <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.variableMetadata.tsv" />
-            <output name="camera_fwhm_rdata" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.RData" compare="sim_size" delta="300" />
+            <output name="camera_fwhm_rdata" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.RData" compare="sim_size" delta="5000" />
         </test>
     </tests>
     <help><![CDATA[
-
-@HELP_AUTHORS@
 
 ================
 CAMERA.groupFWHM

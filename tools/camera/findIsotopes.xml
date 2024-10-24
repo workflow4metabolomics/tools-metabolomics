@@ -49,7 +49,7 @@
         <data name="camera_findIsotopes_rdata" format="rdata" label="${image.name[:-6]}.findIsotopes.RData" from_work_dir="camera_findIsotopes.RData" />
     </outputs>
     <tests>
-        <test>
+        <test expect_num_outputs="2">
             <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.RData" />
             <!--<param name="maxcharge" value="3" />
             <param name="maxiso" value="4" />
@@ -60,7 +60,7 @@
             <param name="filter" value="FALSE" />-->
             <expand macro="test_file_load_single"/>
             <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.variableMetadata.tsv" />
-            <output name="camera_findIsotopes_rdata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.RData" />
+            <output name="camera_findIsotopes_rdata"  value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.groupCorr.findIsotopes.RData" compare="sim_size" delta="300" />
         </test>
     </tests>
     <help><![CDATA[

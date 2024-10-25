@@ -10,36 +10,36 @@
 
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_findAdducts.R
-		'$image'
-		$ppm
-		$mzabs
-		$multiplier
-		$polarity
+		image '$image'
+		ppm $ppm
+		mzabs $mzabs
+		multiplier $multiplier
+		polarity $polarity
 
 		#if $rules_select == "FALSE":
-            $rules NULL
+            rules NULL
         #else
-            $rules
+            rules $rules
         #end if
 
         #if $advanced_select == "FALSE":
-            $multiplier 3
-            $max_peaks 100
-            $psg_list NULL
+            multiplier 3
+            max_peaks 100
+            psg_list NULL
         #else
-            $multiplier
-            $max_peaks
+            multiplier $multiplier
+            max_peaks $max_peaks
             #if $psg_list_block == "FALSE":
-                $psg_list = NULL
+                psg_list NULL
             #else
-                $psg_list
+                psg_list $psg_list
             #end if
         #end if
 
-		$intval
-		$convertRTMinute
-		$numDigitsMZ
-		$numDigitsRT
+		intval $intval
+		convertRTMinute $convertRTMinute
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
         
         @COMMAND_FILE_LOAD@
 		]]>

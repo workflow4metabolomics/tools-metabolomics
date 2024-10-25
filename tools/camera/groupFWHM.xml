@@ -10,13 +10,13 @@
 
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_groupFWHM.R 
-		'$image' 
-		$sigma 
-		$perfwhm 
-		$intval
-		$convertRTMinute
-		$numDigitsMZ
-		$numDigitsRT
+		image '$image' 
+		sigma $sigma 
+		perfwhm $perfwhm 
+		intval $intval
+		convertRTMinute $convertRTMinute
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
 
         @COMMAND_FILE_LOAD@
 		]]>

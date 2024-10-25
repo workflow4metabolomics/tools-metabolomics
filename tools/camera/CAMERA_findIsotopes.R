@@ -4,29 +4,12 @@
 library(CAMERA)
 library(xcms)
 
-# Retrieve command line arguments
-args_vec <- commandArgs(trailingOnly = TRUE)
+source_local("lib.r")
+
+# Retrieve command-line arguments
+args <- W4MRUtils::parse_args(args = commandArgs())
 
 print("Arguments retrieved from command line:")
-print(args_vec)
-
-args <- list(
-  image = args_vec[1], # the xsAnnotate object
-  maxcharge = as.numeric(args_vec[2]), # max. number of the isotope charge
-  maxiso = as.numeric(args_vec[3]), # max. number of the isotope peaks
-  ppm = as.numeric(args_vec[4]), # ppm error for the search
-  mzabs = as.numeric(args_vec[5]), # allowed variance for the search
-  intval = args_vec[6], # Intensity parameter ("into", "maxo", "intb")
-  minfrac = as.numeric(args_vec[7]), # In case of multiple samples, percentage value of samples, which must contain the correct C12/C13 ratio and are not NA
-  filter = as.logical(args_vec[8]), # Should C12/C13 filter be applied?
-  convertRTMinute = as.logical(args_vec[9]), # TRUE - FALSE
-  numDigitsMZ = as.numeric(args_vec[10]), # Number of digits MZ
-  numDigitsRT = as.numeric(args_vec[11]), # Number of digits RT
-  singlefile_galaxyPath = args_vec[13], # @COMMAND_FILE_LOAD@
-  singlefile_sampleName = args_vec[15] # @COMMAND_FILE_LOAD@
-)
-
-print("Converted arguments:")
 print(args)
 
 print("Argument types:")
@@ -41,46 +24,6 @@ if (!file.exists(args$image)) {
 load(args$image)
 args$image <- NULL
 
-# Function to retrieve the raw file from the arguments
-getRawfilePathFromArguments <- function(singlefile, zipfile, args) {
-  if (!is.null(args$zipfile)) zipfile <- args$zipfile
-  if (!is.null(args$zipfilePositive)) zipfile <- args$zipfilePositive
-  if (!is.null(args$zipfileNegative)) zipfile <- args$zipfileNegative
-
-  if (!is.null(args$singlefile_galaxyPath)) {
-    singlefile_galaxyPaths <- args$singlefile_galaxyPath
-    singlefile_sampleNames <- args$singlefile_sampleName
-  }
-  if (!is.null(args$singlefile_galaxyPathPositive)) {
-    singlefile_galaxyPaths <- args$singlefile_galaxyPathPositive
-    singlefile_sampleNames <- args$singlefile_sampleNamePositive
-  }
-  if (!is.null(args$singlefile_galaxyPathNegative)) {
-    singlefile_galaxyPaths <- args$singlefile_galaxyPathNegative
-    singlefile_sampleNames <- args$singlefile_sampleNameNegative
-  }
-  if (exists("singlefile_galaxyPaths")) {
-    singlefile_galaxyPaths <- unlist(strsplit(singlefile_galaxyPaths, ","))
-    singlefile_sampleNames <- unlist(strsplit(singlefile_sampleNames, ","))
-
-    singlefile <- NULL
-    for (singlefile_galaxyPath_i in seq_len(length(singlefile_galaxyPaths))) {
-      singlefile_galaxyPath <- singlefile_galaxyPaths[singlefile_galaxyPath_i]
-      singlefile_sampleName <- singlefile_sampleNames[singlefile_galaxyPath_i]
-      singlefile[[singlefile_sampleName]] <- singlefile_galaxyPath
-    }
-  }
-  for (argument in c(
-    "zipfile", "zipfilePositive", "zipfileNegative",
-    "singlefile_galaxyPath", "singlefile_sampleName",
-    "singlefile_galaxyPathPositive", "singlefile_sampleNamePositive",
-    "singlefile_galaxyPathNegative", "singlefile_sampleNameNegative"
-  )) {
-    args[[argument]] <- NULL
-  }
-  return(list(zipfile = zipfile, singlefile = singlefile, args = args))
-}
-
 # Save arguments to generate a report
 if (!exists("listOFlistArguments")) listOFlistArguments <- list()
 listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_findIsotopes")]] <- args
@@ -93,52 +36,8 @@ zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
 args <- rawFilePath$args
 
-# Function to retrieve raw files in the working directory
-retrieveRawfileInTheWorkingDir <- function(singlefile, zipfile) {
-  if (!is.null(singlefile) && (length(singlefile) > 0)) {
-    for (singlefile_sampleName in names(singlefile)) {
-      singlefile_galaxyPath <- singlefile[[singlefile_sampleName]]
-      if (!file.exists(singlefile_galaxyPath)) {
-        error_message <- paste("Cannot access the sample:", singlefile_sampleName, "located:", singlefile_galaxyPath)
-        print(error_message)
-        stop(error_message)
-      }
-      file.symlink(singlefile_galaxyPath, singlefile_sampleName)
-    }
-    directory <- "."
-  }
-  if (!is.null(zipfile) && (zipfile != "")) {
-    if (!file.exists(zipfile)) {
-      error_message <- paste("Cannot access the Zip file:", zipfile)
-      print(error_message)
-      stop(error_message)
-    }
-    suppressWarnings(unzip(zipfile, unzip = "unzip"))
-    filesInZip <- unzip(zipfile, list = TRUE)
-    directories <- unique(unlist(lapply(strsplit(filesInZip$Name, "/"), function(x) x[1])))
-    directories <- directories[!(directories %in% c("__MACOSX")) & file.info(directories)$isdir]
-    directory <- "."
-    if (length(directories) == 1) directory <- directories
-    cat("files_root_directory\t", directory, "\n")
-  }
-  return(directory)
-}
-
 # Retrieve files
 directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
-
-# @author G. Le Corguille
-# This function convert if it is required the Retention Time in minutes
-RTSecondToMinute <- function(variableMetadata, convertRTMinute) {
-  if (convertRTMinute) {
-    # converting the retention times (seconds) into minutes
-    print("converting the retention times into minutes in the variableMetadata")
-    variableMetadata[, "rt"] <- variableMetadata[, "rt"] / 60
-    variableMetadata[, "rtmin"] <- variableMetadata[, "rtmin"] / 60
-    variableMetadata[, "rtmax"] <- variableMetadata[, "rtmax"] / 60
-  }
-  return(variableMetadata)
-}
 
 # Verify if the xa object is loaded
 if (!exists("xa")) {

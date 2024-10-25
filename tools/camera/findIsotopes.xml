@@ -10,17 +10,17 @@
 
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_findIsotopes.R
-		'$image'
-		$maxcharge
-		$maxiso
-		$ppm
-		$mzabs
-		$intval
-		$minfrac
-		$filter
-		$convertRTMinute
-		$numDigitsMZ
-		$numDigitsRT
+		image '$image'
+		maxcharge $maxcharge
+		maxiso $maxiso
+		ppm $ppm
+		mzabs $mzabs
+		intval $intval
+		minfrac $minfrac
+		filter $filter
+		convertRTMinute $convertRTMinute
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
         
         @COMMAND_FILE_LOAD@
 		]]>

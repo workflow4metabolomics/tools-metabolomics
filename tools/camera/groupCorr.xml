@@ -10,18 +10,18 @@
 
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_groupCorr.R
-		'$image'
-		$cor_eic_th
-		$pval
-		$graphMethod
-		$calcIso
-		$calcCiS
-		$calcCaS
-		$cor_exp_th
-		$intval
-		$numDigitsMZ
-		$numDigitsRT
-		$convertRTMinute
+		image '$image'
+		cor_eic_th $cor_eic_th
+		pval $pval
+		graphMethod $graphMethod
+		calcIso $calcIso
+		calcCiS $calcCiS
+		calcCaS $calcCaS
+		cor_exp_th $cor_exp_th
+		intval $intval
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
+		convertRTMinute $convertRTMinute
 
         @COMMAND_FILE_LOAD@
 		]]>

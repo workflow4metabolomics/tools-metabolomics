@@ -1,13 +1,26 @@
 #!/usr/bin/env Rscript
 
-# Load necessary libraries
-library(CAMERA)
-library(xcms)
+# ----- PACKAGE -----
+cat("\tSESSION INFO\n")
 
+# Import the different functions
+source_local <- function(fname) {
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
+}
 source_local("lib.r")
 
-# Retrieve command-line arguments
-args <- W4MRUtils::parse_args(args = commandArgs())
+pkgs <- c("CAMERA", "xcms", "multtest", "batch")
+loadAndDisplayPackages(pkgs)
+cat("\n\n")
+# ----- ARGUMENTS -----
+cat("\tARGUMENTS INFO\n")
+
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
+
+cat("\n\n")
 
 print("Arguments retrieved from the command line:")
 print(args)
@@ -15,14 +28,29 @@ print(args)
 print("Argument types:")
 print(sapply(args, class))
 
-# Verify the arguments
+# Check if the image file exists
 if (!file.exists(args$image)) {
-  stop("The provided RData file does not exist: ", args$image)
+  stop("The RData file does not exist: ", args$image)
 }
+
+# ----- PROCESSING INFILE -----
 
 # Load the RData file
 load(args$image)
 args$image <- NULL
+
+# Save arguments for report generation
+if (!exists("listOFlistArguments")) listOFlistArguments <- list()
+listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_findAdducts")]] <- args
+
+# We unzip automatically the chromatograms from the zip files.
+if (!exists("zipfile")) zipfile <- NULL
+if (!exists("singlefile")) singlefile <- NULL
+rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
+zipfile <- rawFilePath$zipfile
+singlefile <- rawFilePath$singlefile
+args <- rawFilePath$args
+directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Check if the 'rules' argument in 'args' is NULL
 if (is.null(args$rules)) {
@@ -52,21 +80,6 @@ if (is.null(args$rules)) {
     stop(error_message) # Stop execution with an error
   }
 }
-
-# Save arguments for report generation
-if (!exists("listOFlistArguments")) listOFlistArguments <- list()
-listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_findAdducts")]] <- args
-
-# Retrieve raw files
-if (!exists("zipfile")) zipfile <- NULL
-if (!exists("singlefile")) singlefile <- NULL
-rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
-args <- rawFilePath$args
-
-# Retrieve the files
-directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Verify that the object xa is loaded
 if (!exists("xa")) {

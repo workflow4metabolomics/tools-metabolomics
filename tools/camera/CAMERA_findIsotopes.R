@@ -1,24 +1,39 @@
 #!/usr/bin/env Rscript
 
-# Load necessary libraries
-library(CAMERA)
-library(xcms)
+# ----- PACKAGE -----
+cat("\tSESSION INFO\n")
 
+# Import the different functions
+source_local <- function(fname) {
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
+}
 source_local("lib.r")
 
-# Retrieve command-line arguments
-args <- W4MRUtils::parse_args(args = commandArgs())
+pkgs <- c("CAMERA", "xcms", "multtest", "batch")
+loadAndDisplayPackages(pkgs)
+cat("\n\n")
+# ----- ARGUMENTS -----
+cat("\tARGUMENTS INFO\n")
 
-print("Arguments retrieved from command line:")
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
+
+cat("\n\n")
+
+print("Arguments retrieved from the command line:")
 print(args)
 
 print("Argument types:")
 print(sapply(args, class))
 
-# Argument validation
+# Check if the image file exists
 if (!file.exists(args$image)) {
-  stop("The provided RData file does not exist: ", args$image)
+  stop("The RData file does not exist: ", args$image)
 }
+
+# ----- PROCESSING INFILE -----
 
 # Load the RData file
 load(args$image)
@@ -28,15 +43,13 @@ args$image <- NULL
 if (!exists("listOFlistArguments")) listOFlistArguments <- list()
 listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_findIsotopes")]] <- args
 
-# Retrieve raw files
+# We unzip automatically the chromatograms from the zip files.
 if (!exists("zipfile")) zipfile <- NULL
 if (!exists("singlefile")) singlefile <- NULL
 rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
 args <- rawFilePath$args
-
-# Retrieve files
 directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Verify if the xa object is loaded

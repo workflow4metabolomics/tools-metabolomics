@@ -50,7 +50,11 @@ rawFilePath <- getRawfilePathFromArguments(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
 args <- rawFilePath$args
-directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
+
+print("singlefile :", singlefile)
+if (!is.null(singlefile)) {
+  directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
+}
 
 # Ensure the xa object is loaded
 if (!exists("xa")) {

@@ -51,7 +51,7 @@ zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile
 args <- rawFilePath$args
 
-print("singlefile :", singlefile)
+print(paste("singlefile :", singlefile))
 if (!is.null(singlefile)) {
   directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 }

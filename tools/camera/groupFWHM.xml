@@ -48,13 +48,13 @@
 
     <tests>
         <test expect_num_outputs="2">
-            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.RData" />
+            <param name="image" value="xset.merged.groupChromPeaks.fillChromPeaks.RData" />
             <!--<param name="sigma" value="6" />
             <param name="perfwhm" value="0.6" />
             <param name="intval" value="into" />-->
             <expand macro="test_file_load_single"/>
-            <output name="variableMetadata" file="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.variableMetadata.tsv" />
-            <output name="camera_fwhm_rdata" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.fwhm.RData" compare="sim_size" delta="13000" />
+            <output name="variableMetadata" file="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.variableMetadata.tsv" />
+            <output name="camera_fwhm_rdata" value="xset.merged.groupChromPeaks.fillChromPeaks.fwhm.RData" compare="sim_size" delta="13000" />
         </test>
     </tests>
     <help><![CDATA[

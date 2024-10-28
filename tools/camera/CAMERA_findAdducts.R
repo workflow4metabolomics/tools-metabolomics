@@ -25,6 +25,18 @@ cat("\n\n")
 print("Arguments retrieved from the command line:")
 print(args)
 
+# Function to convert "NULL" strings to actual NULL values
+convertNullString <- function(x) {
+  if (x == "NULL") {
+    return(NULL)
+  }
+  return(x)
+}
+
+for (arg in names(args)) {
+  args[[arg]] <- convertNullString(args[[arg]])
+}
+
 print("Argument types:")
 print(sapply(args, class))
 

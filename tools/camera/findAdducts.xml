@@ -17,26 +17,25 @@
 		image '$image'
 		ppm $ppm
 		mzabs $mzabs
-		multiplier $multiplier
 		polarity $polarity
 
-		#if $rules_select == "FALSE":
+		#if $rules_block.rules_select == "FALSE":
             rules NULL
         #else
-            rules $rules
+            rules $rules_block.rules
         #end if
 
-        #if $advanced_select == "FALSE":
+        #if $advanced.advanced_select == "FALSE":
             multiplier 3
             max_peaks 100
             psg_list NULL
         #else
-            multiplier $multiplier
-            max_peaks $max_peaks
-            #if $psg_list_block == "FALSE":
+            multiplier $advanced.multiplier
+            max_peaks $advanced.max_peaks
+            #if $advanced.psg_list_block.psg_list_select == "FALSE":
                 psg_list NULL
             #else
-                psg_list $psg_list
+                psg_list $advanced.psg_list_block.psg_list
             #end if
         #end if
 

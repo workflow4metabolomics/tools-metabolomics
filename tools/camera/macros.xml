@@ -68,6 +68,15 @@
         </section>
     </xml>
 
+    <xml name="test_file_load_faahKO_15">
+        <section name="file_load_section">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" value="yes" />
+                <param name="input" value="wt15.CDF,ko15.CDF" ftype="netcdf" />
+            </conditional>
+        </section>
+    </xml>
+
     <!-- peaklist export option management -->
     <token name="@COMMAND_PEAKLIST@">
         convertRTMinute $export.convertRTMinute

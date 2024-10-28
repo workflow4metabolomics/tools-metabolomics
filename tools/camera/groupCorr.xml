@@ -8,6 +8,10 @@
 
     <expand macro="requirements"/>
 
+    <required_files>
+        <include type="literal" path="CAMERA_groupCorr.R"/>
+    </required_files>
+
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_groupCorr.R
 		image '$image'

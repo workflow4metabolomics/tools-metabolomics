@@ -8,6 +8,10 @@
 
     <expand macro="requirements"/>
 
+    <required_files>
+        <include type="literal" path="CAMERA_findIsotopes.R"/>
+    </required_files>
+
     <command detect_errors="exit_code"><![CDATA[
 		@COMMAND_RSCRIPT@CAMERA_findIsotopes.R
 		image '$image'

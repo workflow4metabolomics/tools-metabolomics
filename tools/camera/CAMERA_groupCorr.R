@@ -88,7 +88,7 @@ main_cols <- 1:(ncols - sample_cols - 3) # Main columns before sample columns
 tail_cols <- (ncols - 2):ncols # The last 3 columns (adduct, isotope, pcgroup)
 
 # Combine the selected columns from matgrp with the group names
-variableMetadata <- cbind(
+variableMetadata <- data.frame(
   name = names_default,
   name_custom = names_custom,
   stringsAsFactors = FALSE

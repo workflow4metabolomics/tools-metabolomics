@@ -109,7 +109,7 @@ write.table(variableMetadata, file = output_file_tsv, sep = "\t", row.names = FA
 
 # Save the updated xsAnnotate object
 output_file_RData <- "camera_groupCorr.RData"
-objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute")
+objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "xdata@phenoData")
 save(list = objects2save[objects2save %in% ls()], file = output_file_RData)
 
 cat("Output files generated:", output_file_tsv, "and", output_file_RData, "\n")

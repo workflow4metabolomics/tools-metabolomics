@@ -25,6 +25,19 @@ cat("\n\n")
 print("Arguments retrieved from the command line:")
 print(args)
 
+# Function to convert "NA" strings to actual NA values
+convertNAString <- function(x) {
+  if (is.vector(x)) {
+    x[x == "NA"] <- NA
+  } else if (x == "NA") {
+    x <- NA
+  }
+  return(x)
+}
+
+# Convert only the 'sample' element in args
+args$sample <- convertNAString(args$sample)
+
 print("Argument types:")
 print(sapply(args, class))
 
@@ -68,7 +81,7 @@ if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. O
 
 # Convert the xset object to xsAnnotate using CAMERA
 cat("Converting xset object to xsAnnotate...\n")
-xsa <- xsAnnotate(xset)
+xsa <- xsAnnotate(xset, sample = args$sample, nSlaves = as.numeric(args$nSlaves), polarity = args$polarity)
 
 # Apply the groupFWHM function with the parameters
 cat("Applying groupFWHM...\n")
@@ -112,7 +125,7 @@ write.table(variableMetadata, file = output_file_tsv, sep = "\t", row.names = FA
 
 # Save the xsAnnotate object
 output_file_RData <- "camera_fwhm.RData"
-objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute")
+objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "xdata@phenoData")
 save(list = objects2save[objects2save %in% ls()], file = output_file_RData)
 
 cat("Output files generated:", output_file_tsv, "and", output_file_RData, "\n")

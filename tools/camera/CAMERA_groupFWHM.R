@@ -25,18 +25,19 @@ cat("\n\n")
 print("Arguments retrieved from the command line:")
 print(args)
 
-# Function to convert "NA" strings to actual NA values
-convertNAString <- function(x) {
-  if (is.vector(x)) {
-    x[x == "NA"] <- NA
-  } else if (x == "NA") {
-    x <- NA
+# Function to convert "NA" strings to actual NA values and string to numeric lists
+convertStringToNumeric <- function(x) {
+  if (x == "NA") {
+    return(NA)
+  } else {
+    # Convert string representation of a list to a numeric vector
+    # Use a regular expression to split by common separators
+    return(as.numeric(unlist(strsplit(x, "[,;\\s]+"))))
   }
-  return(x)
 }
 
 # Convert only the 'sample' element in args
-args$sample <- convertNAString(args$sample)
+args$sample <- convertStringToNumeric(args$sample)
 
 print("Argument types:")
 print(sapply(args, class))

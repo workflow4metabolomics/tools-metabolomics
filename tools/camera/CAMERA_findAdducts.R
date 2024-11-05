@@ -37,6 +37,20 @@ for (arg in names(args)) {
   args[[arg]] <- convertNullString(args[[arg]])
 }
 
+# Function to convert string to numeric lists
+convertStringToNumeric <- function(x) {
+  if (x == NULL) {
+    return(x)
+  } else {
+    # Convert string representation of a list to a numeric vector
+    # Use a regular expression to split by common separators
+    return(as.numeric(unlist(strsplit(x, "[,;\\s]+"))))
+  }
+}
+
+# Convert only the 'psg_list' element in args
+args$psg_list <- convertStringToNumeric(args$psg_list)
+
 print("Argument types:")
 print(sapply(args, class))
 

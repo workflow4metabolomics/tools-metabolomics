@@ -28,7 +28,7 @@
             nSlaves 1
         #else
             sample $sample
-            nSlaves $nSlaves
+            nSlaves 1
         #end if
 
         @COMMAND_FILE_LOAD@
@@ -59,10 +59,11 @@
             </when>
             <when value="TRUE">
                 <param name="sample" type="text" value="NA" label="use all the samples (automatic selection)" optional="true" />
-                <param name="nSlaves" type="integer" value="1" max="3" min="1" label="for parallel mode set nSlaves higher than 1" optional="true" />
+                <!-- issue with findAdducts Use of 'xcmsClusterApply' is deprecated! Use 'BPPARAM' arguments instead. Need update of the package -->
+                <!-- <param name="nSlaves" type="integer" value="1" max="3" min="1" label="for parallel mode set nSlaves higher than 1" optional="true" /> -->
             </when>
         </conditional>
-        <param name="convertRTMinute" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+        <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
         <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
         <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
         <expand macro="input_file_load"/>

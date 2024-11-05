@@ -71,6 +71,7 @@ if (!is.null(singlefile)) {
 
 # If the xdata object exists, convert it to xcmsSet
 if (exists("xdata")) {
+  phenoData <- xdata@phenoData
   xset <- getxcmsSetObject(xdata)
 }
 
@@ -125,7 +126,7 @@ write.table(variableMetadata, file = output_file_tsv, sep = "\t", row.names = FA
 
 # Save the xsAnnotate object
 output_file_RData <- "camera_fwhm.RData"
-objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "xdata@phenoData")
+objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "phenoData")
 save(list = objects2save[objects2save %in% ls()], file = output_file_RData)
 
 cat("Output files generated:", output_file_tsv, "and", output_file_RData, "\n")

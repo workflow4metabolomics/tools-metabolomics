@@ -109,7 +109,7 @@ names_custom <- groupnames(xa@xcmsSet, mzdec = args$numDigitsMZ, rtdec = args$nu
 # Calculate indices of the columns to include from peakList
 # Select all columns except the last sample-specific columns
 ncols <- length(colnames(peakList))
-sample_cols <- length(rownames(xdata@phenoData)) # Number of samples
+sample_cols <- length(rownames(phenoData)) # Number of samples
 
 # Indices for the columns of interest
 main_cols <- 1:(ncols - sample_cols - 3) # Main columns before sample columns
@@ -138,7 +138,7 @@ write.table(variableMetadata, file = output_file_tsv, sep = "\t", row.names = FA
 # Save the updated xsAnnotate object
 output_file_RData <- "camera_findIsotopes.RData"
 
-objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "xdata@phenoData")
+objects2save <- c("xa", "variableMetadata", "listOFlistArguments", "zipfile", "singlefile", "RTinMinute", "phenoData")
 save(list = objects2save[objects2save %in% ls()], file = output_file_RData)
 
 cat("Output files generated:", output_file_tsv, "and", output_file_RData, "\n")

@@ -25,10 +25,16 @@ cat("\n\n")
 print("Arguments retrieved from the command line:")
 print(args)
 
-# Function to convert "NA" strings to actual NA values and string to numeric lists
+# Function to convert "NA" strings to actual NA values and string lists to numeric lists
 convertStringToNumeric <- function(x) {
+  # Force conversion to character
+  x <- as.character(x)
+
   if (x == "NA") {
     return(NA)
+  } else if (grepl("^[0-9]+$", x)) {
+    # If the string represents a single numeric value
+    return(as.numeric(x))
   } else {
     # Convert string representation of a list to a numeric vector
     # Use a regular expression to split by common separators

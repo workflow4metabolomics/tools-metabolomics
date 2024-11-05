@@ -33,19 +33,25 @@ convertNullString <- function(x) {
   return(x)
 }
 
-for (arg in names(args)) {
-  args[[arg]] <- convertNullString(args[[arg]])
-}
-
-# Function to convert string to numeric lists
+# Function to convert string to numeric lists or NA
 convertStringToNumeric <- function(x) {
-  if (x == NULL) {
-    return(x)
+  # Force conversion to character
+  x <- as.character(x)
+
+  if (x == "NA") {
+    return(NA)
+  } else if (grepl("^[0-9]+$", x)) {
+    # If the string represents a single numeric value
+    return(as.numeric(x))
   } else {
     # Convert string representation of a list to a numeric vector
     # Use a regular expression to split by common separators
     return(as.numeric(unlist(strsplit(x, "[,;\\s]+"))))
   }
+}
+
+for (arg in names(args)) {
+  args[[arg]] <- convertNullString(args[[arg]])
 }
 
 # Convert only the 'psg_list' element in args

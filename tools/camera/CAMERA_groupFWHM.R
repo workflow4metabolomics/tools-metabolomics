@@ -84,10 +84,10 @@ names_custom <- groupnames(xa@xcmsSet, mzdec = args$numDigitsMZ, rtdec = args$nu
 # Calculate indices of the columns to include from peakList
 # Select all columns except the last sample-specific columns
 ncols <- length(colnames(peakList))
-sample_cols <- length(xa@sample) # Number of samples
+sample_cols <- length(rownames(xdata@phenoData)) # Number of samples
 
 # Indices for the columns of interest
-main_cols <- 1:(ncols - (6 + sample_cols)) # Main columns before sample columns
+main_cols <- 1:(ncols - sample_cols) # Main columns before sample columns
 tail_cols <- (ncols - 2):ncols # The last 3 columns (adduct, isotope, pcgroup)
 
 # Combine the selected columns from matgrp with the group names

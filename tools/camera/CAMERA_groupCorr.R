@@ -84,15 +84,17 @@ ncols <- length(colnames(peakList))
 sample_cols <- length(rownames(xdata@phenoData)) # Number of samples
 
 # Indices for the columns of interest
-main_cols <- 1:(ncols - sample_cols) # Main columns before sample columns
+main_cols <- 1:(ncols - sample_cols - 3) # Main columns before sample columns
 tail_cols <- (ncols - 2):ncols # The last 3 columns (adduct, isotope, pcgroup)
 
 # Combine the selected columns from matgrp with the group names
 variableMetadata <- cbind(
   name = names_default,
   name_custom = names_custom,
-  peakList[, c(main_cols, tail_cols)]
+  stringsAsFactors = FALSE
 )
+
+variableMetadata <- cbind(variableMetadata, peakList[, c(main_cols, tail_cols)])
 
 if (!exists("RTinMinute")) RTinMinute <- FALSE
 

@@ -33,14 +33,17 @@ convertNullString <- function(x) {
   return(x)
 }
 
-# Function to convert string to numeric lists or NA
-convertStringToNumeric <- function(x) {
+# Function to convert string to numeric lists
+convert_psg_list <- function(x) {
+  # Check if x is NULL or has zero length before further processing
+  if (is.null(x) || length(x) == 0) {
+    return(NULL)
+  }
+
   # Force conversion to character
   x <- as.character(x)
 
-  if (x == "NA") {
-    return(NA)
-  } else if (grepl("^[0-9]+$", x)) {
+  if (grepl("^[0-9]+$", x)) {
     # If the string represents a single numeric value
     return(as.numeric(x))
   } else {
@@ -55,7 +58,7 @@ for (arg in names(args)) {
 }
 
 # Convert only the 'psg_list' element in args
-args$psg_list <- convertStringToNumeric(args$psg_list)
+args$psg_list <- convert_psg_list(args$psg_list)
 
 print("Argument types:")
 print(sapply(args, class))

@@ -21,6 +21,13 @@
 		calcIso $calcIso
 		calcCiS $calcCiS
 		calcCaS $calcCaS
+
+        #if $psg_list_block.psg_list_select == "FALSE":
+            psg_list NULL
+        #else
+            psg_list $psg_list
+        #end if
+        
 		cor_exp_th $cor_exp_th
 		intval $intval
 		numDigitsMZ $numDigitsMZ
@@ -51,6 +58,18 @@
                 <option value="maxf">maxf</option>
             <option value="area">area</option> -->
         </param>
+        <conditional name="psg_list_block">
+            <param name="psg_list_select" type="select" label="Use a personal psg_list">
+                <option value="TRUE">TRUE</option>
+                <option value="FALSE" selected="true">FALSE</option>
+            </param>
+            <when value="FALSE">
+                <!--<param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />-->
+            </when>
+            <when value="TRUE">
+                <param name="psg_list" type="text" optional="true" label="Pseudospectra indices (optional)" help="Provide a comma-separated list of pseudospectra indices (e.g. 1,2,3)." />
+            </when>
+        </conditional>
         <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
         <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
         <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />

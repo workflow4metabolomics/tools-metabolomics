@@ -25,6 +25,41 @@ cat("\n\n")
 print("Arguments retrieved from the command line:")
 print(args)
 
+# Function to convert "NULL" strings to actual NULL values
+convertNullString <- function(x) {
+  if (x == "NULL") {
+    return(NULL)
+  }
+  return(x)
+}
+
+# Function to convert string to numeric lists
+convert_psg_list <- function(x) {
+  # Check if x is NULL or has zero length before further processing
+  if (is.null(x) || length(x) == 0) {
+    return(NULL)
+  }
+
+  # Force conversion to character
+  x <- as.character(x)
+
+  if (grepl("^[0-9]+$", x)) {
+    # If the string represents a single numeric value
+    return(as.numeric(x))
+  } else {
+    # Convert string representation of a list to a numeric vector
+    # Use a regular expression to split by common separators
+    return(as.numeric(unlist(strsplit(x, "[,;\\s]+"))))
+  }
+}
+
+for (arg in names(args)) {
+  args[[arg]] <- convertNullString(args[[arg]])
+}
+
+# Convert only the 'psg_list' element in args
+args$psg_list <- convert_psg_list(args$psg_list)
+
 print("Argument types:")
 print(sapply(args, class))
 
@@ -66,7 +101,7 @@ print(xa)
 
 # Apply the groupCorr function to the xsAnnotate object
 print("Calling groupCorr function:")
-xa <- groupCorr(xa, cor_eic_th = args$cor_eic_th, pval = args$pval, graphMethod = args$graphMethod, calcIso = args$calcIso, calcCiS = args$calcCiS, calcCaS = args$calcCaS, cor_exp_th = args$cor_exp_th, intval = args$intval)
+xa <- groupCorr(xa, cor_eic_th = args$cor_eic_th, pval = args$pval, graphMethod = args$graphMethod, calcIso = args$calcIso, calcCiS = args$calcCiS, calcCaS = args$calcCaS, psg_list = args$psg_list, cor_exp_th = args$cor_exp_th, intval = args$intval)
 
 print("Result of groupCorr function:")
 print(xa)

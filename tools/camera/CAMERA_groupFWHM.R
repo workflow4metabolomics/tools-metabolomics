@@ -87,9 +87,19 @@ if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object call
 # Verification of a group step before doing the fillpeaks job.
 if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. Otherwise it won't work for the groupFWHM step")
 
+# sample = NA  # Automatic selection, particularly useful if you have no specific preference
+# sample = 3 # Single file selection
+# sample = c(1, 2, 5) # Manual selection
+# sample = 1:length(xs@filepaths) # Select all samples
+
 # Convert the xset object to xsAnnotate using CAMERA
 cat("Converting xset object to xsAnnotate...\n")
 xsa <- xsAnnotate(xset, sample = args$sample, nSlaves = as.numeric(args$nSlaves), polarity = args$polarity)
+
+print(paste0("All samples in xset object:", paste(1:length(xset@filepaths), collapse = ", ")))
+print(paste0("Selected samples:", paste(xsa@sample, collapse = ", ")))
+print(paste0("Run in parallel mode (0 = disabled):", paste(xsa@runParallel)))
+print(paste0("Polarity:", xsa@polarity))
 
 # Apply the groupFWHM function with the parameters
 cat("Applying groupFWHM...\n")

@@ -173,6 +173,12 @@
 
     </token>
 
+    <token name="@HELP_CAMERA_SUITE@">
+**Version 0.1.0+camera1.48.0 - 06/11/2024**
+
+- Initial release with core functionalities for peak annotation, grouping, and visualization using CAMERA (see CAMERA News_).
+    </token>
+
     <token name="@HELP_CAMERA_NEWVERSION_1480@">
 **Version 2.2.6+camera1.48.0 - 11/06/2021**
 

@@ -109,27 +109,21 @@ print(xa)
 # Extract the list of annotated peaks
 peakList <- getPeaklist(xa, intval = args$intval)
 
-# Generate group names with and without decimals for mz and rt
-names_default <- groupnames(xa@xcmsSet, mzdec = 0, rtdec = 0) # Names without decimals
-names_custom <- groupnames(xa@xcmsSet, mzdec = args$numDigitsMZ, rtdec = args$numDigitsRT) # Names with "x" decimals
+if (length(phenoData@data$sample_name) == 1) {
+  peakList$name <- make.unique(paste0("M", round(peakList[, "mz"], 0), "T", round(peakList[, "rt"], 0)), "_")
+  variableMetadata <- peakList[, c("name", setdiff(names(peakList), "name"))]
+  variableMetadata <- formatIonIdentifiers(variableMetadata, numDigitsRT = args$numDigitsRT, numDigitsMZ = args$numDigitsMZ)
+} else {
+  names_default <- groupnames(xa@xcmsSet, mzdec = 0, rtdec = 0) # Names without decimals
+  names_custom <- groupnames(xa@xcmsSet, mzdec = args$numDigitsMZ, rtdec = args$numDigitsRT) # Names with "x" decimals
 
-# Calculate indices of the columns to include from peakList
-# Select all columns except the last sample-specific columns
-ncols <- length(colnames(peakList))
-sample_cols <- length(rownames(phenoData)) # Number of samples
-
-# Indices for the columns of interest
-main_cols <- 1:(ncols - sample_cols - 3) # Main columns before sample columns
-tail_cols <- (ncols - 2):ncols # The last 3 columns (adduct, isotope, pcgroup)
-
-# Combine the selected columns from matgrp with the group names
-variableMetadata <- data.frame(
-  name = names_default,
-  name_custom = names_custom,
-  stringsAsFactors = FALSE
-)
-
-variableMetadata <- cbind(variableMetadata, peakList[, c(main_cols, tail_cols)])
+  variableMetadata <- data.frame(
+    name = names_default,
+    name_custom = names_custom,
+    stringsAsFactors = FALSE
+  )
+  variableMetadata <- cbind(variableMetadata, peakList[, !(make.names(colnames(peakList)) %in% c(make.names(sampnames(xa@xcmsSet))))])
+}
 
 if (!exists("RTinMinute")) RTinMinute <- FALSE
 

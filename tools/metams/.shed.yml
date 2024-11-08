@@ -1,0 +1,39 @@
+definitions:
+  include: &default-includes
+    - test-data
+    - static
+    - lib.r
+    - macros.xml
+
+name: metams
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: http://workflow4metabolomics.org
+categories:
+- Metabolomics
+
+repositories:
+  metams_plot:
+    description: '[Metabolomics][W4M][GC-MS] GC-MS plotting after data preprocessing using metaMS package'
+    long_description: |
+      Part of the W4M project : http://workflow4metabolomics.org Plotting of preprocessing data by metaMS.
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, metaMS_plot.xml, metaMS_plot.r]
+  metams_runGC:
+    description: '[Metabolomics][W4M][GC-MS] metaMS R Package - GC-MS data preprocessing using metaMS package'
+    long_description: |
+      Part of the W4M project: http://workflow4metabolomics.org 
+      metaMS: https://www.bioconductor.org/packages/release/bioc/html/metaMS.html MS-based metabolomics data processing and compound annotation pipeline.
+    owner: yguitton
+    include:
+      [*default-includes, metams_runGC.xml, metams_runGC.r]
+
+suite:
+  name: suite_metams
+  owner: workflow4metabolomics
+  homepage_url: http://workflow4metabolomics.org
+  description: '[Metabolomics][W4M][GC-MS] metaMS R package - GC-MS data preprocessing using metaMS package and plotting on these datas'
+  long_description: |
+    Part of the W4M project : http://workflow4metabolomics.org 
+    metaMS: https://www.bioconductor.org/packages/release/bioc/html/metaMS.html MS-based metabolomics data processing, compound annotation pipeline and plotting.

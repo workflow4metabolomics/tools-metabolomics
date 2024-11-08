@@ -1,9 +1,0 @@
-categories: [Metabolomics]
-description: '[Metabolomics][W4M][GC-MS] GC-MS plotting after data preprocessing using
-  metaMS package'
-homepage_url: http://workflow4metabolomics.org
-long_description: 'Part of the W4M project : http://workflow4metabolomics.org Plotting
-  of preprocessing data by metaMS.'
-name: metams_plot
-owner: workflow4metabolomics
-remote_repository_url: https://github.com/workflow4metabolomics/metaMS

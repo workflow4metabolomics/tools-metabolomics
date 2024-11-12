@@ -85,7 +85,11 @@ if (exists("xdata")) {
 if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS 2.*")
 
 # Verification of a group step before doing the fillpeaks job.
-if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. Otherwise it won't work for the groupFWHM step")
+if (dim(xdata@phenoData@data)[1] > 1) {
+  if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. Otherwise it won't work for the groupFWHM step")
+} else {
+  print("Only one file in the phenoData keep xset as is")
+}
 
 # Convert the xset object to xsAnnotate using CAMERA
 cat("Converting xset object to xsAnnotate...\n")

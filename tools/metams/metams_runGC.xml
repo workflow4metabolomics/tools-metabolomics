@@ -1,4 +1,4 @@
- <tool id="metams_runGC" name="metaMS.runGC" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
+ <tool id="metams_runGC" name="metaMS.runGC" version="0.1.0+metams@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>GC-MS data preprocessing using metaMS package</description>
 
@@ -7,9 +7,12 @@
     </macros>
 
     <expand macro="requirements"/>
-    <expand macro="stdio"/>
+
+    <required_files>
+        <include type="literal" path="metaMS_runGC.r"/>
+    </required_files>
     
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
     @COMMAND_RSCRIPT@//metaMS_runGC.r
 
         singlefile_galaxyPath '$input' 
@@ -163,7 +166,7 @@
     <tests>
         <!-- Test without DB -->
         <test>
-            <param name="input" value="xset_merged.RData"  ftype="rdata" />
+            <param name="input" value="xset.merged.RData"  ftype="rdata" />
             <conditional name="settings">
                 <param name="setting" value="gcdefault" />
             </conditional>
@@ -175,7 +178,7 @@
         </test>
         <!-- Test with DB -->
         <test>
-            <param name="input" value="xset_merged.RData"  ftype="rdata" />
+            <param name="input" value="xset.merged.RData"  ftype="rdata" />
             <conditional name="settings">
                 <param name="setting" value="gcdefault" />
                 <conditional name="options_db">
@@ -297,7 +300,7 @@ Dittami,S.M. et al. (2012) *Towards deciphering dynamic changes and evolutionary
 Input files
 -----------
 
-    | **RData file from XCMS** -> xset_merged.RData
+    | **RData file from XCMS** -> xset.merged.RData
 
 Parameters
 ----------

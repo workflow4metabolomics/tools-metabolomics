@@ -14,7 +14,7 @@ source_local <- function(fname) {
   base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
   source(paste(base_dir, fname, sep = "/"))
 }
-source_local("lib_metams.r")
+source_local("lib.r")
 
 pkgs <- c("metaMS", "stringr", "batch", "CAMERA") # "batch" necessary for parseCommandArgs function
 loadAndDisplayPackages(pkgs)

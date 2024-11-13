@@ -4,12 +4,7 @@
 
     <token name="@TOOL_VERSION@">1.30.0</token>
     <token name="@VERSION_SUFFIX@">0</token>
-	<xml name="stdio">
-        <stdio>
-            <exit_code range="1" level="fatal" />
-        </stdio>
-	</xml>
-
+    
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@TOOL_VERSION@">bioconductor-metams</requirement>
@@ -47,7 +42,7 @@
         <section name="file_load_section">
             <conditional name="file_load_conditional">
                 <param name="file_load_select" value="yes" />
-                <param name="input" value="alg2.mzData,alg3.mzData,alg7.mzData,alg8.mzData,alg9.mzData,alg11.mzData" ftype="mzdata" />
+                <param name="input" value="alg2.mzData,alg8.mzData" ftype="mzdata" />
             </conditional>
         </section>
 	</xml>

@@ -15,7 +15,7 @@
     </required_files>
 
     <command detect_errors="exit_code"><![CDATA[
-    '@COMMAND_RSCRIPT@/metams_plot.r'
+    @COMMAND_RSCRIPT@/metams_plot.r
         
         metaMS '$metaMS'
 

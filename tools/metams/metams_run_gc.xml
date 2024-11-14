@@ -13,7 +13,7 @@
     </required_files>
     
     <command detect_errors="exit_code"><![CDATA[
-    '@COMMAND_RSCRIPT@//metams_run_gc.r'
+    @COMMAND_RSCRIPT@/metams_run_gc.r
 
         singlefile_galaxyPath '$input' 
         singlefile_sampleName '$input.name'

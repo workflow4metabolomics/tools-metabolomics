@@ -19,15 +19,15 @@ repositories:
       Part of the W4M project : http://workflow4metabolomics.org Plotting of preprocessing data by metaMS.
     owner: workflow4metabolomics
     include:
-      [*default-includes, metaMS_plot.xml, metaMS_plot.r]
-  metams_runGC:
+      [*default-includes, metams_plot.xml, metams_plot.r]
+  metams_run_gc:
     description: '[Metabolomics][W4M][GC-MS] metaMS R Package - GC-MS data preprocessing using metaMS package'
     long_description: |
       Part of the W4M project: http://workflow4metabolomics.org 
       metaMS: https://www.bioconductor.org/packages/release/bioc/html/metaMS.html MS-based metabolomics data processing and compound annotation pipeline.
     owner: yguitton
     include:
-      [*default-includes, metams_runGC.xml, metams_runGC.r]
+      [*default-includes, metams_run_gc.xml, metams_run_gc.r]
 
 suite:
   name: suite_metams

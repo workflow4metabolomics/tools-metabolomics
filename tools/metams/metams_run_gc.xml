@@ -1,4 +1,4 @@
- <tool id="metams_runGC" name="metaMS.runGC" version="0.1.0+metams@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
+ <tool id="metams_run_gc" name="metams.runGC" version="0.1.0+metams@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>GC-MS data preprocessing using metaMS package</description>
 
@@ -9,11 +9,11 @@
     <expand macro="requirements"/>
 
     <required_files>
-        <include type="literal" path="metaMS_runGC.r"/>
+        <include type="literal" path="metams_run_gc.r"/>
     </required_files>
     
     <command detect_errors="exit_code"><![CDATA[
-    @COMMAND_RSCRIPT@//metaMS_runGC.r
+    @COMMAND_RSCRIPT@//metams_run_gc.r
 
         singlefile_galaxyPath '$input' 
         singlefile_sampleName '$input.name'

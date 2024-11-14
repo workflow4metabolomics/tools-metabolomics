@@ -1,4 +1,4 @@
- <tool id="metams_plot" name="metaMS.plot" version="0.1.0+metams@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
+ <tool id="metams_plot" name="metams.plot" version="0.1.0+metams@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>GC-MS data preprocessing using metaMS package</description>
 
@@ -11,11 +11,11 @@
     </expand>
 
     <required_files>
-        <include type="literal" path="metaMS_plot.r"/>
+        <include type="literal" path="metams_plot.r"/>
     </required_files>
 
     <command detect_errors="exit_code"><![CDATA[
-    @COMMAND_RSCRIPT@/metaMS_plot.r
+    @COMMAND_RSCRIPT@/metams_plot.r
         
         metaMS '$metaMS'
 

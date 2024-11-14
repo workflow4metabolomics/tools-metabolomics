@@ -229,7 +229,6 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
         for (j in seq_along(classnames[[l]])) {
-
           bpc <- BPC[[classnames[[l]][j]]]
           points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -252,7 +251,6 @@ getBPC2s <- function(files, xset = NULL, pdfname = "BPCs.pdf", rt = c("raw", "co
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
     for (j in seq_along(classnames[[l]])) {
-
       bpc <- BPC[[classnames[[l]][j]]]
       points(bpc[, 1] / 60, -bpc[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -337,7 +335,6 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
           colvect <- append(colvect, cols[classnames[[k]][j]])
         }
         for (j in seq_along(classnames[[l]])) {
-
           tic <- TIC[[classnames[[l]][j]]]
           points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
           colvect <- append(colvect, cols[classnames[[l]][j]])
@@ -359,7 +356,6 @@ getTIC2s <- function(files, xset = NULL, pdfname = "TICs.pdf", rt = c("raw", "co
       colvect <- append(colvect, cols[classnames[[k]][j]])
     }
     for (j in seq_along(classnames[[l]])) {
-
       tic <- TIC[[classnames[[l]][j]]]
       points(tic[, 1] / 60, -tic[, 2], col = cols[classnames[[l]][j]], pch = pch[classnames[[l]][j]], type = "l")
       colvect <- append(colvect, cols[classnames[[l]][j]])

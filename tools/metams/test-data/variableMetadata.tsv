@@ -1,2 +1,6 @@
-Name	Class	rt.sd	rt
-Unknown 1	Unknown	0.0027	13.956
+Name	DB.idx	RI	Formula	monoMW	Class	std.rt	rt.sd	rt
+Glycine, 3TMS	4	1302.682	C11H29NO2Si3	291.61	Standard	13.965	0.0296	13.977
+Pyroglutamic acid, 2TMS	5	1650.417	C11H23NO3Si2	273.477	Standard	19.513	0.0453	19.513
+Alanine, 3TMS	6	1360.504	C12H31NO2Si3	305.637	Manual	15.323	0.0359	15.338
+Aspartic acid, 2TMS	7	1422.39	C10H23NO4Si2	277.465	Manual	17.071	NA	17.084
+Tryptamine, 2TMS	8	2224.531	C16H28N2Si2	304.578	Manual	19.044	0.0498	19.08

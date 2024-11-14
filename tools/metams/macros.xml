@@ -2,12 +2,12 @@
 
 <macros>
 
-    <token name="@TOOL_VERSION@">1.30.0</token>
+    <token name="@TOOL_VERSION@">0.1.0</token>
     <token name="@VERSION_SUFFIX@">0</token>
     
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="@TOOL_VERSION@">bioconductor-metams</requirement>
+            <requirement type="package" version="1.30.0">bioconductor-metams</requirement>
             <requirement type="package" version="1.1_5">r-batch</requirement>
             <yield />
         </requirements>

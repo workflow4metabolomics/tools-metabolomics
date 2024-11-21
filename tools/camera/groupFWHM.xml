@@ -10,6 +10,7 @@
 
     <required_files>
         <include type="literal" path="CAMERA_groupFWHM.R"/>
+        <include type="literal" path="lib.r"/>
     </required_files>
 
     <command detect_errors="exit_code"><![CDATA[

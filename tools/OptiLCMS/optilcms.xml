@@ -1,28 +1,30 @@
-<tool id="OptiLCMS" name="OptiLCMS - PerformParamsOptimization" version="0.1.0+OptiLCMS@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+<tool id="OptiLCMS_id" name="PerformParamsOptimization" version="0.1.0+OptiLCMS1-galaxy1" profile="23.0">
     <description>Auto-optimization of parameters</description>
-        <requirements>
+    <requirements>
         <requirement type="package" version="4.3.3">r-base</requirement>
-        <requirement type="package" version="?">r-optilcms</requirement> <!-- Package github https://github.com/xia-lab/OptiLCMS -->
+        <requirement type="package" version="1.0.0">r-optilcms</requirement>
         <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
     </requirements>
-    <command detect_errors="exit_code">
-    <![CDATA[
-    
-    Rscript '$__tool_directory__/optilcms.R'
 
-    image '$image'
-    platform '$platform'
-    ncore '$ncore'
-    rt_idx '$rt_idx'
-    rmConts '$rmConts'
-    
-    ]]></command>
-  
-  
+    <required_files>
+        <include type="literal" path="optilcms.R" />
+    </required_files>
+
+    <command detect_errors="exit_code">
+        <![CDATA[
+        Rscript '$__tool_directory__/optilcms.R' \
+        image '$image' \
+        platform '$platform' \
+        ncore '$ncore' \
+        rt_idx '$rt_idx' \
+        rmConts '$rmConts'
+        ]]>
+    </command>
+
     <inputs>
-        <param name="image" type="data" label="collection de fichiers" format="?"/>
-        <param name="platform" type="select" display="radio" label="Type of concatenation">
-            <option value="general">general</option>
+        <param name="image" type="data" format="mzML,mzXML,mzData,cdf" label="Input data file" />
+        <param name="platform" type="select" label="Platform type">
+            <option value="general">General</option>
             <option value="UPLC-Q/E">UPLC-Q/E</option>
             <option value="UPLC-Q/TOF">UPLC-Q/TOF</option>
             <option value="UPLC-T/TOF">UPLC-T/TOF</option>
@@ -34,63 +36,54 @@
             <option value="HPLC-Orbitrap">HPLC-Orbitrap</option>
             <option value="HPLC-S/Q">HPLC-S/Q</option>
         </param>
-        <param name="ncore" type="integer" value="1" max="4" min="1" label="MulticoreParam - Enable parallel computing" />
-        <param name="rt_idx" type="float" value="0.9" max="1" min="0" label="The relative retention time range" />
-        <param name="rmConts" type="select" label="Use a personal ruleset file">
-            <option value="TRUE" selected="true">TRUE</option>
+        <param name="ncore" type="integer" label="Number of cores" value="1" min="1" max="4" />
+        <param name="rt_idx" type="float" label="Retention time index" value="0.9" min="0" max="1" />
+        <param name="rmConts" type="select" label="Remove contaminants">
+            <option value="TRUE">TRUE</option>
             <option value="FALSE">FALSE</option>
         </param>
     </inputs>
-  
+
     <outputs>
-        <data name="chromatogram" label="chromatogram" format="image"></data>
-        <data name="optimized_parameters_txt" label="optimized_parameters" format="tabular"></data>
+        <data name="chromatogram" format="png" label="Chromatogram Image"></data>
+        <data name="optimized_parameters_txt" format="txt" label="Optimized Parameters"></data>
     </outputs>
-  
+
     <tests>
         <test>
-            <param name="image" type="data" label="collection of files" format="mzXML,CDF,mzML"/>
-            <param name="platform" type="select" display="radio" label="Type of concatenation">
-            <param name="ncore" type="integer" value="1" max="4" min="1" label="MulticoreParam - Enable parallel computing" />
-        
-            <output name="chromatogram" file="chromatogram.png"/>
-            <output name="optimized_parameters_txt" file="optimized_parameters.txt"/>
+            <param name="image" value="test_data.mzML" />
+            <param name="platform" value="general" />
+            <param name="ncore" value="1" />
+            <param name="rt_idx" value="0.9" />
+            <param name="rmConts" value="TRUE" />
+            <output name="chromatogram" file="chromatogram.png" />
+            <output name="optimized_parameters_txt" file="optimized_parameters.txt" />
         </test>
     </tests>
-  
-    <help><![CDATA[
+
     
-====================================
+    <help><![CDATA[
 OptiLCMS - PerformParamsOptimization
 ====================================
 
------------
-Description
------------
+This tool performs raw data trimming and optimization for LC-MS datasets.
 
-.. _link: https://rdrr.io/github/xia-lab/OptiLCMS/man/PerformROIExtraction.html
+Inputs:
+-------
 
-This function performs the raw data trimming. This function will output an trimmed 
-MSnExp file to memory or hardisk according to the choice of users must provide the 
-data path for 'datapath', and optionally provide other corresponding parameters.
+- **image**: Input data file in one of the following formats: mzML, mzXML, mzData, cdf.
+- **platform**: Platform type (e.g., UPLC-Q/E, UPLC-Q/TOF).
+- **ncore**: Number of cores to use for processing.
+- **rt_idx**: Retention time index (float between 0 and 1).
+- **rmConts**: Whether to remove contaminants (TRUE/FALSE).
 
----------------------------------------------------
+Outputs:
+--------
 
----------
-Arguments
----------
+- **chromatogram**: A PNG image of the chromatogram.
+- **optimized_parameters_txt**: A text file containing optimized parameters.
 
-+----------------+--------------------------------------------------------------------------------------------------------------------------+
-|Variables       |Descriptions                                                                                                              |
-+================+==========================================================================================================================+
-|datapath        |Character, the path of the raw MS data files' or folder's path (.mzXML, .CDF and .mzML) for parameters training.          |
-+----------------+--------------------------------------------------------------------------------------------------------------------------+
-|rt.idx          |Numeric, the relative retention time range, from 0 to 1. 1 means all retention time will be retained, while 0 means none. |
-+----------------+--------------------------------------------------------------------------------------------------------------------------+
-|rmConts         |LOgical, whether to exclude/remove the potential contamination for parameters optimization. Default is TRUE.              |
-+----------------+--------------------------------------------------------------------------------------------------------------------------+
-
-    ]]></help>
+	]]></help>
     <citations>
         <citation type="doi">10.1021/ac202450g</citation>
         <citation type="doi">10.1093/bioinformatics/btu813</citation>
@@ -105,3 +98,4 @@ Arguments
         <person givenName="Julien" familyName="Saint-Vanne" url="https://github.com/jsaintvanne"></person>
     </creator>
 </tool>
+

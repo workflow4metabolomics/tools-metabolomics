@@ -37,9 +37,9 @@
     <xml name="input_file_load">
         <section name="file_load_section" title="Resubmit your raw dataset or your zip file">
             <conditional name="file_load_conditional">
-                <param name="file_load_select" type="select" label="Resubmit your dataset or your zip file" help="Use only if you get a message which say that your original dataset or zip file have been deleted on the server." >
-                    <option value="no" >no need</option>
-                    <option value="yes" >yes</option>
+                <param name="file_load_select" type="select" label="Resubmit your dataset or your zip file" help="Use only if you get a message which say that your original dataset or zip file have been deleted on the server.">
+                    <option value="no">no need</option>
+                    <option value="yes">yes</option>
                 </param>
                 <when value="no">
                 </when>
@@ -68,6 +68,15 @@
         </section>
     </xml>
 
+    <xml name="test_file_load_faahKO_15">
+        <section name="file_load_section">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" value="yes" />
+                <param name="input" value="wt15.CDF,ko15.CDF" ftype="netcdf" />
+            </conditional>
+        </section>
+    </xml>
+
     <!-- peaklist export option management -->
     <token name="@COMMAND_PEAKLIST@">
         convertRTMinute $export.convertRTMinute
@@ -83,7 +92,7 @@
             <param name="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers" />
             <param name="intval" type="select" label="General used intensity value" help="[intval] See the help section below">
                 <option value="into" selected="true">into</option>
-                <option value="maxo" >maxo</option>
+                <option value="maxo">maxo</option>
                 <option value="intb">intb</option>
             </param>
         </section>
@@ -115,18 +124,18 @@
             <param name="max_peaks" value="100"/>
         </section>
         <section name="diffreport">
-        <conditional name="options">
-            <param name="option" value="show"/>
-            <param name="eicmax" value="200"/>
-            <param name="eicwidth" value="200"/>
-            <param name="value" value="into"/>
-            <param name="h" value="480"/>
-            <param name="w" value="640"/>
-            <param name="mzdec" value="2"/>
-            <param name="sortpval" value="False"/>
-            <param name="tabular2" value="zip"/>
-            <param name="png2" value="zip"/>
-        </conditional>
+            <conditional name="options">
+                <param name="option" value="show"/>
+                <param name="eicmax" value="200"/>
+                <param name="eicwidth" value="200"/>
+                <param name="value" value="into"/>
+                <param name="h" value="480"/>
+                <param name="w" value="640"/>
+                <param name="mzdec" value="2"/>
+                <param name="sortpval" value="False"/>
+                <param name="tabular2" value="zip"/>
+                <param name="png2" value="zip"/>
+            </conditional>
         </section>
         <expand macro="test_peaklist"/>
     </xml>
@@ -164,6 +173,12 @@
 
     </token>
 
+    <token name="@HELP_CAMERA_SUITE@">
+**Version 0.1.0+camera1.48.0 - 06/11/2024**
+
+- Initial release with core functionalities for peak annotation, grouping, and visualization using CAMERA (see CAMERA News_).
+    </token>
+
     <token name="@HELP_CAMERA_NEWVERSION_1480@">
 **Version 2.2.6+camera1.48.0 - 11/06/2021**
 
@@ -187,5 +202,16 @@
             <citation type="doi">10.1021/ac202450g</citation>
             <citation type="doi">10.1093/bioinformatics/btu813</citation>
         </citations>
+    </xml>
+
+    <xml name="creator">
+        <creator>
+            <organization name="MELISA" url="https://www.laberca.org/plateforme-melisa/presentation"></organization>
+            <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
+
+            <person givenName="Yann" familyName="Guitton" url="https://github.com/yguitton"></person>
+            <person givenName="Damien" familyName="Rat" url="https://github.com/DamienCode404"></person>
+            <person givenName="Julien" familyName="Saint-Vanne" url="https://github.com/jsaintvanne"></person>
+        </creator>
     </xml>
 </macros>

@@ -1,0 +1,8 @@
+categories: [Metabolomics]
+description: 'Gathers metadata from mzXML and mzML files'
+homepage_url: https://github.com/workflow4metabolomics/tools-metabolomics/pull/280
+long_description: 'The tool was created to efficiently and quickly collect essential metadata of mzML and mzXML files.
+It is based on the recognition of XML-like tags in the headers of the files, that vary with the constructors and the conversion method used.'
+name: mzxmlmetadatacollector
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

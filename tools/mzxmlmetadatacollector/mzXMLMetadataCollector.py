@@ -29,25 +29,25 @@ def get_info(file, format1):
         try:
             version1 = text1.split('<mzML')[1] \
                 .split('version="')[1].split('"')[0]
-        except :
+        except Exception:
             version1 = "Not found"
             raise
         # Getting ko size
         try:
             taillek1 = np.round(os.stat(file).st_size/1024, 2)
-        except:
+        except Exception:
             taillek1 = "Calculation failed"
             raise
         # Getting Mo size
         try:
             taillem1 = np.round(os.stat(file).st_size/1024**2, 2)
-        except:
+        except Exception:
             taillem1 = "Calculation failed"
             raise
         # Getting Go size
         try:
             tailleg1 = np.round(os.stat(file).st_size/1024**3, 2)
-        except:
+        except Exception:
             tailleg1 = "Calculation failed"
             raise
         # Getting MS level
@@ -76,10 +76,11 @@ def get_info(file, format1):
                             if (' <cvParam cvRef="MS" \
                                     accession="MS:1000580" name="' in text1):
                                 mslevel1 = text1.split(' <cvParam cvRef="MS" \
-                                    accession="MS:1000580" name="')[1].split('"')[0]
+                                    accession="MS:1000580" name="')[1]\
+                                        .split('"')[0]
                             else:
                                 mslevel1 = "Not found"
-        except:
+        except Exception:
             mslevel1 = 'Error'
             raise
         # Getting spectrum type
@@ -102,29 +103,29 @@ def get_info(file, format1):
                                 cvRef="MS" name="')[1].split('"')[0]
                     else:
                         spectrum1 = "Not found"
-        except:
+        except Exception:
             spectrum1 = "Not found"
             raise
         # Getting sourc file
         try:
             source1 = text1.split('<sourceFile ')[1].split('">')[0] \
                 .split('location="')[1].split('"')[0]
-        except:
+        except Exception:
             try:
                 source1 = text1.split('<sourceFile id="WIFF" name="')[1] \
                     .split('"')[0]
-            except:
+            except Exception:
                 try:
                     source1 = text1.split('<sourceFile id=" ')[1].split('"')[0]
-                except:
+                except Exception:
                     source1 = "Not found"
                     raise
         # Getting acquisition date
         try:
-            date1 = text1.split('startTimeStamp="')[1].split('"')[0] \
+            date1 = text1.split('startTimeStamp="')[1].split('"')[0]\
                 .split('T')[0] + " " + text1.split('startTimeStamp="')\
                     [1].split('"')[0].split('T')[1]
-        except:
+        except Exception:
             date1 = "Not found"
             raise
         # Getting software used
@@ -145,7 +146,7 @@ def get_info(file, format1):
                         [i+1].split('"')[0]
                 softwaresList1 = softwaresList1 + \
                     softwares1 + ' ' + softwaresversions1
-        except:
+        except Exception:
             softwaresList1 = "Not found"
             raise
         # Getting processing methods
@@ -160,8 +161,8 @@ def get_info(file, format1):
                     .split('name="')[1].split('"')[0]
                 softwares1 = subtext1.split('softwareRef="')[1] \
                     .split('"')[0]
-                ProcessList1 = ProcessList1 + softwares1 + ' ' +  methods1
-        except:
+                ProcessList1 = ProcessList1 + softwares1 + ' ' + methods1
+        except Exception:
             ProcessList1 = "Not found"
             raise
         # Getting machine model
@@ -187,7 +188,7 @@ def get_info(file, format1):
                             if ('<cvParam cvRef="MS" \
                                     accession="MS:1000495"' in text1):
                                 modele1 = text1.split('<cvParam cvRef="MS" \
-                                    accession="MS:1000495" name="')[1].split \
+                                    accession="MS:1000495" name="')[1].split\
                                         ('value="')[1].split('"')[0]
                             else:
                                 if ('<cvParam accession="MS:1000703" \
@@ -216,13 +217,13 @@ def get_info(file, format1):
                                             modele1 = 'Not available'
             if (modele1 == ''):
                 modele1 = 'Not available'
-        except:
+        except Exception:
             modele1 = "Not found"
             raise
         # Getting points and scans number
         try:
             nbscans1 = text1.split('<spectrumList count="')[1].split('"')[0]
-        except:
+        except Exception:
             nbscans1 = "Not found"
             raise
         try:
@@ -233,10 +234,10 @@ def get_info(file, format1):
                     line = f.readline()
                     if ('defaultArrayLength=' in line):
                         nbpoints1 = nbpoints1 + \
-                            int(line.split('defaultArrayLength="') \
+                            int(line.split('defaultArrayLength="')\
                                 [1].split('"')[0])
             f.close()
-        except:
+        except Exception:
             nbpoints1 = "Calculation failed"
             raise
         # Encoding
@@ -256,27 +257,27 @@ def get_info(file, format1):
         f.close()
         # Getting format version
         try:
-            version1 = text1.split('<mzXML')[1].split('mzXML_')[1] \
+            version1 = text1.split('<mzXML')[1].split('mzXML_')[1]\
                 .split('"')[0].split(' ')[0]
-        except:
+        except Exception:
             version1 = "Not found"
             raise
         # Getting ko size
         try:
             taillek1 = np.round(os.stat(file).st_size/1024, 2)
-        except:
+        except Exception:
             taillek1 = "Calculation failed"
             raise
         # Getting Mo size
         try:
             taillem1 = np.round(os.stat(file).st_size/1024**2, 2)
-        except:
+        except Exception:
             taillem1 = "Calculation failed"
             raise
         # Getting Go size
         try:
             tailleg1 = np.round(os.stat(file).st_size/1024**3, 2)
-        except:
+        except Exception:
             tailleg1 = "Calculation failed"
             raise
         # Getting MS level
@@ -291,13 +292,13 @@ def get_info(file, format1):
                     spectrum1 = "centroid"
                 else:
                     spectrum1 = "Not found"
-        except:
+        except Exception:
             spectrum1 = "Not found"
             raise
         # Getting source file
         try:
             source1 = text1.split('parentFile fileName="')[1].split('"')[0]
-        except:
+        except Exception:
             source1 = "Not found"
             raise
         # Getting acquisition date
@@ -309,14 +310,14 @@ def get_info(file, format1):
                 if i != 0:
                     softwaresList1 = softwaresList1 + ' + '
                 softwaresList1 = softwaresList1 + \
-                    text1.split("<software")[i+1].split('type="')[1] \
+                    text1.split("<software")[i+1].split('type="')[1]\
                         .split('"')[0] + ': ' + \
-                            text1.split("<software")[i+1].split('name="')[1] \
+                            text1.split("<software")[i+1].split('name="')[1]\
                                 .split('"')[0] + ' ' + \
                                     text1.split("<software")[i+1] \
                                         .split('version="')[1] \
                                             .split('"')[0]
-        except:
+        except Exception:
             softwaresList1 = "Not found"
             raise
         # Processing
@@ -337,17 +338,17 @@ def get_info(file, format1):
                     else:
                         if ('accession="MS:1000495"' in text1):
                             modele1 = text1.split('<cvParam cvRef="MS" \
-                                accession="MS:1000495" name="')[1] \
+                                accession="MS:1000495" name="')[1]\
                                     .split('"')[0]
                         else:
                             modele1 = "Not found"
-        except:
+        except Exception:
             modele1 = "Not found"
             raise
         # Getting scans and points number
         try:
             nbscans1 = text1.split('msRun scanCount="')[1].split('"')[0]
-        except:
+        except Exception:
             nbscans1 = "Not found"
             raise
         try:
@@ -359,13 +360,13 @@ def get_info(file, format1):
                     if ('peaksCount="' in line):
                         nbpoints1 = nbpoints1 + \
                             int(line.split('peaksCount="')[1].split('"')[0])
-        except:
+        except Exception:
             nbpoints1 = "Calculation failed"
             raise
         # Encoding
         try:
             encodage1 = text1.split('precision="')[1].split('"')[0] + "-bit"
-        except:
+        except Exception:
             encodage1 = 'Not available'
             raise
         return format1, version1, taillek1, taillem1, tailleg1, \

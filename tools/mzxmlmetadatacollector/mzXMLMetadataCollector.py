@@ -302,7 +302,7 @@ def get_info(file, format1):
             modele1 = "Not found"
             raise
         # Getting scans and points number
-        try:=
+        try:
             nbscans1=text1.split('msRun scanCount="')[1].split('"')[0]
         except:
             nbscans1 = "Not found"

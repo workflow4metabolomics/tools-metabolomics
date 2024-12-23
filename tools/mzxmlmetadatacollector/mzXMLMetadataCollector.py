@@ -232,10 +232,11 @@ def get_info(file, format1):
                 line = 'start'
                 while (line != ''):
                     line = f.readline()
-                    if ('defaultArrayLength=' in line):
-                        nbpoints1 = nbpoints1 
-                        + int(line.split('defaultArrayLength="')[1]\
-                        .split('"')[0])
+                    if 'defaultArrayLength=' in line:
+                        nbpoints1 = nbpoints1 + int(
+                            line.split('defaultArrayLength="')[1]
+                            .split('"')[0]
+    )
             f.close()
         except Exception:
             nbpoints1 = "Calculation failed"

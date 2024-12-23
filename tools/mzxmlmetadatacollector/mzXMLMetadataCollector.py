@@ -234,8 +234,8 @@ def get_info(file, format1):
                     line = f.readline()
                     if ('defaultArrayLength=' in line):
                         nbpoints1 = nbpoints1 + int(line
-                        .split('defaultArrayLength="')[1]
-                        .split('"')[0])
+                            .split('defaultArrayLength="')[1]
+                            .split('"')[0])
             f.close()
         except Exception:
             nbpoints1 = "Calculation failed"
@@ -245,7 +245,7 @@ def get_info(file, format1):
             .group(0).replace('name="', "").replace('"', '')
         return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \
             spectrum1, source1, date1, softwaresList1, ProcessList1, \
-                modele1, nbscans1, nbpoints1, encodage1
+            modele1, nbscans1, nbpoints1, encodage1
     # mzXml files #
     if (format1.casefold() == 'mzxml'):
         # Saving all info of first file until first scan
@@ -312,11 +312,11 @@ def get_info(file, format1):
                 softwaresList1 = softwaresList1 + \
                     text1.split("<software")[i+1].split('type="')[1]\
                     .split('"')[0] + ': ' +\
-                        text1.split("<software")[i+1].split('name="')[1]\
-                            .split('"')[0] + ' ' +\
-                                text1.split("<software")[i+1]\
-                                    .split('version="')[1]\
-                                        .split('"')[0]
+                    text1.split("<software")[i+1].split('name="')[1]\
+                    .split('"')[0] + ' ' +\
+                    text1.split("<software")[i+1]\
+                    .split('version="')[1]\
+                    .split('"')[0]
         except Exception:
             softwaresList1 = "Not found"
             raise

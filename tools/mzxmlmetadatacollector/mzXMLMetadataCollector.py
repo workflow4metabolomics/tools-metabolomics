@@ -7,326 +7,327 @@ Last update on Nov 14 2024
 
 @author: quruin
 """
-# Packages nécessaires
-####################################################################################
-import numpy as np
-import argparse, sys
-import re
+# Packages
+############################################################
 import os
+import sys
+import numpy as np
+import re
 
 def get_info(file, format1):
-    
-    # fichiers mzml #
-    ####################################################################################
-    if (format1.casefold() == 'mzml'):
-        # Enregistrement des infos du fichier 1 jusqu'au premier scan
-        f = open(file,'r+', encoding = "utf-8")
+ 
+ 
+    # mzml files #
+    ############################################################
+    if (format1.casefold()=='mzml'):
+        # Saving all info of first file until first scan
+        f=open(file, 'r+', encoding="utf-8")
         with f:
-            text1 = ''
+            text1=''
             while ('<binary>' not in text1):
-                text1 = text1 + f.readline()                     
+                text1=text1 + f.readline()                     
         f.close()
         
-        # Récupération de la version du format
+        # Getting version format
         try:
-            version1 = text1.split('<mzML')[1].split('version="')[1].split('"')[0]
+            version1=text1.split('<mzML')[1].split('version="')[1].split('"')[0]
         except:
-            version1 = "Not found"            
+            version1="Not found"            
         
-        # Mise à jour de la taille en ko
+        # Getting ko size
         try:
-            taillek1 = np.round(os.stat(file).st_size/1024,2)
+            taillek1=np.round(os.stat(file).st_size/1024, 2)
         except:
-            taillek1 = "Calculation failed"
+            taillek1="Calculation failed"
 
-        # Mise à jour de la taille en Mo
+        # Getting Mo size
         try:
-            taillem1 = np.round(os.stat(file).st_size/1024**2,2)
+            taillem1=np.round(os.stat(file).st_size/1024**2, 2)
         except:
-            taillem1 = "Calculation failed"
+            taillem1="Calculation failed"
   
-        # Mise à jour de la taille en Go
+        #Getting Go size
         try:
-            tailleg1 = np.round(os.stat(file).st_size/1024**3,2)
+            tailleg1=np.round(os.stat(file).st_size/1024**3, 2)
         except:
-            tailleg1 = "Calculation failed"
+            tailleg1="Calculation failed"
 
-        # Mise à jour du niveau de MS
+        #Getting MS level
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-                mslevel1 = text1.split('<cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]
+                mslevel1=text1.split('<cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]
             else:
                 if ('<cvParam cvRef="MS" accession="MS:1000580" value="" name="' in text1):
-                    mslevel1 = text1.split('<cvParam cvRef="MS" accession="MS:1000580" value="" name="')[1].split('"')[0]     
+                    mslevel1=text1.split('<cvParam cvRef="MS" accession="MS:1000580" value="" name="')[1].split('"')[0]     
                 else:
                     if ('accession="MS:1000579" cvRef="MS" name="' in text1):
-                        mslevel1 = text1.split('accession="MS:1000579" cvRef="MS" name="')[1].split('"')[0]
+                        mslevel1=text1.split('accession="MS:1000579" cvRef="MS" name="')[1].split('"')[0]
                     else:
                         if ('cvRef="MS" accession="MS:1000579" name="' in text1):
-                             mslevel1 = text1.split('cvRef="MS" accession="MS:1000579" name="')[1].split('"')[0]     
+                             mslevel1=text1.split('cvRef="MS" accession="MS:1000579" name="')[1].split('"')[0]     
                         else:
                             if (' <cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-                                mslevel1 = text1.split(' <cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]  
+                                mslevel1=text1.split(' <cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]  
                             else: 
-                                mslevel1 = "Not found"
+                                mslevel1="Not found"
         except:
-            mslevel1 = 'Error'
+            mslevel1='Error'
     
-        # Mise à jour du type de spectre
+        # Getting spectrum type
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000127" name="' in text1):
-                spectrum1 = text1.split('<cvParam cvRef="MS" accession="MS:1000127" name="')[1].split('"')[0]  
+                spectrum1=text1.split('<cvParam cvRef="MS" accession="MS:1000127" name="')[1].split('"')[0]  
             else:
                 if ('<cvParam cvRef="MS" accession="MS:1000127" value="" name="' in text1):
-                    spectrum1 = text1.split('<cvParam cvRef="MS" accession="MS:1000127" value="" name="')[1].split('"')[0]  
+                    spectrum1=text1.split('<cvParam cvRef="MS" accession="MS:1000127" value="" name="')[1].split('"')[0]  
                 else:
                     if ('<cvParam accession="MS:1000127" cvRef="MS" name="' in text1):
-                        spectrum1 = text1.split('<cvParam accession="MS:1000127" cvRef="MS" name="')[1].split('"')[0]
+                        spectrum1=text1.split('<cvParam accession="MS:1000127" cvRef="MS" name="')[1].split('"')[0]
                     else:
-                        spectrum1 = "Not found"
+                        spectrum1="Not found"
         except:
-            spectrum1 = "Not found"
+            spectrum1="Not found"
            
-        # Mise à jour du fichier source
+        # Getting sourc file
         try:
-            source1 = text1.split('<sourceFile ')[1].split('">')[0].split('location="')[1].split('"')[0]
+            source1=text1.split('<sourceFile ')[1].split('">')[0].split('location="')[1].split('"')[0]
         except:
             try:
-                source1 = text1.split('<sourceFile id="WIFF" name="')[1].split('"')[0]
+                source1=text1.split('<sourceFile id="WIFF" name="')[1].split('"')[0]
             except:
                 try:
-                    source1 = text1.split('<sourceFile id=" ')[1].split('"')[0]
+                    source1=text1.split('<sourceFile id=" ')[1].split('"')[0]
                 except:
-                    source1 = "Not found"
+                    source1="Not found"
 
-        # Mise à jour de la date d'acquisition
+        # Getting acquisition date
         try:
-            date1 = text1.split('startTimeStamp="')[1].split('"')[0].split('T')[0] + " " + text1.split('startTimeStamp="')[1].split('"')[0].split('T')[1]
+            date1=text1.split('startTimeStamp="')[1].split('"')[0].split('T')[0] + " " + text1.split('startTimeStamp="')[1].split('"')[0].split('T')[1]
         except:
-            date1 = "Not found"
+            date1="Not found"
             
-        # Logiciels utilisés         
+        # Getting software used
         try:
-            softwaresList1 = ''
-            subtext1 = text1.split('softwareList count')[1].split('</softwareList>')[0]
+            softwaresList1=''
+            subtext1=text1.split('softwareList count')[1].split('</softwareList>')[0]
             for i in range(subtext1.count("<software")):
                 if i != 0:
-                    softwaresList1 = softwaresList1 + ' + '
-                softwaresversions1 = subtext1.split("<software")[i+1].split('version="')[1].split('"')[0]
+                    softwaresList1=softwaresList1 + ' + '
+                softwaresversions1=subtext1.split("<software")[i+1].split('version="')[1].split('"')[0]
                 if ('cvRef="MS" name="' in subtext1):
-                    softwares1 = subtext1.split('cvRef="MS" name="')[i+1].split('"')[0]
+                    softwares1=subtext1.split('cvRef="MS" name="')[i+1].split('"')[0]
                 else:
-                    softwares1 = subtext1.split('<software id="')[i+1].split('"')[0]
-                softwaresList1 = softwaresList1 + softwares1 + ' ' + softwaresversions1
+                    softwares1=subtext1.split('<software id="')[i+1].split('"')[0]
+                softwaresList1=softwaresList1 + softwares1 + ' ' + softwaresversions1
         except:
-            softwaresList1 = "Not found"
+            softwaresList1="Not found"
             
-        #Mise à jour du processing
+        # Getting processing methods
         try:
-            ProcessList1 = ''
-            subtext1 = text1.split('<dataProcessingList count')[1].split('</dataProcessingList>')[0]
+            ProcessList1=''
+            subtext1=text1.split('<dataProcessingList count')[1].split('</dataProcessingList>')[0]
             for i in range(subtext1.count("<processingMethod ")):
                 if i != 0:
-                    ProcessList1 = ProcessList1 + ' + '
-                methods1 = subtext1.split("<processingMethod ")[i+1].split('name="')[1].split('"')[0]
-                softwares1 = subtext1.split('softwareRef="')[1].split('"')[0]
-                ProcessList1 = ProcessList1 + softwares1 + ' ' +  methods1                
+                    ProcessList1=ProcessList1 + ' + '
+                methods1=subtext1.split("<processingMethod ")[i+1].split('name="')[1].split('"')[0]
+                softwares1=subtext1.split('softwareRef="')[1].split('"')[0]
+                ProcessList1=ProcessList1 + softwares1 + ' ' +  methods1                
         except:
-            ProcessList1 = "Not found"
+            ProcessList1="Not found"
 
-        # Mise à jour du modèle de machine (deux cas: DataAnalysis et MSConvert)                    
+        # Getting machine model      
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000703" name="' in text1):
-                modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1000703" name="')[1].split('"')[0]
+                modele1=text1.split('<cvParam cvRef="MS" accession="MS:1000703" name="')[1].split('"')[0]
             else:
                 if ('accession="MS:1001547"' in text1):
-                    modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1001547" name="')[1].split('"')[0]
+                    modele1=text1.split('<cvParam cvRef="MS" accession="MS:1001547" name="')[1].split('"')[0]
                 else:
                     if ('<cvParam cvRef="MS" accession="MS:1003094" name="' in text1):
-                        modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1003094" name="')[1].split('"')[0]       
+                        modele1=text1.split('<cvParam cvRef="MS" accession="MS:1003094" name="')[1].split('"')[0]       
                     else:
                         if ('accession="MS:1003123" name="' in text1):
-                            modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1003123" name="')[1].split('"')[0]   
+                            modele1=text1.split('<cvParam cvRef="MS" accession="MS:1003123" name="')[1].split('"')[0]   
                         else:
                             if ('<cvParam cvRef="MS" accession="MS:1000495"' in text1):
-                                modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1000495" name="')[1].split('value="')[1].split('"')[0] 
+                                modele1=text1.split('<cvParam cvRef="MS" accession="MS:1000495" name="')[1].split('value="')[1].split('"')[0] 
                             else:
                                 if ('<cvParam accession="MS:1000703" cvRef="MS" name="' in text1):
-                                    modele1 = text1.split('<cvParam accession="MS:1000703" cvRef="MS" name="')[1].split('"')[0]
+                                    modele1=text1.split('<cvParam accession="MS:1000703" cvRef="MS" name="')[1].split('"')[0]
                                 else:
                                     if ('<cvParam cvRef="MS" accession="MS:1000483" value="" name="' in text1):
-                                        modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1000483" value="" name="')[1].split('"')[0]
+                                        modele1=text1.split('<cvParam cvRef="MS" accession="MS:1000483" value="" name="')[1].split('"')[0]
                                     else: 
                                         if ('<cvParam accession="MS:1000703" cvRef="MS" name="' in text1):
-                                            modele1 = text1.split('<cvParam accession="MS:1000703" cvRef="MS" name="')[1].split('"')[0]
+                                            modele1=text1.split('<cvParam accession="MS:1000703" cvRef="MS" name="')[1].split('"')[0]
                                         else:
-                                            modele1 = 'Not available'
+                                            modele1='Not available'
             if (modele1 == ''):
-                modele1 = 'Not available'
+                modele1='Not available'
         except:
-            modele1 = "Not found"
+            modele1="Not found"
      
-        # Mise à jour du nombre de points et scans (deux cas: DataAnalysis et MSConvert)  
+        # Getting points and scans number
         try:          
-            nbscans1 = text1.split('<spectrumList count="')[1].split('"')[0]
+            nbscans1=text1.split('<spectrumList count="')[1].split('"')[0]
         except:
-            nbscans1 = "Not found"
+            nbscans1="Not found"
         try:
-            nbpoints1 = 0
+            nbpoints1=0
             with open(file, 'r') as f:
-                text = ''
-                line = 'start'
+                text=''
+                line='start'
                 while (line != ''):
-                    line = f.readline()
+                    line=f.readline()
                     if ('defaultArrayLength=' in line):
-                        nbpoints1 = nbpoints1 + int(line.split('defaultArrayLength="')[1].split('"')[0])
+                        nbpoints1=nbpoints1 + int(line.split('defaultArrayLength="')[1].split('"')[0])
             f.close()
         except:
-            nbpoints1 = "Calculation failed"
+            nbpoints1="Calculation failed"
 
-        # Encodage        
-        encodage1 = re.search('name="(.*)-bit float"', text1).group(0).replace('name="',"").replace('"','') 
+        # Encoding     
+        encodage1=re.search('name="(.*)-bit float"', text1).group(0).replace('name="',"").replace('"','') 
 
         return format1, version1, taillek1, taillem1, tailleg1, mslevel1, spectrum1, source1, date1, softwaresList1, ProcessList1, modele1, nbscans1, nbpoints1, encodage1 
        
-    # fichiers mzXml #
-    ####################################################################################        
+    # mzXml files #
+    #########################################     
    
     if (format1.casefold() == 'mzxml'):
-        # Enregistrement des infos du fichier 1 jusqu'au premier scan
-        f = open(file,'r+', encoding = "utf-8")
+        # Saving all info of first file until first scan
+        f=open(file,'r+', encoding="utf-8")
         with f:
-            text1 = ''
+            text1=''
             while ('</scan>' not in text1):
-                text1 = text1 + f.readline()                     
+                text1=text1 + f.readline()                     
         f.close()
         
-        # Récupération de la version du format
+        # Getting format version
         try:
-            version1 = text1.split('<mzXML')[1].split('mzXML_')[1].split('"')[0].split(' ')[0]
+            version1=text1.split('<mzXML')[1].split('mzXML_')[1].split('"')[0].split(' ')[0]
         except:
-            version1 = "Not found"
+            version1="Not found"
             
 
-        # Mise à jour de la taille en ko
+        # Getting ko size
         try:
-            taillek1 = np.round(os.stat(file).st_size/1024,2)
+            taillek1=np.round(os.stat(file).st_size/1024, 2)
         except:
-            taillek1 = "Calculation failed"
+            taillek1="Calculation failed"
      
-        # Mise à jour de la taille en Mo
+        # Getting Mo size
         try:
-            taillem1 = np.round(os.stat(file).st_size/1024**2,2)
+            taillem1=np.round(os.stat(file).st_size/1024**2, 2)
         except:
-            taillem1 = "Calculation failed"
+            taillem1="Calculation failed"
             
-        # Mise à jour de la taille en Go
+        # Getting Go size
         try:
-            tailleg1 = np.round(os.stat(file).st_size/1024**3,2)
+            tailleg1=np.round(os.stat(file).st_size/1024**3, 2)
         except:
-            tailleg1 = "Calculation failed"
+            tailleg1="Calculation failed"
             
-        # Mise à jour du niveau de MS
-        mslevel1 = "Not available in mzXML"
+        # Getting MS level
+        mslevel1="Not available in mzXML"
         
-        # Mise à jour du type de spectre
+        #Getting spectrum type
         try:
-            spectrum1 = text1.split('centroided="')[1].split('"')[0]
+            spectrum1=text1.split('centroided="')[1].split('"')[0]
             if spectrum1 == "0":
-                spectrum1 = "profile"
+                spectrum1="profile"
             else:
                 if spectrum1 == "1":
-                    spectrum1 = "centroid"
+                    spectrum1="centroid"
                 else:
-                    spectrum1 = "Not found"
+                    spectrum1="Not found"
         except:
-            spectrum1 = "Not found"
+            spectrum1="Not found"
            
-        # Mise à jour du fichier source
+        # Getting source file
         try:
-            source1 = text1.split('parentFile fileName="')[1].split('"')[0]
+            source1=text1.split('parentFile fileName="')[1].split('"')[0]
         except:
-            source1 = "Not found"
+            source1="Not found"
 
-        # Mise à jour de la date d'acquisition
-        date1 = "Not available in mzXML"
+        # Getting acquisition date
+        date1="Not available in mzXML"
             
-        # Logiciels utilisés         
+        # Getting used softwares
         try:
-            softwaresList1 = ''
+            softwaresList1=''
             for i in range(text1.count("<software")):
                 if i != 0:
-                    softwaresList1 = softwaresList1 + ' + '          
-                softwaresList1 = softwaresList1 + text1.split("<software")[i+1].split('type="')[1].split('"')[0] + ': ' + text1.split("<software")[i+1].split('name="')[1].split('"')[0] + ' ' + text1.split("<software")[i+1].split('version="')[1].split('"')[0]
+                    softwaresList1=softwaresList1 + ' + '          
+                softwaresList1=softwaresList1 + text1.split("<software")[i+1].split('type="')[1].split('"')[0] + ': ' + text1.split("<software")[i+1].split('name="')[1].split('"')[0] + ' ' + text1.split("<software")[i+1].split('version="')[1].split('"')[0]
         except:
-            softwaresList1 = "Not found"   
+            softwaresList1="Not found"   
 
         # Processing
-        ProcessList1 = "Not available in mzXML"         
+        ProcessList1="Not available in mzXML"         
 
-        # Mise à jour du modèle de machine (deux cas: DataAnalysis et MSConvert)                    
+        # Getting Machine model       
         try:
             if ('<msModel category="msModel" value="' in text1):
-                modele1 = text1.split('<msModel category="msModel" value="')[1].split('"')[0]
+                modele1=text1.split('<msModel category="msModel" value="')[1].split('"')[0]
             else:
                 if ('accession="MS:1001547"' in text1):
-                    modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1001547" name="')[1].split('"')[0]
+                    modele1=text1.split('<cvParam cvRef="MS" accession="MS:1001547" name="')[1].split('"')[0]
                 else:
                     if ('accession="MS:1003123"' in text1):
-                        modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1003123" name="')[1].split('"')[0]
+                        modele1=text1.split('<cvParam cvRef="MS" accession="MS:1003123" name="')[1].split('"')[0]
                     else:
                         if ('accession="MS:1000495"' in text1):
-                            modele1 = text1.split('<cvParam cvRef="MS" accession="MS:1000495" name="')[1].split('"')[0]
+                            modele1=text1.split('<cvParam cvRef="MS" accession="MS:1000495" name="')[1].split('"')[0]
                         else:
-                            modele1 = "Not found"
+                            modele1="Not found"
         except:
-            modele1 = "Not found"
+            modele1="Not found"
                  
-        # Mise à jour du nombre de points et scans (deux cas: DataAnalysis et MSConvert)  
+        # Getting scans and points number
         try:          
-            nbscans1 = text1.split('msRun scanCount="')[1].split('"')[0]
+            nbscans1=text1.split('msRun scanCount="')[1].split('"')[0]
         except:
-            nbscans1 = "Not found"
+            nbscans1="Not found"
         try:
-            nbpoints1 = 0
+            nbpoints1=0
             with open(file, 'r') as f:
-                line = 'start'
+                line='start'
                 while (line != ''):
-                    line = f.readline()
+                    line=f.readline()
                     if ('peaksCount="' in line):
-                        nbpoints1 = nbpoints1 + int(line.split('peaksCount="')[1].split('"')[0])
+                        nbpoints1=nbpoints1 + int(line.split('peaksCount="')[1].split('"')[0])
         except:
-            nbpoints1 = "Calculation failed"
+            nbpoints1="Calculation failed"
           
-        # Encodage      
+        # Encoding      
         try:
-            encodage1 = text1.split('precision="')[1].split('"')[0] + "-bit"
+            encodage1=text1.split('precision="')[1].split('"')[0] + "-bit"
         except:
-            encodage1 = 'Not available'
+            encodage1='Not available'
         
         return format1, version1, taillek1, taillem1, tailleg1, mslevel1, spectrum1, source1, date1, softwaresList1, ProcessList1, modele1, nbscans1, nbpoints1, encodage1
 
-    # Autres types de fichiers
-    ####################################################################################
+    # Other types of files
+    ######################################################
     if ((format1.casefold() != 'mzml') & (format1.casefold() != 'mzxml')):
         return ['' for i in range(0,15)]
         
 def update_entries(infile, singleFile): 
     if (singleFile == "SINGLE"):
-        info = ''
+        info=''
         info += 'Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)\tMSlevel\tSpectrum type\tSource file\tAcquisition date\tSoftware(s) used\tProcessing method(s)\tMachine\tNumber of scans\tNumber of points\tEncoding\n'
-        x = get_info(infile, sys.argv[4].split('.')[-1])
+        x=get_info(infile, sys.argv[4].split('.')[-1])
         info += sys.argv[4] + '\t'
         for i in range(len(x)):
             info += str(x[i]) + '\t'
         info += '\n'
         return info
     else:  
-        info = ''
+        info=''
         info += 'Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)\tMSlevel\tSpectrum type\tSource file\tAcquisition date\tSoftware(s) used\tProcessing method(s)\tMachine\tNumber of scans\tNumber of points\tEncoding\n'
-        ii = 4
+        ii=4
         for f in infile.split(','):
-            x = get_info(f, sys.argv[ii].split('.')[-1])
+            x=get_info(f, sys.argv[ii].split('.')[-1])
             info += sys.argv[ii] + '\t'
             for i in range(len(x)):
                 info += str(x[i]) + '\t'
@@ -335,9 +336,9 @@ def update_entries(infile, singleFile):
         return info
 
 print([i for i in sys.argv])
-outfile = sys.argv[1]
-singleFile = sys.argv[2]
-infile = sys.argv[3]
-res = open(outfile, "w")
+outfile=sys.argv[1]
+singleFile=sys.argv[2]
+infile=sys.argv[3]
+res=open(outfile, "w")
 res.write(update_entries(infile, singleFile))
 res.close()

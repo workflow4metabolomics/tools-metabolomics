@@ -124,7 +124,7 @@ def get_info(file, format1):
         try:
             date1 = text1.split('startTimeStamp="')[1].split('"')[0]\
                 .split('T')[0] + " " + text1.split('startTimeStamp="')[1]\
-                     .split('"')[0].split('T')[1]
+                    .split('"')[0].split('T')[1]
         except Exception:
             date1 = "Not found"
             raise
@@ -233,8 +233,8 @@ def get_info(file, format1):
                 while (line != ''):
                     line = f.readline()
                     if ('defaultArrayLength=' in line):
-                        nbpoints1 = nbpoints1 + \
-                            int(line.split('defaultArrayLength="')[1]\
+                        nbpoints1 = nbpoints1 + int(line\
+                            .split('defaultArrayLength="')[1]\
                                 .split('"')[0])
             f.close()
         except Exception:
@@ -243,7 +243,7 @@ def get_info(file, format1):
         # Encoding
         encodage1 = re.search('name="(.*)-bit float"', text1) \
             .group(0).replace('name="', "").replace('"', '')
-        return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \
+        return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \ 
             spectrum1, source1, date1, softwaresList1, ProcessList1, \
                 modele1, nbscans1, nbpoints1, encodage1
     # mzXml files #
@@ -310,13 +310,13 @@ def get_info(file, format1):
                 if i != 0:
                     softwaresList1 = softwaresList1 + ' + '
                 softwaresList1 = softwaresList1 + \
-                text1.split("<software")[i+1].split('type="')[1]\
-                .split('"')[0] + ': ' + \
-                text1.split("<software")[i+1].split('name="')[1]\
-                .split('"')[0] + ' ' + \
-                text1.split("<software")[i+1] \
-                .split('version="')[1] \
-                .split('"')[0]
+                    text1.split("<software")[i+1].split('type="')[1]\
+                        .split('"')[0] + ': ' + \
+                            text1.split("<software")[i+1].split('name="')[1]\
+                                .split('"')[0] + ' ' + \
+                                    text1.split("<software")[i+1] \
+                                        .split('version="')[1] \
+                                            .split('"')[0]
         except Exception:
             softwaresList1 = "Not found"
             raise

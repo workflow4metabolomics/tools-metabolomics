@@ -53,8 +53,8 @@ def get_info(file, format1):
         # Getting MS level
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-                    mslevel1 = text1.split('<cvParam cvRef="MS" \
-                        accession="MS:1000580" name="')[1].split('"')[0]
+                mslevel1 = text1.split('<cvParam cvRef="MS" \
+                    accession="MS:1000580" name="')[1].split('"')[0]
             else:
                 if ('<cvParam cvRef="MS" accession="MS:1000580" \
                         value="" name="' in text1):
@@ -93,8 +93,8 @@ def get_info(file, format1):
                 if ('<cvParam cvRef="MS" accession="MS:1000127" \
                         value="" name="' in text1):
                     spectrum1 = text1.split('<cvParam cvRef="MS" \
-                        accession="MS:1000127" value="" name="')\
-                            [1].split('"')[0]
+                        accession="MS:1000127" value="" name="')[1]\
+                            .split('"')[0]
                 else:
                     if ('<cvParam accession="MS:1000127" \
                             cvRef="MS" name="' in text1):
@@ -108,11 +108,11 @@ def get_info(file, format1):
             raise
         # Getting sourc file
         try:
-            source1 = text1.split('<sourceFile ')[1].split('">')[0] \
+            source1 = text1.split('<sourceFile ')[1].split('">')[0]\
                 .split('location="')[1].split('"')[0]
         except Exception:
             try:
-                source1 = text1.split('<sourceFile id="WIFF" name="')[1] \
+                source1 = text1.split('<sourceFile id="WIFF" name="')[1]\
                     .split('"')[0]
             except Exception:
                 try:
@@ -123,8 +123,8 @@ def get_info(file, format1):
         # Getting acquisition date
         try:
             date1 = text1.split('startTimeStamp="')[1].split('"')[0]\
-                .split('T')[0] + " " + text1.split('startTimeStamp="')\
-                    [1].split('"')[0].split('T')[1]
+                .split('T')[0] + " " + text1.split('startTimeStamp="')[1]\
+                    .split('"')[0].split('T')[1]
         except Exception:
             date1 = "Not found"
             raise
@@ -136,14 +136,14 @@ def get_info(file, format1):
             for i in range(subtext1.count("<software")):
                 if i != 0:
                     softwaresList1 = softwaresList1 + ' + '
-                softwaresversions1 = subtext1.split("<software")[i+1] \
+                softwaresversions1 = subtext1.split("<software")[i+1]\
                     .split('version="')[1].split('"')[0]
                 if ('cvRef="MS" name="' in subtext1):
-                    softwares1 = subtext1.split('cvRef="MS" name="')\
-                        [i+1].split('"')[0]
+                    softwares1 = subtext1.split('cvRef="MS" name="')[i+1]\
+                        .split('"')[0]
                 else:
-                    softwares1 = subtext1.split('<software id="')\
-                        [i+1].split('"')[0]
+                    softwares1 = subtext1.split('<software id="')[i+1]\
+                        .split('"')[0]
                 softwaresList1 = softwaresList1 + \
                     softwares1 + ' ' + softwaresversions1
         except Exception:
@@ -234,8 +234,8 @@ def get_info(file, format1):
                     line = f.readline()
                     if ('defaultArrayLength=' in line):
                         nbpoints1 = nbpoints1 + \
-                            int(line.split('defaultArrayLength="')\
-                                [1].split('"')[0])
+                            int(line.split('defaultArrayLength="')[1]\
+                                .split('"')[0])
             f.close()
         except Exception:
             nbpoints1 = "Calculation failed"
@@ -325,8 +325,8 @@ def get_info(file, format1):
         # Getting Machine model
         try:
             if ('<msModel category="msModel" value="' in text1):
-                modele1 = text1.split('<msModel category="msModel" value="')\
-                    [1].split('"')[0]
+                modele1 = text1.split('<msModel category="msModel" \
+                    value="')[1].split('"')[0]
             else:
                 if ('accession="MS:1001547"' in text1):
                     modele1 = text1.split('<cvParam cvRef="MS" \

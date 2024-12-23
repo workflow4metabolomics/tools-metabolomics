@@ -243,7 +243,7 @@ def get_info(file, format1):
         # Encoding
         encodage1 = re.search('name="(.*)-bit float"', text1) \
             .group(0).replace('name="', "").replace('"', '')
-        return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \ 
+        return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \
             spectrum1, source1, date1, softwaresList1, ProcessList1, \
                 modele1, nbscans1, nbpoints1, encodage1
     # mzXml files #

@@ -19,7 +19,7 @@ def get_info(file, format1):
     # mzml files #
     if (format1.casefold() == 'mzml'):
         # Saving all info of first file until first scan
-        f = open(file, 'r+', encoding = "utf-8")
+        f = open(file, 'r+', encoding="utf-8")
         with f:
             text1 = ''
             while ('<binary>' not in text1):
@@ -53,26 +53,28 @@ def get_info(file, format1):
         # Getting MS level
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-                mslevel1 = text1.split('<cvParam cvRef="MS" \
-                    accession="MS:1000580" name="')[1].split('"')[0]
+                    mslevel1 = text1.split('<cvParam cvRef="MS" \
+                        accession="MS:1000580" name="')[1].split('"')[0]
             else:
                 if ('<cvParam cvRef="MS" accession="MS:1000580" \
-                    value="" name="' in text1):
+                        value="" name="' in text1):
                     mslevel1 = text1.split('<cvParam cvRef="MS" \
-                        accession="MS:1000580" value="" name="')[1].split('"')[0]
+                        accession="MS:1000580" value="" name="')\
+                            [1].split('"')[0]
                 else:
                     if ('accession="MS:1000579" cvRef="MS" \
-                        name="' in text1):
+                            name="' in text1):
                         mslevel1 = text1.split('accession="MS:1000579" \
                             cvRef="MS" name="')[1].split('"')[0]
                     else:
                         if ('cvRef="MS" accession="MS:1000579" \
-                            name="' in text1):
-                             mslevel1 = text1.split('cvRef="MS" \
-                                accession="MS:1000579" name="')[1].split('"')[0]
+                                name="' in text1):
+                            mslevel1 = text1.split('cvRef="MS" \
+                                accession="MS:1000579" name="')\
+                                    [1].split('"')[0]
                         else:
                             if (' <cvParam cvRef="MS" \
-                                accession="MS:1000580" name="' in text1):
+                                    accession="MS:1000580" name="' in text1):
                                 mslevel1 = text1.split(' <cvParam cvRef="MS" \
                                     accession="MS:1000580" name="')[1].split('"')[0]
                             else:
@@ -83,19 +85,21 @@ def get_info(file, format1):
         # Getting spectrum type
         try:
             if ('<cvParam cvRef="MS" accession="MS:1000127" \
-                name="' in text1):
+                    name="' in text1):
                 spectrum1 = text1.split('<cvParam cvRef="MS"  \
                     accession="MS:1000127" name="')[1].split('"')[0]
             else:
                 if ('<cvParam cvRef="MS" accession="MS:1000127" \
-                    value="" name="' in text1):
+                        value="" name="' in text1):
                     spectrum1 = text1.split('<cvParam cvRef="MS" \
-                        accession="MS:1000127" value="" name="')[1].split('"')[0]
+                        accession="MS:1000127" value="" name="')\
+                            [1].split('"')[0]
                 else:
-                    if ('<cvParam accession="MS:1000127" cvRef="MS" name="' \
-                        in text1):
-                        spectrum1 = text1.split('<cvParam accession="MS:1000127"\
-                            cvRef="MS" name="')[1].split('"')[0]
+                    if ('<cvParam accession="MS:1000127" \
+                            cvRef="MS" name="' in text1):
+                        spectrum1 = text1.split('<cvParam \
+                            accession="MS:1000127" \
+                                cvRef="MS" name="')[1].split('"')[0]
                     else:
                         spectrum1 = "Not found"
         except:
@@ -118,7 +122,7 @@ def get_info(file, format1):
         # Getting acquisition date
         try:
             date1 = text1.split('startTimeStamp="')[1].split('"')[0] \
-                .split('T')[0] + " " + text1.split('startTimeStamp="') \
+                .split('T')[0] + " " + text1.split('startTimeStamp="')\
                     [1].split('"')[0].split('T')[1]
         except:
             date1 = "Not found"
@@ -134,10 +138,10 @@ def get_info(file, format1):
                 softwaresversions1 = subtext1.split("<software")[i+1] \
                     .split('version="')[1].split('"')[0]
                 if ('cvRef="MS" name="' in subtext1):
-                    softwares1 = subtext1.split('cvRef="MS" name="') \
+                    softwares1 = subtext1.split('cvRef="MS" name="')\
                         [i+1].split('"')[0]
                 else:
-                    softwares1 = subtext1.split('<software id="') \
+                    softwares1 = subtext1.split('<software id="')\
                         [i+1].split('"')[0]
                 softwaresList1 = softwaresList1 + \
                     softwares1 + ' ' + softwaresversions1
@@ -147,16 +151,16 @@ def get_info(file, format1):
         # Getting processing methods
         try:
             ProcessList1 = ''
-            subtext1=text1.split('<dataProcessingList count')[1] \
+            subtext1 = text1.split('<dataProcessingList count')[1] \
                 .split('</dataProcessingList>')[0]
             for i in range(subtext1.count("<processingMethod ")):
                 if i != 0:
-                    ProcessList1=ProcessList1 + ' + '
+                    ProcessList1 = ProcessList1 + ' + '
                 methods1 = subtext1.split("<processingMethod ")[i+1] \
                     .split('name="')[1].split('"')[0]
                 softwares1 = subtext1.split('softwareRef="')[1] \
                     .split('"')[0]
-                ProcessList1=ProcessList1 + softwares1 + ' ' +  methods1
+                ProcessList1 = ProcessList1 + softwares1 + ' ' +  methods1
         except:
             ProcessList1 = "Not found"
             raise
@@ -171,7 +175,7 @@ def get_info(file, format1):
                         accession="MS:1001547" name="')[1].split('"')[0]
                 else:
                     if ('<cvParam cvRef="MS" \
-                        accession="MS:1003094" name="' in text1):
+                            accession="MS:1003094" name="' in text1):
                         modele1 = text1.split('<cvParam cvRef="MS" \
                             accession="MS:1003094" name="')[1].split('"')[0]
                     else:
@@ -181,28 +185,28 @@ def get_info(file, format1):
                                     .split('"')[0]
                         else:
                             if ('<cvParam cvRef="MS" \
-                                accession="MS:1000495"' in text1):
+                                    accession="MS:1000495"' in text1):
                                 modele1 = text1.split('<cvParam cvRef="MS" \
                                     accession="MS:1000495" name="')[1].split \
                                         ('value="')[1].split('"')[0]
                             else:
                                 if ('<cvParam accession="MS:1000703" \
-                                    cvRef="MS" name="' in text1):
+                                        cvRef="MS" name="' in text1):
                                     modele1 = text1.split('<cvParam \
                                         accession="MS:1000703" \
                                             cvRef="MS" name="')[1] \
                                                 .split('"')[0]
                                 else:
                                     if ('<cvParam cvRef="MS" accession= \
-                                        "MS:1000483" value="" name="' \
-                                            in text1):
+                                        "MS:1000483" \
+                                            value="" name="' in text1):
                                         modele1 = text1.split('<cvParam \
                                             cvRef="MS" accession="MS:1000483" \
                                                 value="" name="')[1] \
                                                     .split('"')[0]
                                     else:
                                         if ('<cvParam accession="MS:1000703" \
-                                            cvRef="MS" name="' in text1):
+                                                cvRef="MS" name="' in text1):
                                             modele1 = text1.split('<cvParam \
                                                 accession="MS:1000703" \
                                                     cvRef="MS" \
@@ -226,10 +230,11 @@ def get_info(file, format1):
             with open(file, 'r') as f:
                 line = 'start'
                 while (line != ''):
-                    line=f.readline()
+                    line = f.readline()
                     if ('defaultArrayLength=' in line):
-                        nbpoints1=nbpoints1 + int(line \
-                            .split('defaultArrayLength="')[1].split('"')[0])
+                        nbpoints1 = nbpoints1 + \
+                            int(line.split('defaultArrayLength="') \
+                                [1].split('"')[0])
             f.close()
         except:
             nbpoints1 = "Calculation failed"
@@ -304,13 +309,13 @@ def get_info(file, format1):
                 if i != 0:
                     softwaresList1 = softwaresList1 + ' + '
                 softwaresList1 = softwaresList1 + \
-                text1.split("<software")[i+1].split('type="')[1] \
-                    .split('"')[0] + ': ' + \
-                        text1.split("<software")[i+1].split('name="')[1] \
-                            .split('"')[0] + ' ' + \
-                                text1.split("<software")[i+1] \
-                                    .split('version="')[1] \
-                                        .split('"')[0]
+                    text1.split("<software")[i+1].split('type="')[1] \
+                        .split('"')[0] + ': ' + \
+                            text1.split("<software")[i+1].split('name="')[1] \
+                                .split('"')[0] + ' ' + \
+                                    text1.split("<software")[i+1] \
+                                        .split('version="')[1] \
+                                            .split('"')[0]
         except:
             softwaresList1 = "Not found"
             raise
@@ -319,7 +324,7 @@ def get_info(file, format1):
         # Getting Machine model
         try:
             if ('<msModel category="msModel" value="' in text1):
-                modele1 = text1.split('<msModel category="msModel" value="') \
+                modele1 = text1.split('<msModel category="msModel" value="')\
                     [1].split('"')[0]
             else:
                 if ('accession="MS:1001547"' in text1):

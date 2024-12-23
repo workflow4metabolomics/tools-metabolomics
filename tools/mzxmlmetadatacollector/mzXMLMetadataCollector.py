@@ -154,8 +154,8 @@ def get_info(file, format1):
                     ProcessList1=ProcessList1 + ' + '
                 methods1 = subtext1.split("<processingMethod ")[i+1] \
                     .split('name="')[1].split('"')[0]
-                        softwares1 = subtext1.split('softwareRef="')[1] \
-                            .split('"')[0]
+                softwares1 = subtext1.split('softwareRef="')[1] \
+                    .split('"')[0]
                 ProcessList1=ProcessList1 + softwares1 + ' ' +  methods1
         except:
             ProcessList1 = "Not found"

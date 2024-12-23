@@ -273,7 +273,7 @@ def get_info(file, format1):
                 .split('"')[0] + ': ' + \
                 text1.split("<software")[i+1].split('name="')[1] \
                 .split('"')[0] + ' ' + \
-                text1.split("<software")[i+1].split('version="')[1] s\
+                text1.split("<software")[i+1].split('version="')[1] \
                 .split('"')[0]
         except:
             softwaresList1 = "Not found"

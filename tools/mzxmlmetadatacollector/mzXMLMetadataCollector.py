@@ -8,7 +8,6 @@ Last update on Nov 14 2024
 @author: quruin
 """
 # Packages
-############################################################
 import os
 import re
 import sys
@@ -18,7 +17,6 @@ import numpy as np
 
 def get_info(file, format1):
     # mzml files #
-    ############################################################
     if (format1.casefold() == 'mzml'):
         # Saving all info of first file until first scan
         f = open(file, 'r+', encoding = "utf-8")
@@ -208,10 +206,9 @@ def get_info(file, format1):
         return format1, version1, taillek1, taillem1, tailleg1, mslevel1, spectrum1, \
         source1, date1, softwaresList1, ProcessList1, modele1, nbscans1, nbpoints1, encodage1
     # mzXml files #
-    #########################################        
     if (format1.casefold() == 'mzxml'):
         # Saving all info of first file until first scan
-        f=open(file,'r+', encoding="utf-8")
+        f = open(file, 'r+', encoding="utf-8")
         with f:
             text1 = ''
             while ('</scan>' not in text1):
@@ -219,8 +216,9 @@ def get_info(file, format1):
         f.close()
         # Getting format version
         try:
-            version1 = text1.split('<mzXML')[1].split('mzXML_')[1].split('"')[0].split(' ')[0]
-        except: 
+            version1 = text1.split('<mzXML')[1].split('mzXML_')[1] \
+            .split('"')[0].split(' ')[0]
+        except:
             version1 = "Not found"
             raise
         # Getting ko size
@@ -232,7 +230,9 @@ def get_info(file, format1):
         # Getting Mo size
         try:
             taillem1 = np.round(os.stat(file).st_size/1024**2, 2)
-        except: taillem1 = "Calculation failed"
+        except: 
+            taillem1 = "Calculation failed"
+            raise
         # Getting Go size
         try:
             tailleg1 = np.round(os.stat(file).st_size/1024**3, 2)
@@ -240,12 +240,12 @@ def get_info(file, format1):
             tailleg1 = "Calculation failed"
             raise
         # Getting MS level
-        mslevel1 = "Not available in mzXML"      
-        #Getting spectrum type
+        mslevel1 = "Not available in mzXML"
+        # Getting spectrum type
         try:
             spectrum1 = text1.split('centroided="')[1].split('"')[0]
             if spectrum1 == "0":
-                spectrum1="profile"
+                spectrum1 = "profile"
             else:
                 if spectrum1 == "1":
                     spectrum1 = "centroid"
@@ -264,16 +264,16 @@ def get_info(file, format1):
         date1="Not available in mzXML"
         # Getting used softwares
         try:
-            softwaresList1=''
+            softwaresList1 = ''
             for i in range(text1.count("<software")):
                 if i != 0:
-                    softwaresList1=softwaresList1 + ' + '
-                softwaresList1=softwaresList1 + \
-                text1.split("<software")[i+1].split('type="')[1]\
+                    softwaresList1 = softwaresList1 + ' + '
+                softwaresList1 = softwaresList1 + \
+                text1.split("<software")[i+1].split('type="')[1] \
                 .split('"')[0] + ': ' + \
-                text1.split("<software")[i+1].split('name="')[1]\
+                text1.split("<software")[i+1].split('name="')[1] \
                 .split('"')[0] + ' ' + \
-                text1.split("<software")[i+1].split('version="')[1]\
+                text1.split("<software")[i+1].split('version="')[1] s\
                 .split('"')[0]
         except:
             softwaresList1 = "Not found"
@@ -283,7 +283,8 @@ def get_info(file, format1):
         # Getting Machine model
         try:
             if ('<msModel category="msModel" value="' in text1):
-                modele1=text1.split('<msModel category="msModel" value="')[1].split('"')[0]
+                modele1 = text1.split('<msModel category="msModel" value="') \
+                [1].split('"')[0]
             else:
                 if ('accession="MS:1001547"' in text1):
                     modele1 = text1.split('<cvParam cvRef="MS" \
@@ -303,18 +304,19 @@ def get_info(file, format1):
             raise
         # Getting scans and points number
         try:
-            nbscans1=text1.split('msRun scanCount="')[1].split('"')[0]
+            nbscans1 = text1.split('msRun scanCount="')[1].split('"')[0]
         except:
             nbscans1 = "Not found"
             raise
         try:
-            nbpoints1=0
+            nbpoints1 = 0
             with open(file, 'r') as f:
                 line = 'start'
                 while (line != ''):
                     line = f.readline()
                     if ('peaksCount="' in line):
-                        nbpoints1 = nbpoints1 + int(line.split('peaksCount="')[1].split('"')[0])
+                        nbpoints1 = nbpoints1 + \
+                        int(line.split('peaksCount="')[1].split('"')[0])
         except:
             nbpoints1 = "Calculation failed"
             raise
@@ -324,12 +326,16 @@ def get_info(file, format1):
         except:
             encodage1 = 'Not available'
             raise
-        return format1, version1, taillek1, taillem1, tailleg1, mslevel1, spectrum1, source1, \
-        date1, softwaresList1, ProcessList1, modele1, nbscans1, nbpoints1, encodage1
+        return format1, version1, taillek1, taillem1, tailleg1, \
+        mslevel1, spectrum1, source1,date1, softwaresList1, ProcessList1, \
+        modele1, nbscans1, nbpoints1, encodage1
     # Other types of files
     ######################################################
     if ((format1.casefold() != 'mzml') & (format1.casefold() != 'mzxml')):
-        return ['' for i in range(0,15)]
+        return ['' for i in range(0, 15)]
+
+
+
 def update_entries(infile, singleFile):
     if (singleFile == "SINGLE"):
         info = ''
@@ -337,31 +343,33 @@ def update_entries(infile, singleFile):
         \tMSlevel\tSpectrum type\tSource file\tAcquisition \
         date\tSoftware(s) used\tProcessing method(s)\tMachine\t \
         Number of scans\tNumber of points\tEncoding\n'
-        x=get_info(infile, sys.argv[4].split('.')[-1])
+        x = get_info(infile, sys.argv[4].split('.')[-1])
         info += sys.argv[4] + '\t'
         for i in range(len(x)):
             info += str(x[i]) + '\t'
         info += '\n'
         return info
     else:
-        info=''
+        info = ''
         info += 'Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)\t \
         MSlevel\tSpectrum type\tSource file\tAcquisition \
         date\tSoftware(s) used\tProcessing method(s)\tMachine\t \
         Number of scans\tNumber of points\tEncoding\n'
-        ii=4
+        ii = 4
         for f in infile.split(','):
-            x=get_info(f, sys.argv[ii].split('.')[-1])
+            x = get_info(f, sys.argv[ii].split('.')[-1])
             info += sys.argv[ii] + '\t'
             for i in range(len(x)):
                 info += str(x[i]) + '\t'
             info += '\n'
             ii += 1
         return info
+
+
 print([i for i in sys.argv])
-outfile=sys.argv[1]
-singleFile=sys.argv[2]
-infile=sys.argv[3]
-res=open(outfile, "w")
+outfile = sys.argv[1]
+singleFile = sys.argv[2]
+infile = sys.argv[3]
+res = open(outfile, "w")
 res.write(update_entries(infile, singleFile))
 res.close()

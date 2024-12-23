@@ -59,8 +59,8 @@ def get_info(file, format1):
                 if ('<cvParam cvRef="MS" accession="MS:1000580" \
                         value="" name="' in text1):
                     mslevel1 = text1.split('<cvParam cvRef="MS" \
-                        accession="MS:1000580" value="" name="')\
-                            [1].split('"')[0]
+                        accession="MS:1000580" value="" name="')[1]\
+                            .split('"')[0]
                 else:
                     if ('accession="MS:1000579" cvRef="MS" \
                             name="' in text1):
@@ -70,8 +70,8 @@ def get_info(file, format1):
                         if ('cvRef="MS" accession="MS:1000579" \
                                 name="' in text1):
                             mslevel1 = text1.split('cvRef="MS" \
-                                accession="MS:1000579" name="')\
-                                    [1].split('"')[0]
+                                accession="MS:1000579" name="')[1]\
+                                    .split('"')[0]
                         else:
                             if (' <cvParam cvRef="MS" \
                                     accession="MS:1000580" name="' in text1):
@@ -124,7 +124,7 @@ def get_info(file, format1):
         try:
             date1 = text1.split('startTimeStamp="')[1].split('"')[0]\
                 .split('T')[0] + " " + text1.split('startTimeStamp="')[1]\
-                    .split('"')[0].split('T')[1]
+                     .split('"')[0].split('T')[1]
         except Exception:
             date1 = "Not found"
             raise
@@ -188,8 +188,8 @@ def get_info(file, format1):
                             if ('<cvParam cvRef="MS" \
                                     accession="MS:1000495"' in text1):
                                 modele1 = text1.split('<cvParam cvRef="MS" \
-                                    accession="MS:1000495" name="')[1].split\
-                                        ('value="')[1].split('"')[0]
+                                    accession="MS:1000495" name="')[1]\
+                                        .split('value="')[1].split('"')[0]
                             else:
                                 if ('<cvParam accession="MS:1000703" \
                                         cvRef="MS" name="' in text1):
@@ -233,7 +233,7 @@ def get_info(file, format1):
                 while (line != ''):
                     line = f.readline()
                     if ('defaultArrayLength=' in line):
-                        nbpoints1 = nbpoints1 + \
+                        nbpoints1 = nbpoints1 + 
                             int(line.split('defaultArrayLength="')[1]\
                                 .split('"')[0])
             f.close()
@@ -310,13 +310,13 @@ def get_info(file, format1):
                 if i != 0:
                     softwaresList1 = softwaresList1 + ' + '
                 softwaresList1 = softwaresList1 + \
-                    text1.split("<software")[i+1].split('type="')[1]\
-                        .split('"')[0] + ': ' + \
-                            text1.split("<software")[i+1].split('name="')[1]\
-                                .split('"')[0] + ' ' + \
-                                    text1.split("<software")[i+1] \
-                                        .split('version="')[1] \
-                                            .split('"')[0]
+                text1.split("<software")[i+1].split('type="')[1]\
+                .split('"')[0] + ': ' + \
+                text1.split("<software")[i+1].split('name="')[1]\
+                .split('"')[0] + ' ' + \
+                text1.split("<software")[i+1] \
+                .split('version="')[1] \
+                .split('"')[0]
         except Exception:
             softwaresList1 = "Not found"
             raise

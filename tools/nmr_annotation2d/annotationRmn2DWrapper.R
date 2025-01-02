@@ -35,7 +35,7 @@ flagC <- "\n"
 ##------------------------------
 ## R libraries laoding
 ##------------------------------
-library(batch)
+# library(batch)
 library(dplyr)
 library(ggplot2)
 library(openxlsx)
@@ -44,8 +44,21 @@ library(tidyr)
 library(curl)
 library(jsonlite)
 
-if (!runExampleL)
-    argLs <- parseCommandArgs(evaluate = FALSE)
+# if (!runExampleL)
+#    argLs <- parseCommandArgs(evaluate = FALSE)
+parse_args <- function() {
+  args <- commandArgs()
+  start <- which(args == "--args")[1] + 1
+  if (is.na(start)) {
+      return(list())
+  }
+  seq_by2 <- seq(start, length(args), by = 2)
+  result <- as.list(args[seq_by2 + 1])
+  names(result) <- args[seq_by2]
+  return(result)
+}
+argLs <- parse_args() #interpretation of arguments given in command line as an R list of objects
+
 logFile <- argLs[["logOut"]]
 sink(logFile)
 

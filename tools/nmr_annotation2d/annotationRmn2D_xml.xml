@@ -3,7 +3,7 @@
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
     <requirements>
-        <requirement type="package" version="1.1_5">r-batch</requirement>
+#        <requirement type="package" version="1.1_5">r-batch</requirement>
         <requirement type="package" version="0.8.3">r-dplyr</requirement>
         <requirement type="package" version="3.2.1">r-ggplot2</requirement>
         <requirement type="package" version="4.0.17">r-openxlsx</requirement>

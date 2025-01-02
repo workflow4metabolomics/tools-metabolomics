@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy2">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy3">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>

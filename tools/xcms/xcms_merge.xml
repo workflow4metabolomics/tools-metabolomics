@@ -7,6 +7,10 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms_merge.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[

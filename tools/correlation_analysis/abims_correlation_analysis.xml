@@ -1,4 +1,4 @@
-<tool id="correlation_analysis" name="Metabolites Correlation Analysis" version="1.0.1+galaxy0" >
+<tool id="correlation_analysis" name="Metabolites Correlation Analysis" version="1.0.1+galaxy1" >
 
     <description>to highlight ion correlations considering PC-groups</description>
 
@@ -7,6 +7,9 @@
         <requirement type="package" version="0.8.8">r-reshape</requirement>
         <requirement type="package" version="7.3_53">r-mass</requirement>
     </requirements>
+    <required_files>
+        <include path="correlation_analysis.r" />
+    </required_files>
 
     <command detect_errors='exit_code'>
         Rscript '$__tool_directory__/correlation_analysis.r'

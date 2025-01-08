@@ -1,4 +1,4 @@
-<tool id="ipo4xcmsSet" name="IPO for xcmsSet" version="@TOOL_VERSION@+galaxy1">
+<tool id="ipo4xcmsSet" name="IPO for xcmsSet" version="@TOOL_VERSION@+galaxy2">
 
     <description>IPO optimization process for xcms.findChromPeaks</description>
 
@@ -7,6 +7,10 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="ipo4xcmsSet.r" />
+        <include path="lib.r" />
+    </required_files>
 
     <command detect_errors="exit_code"><![CDATA[
         LANG=C Rscript '$__tool_directory__/ipo4xcmsSet.r'

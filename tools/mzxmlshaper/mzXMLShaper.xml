@@ -1,4 +1,4 @@
-<tool id="mzxmlshaper" name="Mz(X)ML Shaper" version="1.0.0+galaxy0" profile="21.01">
+<tool id="mzxmlshaper" name="Mz(X)ML Shaper" version="1.0.0+galaxy1" profile="21.01">
   <description>
     conversion into XCMS-supported mz(X)ML file formats
   </description>
@@ -8,6 +8,9 @@
     <requirement type="package" version="2.36.0">bioconductor-mzr</requirement>
     <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
+  <required_files>
+    <include path="mzXMLShaper.R" />
+</required_files>
   <command detect_errors="aggressive"><![CDATA[
     Rscript '$__tool_directory__/mzXMLShaper.R'
       inputfilename '$infile'
@@ -111,7 +114,7 @@ A file (or collection of files) converted in mzML or mzXML with the same name as
 EXAMPLE OF WORKFLOW POSITION
 ----------------------------
 
-Used as first step in any workflow supporting mzML or mzXML formats just before ReadMSData. 
+Used as first step in any workflow supporting mzML or mzXML formats just before ReadMSData.
 
 ---------------------------------------------------
 
@@ -119,7 +122,7 @@ Used as first step in any workflow supporting mzML or mzXML formats just before 
 TOOL PARAMETERS
 ===============
 
-- Desired output format: mzML or MZXML 
+- Desired output format: mzML or MZXML
 
 ---------------------------------------------------
 
@@ -127,7 +130,7 @@ TOOL PARAMETERS
 OUTPUT DESCRIPTION
 ==================
 
-Standardized MzML or mzXML files (depending on the user's configuration of the tool) 
+Standardized MzML or mzXML files (depending on the user's configuration of the tool)
 
 ---------------------------------------------------
 
@@ -142,7 +145,7 @@ KNOWN ISSUES
 ------------
 
 MzR does not read Bruker's DataAnalysis mzML or mzXML files, as they are not "standard" or "Pwiz-style" files (August 2024). This might also be the case for other constructor-converted mzML/mzXML, in that case an "unsupported file format" error will happen. However, this tool is functional for ProteoWizard's MSConvert mzML/mzXML files.
-    
+
   ]]>
   </help>
   <citations>

@@ -6,6 +6,10 @@
         <import>macros_xcms.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms_plot_chromatogram.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[

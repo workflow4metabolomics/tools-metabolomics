@@ -14,7 +14,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_xcmsSet.r
+        @COMMAND_RSCRIPT@xcms_xcmsSet.r
 
         image '$image'
 

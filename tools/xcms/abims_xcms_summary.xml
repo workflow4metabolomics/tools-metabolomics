@@ -19,7 +19,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_summary.r
+        @COMMAND_RSCRIPT@xcms_summary.r
 
         image '$image'
         htmlOutput '$htmlOutput'

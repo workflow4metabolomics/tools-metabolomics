@@ -14,7 +14,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/CAMERA_annotateDiffreport.r
+        @COMMAND_RSCRIPT@CAMERA_annotateDiffreport.r
         image '$image'
 
         nSlaves \${GALAXY_SLOTS:-1}

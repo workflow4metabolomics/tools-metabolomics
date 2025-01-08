@@ -14,7 +14,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/msnbase_readmsdata.r
+        @COMMAND_RSCRIPT@msnbase_readmsdata.r
 
         #if $input.is_of_type("mzxml") or $input.is_of_type("mzml") or $input.is_of_type("mzdata") or $input.is_of_type("netcdf"):
             #if $os.path.islink(str($input))

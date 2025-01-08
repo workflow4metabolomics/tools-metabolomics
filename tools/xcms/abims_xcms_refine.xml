@@ -15,7 +15,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_refine.r
+        @COMMAND_RSCRIPT@xcms_refine.r
         image '$image'
 
         method $methods.method

@@ -14,7 +14,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_merge.r
+        @COMMAND_RSCRIPT@xcms_merge.r
 
         images 'c("${"\",\"".join(map(str, $images))}")'
 

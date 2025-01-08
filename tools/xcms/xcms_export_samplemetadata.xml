@@ -14,7 +14,7 @@
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_export_samplemetadata.r
+        @COMMAND_RSCRIPT@xcms_export_samplemetadata.r
 
         images 'c("${"\",\"".join(map(str, $images))}")'
     ]]></command>

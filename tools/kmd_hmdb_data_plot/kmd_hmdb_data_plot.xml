@@ -5,7 +5,7 @@
     <macros>
         <import>macro.xml</import>
         <token name="@TOOL_VERSION@">1.0.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
@@ -19,6 +19,10 @@
         <requirement type="package" version="5.15.0">plotly</requirement>
         <requirement type="package" version="1.0.1">kmd_hmdb_api_client</requirement>
     </requirements>
+    <required_files>
+        <include path="kmd_hmdb_interrogator.py" />
+        <include path="kmd_hmdb_plot_generator.py" />
+    </required_files>
     <command detect_errors="exit_code">
 <![CDATA[
 #if "get_data" in str($what.to_do)

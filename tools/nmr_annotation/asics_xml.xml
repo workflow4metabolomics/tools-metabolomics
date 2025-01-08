@@ -1,4 +1,4 @@
-<tool id="NmrAnnotation" name="NMR_Annotation" version="3.0.0">
+<tool id="NmrAnnotation" name="NMR_Annotation" version="3.0.0+galaxy1">
 
     <description> Annotation of complex mixture NMR spectra and metabolite proportion estimation </description>
 
@@ -6,6 +6,11 @@
         <requirement type="package" version="1.1_4">r-batch</requirement>
         <requirement type="package" version="1.0.1">r-asics</requirement>
     </requirements>
+    <required_files>
+        <include path="asics_wrapper.R" />
+        <include path="DrawSpec.R" />
+        <include path="Library.Rdata" />
+    </required_files>
 
     <stdio>
         <exit_code range="1:" level="fatal" />

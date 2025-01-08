@@ -1,31 +1,36 @@
-<tool id="W4Mconcatenate" name="W4M concatenate" version="1.0.0+galaxy0">
+<tool id="W4Mconcatenate" name="W4M concatenate" version="1.0.0+galaxy1">
   <description>to merge two metadata tables</description>
   <requirements>
    <requirement type="package" version="4.3.3">r-base</requirement>
    <requirement type="package" version="1.1.4">r-dplyr</requirement>
    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
+  <required_files>
+    <include path="concatenation_wrapper.R" />
+    <include path="concatenation.R" />
+    <include path="fonctions_auxiliaires.R" />
+</required_files>
   <command detect_errors="exit_code">
   <![CDATA[
-    
+
     Rscript '$__tool_directory__/concatenation_wrapper.R'
-    
+
     dataMatrix_1 '$dataMatrix_1'
-    
+
     dataMatrix_2 '$dataMatrix_2'
-    
+
     metadata_1 '$metadata_1'
-    
+
     metadata_2 '$metadata_2'
-    
+
     type '$type'
-    
+
     tab1 '$tab1'
-    
+
     tab2 '$tab2'
-    
+
     concatenation '$concatenation'
-    
+
     choice_keep '$choice.choice_keep'
     #if str($choice.choice_keep) == 'yes':
         keep 0
@@ -33,32 +38,32 @@
     #if str($choice.choice_keep) == 'no':
         keep "$choice.keep"
     #end if
-    
+
     dataMatrix_1_out '$dataMatrix_1_out'
     dataMatrix_2_out '$dataMatrix_2_out'
     metadata_out '$metadata_out'
-    
+
   ]]></command>
-  
-  
+
+
   <inputs>
-  
+
    <param name="dataMatrix_1" type="data" label="Data matrix file 1" format="tabular"/>
    <param name="dataMatrix_2" type="data" label="Data matrix file 2" format="tabular"/>
    <param name="metadata_1" type="data" label="Metadata file 1" format="tabular"/>
    <param name="metadata_2" type="data" label="Metadata file 2" format="tabular"/>
-  
+
    <param name="type" type="select" display="radio" label="Type of metadata">
     <option value="sample">Sample metadata</option>
     <option value="variable">Variable metadata</option>
    </param>
-  
+
    <param name="concatenation" type="select" display="radio" label="Type of concatenation">
     <option value="unique">Unique</option>
     <option value="intersection">Intersection</option>
     <option value="union">Union</option>
    </param>
-  
+
    <conditional name="choice">
     <param name="choice_keep" type="select" display="radio" label="Keep all or just one">
      <option value="yes">Keep all</option>
@@ -73,22 +78,22 @@
     <when value="yes">
     </when>
    </conditional>
-  
+
   <param name="tab1" type="text" label="Suffix for Metadata 1" value="Tab1"/>
   <param name="tab2" type="text" label="Suffix for Metadata 2" value="Tab2"/>
-  
+
   </inputs>
-  
-  
-  
+
+
+
   <outputs>
-  
+
    <data name="dataMatrix_1_out" label="Concat_${dataMatrix_1.name}" format="tabular"></data>
    <data name="dataMatrix_2_out" label="Concat_${dataMatrix_2.name}" format="tabular"></data>
    <data name="metadata_out" label="Concat_${metadata_1.name}" format="tabular"></data>
-  
+
   </outputs>
-  
+
   <tests>
    <test>
     <param name="dataMatrix_1" value="Input_Unique_Test_1-2-3-4-5_DM1.txt"/>
@@ -99,14 +104,14 @@
     <param name="choice_keep" value="yes"/>
     <param name="tab1" value="tab1"/>
     <param name="tab2" value="tab2"/>
-  
+
     <output name="dataMatrix_1_out" file="Output_Attendu_Unique_Test_1-2-3_DM1.txt"/>
     <output name="dataMatrix_2_out" file="Output_Attendu_Unique_Test_1-2-3_DM2.txt"/>
     <output name="metadata_out" file="Output_Attendu_Unique_Test_1_Metadata.txt"/>
-  
-  
+
+
    </test>
-  
+
    <test expect_failure="true">
     <param name="dataMatrix_1" value="Input_Unique_Test_1-2-3-4-5_DM1.txt"/>
     <param name="dataMatrix_2" value="Input_Unique_Test_4_DM2.txt"/>
@@ -116,51 +121,51 @@
     <param name="choice_keep" value="yes"/>
     <param name="tab1" value="tab1"/>
     <param name="tab2" value="tab2"/>
-  
+
    </test>
-  
+
   </tests>
-  
+
   <help><![CDATA[
-    
+
 .. class:: infomark
-    
+
 **Credits**
  | **Original tool code:** Hanane Nourine
- | **Original tool wrapping:** Hanane Nourine 
+ | **Original tool wrapping:** Hanane Nourine
  | **Tool maintainer:** Melanie Petera (PFEM - INRAE - MetaboHUB)
  | **Wrapper maintainer:** Melanie Petera (PFEM - INRAE - MetaboHUB)
-    
+
 .. class:: infomark
-    
+
 **Contact:** Melanie Petera (PFEM - INRAE - MetaboHUB)
-      
+
 ---------------------------------------------------
-      
+
 ******************
 Concatenation
 ******************
-      
+
 ===========
 DESCRIPTION
-===========        
-      
+===========
+
 Concatenate two Metadata tables
-    
-    
+
+
 ---------------------------------------------------
-      
+
 ==========================
 ALIGNMENT WITH OTHER TOOLS
 ==========================
-     
-This tool is designed to work with the W4M 3-tables format. Inputs are supposed to follow this standard. 
+
+This tool is designed to work with the W4M 3-tables format. Inputs are supposed to follow this standard.
 Outputs follows the standard and thus can be used in further W4M-supported workflows.
 
 -----------
 Input files
 -----------
-      
+
 +----------------------------------+------------+
 | Parameter : num + label          |   Format   |
 +==================================+============+
@@ -172,11 +177,11 @@ Input files
 +----------------------------------+------------+
 | 4 : Second metadata file         |   tabular  |
 +----------------------------------+------------+
-      
+
 ------------
 Output files
 ------------
-      
+
 +----------------------------------+------------+
 | Parameter : num + label          |   Format   |
 +==================================+============+
@@ -186,62 +191,62 @@ Output files
 +----------------------------------+------------+
 | 3 : Second Data matrix file      |   tabular  |
 +----------------------------------+------------+
-      
+
 ---------------------------------------------------
-      
-      
+
+
 ===============
 TOOL PARAMETERS
 ===============
-      
 
-Data matrix 
- | contains the intensity values of the analytical variables. 
+
+Data matrix
+ | contains the intensity values of the analytical variables.
  | First line is the sample identifiers and first column the variable identifiers.
  |
-      
-      
+
+
 Metadata file
- | contains metadata about samples OR variables (only one type possible at a time). 
+ | contains metadata about samples OR variables (only one type possible at a time).
  | Each metadata file must match its corresponding data matrix file regarding identifiers.
  |
-      
+
 Type of metadata
  | Specify which type of metadata table is given as metadata file
- | 
-      
-      
-Type of concatenation 
+ |
+
+
+Type of concatenation
  | Selects the type of concatenation
  | Unique: identifiers are the same in both datasets (i.e. metadata file 1 and metadata file 2 are expected to match perfectly regarding identifiers)
- | Intersection: keep only identifiers in common 
+ | Intersection: keep only identifiers in common
  | Union: keep all identifiers in both datasets
  |
-      
-Choice_keep 
+
+Choice_keep
  | Determine what to do in case a column name is found in the two metadata files
  | - Keep all: both columns and change their names by adding a prefix
  | - Keep one: the column belonging to metadata 1 or metadata 2
  |
-      
+
 Prefixes for redundant columns
  | By default, the prefixes are Tab1 and Tab2
  |
-      
+
 ==================
 OUTPUT DESCRIPTION
 ==================
-      
-**Unique**: the tables must have the same identifiers, otherwise a warning will be generated. 
+
+**Unique**: the tables must have the same identifiers, otherwise a warning will be generated.
 The output returned is a unique merged metadata file without modifying the DataMatrices.
-    
-**Intersection**: there must be identifiers in common between the two metadata tables, otherwise an error will be displayed. 
-Moreover, if the number of identifiers in common is less than 5, a warning will be generated. 
+
+**Intersection**: there must be identifiers in common between the two metadata tables, otherwise an error will be displayed.
+Moreover, if the number of identifiers in common is less than 5, a warning will be generated.
 The DataMatrix outputs will only keep common identifiers.
-    
-**Union**: the identifiers don't necessarily have to be the same between the metadata tables. If no identifiers are common, a warning will be generated. 
+
+**Union**: the identifiers don't necessarily have to be the same between the metadata tables. If no identifiers are common, a warning will be generated.
 The modified DataMatrix will then include all the individuals, adding NA values for those that are missing.
-If common pairs of sample and variable exist between the dataset 1 and dataset 2 with no difference in the intensity values, 
+If common pairs of sample and variable exist between the dataset 1 and dataset 2 with no difference in the intensity values,
 the intersections will be added instead of NA.
 
 
@@ -250,11 +255,11 @@ the intersections will be added instead of NA.
 	<citations>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
-  
+
   <creator>
     <organization name="PFEM" url="https://eng-pfem.isc.inrae.fr/"></organization>
     <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
-    
+
     <person givenName="Hanane" familyName="Nourine" jobTitle="Intern"></person>
     <person givenName="Mélanie" familyName="Petera"></person>
   </creator>

@@ -1,4 +1,4 @@
-<tool id="NMR_Preprocessing" name="NMR_Preprocessing" version="@WRAPPER_VERSION@">
+<tool id="NMR_Preprocessing" name="NMR_Preprocessing" version="@WRAPPER_VERSION@+galaxy1">
     <description> Preprocessing of 1D NMR spectra </description>
 
     <macros>
@@ -9,6 +9,11 @@
         <requirement type="package" version="1.9_12">r-ptw</requirement>
         <requirement type="package" version="1.2_12">r-matrix</requirement>
     </expand>
+    <required_files>
+        <include path="NmrPreprocessing_wrapper.R" />
+        <include path="NmrPreprocessing_script.R" />
+        <include path="DrawFunctions.R" />
+    </required_files>
 
     <expand macro="stdio"/>
 

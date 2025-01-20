@@ -5,7 +5,7 @@
     <macros>
         <import>macro.xml</import>
         <token name="@TOOL_VERSION@">1.0.0</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">2</token>
     </macros>
     <edam_topics>
         <edam_topic>topic_0091</edam_topic>
@@ -107,7 +107,7 @@
     </outputs>
 
     <tests>
-        <test>
+        <test expect_num_outputs="1">
             <!-- #1 get_data with tolerance = 0.01 -->
             <param name="to_do" value="get_data" />
             <param name="mass_tolerance" value="0.01" />
@@ -167,7 +167,9 @@ So don't hesitate to select a lot of parameters for X and Y!
 
 ]]>
     </help>
-    <citations></citations>
+    <citations>
+    <citation type="doi">10.1093/nar/gkab1062</citation>
+    </citations>
     <creator>
         <person
             honorificPrefix="Mx."

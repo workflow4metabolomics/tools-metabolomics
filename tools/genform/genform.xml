@@ -1,4 +1,4 @@
-<tool id="genform" name="genform" version="@GENFORM_VERSION@-galaxy1" python_template_version="3.5">
+<tool id="genform" name="genform" version="@GENFORM_VERSION@+galaxy1" python_template_version="3.5">
     <description>Generation of molecular formulas by high-resolution MS and MS/MS data</description>
     <macros>
         <token name="@GENFORM_VERSION@">8</token>

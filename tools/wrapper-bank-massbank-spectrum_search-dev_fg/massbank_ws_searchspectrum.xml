@@ -1,0 +1,268 @@
+<tool id="massbank_ws_searchspectrum" name="MassBank spectrum searches" version="2017-02-06">
+  <description>
+       : Search by pseudo-spectra on a High Quality Mass Spectral Database.
+  </description>
+  <requirements>
+    <requirement type="package" version="1.19">perl-soap-lite</requirement>
+    <requirement type="package" version="6.15">perl-lwp-simple</requirement>
+	<requirement type="package" version="6.15">perl-libwww-perl</requirement>
+    <requirement type="package" version="2.95">perl-html-template</requirement>
+    <requirement type="package" version="1.71">perl-uri</requirement>
+    <requirement type="package" version="1.33">perl-text-csv</requirement>
+    <requirement type="package" version="2.90">perl-json</requirement>
+  </requirements>
+  <stdio>
+    <exit_code level="fatal" range="1"/>
+  </stdio>
+  <command><![CDATA[
+	perl $__tool_directory__/massbank_ws_searchspectrum.pl -masses "${variableMetadata_in}" -col_mz "$col_mz" -col_pcgroup "$col_pcgroup" -score_threshold "$score_threshold"
+		#if str($header.header_choice) == "true":
+			-lineheader "${header.nbheader}"
+		#end if
+		
+		#if str($intensity.colint_choice) == "true":
+			-col_int "${intensity.col_int}"
+		#end if
+		
+		#if str($mode) == "Positive,Negative":
+			-mode "both"
+		#else:
+			-mode "$mode"
+		#end if
+		
+		#if str($advanced.advanced_settings) == "false":
+			-instruments "all" -max "10" -unit "unit" -tolerance "0.3" -cutoff "50" -server "JP"
+		#else:
+			-instruments "${advanced.instruments}" -max "${advanced.max}"
+			-unit "${advanced.mz_tolerance.unit}" -tolerance "${advanced.mz_tolerance.tolerance}"
+			-cutoff "${advanced.cutoff}" -server "${advanced.server}"
+		#end if
+		
+		-output_tabular "$variableMetadata_out"
+		-output_xlsx "$massBankSpectraOutXlsx"
+		-output_json "$massBankSpectraOutJson"
+		-output_html "$massBankSpectraOutWeb"
+
+  ]]></command>
+  <inputs>
+    <param format="tabular" help="Generally variable metadata file" label="File of masses (format: tabular)" name="variableMetadata_in" type="data"/>
+    <conditional name="header">
+      <param checked="true" falsevalue="false" help="if 'YES' is selected then enter your number of header lines" label="Do you have a header?" name="header_choice" truevalue="true" type="boolean"/>
+      <when value="true">
+        <param help="number of lines not containing masses" label="Number of header lines" max="10" min="1" name="nbheader" type="integer" value="1"/>
+      </when>
+      <when value="false"/>
+    </conditional>
+    <param accept_default="true" data_ref="variableMetadata_in" label="Column of masses (MZ)" name="col_mz" type="data_column"/>
+    <param accept_default="true" data_ref="variableMetadata_in" label="Column of pcgroup" name="col_pcgroup" type="data_column"/>
+    <conditional name="intensity">
+      <param checked="true" falsevalue="false" help="if 'No' is selected, the value of intensity for each mz is set to 10 (MassBank spectrum search require mz-pcgroup-intensity data - please use massbank peak search if needed)" label="Do you have a column of intensity?" name="colint_choice" truevalue="true" type="boolean"/>
+      <when value="true">
+        <param accept_default="true" data_ref="variableMetadata_in" label="Column of intensity" name="col_int" type="data_column"/>
+      </when>
+      <when value="false"/>
+    </conditional>
+    <param display="checkboxes" help="" label="What kind of Ionization Search will be done?" multiple="True" name="mode" type="select">
+      <option selected="true" value="Positive">Positif Mode</option>
+      <option value="Negative">Negatif Mode</option>
+    </param>
+    <param help="Default value is 0.5." label="Score threshold to apply on returned MassBank results" max="1" min="0" name="score_threshold" type="float" value="0.5"/>
+    <conditional name="advanced">
+      <param checked="false" falsevalue="false" help="if 'NO' is selected then defaults values are: instruments = all ; max = 10 ; unit = unit ; tolerance = 0.3 ; cutoff = 50 ; server = JP" label="Show advanced settings?" name="advanced_settings" truevalue="true" type="boolean"/>
+      <when value="true">
+        <param display="checkboxes" help="" label="What kind of Instruments will be use?" multiple="True" name="instruments" type="select">
+          <option selected="True" value="all">All</option>
+          <option value="APCI-ITFT">APCI-ITFT</option>
+          <option value="APCI-ITTOF">APCI-ITTOF</option>
+          <option value="CE-ESI-TOF">CE-ESI-TOF</option>
+          <option value="CI-B">CI-B</option>
+          <option value="EI-B">EI-B</option>
+          <option value="EI-EBEB">EI-EBEB</option>
+          <option value="ESI-ITFT">ESI-ITFT</option>
+          <option value="ESI-ITTOF">ESI-ITTOF</option>
+          <option value="FAB-B">FAB-B</option>
+          <option value="FAB-EB">FAB-EB</option>
+          <option value="FAB-EBEB">FAB-EBEB</option>
+          <option value="FD-B">FD-B</option>
+          <option value="FI-B">FI-B</option>
+          <option value="GC-EI-QQ">GC-EI-QQ</option>
+          <option value="GC-EI-TOF">GC-EI-TOF</option>
+          <option value="LC-APCI-QTOF">LC-APCI-QTOF</option>
+          <option value="LC-APPI-QQ">LC-APPI-QQ</option>
+          <option value="LC-ESI-IT">LC-ESI-IT</option>
+          <option value="LC-ESI-ITFT">LC-ESI-ITFT</option>
+          <option value="LC-ESI-ITTOF">LC-ESI-ITTOF</option>
+          <option value="LC-ESI-Q">LC-ESI-Q</option>
+          <option value="LC-ESI-QFT">LC-ESI-QFT</option>
+          <option value="LC-ESI-QIT">LC-ESI-QIT</option>
+          <option value="LC-ESI-QQ">LC-ESI-QQ</option>
+          <option value="LC-ESI-QTOF">LC-ESI-QTOF</option>
+          <option value="LC-ESI-TOF">LC-ESI-TOF</option>
+          <option value="MALDI-QIT">MALDI-QIT</option>
+          <option value="MALDI-TOF">MALDI-TOF</option>
+          <option value="MALDI-TOFTOF">MALDI-TOFTOF</option>
+        </param>
+        <param help="'0' means unspecified and then all results are obtained." label="Maximum number of search results" max="50" min="0" name="max" type="integer" value="10"/>
+        <conditional name="mz_tolerance">
+          <param display="radio" help="" label="Unit of tolerance" name="unit" type="select">
+            <option selected="True" value="unit">unit</option>
+            <option value="ppm">ppm</option>
+          </param>
+          <when value="unit">
+            <param help="Default value is 0.3 unit." label="Tolerance of values of m/z of peaks (in unit)" max="10" min="0" name="tolerance" type="float" value="0.3"/>
+          </when>
+          <when value="ppm">
+            <param help="Default value is 50 ppm." label="Tolerance of values of m/z of peaks (in ppm)" max="5000" min="0" name="tolerance" type="integer" value="50"/>
+          </when>
+        </conditional>
+        <param help="Ignore peaks whose intensity is not larger than the value of cutoff." label="Ignore peaks whose intensity is not larger than the value of cutoff" max="5000000" min="0" name="cutoff" type="integer" value="50"/>
+        <param display="radio" help="" label="Which MassBank server start searching?" name="server" type="select">
+          <option selected="True" value="JP">Japon (JP)</option>
+          <option value="EU">Europe (EU)</option>
+        </param>
+      </when>
+      <when value="false"/>
+    </conditional>
+  </inputs>
+  <outputs>
+    <data format="tabular" label="${variableMetadata_in.name[:-6]}.MASSBANK.tabular" name="variableMetadata_out"/>
+    <data format="html" label="${variableMetadata_in.name[:-6]}.MASSBANK_WEB.html" name="massBankSpectraOutWeb"/>
+    <data format="tabular" label="${variableMetadata_in.name[:-6]}.MASSBANK_XLS.txt" name="massBankSpectraOutXlsx"/>
+    <data format="txt" label="${variableMetadata_in.name[:-6]}.MASSBANK_JSON.txt" name="massBankSpectraOutJson"/>
+  </outputs>
+  <tests>
+    <test>
+      <!--test 01 short result -  -->
+      <param name="variableMetadata_in" value="input01_69-pcgroups-mz-relative_int.tabular"/>
+      <param name="header" value="true"/>
+      <param name="nbheader" value="1"/>
+      <param name="col_mz" value="1"/>
+      <param name="col_pcgroup" value="14"/>
+      <param name="colint_choice" value="true"/>
+      <param name="col_int" value="7"/>
+      <param name="mode" value="Positive"/>
+      <param name="score_threshold" value="0.5"/>
+      <param name="advanced_settings" value="true"/>
+      <param name="instruments" value="all"/>
+      <param name="max" value="20"/>
+      <param name="unit" value="unit"/>
+      <param name="tolerance" value="0.3"/>
+      <param name="cutoff" value="50"/>
+      <param name="server" value="JP"/>
+      <output file="out_test01.tabular" name="variableMetadata_out"/>
+      <output file="out_test01.html" name="massBankSpectraOutWeb"/>
+      <output file="out_test01.txt" name="massBankSpectraOutXlsx"/>
+      <!--<output file="out_test01.json" name="massBankSpectraOutJson"/> The JSON output structure is messy, so it is delete from test-->
+    </test>
+    <!--t<test>
+  	</test>
+    <test>
+  	</test>-->
+  </tests>
+  <help><![CDATA[
+
+.. class:: infomark
+
+**Wrapping**
+  | Franck Giacomoni - PFEM ; INRA ; MetaboHUB (for xml interface and perl wrapper and WS client)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite** If you use this tool, please cite MassBank (http://www.massbank.jp)
+
+
+==============
+wsdl_MassBank
+==============
+
+-----------
+Description
+-----------
+
+Finding information (search spectra method) in the MassBank project via a web service from masses and pcgroups.
+
+-----------------
+Workflow position
+-----------------
+
+
+.. image:: ./static/images/metabolomics/massbank-ws.png
+        :width: 800
+
+
+-----------
+Input files
+-----------
+
++-------------------------+-----------+
+| Parameter : num + label |  Format   |
++=========================+===========+
+| 1 : variableMetadata    |  tabular  |
++-------------------------+-----------+
+
+File variableMetadata must have at least the 3 following column : 
+	* Masses : column with all the masses in the tabular input file
+	* Intensities : column with all the intensities in the tabular input file (Optionnal but if you haven't intensitt values, please use the Massbank peak search tool)
+	* PCgroups : column with all the pcgroups in the tabular input file
+
+
+----------
+Parameters
+----------
+
+Number of header lines
+	| Number of lines not containing values 
+	|
+
+Column of masses
+	| Specify the column number for the mass in the tabular input file
+	|
+
+Tolerance of mass (in unit or ppm)
+	| Specify a delta (+/-) to the mass to search
+	
+Parameters applied on query
+	| cutoff : intensity cutoff (don't add to the query, mz with intensity below defined cutoff).
+	| max: maximum number of records returned by the MASSBANK server foreach pcgroup of masses (by default max is set to 10).
+	| score_threshold: apply a filter on MASSBANK scores (by default threshold is set to 0.5).
+	| mode : Ionization search mode: Positive or Negative ou Both
+	| Instrument: filter applied on spectra depending of the instrument source. (All is the default value) - - GCMS technologies are available in W4M GCMS tools section.
+
+------------
+Output files
+------------
+
+Two types of files
+	| MASSBANK_WEB.html: for viewing result via HTML.
+	| MASSBANK.tabular: for linking with others modules.
+	| MASSBANK_XLS.txt: an excel-like output to export results under a multi lines format.
+	| MASSBANK_JSON.txt: an json output will be available.
+	
+---------------------------------------------------
+
+
+---------------
+Working example
+---------------
+
+
+.. class:: warningmark
+
+Refer to the corresponding W4M HowTo section: http://workflow4metabolomics.org/howto
+ | Format Data For Postprocessing
+ | Perform LCMS Annotations
+
+.. class:: warningmark
+
+And their "W4M courses 2016":
+ | Using Galaxy4Metabolomics - W4M table format for Galaxy
+ | Annotation Banks - Annotation  
+	
+	]]></help>
+  <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
+  <citations>
+    <citation type="doi">10.1002/jms.1777</citation>
+  </citations>
+</tool>

@@ -1,0 +1,10 @@
+categories: [Metabolomics]
+description: '[W4M][LC-MS] MassBank spectrum searches - Annotation - Search by pseudo-spectra
+  on a High Quality Mass Spectral Database.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / MassBank:
+  http://www.massbank.jp The wrapper script use the MassBank ''Web service API'' resource
+  to annotate a list of pseudo-spectra. The process returns outputs files (CSV and
+  HTML formats) with links through MassBank records.'
+name: massbank_ws_searchspectrum
+owner: fgiacomoni

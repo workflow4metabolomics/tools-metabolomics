@@ -362,4 +362,7 @@ Input files
 @CHANGELOG@
 ]]>
     </help>
+    <citations>
+    <citation type="doi">10.18129/B9.bioc.msPurity</citation>
+    </citations>
 </tool>

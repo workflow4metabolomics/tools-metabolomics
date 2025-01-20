@@ -139,7 +139,7 @@ Changelog/News
     </token>
 
     <token name="@TOOL_VERSION@">2.2.1</token>
-    <token name="@VERSION_SUFFIX@">1</token>
+    <token name="@VERSION_SUFFIX@">2</token>
 
     <xml name="has_smol_stdout">
         <has_line line="processing 2-diethylamino-6-methyl pyrimidin-4-ol one" />

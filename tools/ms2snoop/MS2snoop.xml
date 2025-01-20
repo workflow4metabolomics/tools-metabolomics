@@ -158,7 +158,7 @@
         </data>
     </outputs>
     <tests>
-        <test>
+        <test expect_num_outputs="1">
             <!-- #1 Regular test with no option -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
@@ -171,7 +171,7 @@
             </assert_stdout>
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!-- #2 Regular files with verbose output -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
@@ -185,7 +185,7 @@
             </assert_stdout>
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!-- #3 Regular test with debug outputs -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
@@ -199,7 +199,7 @@
             </assert_stdout>
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!-- #4 Regular test with both verbose and debug outputs -->
             <param name="compound_txt" value="compounds_pos.txt" />
             <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
@@ -214,7 +214,7 @@
             </assert_stdout>
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!--
             #5 This test mixes tsv, csv, and so, and ms2snoop is expected
             handle them like usual.
@@ -231,7 +231,7 @@
             </assert_stdout>
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!--
             #6 This test contains smaller datasets. This is the "regular"
             smol test, to prepare further smolah tests.
@@ -244,7 +244,7 @@
             <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
         </test>
 
-        <test>
+        <test expect_num_outputs="2">
             <!--
             #7 Test for pdf generation
             -->
@@ -257,7 +257,7 @@
             <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!--
                #8  test for delta in ppm
             -->
@@ -270,7 +270,7 @@
             <output name="frag_result_txt" file="smol/out-smol-delta-8.542.tsv" />
         </test>
 
-        <test>
+        <test expect_num_outputs="1">
             <!--
                 #9 test for delta in m/z
             -->

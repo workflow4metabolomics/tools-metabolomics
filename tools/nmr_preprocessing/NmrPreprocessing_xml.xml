@@ -370,7 +370,13 @@
                 <param name="NegativetoZero" value="YES" />
             </section>
             <param name="FinalGraph" value="YES" />
-            <output name="dataMatrix" value="NMR_Preprocessing_dataMatrix.tabular" />
+            <output name="dataMatrix">
+                <assert_contents>
+                    <has_n_lines n="32776"/>
+                    <has_size size="2377097" delta="20"/>
+                    <has_text text="ADG10003u_007"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
 

@@ -3,20 +3,20 @@
 
 
 # ----- ARGUMENTS BLACKLIST -----
-#xcms.r
+# xcms.r
 argBlacklist <- c("zipfile", "singlefile_galaxyPath", "singlefile_sampleName", "xfunction", "xsetRdataOutput", "sampleMetadataOutput", "ticspdf", "bicspdf", "rplotspdf")
-#CAMERA.r
+# CAMERA.r
 argBlacklist <- c(argBlacklist, "dataMatrixOutput", "variableMetadataOutput", "new_file_path")
 
 
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -27,43 +27,47 @@ cat("\n\n")
 
 # ----- FUNCTION -----
 writehtml <- function(...) {
-  cat(..., "\n", file = htmlOutput, append = TRUE, sep = "")
+    cat(..., "\n", file = htmlOutput, append = TRUE, sep = "")
 }
 writeraw <- function(htmlOutput, object, open = "at") {
-  log_file <- file(htmlOutput, open = open)
-  sink(log_file)
-  sink(log_file, type = "output")
-  print(object)
-  sink()
-  close(log_file)
+    log_file <- file(htmlOutput, open = open)
+    sink(log_file)
+    sink(log_file, type = "output")
+    print(object)
+    sink()
+    close(log_file)
 }
 getSampleNames <- function(xobject) {
-  if (class(xobject) == "xcmsSet")
-    return(sampnames(xobject))
-  if (class(xobject) == "XCMSnExp")
-    return(xobject@phenoData@data$sample_name)
+    if (class(xobject) == "xcmsSet") {
+        return(sampnames(xobject))
+    }
+    if (class(xobject) == "XCMSnExp") {
+        return(xobject@phenoData@data$sample_name)
+    }
 }
 getFilePaths <- function(xobject) {
-  if (class(xobject) == "xcmsSet")
-    return(xobject@filepaths)
-  if (class(xobject) == "XCMSnExp")
-    return(fileNames(xobject))
+    if (class(xobject) == "xcmsSet") {
+        return(xobject@filepaths)
+    }
+    if (class(xobject) == "XCMSnExp") {
+        return(fileNames(xobject))
+    }
 }
 equalParams <- function(param1, param2) {
-  writeraw("param1.txt", param1, open = "wt")
-  writeraw("param2.txt", param2, open = "wt")
-  return(tools::md5sum("param1.txt") == tools::md5sum("param2.txt"))
+    writeraw("param1.txt", param1, open = "wt")
+    writeraw("param2.txt", param2, open = "wt")
+    return(tools::md5sum("param1.txt") == tools::md5sum("param2.txt"))
 }
 
 
 # ----- ARGUMENTS -----
 
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
 
 
 # ----- ARGUMENTS PROCESSING -----
 
-#image is an .RData file necessary to use xset variable given by previous tools
+# image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
 
 htmlOutput <- "summary.html"
@@ -74,19 +78,19 @@ if (!is.null(args$user_email)) user_email <- args$user_email
 
 # if the RData come from XCMS 1.x
 if (exists("xset")) {
-  xobject <- xset
-  # retrocompatability
-  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(sampnames(xobject)))
+    xobject <- xset
+    # retrocompatability
+    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(sampnames(xobject)))
 }
 # if the RData come from CAMERA
 if (exists("xa")) {
-  xobject <- xa@xcmsSet
-  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xa@xcmsSet@phenoData$sample_name))
+    xobject <- xa@xcmsSet
+    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xa@xcmsSet@phenoData$sample_name))
 }
 # if the RData come from XCMS 3.x
 if (exists("xdata")) {
-  xobject <- xdata
-  if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xdata@phenoData@data$sample_name))
+    xobject <- xdata
+    if (!exists("sampleNamesList")) sampleNamesList <- list("sampleNamesMakeNames" = make.names(xdata@phenoData@data$sample_name))
 }
 
 if (!exists("xobject")) stop("You need at least a xdata, a xset or a xa object.")
@@ -114,33 +118,33 @@ writehtml("<BODY>")
 writehtml("<div><h1>___ XCMS analysis summary using Workflow4Metabolomics ___</h1>")
 # to pass the planemo shed_test
 if (user_email != "test@bx.psu.edu") {
-  if (!is.null(user_email)) writehtml("By: ", user_email, " - ")
-  writehtml("Date: ", format(Sys.time(), "%y%m%d-%H:%M:%S"))
+    if (!is.null(user_email)) writehtml("By: ", user_email, " - ")
+    writehtml("Date: ", format(Sys.time(), "%y%m%d-%H:%M:%S"))
 }
 writehtml("</div>")
 
 writehtml("<h2>Samples used:</h2>")
 writehtml("<div><table>")
 if (all(getSampleNames(xobject) == sampleNamesList$sampleNamesMakeNames)) {
-  sampleNameHeaderHtml <- paste0("<th>sample</th>")
-  sampleNameHtml <- paste0("<td>", getSampleNames(xobject), "</td>")
+    sampleNameHeaderHtml <- paste0("<th>sample</th>")
+    sampleNameHtml <- paste0("<td>", getSampleNames(xobject), "</td>")
 } else {
-  sampleNameHeaderHtml <- paste0("<th>sample</th><th>sample renamed</th>")
-  sampleNameHtml <- paste0("<td>", getSampleNames(xobject), "</td><td>", sampleNamesList$sampleNamesMakeNames, "</td>")
+    sampleNameHeaderHtml <- paste0("<th>sample</th><th>sample renamed</th>")
+    sampleNameHtml <- paste0("<td>", getSampleNames(xobject), "</td><td>", sampleNamesList$sampleNamesMakeNames, "</td>")
 }
 
 if (!exists("md5sumList")) {
-  md5sumHeaderHtml <- ""
-  md5sumHtml <- ""
-  md5sumLegend <- ""
+    md5sumHeaderHtml <- ""
+    md5sumHtml <- ""
+    md5sumLegend <- ""
 } else if (is.null(md5sumList$removalBadCharacters)) {
-  md5sumHeaderHtml <- paste0("<th>md5sum<sup>*</sup></th>")
-  md5sumHtml <- paste0("<td>", md5sumList$origin, "</td>")
-  md5sumLegend <- "<br/><sup>*</sup>The program md5sum is designed to verify data integrity. So you can check if the data were uploaded correctly or if the data were changed during the process."
+    md5sumHeaderHtml <- paste0("<th>md5sum<sup>*</sup></th>")
+    md5sumHtml <- paste0("<td>", md5sumList$origin, "</td>")
+    md5sumLegend <- "<br/><sup>*</sup>The program md5sum is designed to verify data integrity. So you can check if the data were uploaded correctly or if the data were changed during the process."
 } else {
-  md5sumHeaderHtml <- paste0("<th>md5sum<sup>*</sup></th><th>md5sum<sup>**</sup> after bad characters removal</th>")
-  md5sumHtml <- paste0("<td>", md5sumList$origin, "</td><td>", md5sumList$removalBadCharacters, "</td>")
-  md5sumLegend <- "<br/><sup>*</sup>The program md5sum is designed to verify data integrity. So you can check if the data were uploaded correctly or if the data were changed during the process.<br/><sup>**</sup>Because some bad characters (eg: accent) were removed from your original file, the checksum have changed too.<br/>"
+    md5sumHeaderHtml <- paste0("<th>md5sum<sup>*</sup></th><th>md5sum<sup>**</sup> after bad characters removal</th>")
+    md5sumHtml <- paste0("<td>", md5sumList$origin, "</td><td>", md5sumList$removalBadCharacters, "</td>")
+    md5sumLegend <- "<br/><sup>*</sup>The program md5sum is designed to verify data integrity. So you can check if the data were uploaded correctly or if the data were changed during the process.<br/><sup>**</sup>Because some bad characters (eg: accent) were removed from your original file, the checksum have changed too.<br/>"
 }
 
 writehtml("<tr>", sampleNameHeaderHtml, "<th>filename</th>", md5sumHeaderHtml, "</tr>")
@@ -155,43 +159,44 @@ writehtml("<div><table>")
 writehtml("<tr><th>timestamp<sup>***</sup></th><th>function</th><th>argument</th><th>value</th></tr>")
 # XCMS 3.x
 if (class(xobject) == "XCMSnExp") {
-  xcmsFunction <- NULL
-  params <- NULL
-  for (processHistoryItem in processHistory(xobject)) {
-    if ((xcmsFunction == processType(processHistoryItem)) && equalParams(params, processParam(processHistoryItem)))
-      next
-    timestamp <- processDate(processHistoryItem)
-    xcmsFunction <- processType(processHistoryItem)
-    params <- processParam(processHistoryItem)
-    writehtml("<tr><td>", timestamp, "</td><td>", xcmsFunction, "</td><td colspan='2'><pre>")
-    writeraw(htmlOutput, params)
-    writehtml("</pre></td></tr>")
-  }
+    xcmsFunction <- NULL
+    params <- NULL
+    for (processHistoryItem in processHistory(xobject)) {
+        if ((xcmsFunction == processType(processHistoryItem)) && equalParams(params, processParam(processHistoryItem))) {
+            next
+        }
+        timestamp <- processDate(processHistoryItem)
+        xcmsFunction <- processType(processHistoryItem)
+        params <- processParam(processHistoryItem)
+        writehtml("<tr><td>", timestamp, "</td><td>", xcmsFunction, "</td><td colspan='2'><pre>")
+        writeraw(htmlOutput, params)
+        writehtml("</pre></td></tr>")
+    }
 }
 # CAMERA and retrocompatability XCMS 1.x
 if (exists("listOFlistArguments")) {
-  for (tool in names(listOFlistArguments)) {
-    listOFlistArgumentsDisplay <- listOFlistArguments[[tool]][!(names(listOFlistArguments[[tool]]) %in% argBlacklist)]
+    for (tool in names(listOFlistArguments)) {
+        listOFlistArgumentsDisplay <- listOFlistArguments[[tool]][!(names(listOFlistArguments[[tool]]) %in% argBlacklist)]
 
-    timestamp <- strsplit(tool, "_")[[1]][1]
-    xcmsFunction <- strsplit(tool, "_")[[1]][2]
-    writehtml("<tr><td rowspan='", length(listOFlistArgumentsDisplay), "'>", timestamp, "</td><td rowspan='", length(listOFlistArgumentsDisplay), "'>", xcmsFunction, "</td>")
-    line_begin <- ""
-    for (arg in names(listOFlistArgumentsDisplay)) {
-      writehtml(line_begin, "<td>", arg, "</td><td>", unlist(listOFlistArgumentsDisplay[arg][1]), "</td></tr>")
-      line_begin <- "<tr>"
+        timestamp <- strsplit(tool, "_")[[1]][1]
+        xcmsFunction <- strsplit(tool, "_")[[1]][2]
+        writehtml("<tr><td rowspan='", length(listOFlistArgumentsDisplay), "'>", timestamp, "</td><td rowspan='", length(listOFlistArgumentsDisplay), "'>", xcmsFunction, "</td>")
+        line_begin <- ""
+        for (arg in names(listOFlistArgumentsDisplay)) {
+            writehtml(line_begin, "<td>", arg, "</td><td>", unlist(listOFlistArgumentsDisplay[arg][1]), "</td></tr>")
+            line_begin <- "<tr>"
+        }
     }
-  }
 }
 writehtml("</table>")
 writehtml("<br/><sup>***</sup>timestamp format: DD MM dd hh:mm:ss YYYY or yymmdd-hh:mm:ss")
 writehtml("</div>")
 
 if (class(xobject) == "XCMSnExp") {
-  writehtml("<h2>Informations about the XCMSnExp object:</h2>")
-  writehtml("<div><pre>")
-  writeraw(htmlOutput, xobject)
-  writehtml("</pre></div>")
+    writehtml("<h2>Informations about the XCMSnExp object:</h2>")
+    writehtml("<div><pre>")
+    writeraw(htmlOutput, xobject)
+    writehtml("</pre></div>")
 }
 
 writehtml("<h2>Informations about the xcmsSet object:</h2>")
@@ -204,10 +209,10 @@ writehtml("</pre></div>")
 
 # CAMERA
 if (exists("xa")) {
-  writehtml("<h2>Informations about the CAMERA object:</h2>")
-  writehtml("<div>")
-  writehtml("Number of pcgroup: ", length(xa@pspectra))
-  writehtml("</div>")
+    writehtml("<h2>Informations about the CAMERA object:</h2>")
+    writehtml("<div>")
+    writehtml("Number of pcgroup: ", length(xa@pspectra))
+    writehtml("</div>")
 }
 
 writehtml("<h2>Citations:</h2>")

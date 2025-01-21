@@ -1,4 +1,4 @@
-<tool id="correlation_analysis" name="Metabolites Correlation Analysis" version="1.0.1+galaxy0" >
+<tool id="correlation_analysis" name="Metabolites Correlation Analysis" version="1.0.1+galaxy2" >
 
     <description>to highlight ion correlations considering PC-groups</description>
 
@@ -7,6 +7,9 @@
         <requirement type="package" version="0.8.8">r-reshape</requirement>
         <requirement type="package" version="7.3_53">r-mass</requirement>
     </requirements>
+    <required_files>
+        <include path="correlation_analysis.r" />
+    </required_files>
 
     <command detect_errors='exit_code'>
         Rscript '$__tool_directory__/correlation_analysis.r'
@@ -106,7 +109,7 @@
         <data name="correlation_matrix_user" format="tabular" from_work_dir="correlation_matrix.tsv" label="correlation_matrix.tsv">
             <filter>(cond_input_type['select_input_type'] == 'select_input_other')</filter>
         </data>
-        <data name="siff_table_user_user" format="tabular" from_work_dir="siff_table.tsv" label="sif_table.tsv">
+        <data name="siff_table_user_user" format="tabular" from_work_dir="siff_table.tsv" label="sif_table_user.tsv">
             <filter>(cond_input_type['select_input_type'] == 'select_input_other')</filter>
         </data>
     </outputs>

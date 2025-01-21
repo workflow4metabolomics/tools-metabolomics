@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy2">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy3">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>
@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="msnbase_readmsdata.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/msnbase_readmsdata.r
+        @COMMAND_RSCRIPT@msnbase_readmsdata.r
 
         #if $input.is_of_type("mzxml") or $input.is_of_type("mzml") or $input.is_of_type("mzdata") or $input.is_of_type("netcdf"):
             #if $os.path.islink(str($input))

@@ -5,9 +5,9 @@ cat("\tSESSION INFO\n")
 
 # Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -50,7 +50,7 @@ directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Because so far CAMERA isn't compatible with the new XCMSnExp object
 if (exists("xdata")) {
-  xset <- getxcmsSetObject(xdata)
+    xset <- getxcmsSetObject(xdata)
 }
 
 cat("\n\n")

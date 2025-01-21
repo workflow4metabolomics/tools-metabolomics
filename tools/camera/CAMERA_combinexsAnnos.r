@@ -3,11 +3,11 @@
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -18,7 +18,7 @@ cat("\n\n")
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
 
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
@@ -27,7 +27,7 @@ cat("\n\n")
 # ----- PROCESSING INFILE -----
 cat("\tINFILE PROCESSING INFO\n")
 
-#image is an .RData file necessary to use xset variable given by previous tools
+# image is an .RData file necessary to use xset variable given by previous tools
 load(args$image_pos)
 xaP <- xa
 
@@ -58,16 +58,16 @@ cat("\n\n")
 cat("\tMAIN PROCESSING INFO\n")
 
 cAnnot <- combinexsAnnos_function(
-  xaP = xaP, xaN = xaN,
-  diffrepP = diffrepP, diffrepN = diffrepN,
-  pos = args$pos, tol = args$tol, ruleset = args$ruleset, keep_meta = args$keep_meta,
-  convertRTMinute = args$convertRTMinute, numDigitsMZ = args$numDigitsMZ, numDigitsRT = args$numDigitsRT,
-  variableMetadataOutput = "variableMetadata.tsv"
+    xaP = xaP, xaN = xaN,
+    diffrepP = diffrepP, diffrepN = diffrepN,
+    pos = args$pos, tol = args$tol, ruleset = args$ruleset, keep_meta = args$keep_meta,
+    convertRTMinute = args$convertRTMinute, numDigitsMZ = args$numDigitsMZ, numDigitsRT = args$numDigitsRT,
+    variableMetadataOutput = "variableMetadata.tsv"
 )
 
 # ----- EXPORT -----
 
-#saving R data in .Rdata file to save the variables used in the present tool
+# saving R data in .Rdata file to save the variables used in the present tool
 objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFargs", "zipfile", "singlefile")
 save(list = objects2save[objects2save %in% ls()], file = "combinexsAnnos.RData")
 

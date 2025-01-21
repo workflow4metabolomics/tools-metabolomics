@@ -168,7 +168,6 @@ legend("topleft", legend = c("Real Mixture", "Estimated Composition"), lty = c(1
 ## Zoomed spectral window depending on user-selected zone(s)
 graphical.zone.length <- length(graphicalZonesBorders)
 if (graphical.zone.length != 0) {
-
     #   par(mfrow=c(2,1))
     for (g in 1:graphical.zone.length)
     {

@@ -426,7 +426,6 @@ lmixedm <- function(datMN,
     for (i in seq_len(nrow(resLM))) {
         ## if any fixed factor + time factor
         if (ifixfact > 0) {
-
             ## if any main factor after p-value correction is significant -> plot estimates and time course
             if (length(which(resLM[i, c(4:6)] < pvalCutof)) > 0) {
                 ## Plot of time course by fixfact : data prep with factors and quantitative var to be plot
@@ -452,7 +451,6 @@ lmixedm <- function(datMN,
 
         ## if only a time factor
         if (ifixfact == 0) {
-
             ## if time factor after p-value correction is significant -> plot time course
             if (length(which(resLM[i, 4] < pvalCutof)) > 0) {
                 ## Plot of time course  : data prep with factors and quantitative var to be plot

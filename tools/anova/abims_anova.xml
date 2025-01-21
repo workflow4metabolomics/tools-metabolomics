@@ -1,0 +1,189 @@
+<tool id="abims_anova" name="Anova" version="1.2.1">
+
+    <description>N-way anova. With ou Without interactions</description>
+
+    <requirements>
+	<requirement type="package" version="1.1_4">r-batch</requirement>
+	<requirement type="package" version="1.2">r-venn</requirement>
+    </requirements>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
+
+    <command>
+Rscript $__tool_directory__/abims_anova.r file '$input' sampleinfo '$sampleinfo' varinfo '$varinfo' mode '$mode'
+condition "c('$condition_1'
+#for $i, $s in enumerate( $conditions )
+,'${s.condition}'
+#end for
+)"
+interaction $interaction
+method $method
+threshold $threshold
+selection_method $selection_method
+sep '$sep'
+dec '$dec'
+outputdatapvalue '$varMetaPValue'
+outputdatasignif '$dataSignif'
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Data Matrix file" format="tabular,csv" help="Matrix of numeric data with headers." />
+        <param name="sampleinfo" type="data" label="Sample Metadata file" format="tabular" help="Tabular file with the data metadata : one sample per line and at least two columns : ids and one condition" />
+        <param name="varinfo" type="data" label="Variable Metadata file" format="tabular" help="Tabular file with information about your tested variables. Only used to aggregate generated information." />
+
+        <param name="mode" type="select" help="Perform the anova tests on column/row; for W4M 3-tables format, use 'row'." format="text" optional="true">
+            <label>Mode</label>
+            <option value="row" selected="True">row</option>
+            <option value="column">column</option>
+        </param>
+
+        <param name="condition_1" type="text" label="Condition" value="" help="The column name of the condition. ex: hour or treatment" optional="false" />
+        <repeat name="conditions" title="Conditions for N-ways anova">
+            <param name="condition" type="text" label="Condition" value="" help="The column name of the condition. ex: hour or treatment" />
+        </repeat>
+
+        <param name="interaction" type="boolean" label="Enable interaction response p-values" truevalue="T" falsevalue="F" help="Used if more than 1 conditon. The anova will produse p-value according to the interaction between your condition (ex: condition1:conditions2, condition1:conditions3, condition2:conditions3 and condition1:condition2:conditions3)" />
+
+        <param name="method" type="select" help="Method used to apply a correction on the pvalue because of the number of test" >
+            <label>PValue adjusted method</label>
+            <option value="BH">BH</option>
+            <option value="holm">holm</option>
+            <option value="bonferroni">bonferroni</option>
+            <option value="hochberg">hochberg</option>
+            <option value="hommel">hommel</option>
+            <option value="BY">BY</option>
+            <option value="fdr">fdr</option>
+            <option value="none" selected="True">none</option>
+        </param>
+
+        <param name="threshold" type="float" label="Threshold" value="0.01" help="max adjusted p.value accepted" />
+
+        <param name="selection_method" type="select" help="Intersection: all condition p-value must be under the threshold. Union: at least condition p-value must be under the threshold. ">
+            <label>Selection method</label>
+            <option value="intersection" selected="true">intersection / strong</option>
+            <option value="union">union / weak</option>
+        </param>
+
+        <param name="sep" type="select" format="text">
+            <label>Separator of columns</label>
+            <option value="tabulation">tabulation</option>
+            <option value="semicolon">;</option>
+            <option value="comma">,</option>
+        </param>
+
+        <param name="dec" type="text" label="Decimal separator" value="." help="" />
+
+    </inputs>
+
+    <outputs>
+        <data name="varMetaPValue" format_source="varinfo" label="${varinfo.name}_anova_pvalue.${varinfo.ext}"/>
+        <data name="dataSignif" format="pdf" label="${input.name}_anova_signif"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input" value="dataMatrix.tsv"/>
+            <param name="sampleinfo" value="sampleMetadata.tsv"/>
+            <param name="varinfo" value="variableMetadata.tsv"/>
+            <param name="mode" value="row"/>
+            <param name="condition_1" value="age"/>
+            <param name="conditions_0|condition" value="gender"/>
+            <param name="interaction" value="F"/>
+            <param name="method" value="BH"/>
+            <param name="threshold" value="0.05"/>
+            <param name="selection_method" value="union"/>
+            <param name="sep" value="tabulation"/>
+            <param name="dev" value="."/>
+            <output name="varMetaPValue" file="variableMetadata.tsv_anova_pvalue.tabular" />
+            <output name="dataSignif" file="dataMatrix.tsv_anova_signif.pdf" compare="sim_size" delta="600" />
+        </test>
+    </tests>
+
+    <help>
+
+.. class:: infomark
+
+**Authors** Gildas Le Corguille  ABiMS - UPMC/CNRS - Station Biologique de Roscoff - gildas.lecorguille|at|sb-roscoff.fr
+Melanie Petera - PFEM ; INRA ; MetaboHUB
+
+---------------------------------------------------
+
+=====
+Anova
+=====
+
+-----------
+Description
+-----------
+
+Analysis of variance (ANOVA) is used to analyze the differences between group means and their associated procedures,
+in which the observed variance in a particular variable is partitioned into components attributable to different sources of variation.
+
+**Note about sum of squares (SS) calculation of N-way ANOVA in this module.**
+This module use R function *manova()* (and thus R function *aov()*) to establish N-way ANOVA. 
+Therefore calculated sum of squares are sequential ones (sometimes called "Type I SS"). 
+If your design is unbalanced, this may not correspond to the type of hypothesis being of interest. 
+Note that you can obtain adjusted sums of squares ("Type II SS") by running several times this module with different orders in factors. 
+
+
+-----------
+Input files
+-----------
+
++----------------------------+------------+
+| Parameter : num + label    |   Format   |
++============================+============+
+| 1 : Data Matrix file       | Tabular    |
++----------------------------+------------+
+| 2 : Sample Metadata file   | Tabular    |
++----------------------------+------------+
+| 3 : Variable Metadata file | Tabular    |
++----------------------------+------------+
+
+
+------------
+Output files
+------------
+
+
+
+***.anova_pvalue.tabular**
+
+    | Your variable metadata file completed with columns of p-values, result of selection method and means of subgroups.
+
+***.anova_signif.pdf**
+
+    | A pdf file containing a Venn diagram and boxplots of significant variables.
+
+
+------
+
+.. class:: infomark
+
+The outputs ***.anova_filtered.tabular** is a tabular file. You can continue your analysis using it in the following tools:
+
+    | Generic_filter
+    | Hierarchical Clustering
+
+
+
+---------------------------------------------------
+
+
+
+    </help>
+
+    <citations>
+        <citation type="bibtex">@ARTICLE{fisher,
+           author = {Ronald A. Fisher},
+           title = {The Correlation between Relatives on the Supposition of Mendelian Inheritance},
+           journal = {Philosophical Transactions of the Royal Society of Edinburgh},
+           year = {1918},
+           volume = {52},
+           pages = {399-433}
+        }</citation>
+    </citations>
+
+</tool>

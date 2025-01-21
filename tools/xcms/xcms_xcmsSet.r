@@ -9,11 +9,11 @@ sink(log_file, type = "output")
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -24,7 +24,7 @@ cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
@@ -33,14 +33,14 @@ cat("\n\n")
 # ----- PROCESSING INFILE -----
 cat("\tARGUMENTS PROCESSING INFO\n")
 
-#saving the commun parameters
+# saving the commun parameters
 BPPARAM <- MulticoreParam(1)
 if (!is.null(args$BPPARAM)) {
-  BPPARAM <- MulticoreParam(args$BPPARAM)
+    BPPARAM <- MulticoreParam(args$BPPARAM)
 }
 register(BPPARAM)
 
-#saving the specific parameters
+# saving the specific parameters
 if (!is.null(args$filterAcquisitionNum)) filterAcquisitionNumParam <- args$filterAcquisitionNum
 if (!is.null(args$filterRt)) filterRtParam <- args$filterRt
 if (!is.null(args$filterMz)) filterMzParam <- args$filterMz
@@ -49,9 +49,9 @@ if (!is.null(args$peaklist)) peaklistParam <- args$peaklist
 method <- args$method
 
 if (!is.null(args$roiList)) {
-  cat("\t\troiList provided\n")
-  args$roiList <- list(getDataFrameFromFile(args$roiList))
-  print(args$roiList)
+    cat("\t\troiList provided\n")
+    args$roiList <- list(getDataFrameFromFile(args$roiList))
+    print(args$roiList)
 }
 
 cat("\n\n")
@@ -59,7 +59,7 @@ cat("\n\n")
 # ----- INFILE PROCESSING -----
 cat("\tINFILE PROCESSING INFO\n")
 
-#image is an .RData file necessary to use xset variable given by previous tools
+# image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
 if (!exists("raw_data")) stop("\n\nERROR: The RData doesn't contain any object called 'raw_data' which is provided by the tool: MSnbase readMSData")
 
@@ -79,12 +79,12 @@ cat("\tMAIN PROCESSING INFO\n")
 cat("\t\tCOMPUTE\n")
 
 cat("\t\t\tApply filter[s] (if asked)\n")
-if (exists("filterAcquisitionNumParam"))  raw_data <- filterAcquisitionNum(raw_data, filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
+if (exists("filterAcquisitionNumParam")) raw_data <- filterAcquisitionNum(raw_data, filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
 if (exists("filterRtParam")) raw_data <- filterRt(raw_data, filterRtParam)
 if (exists("filterMzParam")) raw_data <- filterMz(raw_data, filterMzParam)
-#Apply this filter only if file contain MS and MSn
+# Apply this filter only if file contain MS and MSn
 if (length(unique(msLevel(raw_data))) != 1) {
-  raw_data <- filterMsLevel(raw_data, msLevel = 1)
+    raw_data <- filterMsLevel(raw_data, msLevel = 1)
 }
 
 cat("\t\t\tChromatographic peak detection\n")
@@ -103,10 +103,10 @@ sampleNamesList <- getSampleMetadata(xdata = xdata, sampleMetadataOutput = "samp
 
 # Create a chromPeaks table if required
 if (exists("peaklistParam")) {
-  if (peaklistParam) {
-    cat("\nCreating the chromatographic peaks' table...\n")
-    write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
-  }
+    if (peaklistParam) {
+        cat("\nCreating the chromatographic peaks' table...\n")
+        write.table(chromPeaks(xdata), file = "chromPeak_table.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+    }
 }
 
 cat("\n\n")
@@ -123,7 +123,7 @@ xset <- getxcmsSetObject(xdata)
 print(xset)
 cat("\n\n")
 
-#saving R data in .Rdata file to save the variables used in the present tool
+# saving R data in .Rdata file to save the variables used in the present tool
 objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList")
 save(list = objects2save[objects2save %in% ls()], file = "xcmsSet.RData")
 

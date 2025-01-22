@@ -9,4 +9,8 @@ tools/ipo*/*                     @lecorguille @yguitton
 tools/isoplot/*                  @llegregam
 tools/nmr*/*                     @mtremblayfr @lecorguille
 tools/normalization/*            @mtremblayfr @lecorguille
+tools/influx_data_manager/*      @llegregam
+tools/physiofit/*                @llegregam
+tools/physiofit_manager/*        @llegregam
+tools/skyline2isocor/*           @llegregam
 tools/xcms*/*                    @lecorguille @yguitton

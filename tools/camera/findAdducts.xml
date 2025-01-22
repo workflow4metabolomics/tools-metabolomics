@@ -1,0 +1,206 @@
+<tool id="CAMERA_findAdducts" name="CAMERA.findAdducts" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+
+    <description>Annotate adducts</description>
+
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+
+    <required_files>
+        <include type="literal" path="CAMERA_findAdducts.R"/>
+        <include type="literal" path="lib.r"/>
+    </required_files>
+
+    <command detect_errors="exit_code"><![CDATA[
+		@COMMAND_RSCRIPT@CAMERA_findAdducts.R
+		image '$image'
+		ppm $ppm
+		mzabs $mzabs
+		polarity $polarity
+
+		#if $rules_block.rules_select == "FALSE":
+            rules NULL
+        #else
+            rules $rules_block.rules
+        #end if
+
+        #if $advanced.advanced_select == "FALSE":
+            multiplier 3
+            max_peaks 100
+            psg_list NULL
+        #else
+            multiplier $advanced.multiplier
+            max_peaks $advanced.max_peaks
+            #if $advanced.psg_list_block.psg_list_select == "FALSE":
+                psg_list NULL
+            #else
+                psg_list $advanced.psg_list_block.psg_list
+            #end if
+        #end if
+
+		intval $intval
+		convertRTMinute $convertRTMinute
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
+        
+        @COMMAND_FILE_LOAD@
+		]]>
+    </command>
+    <inputs>
+        <param name="image" type="data" label="RData file" format="rdata" help="Output file from another function CAMERA (findIsotopes)" />
+        <param name="ppm" type="integer" value="5" label="General ppm error" />
+        <param name="mzabs" type="float" value="0.015" label="General absolute error in m/z" />
+        <param name="polarity" type="select" label="Which polarity mode was used for measuring of the MS sample">
+            <option value="positive">positive</option>
+            <option value="negative" selected="true">negative</option>
+        </param>
+
+        <conditional name="rules_block">
+            <param name="rules_select" type="select" label="Use a personal ruleset file">
+                <option value="TRUE">TRUE</option>
+                <option value="FALSE" selected="true">FALSE</option>
+            </param>
+            <when value="FALSE">
+                <!--<param name="rules" type="text" value="NULL" label="No personal ruleset file (using default ruleset)" optional="true" />-->
+            </when>
+            <when value="TRUE">
+                <param name="rules" type="data" format="csv" label="User defined ruleset" />
+            </when>
+        </conditional>
+
+        <param name="intval" type="select" label="Choose intensity values">
+            <option value="into" selected="true">into</option>
+            <option value="maxo">maxo</option>
+            <option value="intb">intb</option>
+        </param>
+
+        <conditional name="advanced">
+            <param name="advanced_select" type="select" label="Advanced parameters">
+                <option value="TRUE">TRUE</option>
+                <option value="FALSE" selected="true">FALSE</option>
+            </param>
+            <when value="FALSE">
+                <!--<param name="multiplier" type="integer" value="3" label="Highest number(n) of allowed clusterion [nM+ion]" optional="true" />
+                <param name="max_peaks" type="integer" value="100" label="How many peaks will be calculated in every thread (parallel mode)" optional="true" />
+                <param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />-->
+            </when>
+            <when value="TRUE">
+                <param name="multiplier" type="integer" value="3" label="Highest number(n) of allowed clusterion [nM+ion]" />
+                <param name="max_peaks" type="integer" value="100" label="How many peaks will be calculated in every thread (parallel mode)" />
+
+                <conditional name="psg_list_block">
+                    <param name="psg_list_select" type="select" label="Use a personal psg_list">
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE" selected="true">FALSE</option>
+                    </param>
+                    <when value="FALSE">
+                        <!--<param name="psg_list" type="text" value="NULL" label="No psg_list" optional="true" />-->
+                    </when>
+                    <when value="TRUE">
+                        <param name="psg_list" type="text" optional="true" label="Pseudospectra indices (optional)" help="Provide a comma-separated list of pseudospectra indices (e.g. 1,2,3)." />
+                    </when>
+                </conditional>
+            </when>
+        </conditional>
+        <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+        <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+        <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <expand macro="input_file_load"/>
+    </inputs>
+    <outputs>
+        <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.findAdducts.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="camera_findAdducts_rdata" format="rdata" label="${image.name[:-6]}.findAdducts.RData" from_work_dir="camera_findAdducts.RData" />
+    </outputs>
+    <tests>
+        <test expect_num_outputs="2">
+            <param name="image" value="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.findIsotopes.RData" />
+            <!--<param name="ppm" value="5" />
+            <param name="mzabs" value="0.015" />
+            <param name="polarity" value="positive" />
+            <param name="rules" value="NULL" />
+            <param name="intval" value="into" />
+            <param name="multiplier" value="3" />
+            <param name="max_peaks" value="100" />
+            <param name="psg_list" value="NULL" />-->
+            <expand macro="test_file_load_faahKO_15"/>
+            <output name="variableMetadata" file="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.findIsotopes.findAdducts.variableMetadata.tsv" />
+            <output name="camera_findAdducts_rdata" value="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.findIsotopes.findAdducts.RData" compare="sim_size" delta="5000" />
+        </test>
+    </tests>
+    <help><![CDATA[
+
+===================
+CAMERA.findAdducts
+===================
+
+-----------
+Description
+-----------
+
+.. _link: https://bioconductor.org/packages/release/bioc/manuals/CAMERA/man/CAMERA.pdf
+
+Annotate adducts (and fragments) for a `xsAnnotate` object. Returns a `xsAnnotate` object with annotated pseudospectra. Click on the link to see the "Reference Manual" : link_ .
+
+---------------------------------------------------
+
+---------
+Arguments
+---------
+
++--------------+-------------------------------------------------------------------+
+| Variables    | Descriptions                                                      |
++==============+===================================================================+
+| object       | the xsAnnotate object                                             |
++--------------+-------------------------------------------------------------------+
+| ppm          | ppm error for the search                                          |
++--------------+-------------------------------------------------------------------+
+| mzabs        | allowed variance for the search                                   |
++--------------+-------------------------------------------------------------------+
+| multiplier   | highest number(n) of allowed clusterion [nM+ion]                  |
++--------------+-------------------------------------------------------------------+
+| polarity     | Which polarity mode was used for measuring of the ms sample       |
++--------------+-------------------------------------------------------------------+
+| rules        | personal ruleset or with NULL standard ruleset will be calculated |
++--------------+-------------------------------------------------------------------+
+| max_peaks    | If run in parallel mode, this number defines how many peaks will  |
+|              | be calculated in every thread                                     |
++--------------+-------------------------------------------------------------------+
+| psg_list     | Vector of pseudospectra indices. The correlation analysis will be |
+|              | only done for those groups                                        |
++--------------+-------------------------------------------------------------------+
+| intval       | choose intensity values. Allowed values are into, maxo, intb      |
++--------------+-------------------------------------------------------------------+
+
+---------------------------------------------------
+
+------------------------------------------
+General schema of the metabolomic workflow
+------------------------------------------
+
+.. image:: findAdducts.png
+
+---------------------------------------------------
+
+-------
+Details
+-------
+
+Adducts (and fragments) are annotated for a `xsAnnotate` object. For every pseudospectra group, generated by `groupFWHM` and `groupCorr`, all possible Adducts are calculated and mapped to the peaks. If at least two adducts match, a possible molecule-mass for the group can be calculated. After the annotation, every mass hypothesis is checked against the charge of the calculated isotopes. It is recommended to call `findIsotopes()` before the annotation step.
+
+---------------------------------------------------
+
+--------------
+Changelog/News
+--------------
+
+.. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
+
+@HELP_CAMERA_SUITE@
+
+]]>    </help>
+
+    <expand macro="citation"/>
+    <expand macro="creator"/>
+</tool>

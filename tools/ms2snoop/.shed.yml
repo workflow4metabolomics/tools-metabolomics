@@ -1,6 +1,7 @@
 categories: [Metabolomics]
 description: '[W4M][Utils] Extraction et nettoyage des spectre MS1/2 post-traitement MSPurity.'
 homepage_url: http://workflow4metabolomics.org
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics
 long_description: 'Extraction des spectres MS1 et adduits associées + Extraction + 
 nettoyage automatisé des spectres MS2 Extraction des métadonnées
 des fichiers RAW Export en fichier idéalement en JSON'

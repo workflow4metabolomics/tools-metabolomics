@@ -1,4 +1,4 @@
-<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@">
+<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy1">
     <description> Read Bruker NMR raw files</description>
 
     <macros>
@@ -6,6 +6,11 @@
     </macros>
 
     <expand macro="requirements" />
+    <required_files>
+        <include path="ReadFids_wrapper.R" />
+        <include path="ReadFids_script.R" />
+        <include path="DrawFunctions.R" />
+    </required_files>
 
     <expand macro="stdio"/>
 

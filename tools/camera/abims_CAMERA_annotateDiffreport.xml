@@ -1,4 +1,4 @@
-<tool id="abims_CAMERA_annotateDiffreport" name="CAMERA.annotate" version="2.2.6+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
+<tool id="abims_CAMERA_annotateDiffreport" name="CAMERA.annotate" version="2.2.7+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
 
     <description>CAMERA annotate function. Returns annotation results (isotope peaks, adducts and fragments) and a diffreport if more than one condition.</description>
 
@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="CAMERA_annotateDiffreport.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/CAMERA_annotateDiffreport.r
+        @COMMAND_RSCRIPT@CAMERA_annotateDiffreport.r
         image '$image'
 
         nSlaves \${GALAXY_SLOTS:-1}

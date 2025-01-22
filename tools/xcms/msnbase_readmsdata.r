@@ -9,11 +9,11 @@ sink(log_file, type = "output")
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -24,7 +24,7 @@ cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
@@ -83,8 +83,8 @@ cat("\t\tphenoData\n")
 print(raw_data@phenoData@data)
 cat("\n\n")
 
-#saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("raw_data", "zipfile", "singlefile", "md5sumList", "sampleNamesList") #, "chromTIC", "chromBPI")
+# saving R data in .Rdata file to save the variables used in the present tool
+objects2save <- c("raw_data", "zipfile", "singlefile", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI")
 save(list = objects2save[objects2save %in% ls()], file = "readmsdata.RData")
 
 

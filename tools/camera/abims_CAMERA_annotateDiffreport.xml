@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="CAMERA_annotateDiffreport.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/CAMERA_annotateDiffreport.r
+        @COMMAND_RSCRIPT@CAMERA_annotateDiffreport.r
         image '$image'
 
         nSlaves \${GALAXY_SLOTS:-1}

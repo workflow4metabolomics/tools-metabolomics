@@ -1,4 +1,4 @@
-<tool id="NMR_Preprocessing" name="NMR_Preprocessing" version="@WRAPPER_VERSION@">
+<tool id="NMR_Preprocessing" name="NMR_Preprocessing" version="@WRAPPER_VERSION@+galaxy2">
     <description> Preprocessing of 1D NMR spectra </description>
 
     <macros>
@@ -6,9 +6,15 @@
     </macros>
 
     <expand macro="requirements">
+        <requirement type="package" version="3.0.0">libgfortran</requirement>
         <requirement type="package" version="1.9_12">r-ptw</requirement>
         <requirement type="package" version="1.2_12">r-matrix</requirement>
     </expand>
+    <required_files>
+        <include path="NmrPreprocessing_wrapper.R" />
+        <include path="NmrPreprocessing_script.R" />
+        <include path="DrawFunctions.R" />
+    </required_files>
 
     <expand macro="stdio"/>
 
@@ -161,13 +167,13 @@
         <section name="Apod" title="Apodization" expanded="true">
             <conditional name="apodizationMethod" >
                 <param name="method" label="Apodization: method" type="select" help="Default method is Decreasing Exponential signal. See details below" >
-                    <option value="exp"  />
-                    <option value="cos2" />
-                    <option value="hanning" />
-                    <option value="hamming" />
-                    <option value="blockexp" />
-                    <option value="blockcos2" />
-                    <option value="gauss" />
+                    <option value="exp">exp</option>
+                    <option value="cos2">cos2</option>
+                    <option value="hanning">hanning</option>
+                    <option value="hamming">haming</option>
+                    <option value="blockexp">blockexp</option>
+                    <option value="blockcos2">blockcos2</option>
+                    <option value="gauss">gauss</option>
                 </param>
                 <when value="exp">
                     <param name="expLB" type="float" label="Line broadening" value="1" help="Default value is 1" />
@@ -235,9 +241,9 @@
         <section name="SR" title="Shift Referencing" expanded="true">
             <conditional name="shiftReferencingRange" >
                 <param name="method" label="Shift Referencing: definition of the search zone" type="select" help="Definition of the search zone" >
-                    <option value="nearvalue" />
-                    <option value="all"  />
-                    <option value="window" />
+                    <option value="nearvalue">nearvalue</option>
+                    <option value="all">all</option>
+                    <option value="window">window</option>
                 </param>
 
                 <when value="all" />
@@ -364,7 +370,13 @@
                 <param name="NegativetoZero" value="YES" />
             </section>
             <param name="FinalGraph" value="YES" />
-            <output name="dataMatrix" value="NMR_Preprocessing_dataMatrix.tabular" />
+            <output name="dataMatrix">
+                <assert_contents>
+                    <has_n_lines n="32776"/>
+                    <has_size size="2377097" delta="20"/>
+                    <has_text text="ADG10003u_007"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
 

@@ -7,9 +7,9 @@ cat("\tSESSION INFO\n")
 
 # Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -28,8 +28,8 @@ options(bitmapType = "cairo")
 
 samplebyclass <- 2
 if (!is.null(args$samplebyclass)) {
-  samplebyclass <- args$samplebyclass
-  args$samplebyclass <- NULL
+    samplebyclass <- args$samplebyclass
+    args$samplebyclass <- NULL
 }
 
 # ----- INFILE PROCESSING -----

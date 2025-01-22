@@ -15,8 +15,10 @@ library("tools")
 
 args <- W4MRUtils::parse_args(args = commandArgs())
 
-cat("\n\n--------------------------------------------------------------------",
-    "\nParameters used by the 'mz(X)MLShaper' tool:\n\n")
+cat(
+    "\n\n--------------------------------------------------------------------",
+    "\nParameters used by the 'mz(X)MLShaper' tool:\n\n"
+)
 cat("--------------------------------------------------------------------\n\n")
 print(args)
 
@@ -32,15 +34,19 @@ pks <- mzR::spectra(spectrum)
 hdr <- mzR::header(spectrum)
 
 if (outputfileformat == "mzml") {
-  writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)
+    writeMSData(pks, file = outputfilename, outformat = "mzml", header = hdr)
 }
 
 if (outputfileformat == "mzXml") {
-  writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)
+    writeMSData(pks, file = outputfilename, outformat = "mzxml", header = hdr)
 }
 
-cat("\n--------------------------------------------------------------------",
-    "\nInformation about R (version, Operating System, attached or loaded packages):\n\n")
+cat(
+    "\n--------------------------------------------------------------------",
+    "\nInformation about R (version, Operating System, attached or loaded packages):\n\n"
+)
 sessionInfo()
-cat("--------------------------------------------------------------------\n",
-    "\nJob ending time:\n", format(Sys.time(), "%a %d %b %Y %X"))
+cat(
+    "--------------------------------------------------------------------\n",
+    "\nJob ending time:\n", format(Sys.time(), "%a %d %b %Y %X")
+)

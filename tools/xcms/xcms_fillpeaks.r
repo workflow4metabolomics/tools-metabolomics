@@ -9,11 +9,11 @@ sink(log_file, type = "output")
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
 
-#Import the different functions
+# Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -24,7 +24,7 @@ cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-args <- parseCommandArgs(evaluate = FALSE) #interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
@@ -32,7 +32,7 @@ cat("\n\n")
 # ----- PROCESSING INFILE -----
 cat("\tARGUMENTS PROCESSING INFO\n")
 
-#saving the specific parameters
+# saving the specific parameters
 method <- "FillChromPeaks"
 
 if (!is.null(args$convertRTMinute)) convertRTMinute <- args$convertRTMinute
@@ -47,11 +47,11 @@ cat("\n\n")
 # ----- ARGUMENTS PROCESSING -----
 cat("\tINFILE PROCESSING INFO\n")
 
-#image is an .RData file necessary to use xset variable given by previous tools
+# image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
 if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS 2.*")
 
-#Verification of a group step before doing the fillpeaks job.
+# Verification of a group step before doing the fillpeaks job.
 if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. Otherwise it won't work for the fillpeaks step")
 
 # Handle infiles
@@ -83,7 +83,7 @@ register(SerialParam())
 xdata <- fillChromPeaks(xdata, param = fillChromPeaksParam)
 
 if (exists("intval")) {
-  getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
+    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
 }
 
 cat("\n\n")
@@ -100,8 +100,8 @@ xset <- getxcmsSetObject(xdata)
 print(xset)
 cat("\n\n")
 
-#saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList") #, "chromTIC", "chromBPI", "chromTIC_adjusted", "chromBPI_adjusted")
+# saving R data in .Rdata file to save the variables used in the present tool
+objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI", "chromTIC_adjusted", "chromBPI_adjusted")
 save(list = objects2save[objects2save %in% ls()], file = "fillpeaks.RData")
 
 cat("\n\n")

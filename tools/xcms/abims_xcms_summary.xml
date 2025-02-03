@@ -12,11 +12,14 @@
         <requirement type="package" version="1.46.0">bioconductor-camera</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
     </requirements>
-
+    <required_files>
+        <include path="xcms_summary.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_summary.r
+        @COMMAND_RSCRIPT@xcms_summary.r
 
         image '$image'
         htmlOutput '$htmlOutput'

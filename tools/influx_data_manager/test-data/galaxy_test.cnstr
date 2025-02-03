@@ -1,0 +1,14 @@
+# Created by 'ftbl2mtf e_coli.ftbl -o mtf/' at 2022-05-25 17:04:34 CEST +0200
+Id	Comment	Kind	Formula	Operator	Value
+		NET	fum_a-fum_b	==	0
+		NET	Glucupt_1+Glucupt_U	==	1
+		NET	bs_oaa3a-bs_oaa3b	==	0
+		NET	bs_pep3a-bs_pep3b	==	0
+		NET	bs_pep4a-bs_pep4b	==	0
+		XCH	fum_a-fum_b	==	0
+		NET	pyk	>=	1
+		NET	edd	>=	0.0001
+		NET	gnd	>=	0.0001
+		NET	zwf	>=	0.0001
+		NET	ppc	>=	0.0001
+		NET	mae	>=	0.0001

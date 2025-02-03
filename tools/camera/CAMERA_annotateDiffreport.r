@@ -5,9 +5,9 @@ cat("\tSESSION INFO\n")
 
 # Import the different functions
 source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep = "/"))
 }
 source_local("lib.r")
 
@@ -35,8 +35,8 @@ cat("\n\n")
 cat("\tARGUMENTS PROCESSING INFO\n")
 
 # Save arguments to generate a report
-if (!exists("listOFargs")) listOFargs <- list()
-listOFargs[[format(Sys.time(), "%y%m%d-%H:%M:%S_annotatediff")]] <- args
+if (!exists("listOFlistArguments")) listOFlistArguments <- list()
+listOFlistArguments[[format(Sys.time(), "%y%m%d-%H:%M:%S_annotatediff")]] <- args
 
 # We unzip automatically the chromatograms from the zip files.
 if (!exists("zipfile")) zipfile <- NULL
@@ -50,7 +50,7 @@ directory <- retrieveRawfileInTheWorkingDir(singlefile, zipfile)
 
 # Because so far CAMERA isn't compatible with the new XCMSnExp object
 if (exists("xdata")) {
-  xset <- getxcmsSetObject(xdata)
+    xset <- getxcmsSetObject(xdata)
 }
 
 cat("\n\n")
@@ -73,7 +73,7 @@ print(xa)
 cat("\n\n")
 
 # saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFargs", "zipfile", "singlefile")
+objects2save <- c("xa", "variableMetadata", "diffrep", "cAnnot", "listOFlistArguments", "zipfile", "singlefile")
 save(list = objects2save[objects2save %in% ls()], file = "annotatediff.RData")
 
 cat("\n\n")

@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="CAMERA_combinexsAnnos.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/CAMERA_combinexsAnnos.r
+        @COMMAND_RSCRIPT@CAMERA_combinexsAnnos.r
         image_pos '$image_pos'
         image_neg '$image_neg'
 

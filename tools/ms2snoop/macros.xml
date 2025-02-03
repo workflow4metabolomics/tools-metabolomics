@@ -26,13 +26,13 @@ msPurity.frag4feature
 Compounds file
   | A tabulated, comma or semicolon separated values file whith
     compounds. Its format is as follow:
-  |  
+  |
   | At least 4 columns:
   | **compound_name**: The name of the compound
   | **mz**: The m/z ratio
   | **rtsec**: The retention time in seconds
   | **inchikey**: The compound's inchi key
-  |  
+  |
   | An optional column can be added:
   | **elemcomposition**: The elemental composition of the molecule
 
@@ -66,10 +66,10 @@ compound_fragments_result.tsv
   | tabular output
   | Array with p rows (corresponding to the fragments for the different
     compounds of the compounds file)
-  | Last column "corvalid" is a boolean for validated fragments 
+  | Last column "corvalid" is a boolean for validated fragments
 
 processing_file.pdf
-  | pdf output 
+  | pdf output
   | For each compound of the compounds file, Graph of the all fragments
     with parents (or most intense peak if parent is not detected in the
     fragments. At the end the pdf file a graph of the spectra with
@@ -103,7 +103,7 @@ Changelog/News
     mzref and the rtref to be the 1st, the 2nd and the 3rd columns
     respectively, and the header was somewhat ignored in the compound
     file.
-  | 
+  |
   | Now, we'd like to add some new columns, some of them are optional.
     This new
     format of file implies a better definition of the columns order,
@@ -114,7 +114,7 @@ Changelog/News
   |   - **elemcomposition** [OPTIONAL] ;
   |   - **mz** [MANDATORY] ;
   |   - **rtsec** [MANDATORY].
-  | 
+  |
   | These names can be written indiferentially in lower and/or upper
     case. The new definition being incompatible with the older one, that
     was more flexible, but also more error-prone.
@@ -139,7 +139,7 @@ Changelog/News
     </token>
 
     <token name="@TOOL_VERSION@">2.2.1</token>
-    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@VERSION_SUFFIX@">2</token>
 
     <xml name="has_smol_stdout">
         <has_line line="processing 2-diethylamino-6-methyl pyrimidin-4-ol one" />

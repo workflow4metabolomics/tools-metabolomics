@@ -1,0 +1,6 @@
+# Created by 'ftbl2mtf e_coli.ftbl -o mtf/' at 2022-05-25 17:04:34 CEST +0200
+Id	Comment	Specie	Isotopomer	Value
+		Gluc_U	111111	1
+		Gluc_U	000000	0.
+		Gluc_1	100000	1.
+		Gluc_1	000000	0.

@@ -8,11 +8,14 @@
     </macros>
 
     <expand macro="requirements"/>
-
+    <required_files>
+        <include path="xcms_refine.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_refine.r
+        @COMMAND_RSCRIPT@xcms_refine.r
         image '$image'
 
         method $methods.method

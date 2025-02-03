@@ -1,10 +1,15 @@
-<tool id="normalization" name="Normalization" version="1.0.7">
+<tool id="normalization" name="Normalization" version="1.0.7+galaxy2">
 
     <description> Normalization of (preprocessed) spectra </description>
 
     <requirements>
           <requirement type="package" version="1.1_4">r-batch</requirement>
     </requirements>
+    <required_files>
+        <include path="NmrNormalization_wrapper.R" />
+        <include path="NmrNormalization_script.R" />
+        <include path="DrawSpec.R" />
+    </required_files>
 
       <stdio>
         <exit_code range="1:" level="fatal" />
@@ -85,7 +90,7 @@
     </outputs>
 
   <tests>
-        <test>
+        <test expect_num_outputs="3">
             <param name="dataMatrix" value="MTBLS1_bucketedData.tabular.tsv" ftype="tabular" />
             <conditional name="scalingMethod" >
                 <param name="method" value="Total" />

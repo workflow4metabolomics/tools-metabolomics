@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms_xcmsSet.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/xcms_xcmsSet.r
+        @COMMAND_RSCRIPT@xcms_xcmsSet.r
 
         image '$image'
 

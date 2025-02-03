@@ -1,4 +1,4 @@
-<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy1">
+<tool id="msnbase_readmsdata" name="MSnbase readMSData" version="@WRAPPER_VERSION@+galaxy3">
     <description>Imports mass-spectrometry data files</description>
 
     <macros>
@@ -7,10 +7,14 @@
     </macros>
 
     <expand macro="requirements"/>
+    <required_files>
+        <include path="msnbase_readmsdata.r" />
+        <include path="lib.r" />
+    </required_files>
     <expand macro="stdio"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@/msnbase_readmsdata.r
+        @COMMAND_RSCRIPT@msnbase_readmsdata.r
 
         #if $input.is_of_type("mzxml") or $input.is_of_type("mzml") or $input.is_of_type("mzdata") or $input.is_of_type("netcdf"):
             #if $os.path.islink(str($input))
@@ -34,14 +38,11 @@
 
     <outputs>
         <data name="xsetRData" format="rdata.msnbase.raw" label="${input.name.rsplit('.',1)[0]}.raw.RData" from_work_dir="readmsdata.RData" />
-        <data name="sampleMetadata" format="tabular" label="${input.name.rsplit('.',1)[0]}.sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv" >
-            <filter>input.extension not in ["mzxml","mzml","mzdata","netcdf"]</filter>
-        </data>
     </outputs>
 
     <tests>
 
-        <test expect_num_outputs="2">
+        <test expect_num_outputs="1">
             <param name="input" value="faahKO_reduce.zip"  ftype="zip" />
             <assert_stdout>
                 <has_text text="rowNames: faahKO_reduce/KO/ko15.CDF faahKO_reduce/KO/ko16.CDF" />
@@ -53,7 +54,6 @@
                 <has_text text="faahKO_reduce/WT/wt15.CDF        wt15           WT" />
                 <has_text text="faahKO_reduce/WT/wt16.CDF        wt16           WT" />
             </assert_stdout>
-            <output name="sampleMetadata" value="sampleMetadata.tsv" />
         </test>
         <test expect_num_outputs="1">
             <param name="input" value="ko15.CDF"  ftype="netcdf" />

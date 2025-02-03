@@ -1,4 +1,4 @@
-<tool id="mixmodel4repeated_measures" name="mixmodel" version="3.1.0" profile="19.01">
+<tool id="mixmodel4repeated_measures" name="mixmodel" version="3.1.0+galaxy1" profile="19.01">
     <description>ANOVA for repeated measures statistics</description>
 
     <requirements>
@@ -8,6 +8,11 @@
         <requirement type="package" version="2.3">r-gridExtra</requirement>
         <requirement type="package" version="2.40.0">bioconductor-multtest</requirement>
     </requirements>
+    <required_files>
+        <include path="mixmodel_wrapper.R" />
+        <include path="mixmodel_script.R" />
+        <include path="diagmfl.R" />
+    </required_files>
 
     <command detect_errors="exit_code"><![CDATA[
         Rscript '$__tool_directory__/mixmodel_wrapper.R'
@@ -114,7 +119,7 @@
 
 .. class:: infomark
 
-**Authors** Natacha Lenuzza and Jean-Francois Martin wrote this wrapper of R repeated measure anova statistical tests. 
+**Authors** Natacha Lenuzza and Jean-Francois Martin wrote this wrapper of R repeated measure anova statistical tests.
 **Maintainers** Melanie Petera and Marie Tremblay-Franco (INRAE-MetaboHUB)
 
 MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (https://www.metabohub.fr/home.html)
@@ -188,7 +193,7 @@ Subject
 |
 
 Degrees of freedom
-| Method to use for degrees of freedom computation 
+| Method to use for degrees of freedom computation
 |
 
 Method for multiple testing correction
@@ -218,13 +223,13 @@ variableMetadata_out.tabular
 
 mixedmodel_Estimates
 | A pdf file is created with a graphical representation of differences among levels of factors with a color code for significance and an error bar.
-| Plots are only provided for features with at least one significant factor. 
+| Plots are only provided for features with at least one significant factor.
 
 
 mixedmodel_diagResiduals
 | if Perform diagnostic of the residuals" is set to yes(default) a pdf file is created with a a serie of
 | graphics outputed in order to assess the distribution of residuals to check the adjustment.
-| Plots are only provided for features with at least one factor being significant based on the non-corrected p-values. 
+| Plots are only provided for features with at least one factor being significant based on the non-corrected p-values.
 
 information.txt
 | File with all messages and warnings generated during the computation

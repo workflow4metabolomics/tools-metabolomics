@@ -1,0 +1,101 @@
+<tool id="OptiLCMS_id" name="PerformParamsOptimization" version="0.1.0+OptiLCMS1-galaxy1" profile="23.0">
+    <description>Auto-optimization of parameters</description>
+    <requirements>
+        <requirement type="package" version="4.3.3">r-base</requirement>
+        <requirement type="package" version="1.0.0">r-optilcms</requirement>
+        <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
+    </requirements>
+
+    <required_files>
+        <include type="literal" path="optilcms.R" />
+    </required_files>
+
+    <command detect_errors="exit_code">
+        <![CDATA[
+        Rscript '$__tool_directory__/optilcms.R' \
+        image '$image' \
+        platform '$platform' \
+        ncore '$ncore' \
+        rt_idx '$rt_idx' \
+        rmConts '$rmConts'
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="image" type="data" format="mzML,mzXML,mzData,cdf" label="Input data file" />
+        <param name="platform" type="select" label="Platform type">
+            <option value="general">General</option>
+            <option value="UPLC-Q/E">UPLC-Q/E</option>
+            <option value="UPLC-Q/TOF">UPLC-Q/TOF</option>
+            <option value="UPLC-T/TOF">UPLC-T/TOF</option>
+            <option value="UPLC-Ion_Trap">UPLC-Ion_Trap</option>
+            <option value="UPLC-Orbitrap">UPLC-Orbitrap</option>
+            <option value="UPLC-G2S">UPLC-G2S</option>
+            <option value="HPLC-Q/TOF">HPLC-Q/TOF</option>
+            <option value="HPLC-Ion_Trap">HPLC-Ion_Trap</option>
+            <option value="HPLC-Orbitrap">HPLC-Orbitrap</option>
+            <option value="HPLC-S/Q">HPLC-S/Q</option>
+        </param>
+        <param name="ncore" type="integer" label="Number of cores" value="1" min="1" max="4" />
+        <param name="rt_idx" type="float" label="Retention time index" value="0.9" min="0" max="1" />
+        <param name="rmConts" type="select" label="Remove contaminants">
+            <option value="TRUE">TRUE</option>
+            <option value="FALSE">FALSE</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data name="chromatogram" format="png" label="Chromatogram Image"></data>
+        <data name="optimized_parameters_txt" format="txt" label="Optimized Parameters"></data>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="image" value="test_data.mzML" />
+            <param name="platform" value="general" />
+            <param name="ncore" value="1" />
+            <param name="rt_idx" value="0.9" />
+            <param name="rmConts" value="TRUE" />
+            <output name="chromatogram" file="chromatogram.png" />
+            <output name="optimized_parameters_txt" file="optimized_parameters.txt" />
+        </test>
+    </tests>
+
+    
+    <help><![CDATA[
+OptiLCMS - PerformParamsOptimization
+====================================
+
+This tool performs raw data trimming and optimization for LC-MS datasets.
+
+Inputs:
+-------
+
+- **image**: Input data file in one of the following formats: mzML, mzXML, mzData, cdf.
+- **platform**: Platform type (e.g., UPLC-Q/E, UPLC-Q/TOF).
+- **ncore**: Number of cores to use for processing.
+- **rt_idx**: Retention time index (float between 0 and 1).
+- **rmConts**: Whether to remove contaminants (TRUE/FALSE).
+
+Outputs:
+--------
+
+- **chromatogram**: A PNG image of the chromatogram.
+- **optimized_parameters_txt**: A text file containing optimized parameters.
+
+	]]></help>
+    <citations>
+        <citation type="doi">10.1021/ac202450g</citation>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
+
+    <creator>
+        <organization name="MELISA" url="https://www.laberca.org/plateforme-melisa/presentation"></organization>
+        <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
+
+        <person givenName="Yann" familyName="Guitton" url="https://github.com/yguitton"></person>
+        <person givenName="Damien" familyName="Rat" url="https://github.com/DamienCode404"></person>
+        <person givenName="Julien" familyName="Saint-Vanne" url="https://github.com/jsaintvanne"></person>
+    </creator>
+</tool>
+

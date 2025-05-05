@@ -14,62 +14,64 @@ vec2mat <- function(vec) {
 
 # ReadFid ==============================================================================
 ReadFid <- function(path) {
-    # Read 1D FID using Bruker XWinNMR and TopSpin format.  It is inspired of the
-    # matNMR matlab library which deals with 2D FID and also other formats
-    # Read also the parameters in the acqus file
+  
+  # Read 1D FID using Bruker XWinNMR and TopSpin format.  It is inspired of the
+  # matNMR matlab library which deals with 2D FID and also other formats
+  # Read also the parameters in the acqus file
+  
+  paramFile <- file.path(path, "acqus")
+  # BYTEORDA: 0 -> Little Endian 1 -> Big Endian
+  params <- readParams(paramFile, c("TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS", 
+                                    "SW_h", "SW", "O1"))
+  console <- readParamsChar(paramFile, c("INSTRUM"))
+  neo <- grepl("neo", tolower(console))
+  
+  if (params[["DSPFVS"]] >= 20) {
+    # The group delay first order phase correction is given directly from version 20
+    grpdly <- readParams(paramFile, c("GRPDLY"))
+    params[["GRPDLY"]] <- grpdly[["GRPDLY"]]
+  }
+  TD <- params[["TD"]]
 
-    paramFile <- file.path(path, "acqus")
-    # BYTEORDA: 0 -> Little Endian 1 -> Big Endian
-    params <- readParams(paramFile, c(
-        "TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS",
-        "SW_h", "SW", "O1"
-    ))
-
-    if (params[["DSPFVS"]] >= 20) {
-        # The group delay first order phase correction is given directly from version 20
-        grpdly <- readParams(paramFile, c("GRPDLY"))
-        params[["GRPDLY"]] <- grpdly[["GRPDLY"]]
-    }
-    TD <- params[["TD"]]
-    endianness <- if (params$BYTORDA) {
-        "big"
-    } else {
-        "little"
-    }
-    if (TD %% 2 != 0) {
-        stop(paste(
-            "Only even numbers are allowed for size in TD because it is complex
-               data with the real and imaginary part for each element.",
-            "The TD value is in the", paramFile, "file"
-        ))
-    }
-
-    # Interpret params Dwell Time, time between 2 data points in the FID
-    params[["DT"]] <- 1 / (2 * params[["SW_h"]])
-
-    # Read fid
-    fidFile <- file.path(path, "fid")
+  endianness <- if (params$BYTORDA) 
+    "big" else "little"
+  if (TD%%2 != 0) {
+    stop(paste("Only even numbers are allowed for size in TD because it is complex 
+               data with the real and imaginary part for each element.", 
+               "The TD value is in the", paramFile, "file"))
+  }
+  
+  # Interpret params Dwell Time, time between 2 data points in the FID
+  params[["DT"]] <- 1/(2 * params[["SW_h"]])
+  
+  # Read fid
+  fidFile <- file.path(path, "fid")
+  if(neo)
+    fidOnDisk <- readBin(fidFile, what = "double", n = TD, size = NA_integer_, signed = TRUE, endian = .Platform$endian)
+  else
     fidOnDisk <- readBin(fidFile, what = "int", n = TD, size = 4L, endian = endianness)
-
-    # Real size that is on disk (it should be equal to TD2, except for TopSpin/Bruker
-    # (which is our case) according to matNMR as just discussed
-    TDOnDisk <- length(fidOnDisk)
-    if (TDOnDisk < TD) {
-        warning("Size is smaller than expected, the rest is filled with zero so the size is the same for every fid")
-        fidGoodSize <- sapply(vector("list", length = TD), function(x) 0)
-        fidGoodSize[1:TDOnDisk] <- fidOnDisk
-    } else if (TDOnDisk > TD) {
-        warning("Size is bigger than expected, the rest ignored so the size is the same for every fid")
-        fidGoodSize <- fidOnDisk(1:TD)
-    } else {
-        fidGoodSize <- fidOnDisk
-    }
-
-    fidRePart <- fidGoodSize[seq(from = 1, to = TD, by = 2)]
-    fidImPart <- fidGoodSize[seq(from = 2, to = TD, by = 2)]
-    fid <- complex(real = fidRePart, imaginary = fidImPart)
-
-    return(list(fid = fid, params = params))
+  
+  # Real size that is on disk (it should be equal to TD2, except for TopSpin/Bruker
+  # (which is our case) according to matNMR as just discussed
+  TDOnDisk <- length(fidOnDisk)
+  if (TDOnDisk < TD) {
+    warning("Size is smaller than expected, the rest is filled with zero so the size is the same for every fid")
+    fidGoodSize <- sapply(vector("list", length = TD), function(x) 0)
+    fidGoodSize[1:TDOnDisk] <- fidOnDisk
+    
+  } else if (TDOnDisk > TD) {
+    warning("Size is bigger than expected, the rest ignored so the size is the same for every fid")
+    fidGoodSize <- fidOnDisk(1:TD)
+    
+  } else {
+    fidGoodSize <- fidOnDisk
+  }
+  
+  fidRePart <- fidGoodSize[seq(from = 1, to = TD, by = 2)]
+  fidImPart <- fidGoodSize[seq(from = 2, to = TD, by = 2)]
+  fid <- complex(real = fidRePart, imaginary = fidImPart)
+  
+  return(list(fid = fid, params = params))
 }
 
 
@@ -282,7 +284,6 @@ getTitle <- function(path, l, subdirs) {
 
 # readParams ==============================================================================
 # Read parameter values for Fid_info in the ReadFids function
-
 readParams <- function(file, paramsName) {
     isDigit <- function(c) {
         return(suppressWarnings(!is.na(as.numeric(c))))
@@ -317,10 +318,59 @@ readParams <- function(file, paramsName) {
         }
         params[paramName] <- as.numeric(substr(line, first, last))
     }
-    return(params)
+    line <- lines[occurences[1]]
+    
+    # Cut beginning and end of the line '##$TD= 65536' -> '65536'
+    igual <- as.numeric(regexpr("=", line))
+    
+    first <- igual
+    while (first <= nchar(line) & !isDigit(substr(line, first, first))) {
+      first <- first + 1
+    }
+    last <- nchar(line)
+    while (last > 0 & !isDigit(substr(line, last, last)))  {
+      last <- last - 1
+    }
+    params[paramName] <- as.numeric(substr(line, first, last))
+  }
+  return(params)
 }
 
-
+readParamsChar <- function(file, paramsName) {
+  lines <- readLines(file)
+  params <- sapply(paramsName, function(x) NULL)
+  
+  for (paramName in paramsName)  {
+    # Find the line with the parameter I add a '$' '=' in the pattern so that for
+    # example 'TD0' is not found where I look for 'TD' and LOCSW and WBSW when I look
+    # for 'SW'
+    pattern <- paste("\\$", paramName, "=", sep = "")
+    occurences <- grep(pattern, lines)
+    if (length(occurences) == 0L)  {
+      stop(paste(file, "has no field", pattern))
+    }
+    if (length(occurences) > 1L) {
+      warning(paste(file, "has more that one field", pattern, " I take the first one"))
+    }
+    line <- lines[occurences[1]]
+    
+    # Cut beginning and end of the line '##$TD= 65536' -> '65536'
+    igual <- as.numeric(regexpr("=", line))
+    
+    first <- igual
+    while (first <= nchar(line) & substr(line, first, first) != "<") {
+      first <- first + 1
+    }
+    first <- first + 1
+    last <- nchar(line)
+    while (last > 0 & substr(line, last, last) != ">")  {
+      last <- last - 1
+    }
+    last <- last - 1
+    params[paramName] <- substr(line, first, last)
+  }
+  return(params)
+}
 
 # ReadFids ==============================================================================
 
@@ -332,6 +382,82 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
     if (file.exists(path) == FALSE) {
         stop(paste("Invalid path:", path))
     }
+    if (dirs.names) {
+      separator <- .Platform$file.sep
+      path_elem <- strsplit(fidDirs,separator)
+      fidNames <- sapply(path_elem, function(x) x[[length(path_elem[[1]])]])
+    }else {fidNames <- sapply(X = fidDirs, FUN = getTitle, l = l, subdirs = subdirs,  USE.NAMES = F)}
+    
+    for (i in 1:n)  {
+      fidList <- ReadFid(fidDirs[i])
+      fid <- fidList[["fid"]]
+      info <- fidList[["params"]]
+      m <- length(fid)
+      if (i == 1)  {
+        Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(fidNames, 
+                                                               info[["DT"]] * (0:(m - 1))))
+        Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(fidNames, 
+                                                                          names(info)))
+      }
+      Fid_data[i, ] <- fid
+      Fid_info[i, ] <- unlist(info)
+    }
+    
+  } else  {
+    maindirs <- dir(path, full.names = TRUE) # subdirectories
+    Fid_data <- numeric()
+    Fid_info <- numeric()
+    
+    fidDirs <- c()
+    for (j in maindirs) {
+      fd <- getDirsContainingFid(j) # recoved FIDs from subdirectories
+      n <- length(fd)
+      if (n > 0L)  {
+        fidDirs <- c(fidDirs, fd)
+      } else {warning(paste("No valid fid in",j ))}
+    }
+    
+    if (dirs.names==TRUE) {
+      if (length(fidDirs)!= length(dir(path))) { # at least one subdir contains more than 1 FID
+        separator <- .Platform$file.sep
+        path_elem <- strsplit(fidDirs,separator)
+        fidNames <- sapply(path_elem, function(x) paste(x[[length(path_elem[[1]])-1]],
+                                                        x[[length(path_elem[[1]])]], sep = "_"))
+      }else {fidNames <- dir(path)}
+      
+    } else {fidNames <- sapply(X = fidDirs, FUN = getTitle, l = l, subdirs = subdirs, USE.NAMES = F)}
+    
+    for (i in 1:length(fidNames))  {
+      fidList <- ReadFid(fidDirs[i])
+      fid <- fidList[["fid"]]
+      info <- fidList[["params"]]
+      m <- length(fid)
+      if (i == 1)  {
+        Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(fidNames, 
+                                                                              info[["DT"]] * (0:(m - 1))))
+        Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(fidNames, 
+                                                                                         names(info)))
+      }
+      print(paste("i=", i, "Fid_data=", ncol(Fid_data), "fid=", length(fid)))
+
+      Fid_data[i, ] <- fid
+      Fid_info[i, ] <- unlist(info)
+    }
+  }
+  
+  # Check for non-unique IDs ----------------------------------------------
+  NonnuniqueIds <- sum(duplicated(row.names(Fid_data)))
+  cat("dim Fid_data: ", dim(Fid_data), "\n")
+  cat("IDs: ", rownames(Fid_data), "\n")
+  cat("non-unique IDs?", NonnuniqueIds, "\n")
+  if (NonnuniqueIds > 0) {
+    warning("There are duplicated IDs: ", Fid_data[duplicated(Fid_data)])
+  }
+  
+  
+  # Return the results ----------------------------------------------
+  return(list(Fid_data = endTreatment("ReadFids", begin_info, Fid_data), Fid_info = Fid_info))
+}
 
 
     # Extract the FIDs and their info ----------------------------------------------

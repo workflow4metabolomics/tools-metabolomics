@@ -23,6 +23,8 @@ ReadFid <- function(path) {
   # BYTEORDA: 0 -> Little Endian 1 -> Big Endian
   params <- readParams(paramFile, c("TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS", 
                                     "SW_h", "SW", "O1"))
+  console <- readParamsChar(paramFile, c("INSTRUM"))
+  neo <- grepl("neo", tolower(console))
   
   if (params[["DSPFVS"]] >= 20) {
     # The group delay first order phase correction is given directly from version 20
@@ -30,6 +32,7 @@ ReadFid <- function(path) {
     params[["GRPDLY"]] <- grpdly[["GRPDLY"]]
   }
   TD <- params[["TD"]]
+
   endianness <- if (params$BYTORDA) 
     "big" else "little"
   if (TD%%2 != 0) {
@@ -43,7 +46,10 @@ ReadFid <- function(path) {
   
   # Read fid
   fidFile <- file.path(path, "fid")
-  fidOnDisk <- readBin(fidFile, what = "int", n = TD, size = 4L, endian = endianness)
+  if(neo)
+    fidOnDisk <- readBin(fidFile, what = "double", n = TD, size = NA_integer_, signed = TRUE, endian = .Platform$endian)
+  else
+    fidOnDisk <- readBin(fidFile, what = "int", n = TD, size = 4L, endian = endianness)
   
   # Real size that is on disk (it should be equal to TD2, except for TopSpin/Bruker
   # (which is our case) according to matNMR as just discussed
@@ -262,7 +268,6 @@ getTitle <- function(path, l, subdirs) {
 
 # readParams ==============================================================================
 # Read parameter values for Fid_info in the ReadFids function
-
 readParams <- function(file, paramsName) {
   
   isDigit <- function(c) {
@@ -286,7 +291,7 @@ readParams <- function(file, paramsName) {
     line <- lines[occurences[1]]
     
     # Cut beginning and end of the line '##$TD= 65536' -> '65536'
-    igual = as.numeric(regexpr("=", line))
+    igual <- as.numeric(regexpr("=", line))
     
     first <- igual
     while (first <= nchar(line) & !isDigit(substr(line, first, first))) {
@@ -301,7 +306,41 @@ readParams <- function(file, paramsName) {
   return(params)
 }
 
-
+readParamsChar <- function(file, paramsName) {
+  lines <- readLines(file)
+  params <- sapply(paramsName, function(x) NULL)
+  
+  for (paramName in paramsName)  {
+    # Find the line with the parameter I add a '$' '=' in the pattern so that for
+    # example 'TD0' is not found where I look for 'TD' and LOCSW and WBSW when I look
+    # for 'SW'
+    pattern <- paste("\\$", paramName, "=", sep = "")
+    occurences <- grep(pattern, lines)
+    if (length(occurences) == 0L)  {
+      stop(paste(file, "has no field", pattern))
+    }
+    if (length(occurences) > 1L) {
+      warning(paste(file, "has more that one field", pattern, " I take the first one"))
+    }
+    line <- lines[occurences[1]]
+    
+    # Cut beginning and end of the line '##$TD= 65536' -> '65536'
+    igual <- as.numeric(regexpr("=", line))
+    
+    first <- igual
+    while (first <= nchar(line) & substr(line, first, first) != "<") {
+      first <- first + 1
+    }
+    first <- first + 1
+    last <- nchar(line)
+    while (last > 0 & substr(line, last, last) != ">")  {
+      last <- last - 1
+    }
+    last <- last - 1
+    params[paramName] <- substr(line, first, last)
+  }
+  return(params)
+}
 
 # ReadFids ==============================================================================
 
@@ -380,11 +419,11 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
         Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(fidNames, 
                                                                                          names(info)))
       }
+      print(paste("i=", i, "Fid_data=", ncol(Fid_data), "fid=", length(fid)))
+
       Fid_data[i, ] <- fid
       Fid_info[i, ] <- unlist(info)
     }
-    
-    
   }
   
   # Check for non-unique IDs ----------------------------------------------
@@ -399,6 +438,5 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
   
   # Return the results ----------------------------------------------
   return(list(Fid_data = endTreatment("ReadFids", begin_info, Fid_data), Fid_info = Fid_info))
-  
 }
 

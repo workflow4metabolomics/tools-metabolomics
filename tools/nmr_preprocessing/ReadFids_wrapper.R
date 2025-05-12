@@ -66,7 +66,6 @@ flagC <- "\n"
 ## Script
 ##------------------------------
 if(!runExampleL)
-#  argLs <- parseCommandArgs(evaluate=FALSE)
   argLs <- unlist(parse_args())
 
   ## Outputs
@@ -88,12 +87,16 @@ print(argLs)
 ## Bruker FIDs
 fileType <- "Bruker"
 zipfile <- argLs[["fidzipfile"]]
-directory <- unzip(zipfile, list = F)
-path <- paste(getwd(), strsplit(directory[1], "/")[[1]][2], sep = "/")
 
 directory <- unzip(zipfile, list = F)
 
-# other inputs from ReadFids
+filesInZip <- unzip(zipfile, list = TRUE)
+
+path1 <- paste(getwd(), strsplit(zipfile1[1], "/")[[1]][2], sep = "/")
+
+path <- paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
+
+     # other inputs from ReadFids
 l <- argLs[["title_line"]]
 subdirs <- argLs[["subdirectories"]]
 dirs.names <- argLs[["dirs_names"]]

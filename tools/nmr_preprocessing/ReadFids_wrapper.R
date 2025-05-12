@@ -45,7 +45,6 @@ source_local <- function(fname)
   source(paste(base_dir, fname, sep="/"))
 }
 
-
 # This function retrieve the raw file in the working directory
 #   - if zipfile: unzip the file with its directory tree
 #   - if singlefiles: set symlink with the good filename
@@ -104,7 +103,6 @@ flagC <- "\n"
 ## Script
 ##------------------------------
 if(!runExampleL)
-#  argLs <- parseCommandArgs(evaluate=FALSE)
   argLs <- unlist(parse_args())
 
   ## Outputs
@@ -126,19 +124,15 @@ zipfile <- argLs[["fidzipfile"]]
 
 rawFilePath <- retrieveRawfileInTheWorkingDir(NULL, zipfile)
 zipfile1 <- rawFilePath
-print(zipfile1)
-print(rawFilePath)
 
 directory <- unzip(zipfile, list = F)
 
 filesInZip <- unzip(zipfile, list = TRUE)
-print(filesInZip)
 
 path1 <- paste(getwd(), strsplit(zipfile1[1], "/")[[1]][2], sep = "/")
-print(path1)
 
 path <- paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
-print(path)
+
      # other inputs from ReadFids
 l <- argLs[["title_line"]]
 subdirs <- argLs[["subdirectories"]]

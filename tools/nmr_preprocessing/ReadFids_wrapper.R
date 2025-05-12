@@ -22,12 +22,24 @@ options(warn = 1)
 
 ## ------------------------------
 ## Libraries laoding
-## ------------------------------
-library(batch)
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
+##------------------------------
+# library(batch) 
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(reshape2))
 
+# In-house function for argument parsing
+parse_args <- function() {
+    args <- commandArgs()
+    start <- which(args == "--args")[1] + 1
+    if (is.na(start)) {
+        return(list())
+    }
+    seq_by2 <- seq(start, length(args), by = 2)
+    result <- as.list(args[seq_by2 + 1])
+    names(result) <- args[seq_by2]
+    return(result)
+}
 
 # R script call
 source_local <- function(fname) {
@@ -52,12 +64,18 @@ flagC <- "\n"
 
 ## ------------------------------
 ## Script
-## ------------------------------
-if (!runExampleL) {
-    argLs <- parseCommandArgs(evaluate = FALSE)
-}
+##------------------------------
+if(!runExampleL)
+#  argLs <- parseCommandArgs(evaluate=FALSE)
+  argLs <- unlist(parse_args())
 
-sink(argLs$logOut)
+  ## Outputs
+logOut <- argLs[["logOut"]]
+nomGraphe <- argLs[["graphOut"]]
+
+sink(logOut, append = TRUE)
+
+print(argLs)
 
 ## ======================================================
 ## ======================================================
@@ -73,6 +91,7 @@ zipfile <- argLs[["fidzipfile"]]
 directory <- unzip(zipfile, list = F)
 path <- paste(getwd(), strsplit(directory[1], "/")[[1]][2], sep = "/")
 
+directory <- unzip(zipfile, list = F)
 
 # other inputs from ReadFids
 l <- argLs[["title_line"]]
@@ -113,11 +132,8 @@ if (length(warnings()) > 0) { # or !is.null(warnings())
 cat("\nStart of 'ReadFids' Galaxy module call: ", as.character(Sys.time()), "\n\n", sep = "")
 
 outputs <- ReadFids(path = path, l = l, subdirs = subdirs, dirs.names = dirs.names)
-
 data_matrix <- outputs[["Fid_data"]] # Data matrix
 data_sample <- outputs[["Fid_info"]] # Sample metadata
-
-
 
 pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
 title <- "Raw FID data"
@@ -147,8 +163,8 @@ write.table(data_sample, file = argLs$sampleMetadata, quote = FALSE, row.names =
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
 
-argLs
-
+# Reproductibility
+sessionInfo()
 ## Ending
 
 cat("\nEnd of 'ReadFids' Galaxy module call: ", as.character(Sys.time()), sep = "")
@@ -159,3 +175,4 @@ sink()
 options(stringsAsFactors = strAsFacL)
 
 rm(list = ls())
+sink()

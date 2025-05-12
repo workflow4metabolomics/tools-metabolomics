@@ -1,23 +1,25 @@
 <tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy1">
     <description> Read Bruker NMR raw files</description>
 
-    <macros>
-        <import>macros.xml</import>
-    </macros>
+    <requirements>
+        <requirement type="package">r-ggplot2</requirement>
+        <requirement type="package">r-gridExtra</requirement>
+        <requirement type="package">r-reshape2</requirement>
+    </requirements>
 
-    <expand macro="requirements" />
     <required_files>
         <include path="ReadFids_wrapper.R" />
         <include path="ReadFids_script.R" />
-        <include path="DrawFunctions.R" />
     </required_files>
 
-    <expand macro="stdio"/>
 
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
+    
     <command>
         ## Wrapper
         Rscript $__tool_directory__/ReadFids_wrapper.R
-
         ## File input
         fidzipfile $fidzipfile
 

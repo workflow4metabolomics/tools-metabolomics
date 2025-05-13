@@ -16,10 +16,15 @@
 library(xcms)
 library(MsExperiment)
 library(Spectra)
+
+sessionInfo()
+
 mse = readMsExperiment(file.path('${input}'))
 mz_offset = ${tolerance_ppm} * 1e-6 * ${mz_value}
 rt_offset = ${rt_range} / 2
+
 raw = mse |>
+    filterMsLevel(msLevel = ${mslevel}L) |>
     filterRt(rt = ${rt} + c(-rt_offset, rt_offset)) |>
     filterMzRange(mz = ${mz_value} + c(-mz_offset, mz_offset))
 png(filename = '${output_filename}')
@@ -34,7 +39,7 @@ dev.off()
         <param type="float" name="rt_range" value="5.0" min="0.0" label="Retention Time Range" help="Retention time range for the plot"/>
     </inputs>
     <outputs>
-        <data name="output_filename" format="png" label="PLot at m/z=$mz_value and rt=$rt of $input.element_identifier"/>
+        <data name="output_filename" format="png" label="Plot at m/z=$mz_value and rt=$rt of $input.element_identifier"/>
     </outputs>
     <tests>
         <test>

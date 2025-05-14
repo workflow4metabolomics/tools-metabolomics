@@ -3,7 +3,7 @@
     <macros>
         <token name="@TOOL_VERSION@">4.4.3</token>
     </macros>
-    
+
     <edam_topics>
         <edam_topic>topic_3172</edam_topic>
     </edam_topics>
@@ -177,7 +177,6 @@ Rscript '$__tool_directory__/wrapper_intensity_check.R'
             <param name="sampleMetadata_in" value="ic_in_sampleMetadata.tabular" />
             <param name="variableMetadata_in" value="ic_in_variableMetadata.tabular" />
             <conditional name="method_cond">
-                <param name="method" value="no_class" />
                 <param name="chosen_stat" value="mean,sd,median,quartile,decile,NA" />
                 <param name="method" value="each_class" />
                 <param name="class_col" value="2" />

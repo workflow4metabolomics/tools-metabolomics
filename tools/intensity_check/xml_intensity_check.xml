@@ -68,14 +68,16 @@ Rscript '$__tool_directory__/wrapper_intensity_check.R'
                 <conditional name="test_fold_cond">
                     <param name="test_fold" type="select" display="radio" label="Calculate the mean fold change">
                         <option value="Yes">Yes</option>
-                        <option value="No">No</option>
+                        <option value="No" selected="true">No</option>
                     </param>
                     <when value="Yes">
                         <param name="logarithm" type="select" label="Logarithm" help="Choose if you want the mean fold change to be converted into a log mean fold change (log2 or log10)">
-                            <option value="none">none</option>
+                            <option value="none" selected='true'>none</option>
                             <option value="log2">log2</option>
                             <option value="log10">log10</option>
                         </param>
+                    </when>
+                    <when value="No">
                     </when>
                 </conditional>
             </when>
@@ -106,6 +108,8 @@ Rscript '$__tool_directory__/wrapper_intensity_check.R'
                             <option value="log10">log10</option>
                         </param>
                     </when>
+                    <when value="No">
+                    </when>
                 </conditional>
             </when>
         </conditional>
@@ -116,36 +120,60 @@ Rscript '$__tool_directory__/wrapper_intensity_check.R'
         <data name="graphs_out" format="pdf" label="IC_Graphs" />
     </outputs>
 
+    <tests>
+        <test>
+            <param name="dataMatrix_in" value="ic_in_dataMatrix.tabular" />
+            <param name="sampleMetadata_in" value="ic_in_sampleMetadata.tabular" />
+            <param name="variableMetadata_in" value="ic_in_variableMetadata.tabular" />
+            <conditional name="method_cond">
+                <param name="method" value="no_class" />
+                <param name="chosen_stat" value="mean,sd,median,quartile,decile,NA" />
+            </conditional>
+            <output name="variableMetadata_out" value="ic_out_variableMetadata.tabular" />
+            <output name="graphs_out" value="ic_out_graphs.pdf" />
+        </test>
+        <test>
+            <param name="dataMatrix_in" value="ic_in_dataMatrix.tabular" />
+            <param name="sampleMetadata_in" value="ic_in_sampleMetadata.tabular" />
+            <param name="variableMetadata_in" value="ic_in_variableMetadata.tabular" />
+            <conditional name="method_cond">
+                <param name="method" value="no_class" />
+                <param name="chosen_stat" value="mean,sd,median,quartile,decile,NA" />
+                <param name="method" value="each_class" />
+                <param name="class_col" value="2" />
+            </conditional>
+            <output name="variableMetadata_out" value="ic_out_variableMetadata_classes.tabular" />
+            <output name="graphs_out" value="ic_out_graphs_classes.pdf" />
+        </test>
+    </tests>
+
     <help><![CDATA[
 
 .. class:: infomark
 
-**Author:** 
-Anthony Fernandes for original code (PFEM - INRA) 
+**Author:**  
+Anthony Fernandes for original code (PFEM - INRA)  
 **Maintainer:** Melanie Petera (PFEM - INRAE - MetaboHUB)
 
 ---------------------------------------------------
 
-========================
+====================
 Intensity Check
-========================
+====================
 
 -----------
 Description
 -----------
 
 This tool performs various metrics: mean fold change calculation, number and proportion of missing values, and mean, sd and decile calculation.
-You can choose to perform these metrics according to sample groups defined in the sample metadata file given as input. 
+You can choose to perform these metrics according to sample groups defined in the sample metadata file given as input.
 
- 
 -----------------
 Workflow position
 -----------------
 
-
 .. image:: int_check.png
-        :width: 800
-
+   :width: 800
 
 -----------
 Input files
@@ -161,50 +189,46 @@ Input files
 | 3 : Variable metadata file |   tabular  |
 +----------------------------+------------+
 
-	| 
-
-
 ----------
+
 Parameters
 ----------
 
-**Computation method**
-	| 	- **Without distinction between samples:** calculates chosen statistic(s) for each variable.
-	| 	- **For each class of samples:** separates samples between each class (class column to specified). Chosen statistic(s) and/or mean fold change are calculated for each of them. 
-	| 	- **Between one class versus all the remaining samples:** If you want to focus only on one class versus all the remaining samples without class distinction. 
-	
-	| In the case of two classes: "each class" and "one class" give the same results for statistical measures. We recommend to choose "one class" for mean fold change calculation in order to select the class you want to put as numerator or denominator (see below).
-	
-**Statistics**
-	|  Select the statistical measures you want to add in the variable metadata table. If the method is "each class" or "one class", you can choose to leave this section blank if you only want to calculate the mean fold change (see below).
+**Computation method**  
+    - **Without distinction between samples:** calculates chosen statistic(s) for each variable.  
+    - **For each class of samples:** separates samples between each class (class column to be specified). Chosen statistic(s) and/or mean fold change are calculated for each of them.  
+    - **Between one class versus all the remaining samples:** If you want to focus only on one class versus all the remaining samples without class distinction.  
 
-**Class column** (*only if "each class" or "one class"*)
-	| Select the class column in sample metadata table.
+    In the case of two classes: "each class" and "one class" give the same results for statistical measures. We recommend to choose "one class" for mean fold change calculation in order to select the class you want to put as numerator or denominator (see below).
 
-**Selected class** (*only if "one class"*)
-	| If the method is "one class", specify it. Remaining samples will be named "Other".
-	
-**Calculate the mean fold change** (*only if "each class" or "one class"*)
-	| Choose if you want to calculate the mean fold change. If the method is "each class": mean fold change will be calculated for all combinations of classes. If the method is "one class": it will be calculated between the selected class (see above) and the remaining samples.
-	
-**Where should the class be placed for the mean fold change calculation?** (*only if "one class"*)
-	| If the method is "one class", choose "top" or "bottom" to put the selected class as numerator or denominator (respectively) for the mean fold change calculation.	
-	
-**Logarithm** (*only if "each class" or "one class"*)
-	| Choose if you want to transform the mean fold change with a log2 or log10.
-	
+**Statistics**  
+    Select the statistical measures you want to add in the variable metadata table. If the method is "each class" or "one class", you can choose to leave this section blank if you only want to calculate the mean fold change (see below).
+
+**Class column** (*only if "each class" or "one class"*)  
+    Select the class column in sample metadata table.
+
+**Selected class** (*only if "one class"*)  
+    If the method is "one class", specify it. Remaining samples will be named "Other".
+
+**Calculate the mean fold change** (*only if "each class" or "one class"*)  
+    Choose if you want to calculate the mean fold change. If the method is "each class": mean fold change will be calculated for all combinations of classes. If the method is "one class": it will be calculated between the selected class (see above) and the remaining samples.
+
+**Where should the class be placed for the mean fold change calculation?** (*only if "one class"*)  
+    If the method is "one class", choose "top" or "bottom" to put the selected class as numerator or denominator (respectively) for the mean fold change calculation.
+
+**Logarithm** (*only if "each class" or "one class"*)  
+    Choose if you want to transform the mean fold change with a log2 or log10.
+
 ------------
-Output file
+Output files
 ------------
 
-**Variable metadata file**
-	| Contains the previous columns in variable metadata file and the new ones.
-	| In the column names for fold, the first class specified is the one used as numerator in the ratio.
-	
-**Graphs file**
-	| Contains barplots with the proportion of NA considering classes and boxplots with the fold values.
+**Variable metadata file**  
+    Contains the previous columns in variable metadata file and the new ones.  
+    In the column names for fold, the first class specified is the one used as numerator in the ratio.
 
-
+**Graphs file**  
+    Contains barplots with the proportion of NA considering classes and boxplots with the fold values.
 
 ---------------------------------------------------
 
@@ -212,11 +236,13 @@ Output file
 Additional information
 ----------------------
 
-
 .. class:: warningmark
 
-For more information about input files, refer to the corresponding "W4M HowTo" page:
- | `W4M table format for Galaxy &lt;http://workflow4metabolomics.org/sites/workflow4metabolomics.org/files/files/w4m_TableFormatForGalaxy_150908.pdf&gt;`_
- |
+For more information about input files, refer to the corresponding "W4M HowTo" page:  
+`W4M table format for Galaxy <http://workflow4metabolomics.org/sites/workflow4metabolomics.org/files/files/w4m_TableFormatForGalaxy_150908.pdf>`_
+
     ]]></help>
+    <citations>
+        <citation type="doi">10.1002/cpz1.70095</citation>
+    </citations>
 </tool>

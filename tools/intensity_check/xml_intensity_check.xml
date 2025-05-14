@@ -3,6 +3,13 @@
     <macros>
         <token name="@TOOL_VERSION@">4.4.3</token>
     </macros>
+    <edam_topics>
+        <edam_topic>topic_3172</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_2428</edam_operation>
+        <edam_operation>operation_2428</edam_operation>
+    </edam_operations>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">r-base</requirement>
         <requirement type="package" version="2.2.5">r-argparse</requirement>

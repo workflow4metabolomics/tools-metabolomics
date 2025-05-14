@@ -28,8 +28,11 @@ table_match <- function(dataMatrix, sampleMetadata, variableMetadata) {
       "\nData matrix and sample metadata do not match regarding sample identifiers."
     )
     if (length(missing_in_sm) > 0) {
-      prefix <- if (length(missing_in_sm) < 4) "\n    The " else
+      prefix <- if (length(missing_in_sm) < 4) {
+        "\n    The "
+      } else {
         "\n    For example, the "
+      }
       err.stock <- c(
         err.stock,
         prefix,
@@ -41,8 +44,11 @@ table_match <- function(dataMatrix, sampleMetadata, variableMetadata) {
       )
     }
     if (length(missing_in_dm) > 0) {
-      prefix <- if (length(missing_in_dm) < 4) "\n    The " else
+      prefix <- if (length(missing_in_dm) < 4) {
+        "\n    The "
+      } else {
         "\n    For example, the "
+      }
       err.stock <- c(
         err.stock,
         prefix,
@@ -64,8 +70,11 @@ table_match <- function(dataMatrix, sampleMetadata, variableMetadata) {
       "\nData matrix and variable metadata do not match regarding variable identifiers."
     )
     if (length(missing_in_vm) > 0) {
-      prefix <- if (length(missing_in_vm) < 4) "\n    The " else
+      prefix <- if (length(missing_in_vm) < 4) {
+        "\n    The "
+      } else {
         "\n    For example, the "
+      }
       err.stock <- c(
         err.stock,
         prefix,
@@ -77,8 +86,11 @@ table_match <- function(dataMatrix, sampleMetadata, variableMetadata) {
       )
     }
     if (length(missing_in_dm_var) > 0) {
-      prefix <- if (length(missing_in_dm_var) < 4) "\n    The " else
+      prefix <- if (length(missing_in_dm_var) < 4) {
+        "\n    The "
+      } else {
         "\n    For example, the "
+      }
       err.stock <- c(
         err.stock,
         prefix,
@@ -100,19 +112,18 @@ table_match <- function(dataMatrix, sampleMetadata, variableMetadata) {
 
 
 intens_check <- function(
-  DM.name,
-  SM.name,
-  VM.name,
-  method,
-  chosen.stat,
-  class.col,
-  test.fold,
-  class1,
-  fold.frac,
-  logarithm,
-  VM.output,
-  graphs.output
-) {
+    DM.name,
+    SM.name,
+    VM.name,
+    method,
+    chosen.stat,
+    class.col,
+    test.fold,
+    class1,
+    fold.frac,
+    logarithm,
+    VM.output,
+    graphs.output) {
   # Read input tables
   DM <- read.table(DM.name, header = TRUE, sep = "\t", check.names = FALSE)
   SM <- read.table(SM.name, header = TRUE, sep = "\t", check.names = FALSE)
@@ -140,22 +151,26 @@ intens_check <- function(
     test.fold <- "No"
   } else {
     class.col <- colnames(SM)[as.numeric(class.col)]
-    if (!(class.col %in% colnames(SM)))
+    if (!(class.col %in% colnames(SM))) {
       stop("The column ", class.col, " is not in sample metadata")
+    }
     c_class <- as.factor(SM[, class.col])
     nb_class <- nlevels(c_class)
     classnames <- levels(c_class)
-    if (nb_class < 2 && test.fold == "Yes")
+    if (nb_class < 2 && test.fold == "Yes") {
       cat(
         "The column",
         class.col,
         "contains only one class, fold calculation could not be executed.\n"
       )
-    if (nb_class > (nrow(SM)) / 3 && method == "each_class")
+    }
+    if (nb_class > (nrow(SM)) / 3 && method == "each_class") {
       cat("There are too many classes, consider reducing the number.\n")
+    }
     if (method == "one_class") {
-      if (!(class1 %in% classnames))
+      if (!(class1 %in% classnames)) {
         stop("The class ", class1, " does not appear in the column ", class.col)
+      }
       c_class <- factor(
         ifelse(c_class == class1, class1, "Other"),
         levels = c(class1, "Other")
@@ -167,12 +182,13 @@ intens_check <- function(
 
   # Check numeric
   if (!is.numeric(as.matrix(DM))) {
-    findchar <- function(myval)
+    findchar <- function(myval) {
       ifelse(
         is.na(myval),
         "ok",
         ifelse(is.na(as.numeric(as.character(myval))), "char", "ok")
       )
+    }
     chardiag <- suppressWarnings(apply(DM, 2, vapply, findchar, "character"))
     charlist <- which(chardiag == "char")
     err.stock <- paste(
@@ -297,14 +313,19 @@ intens_check <- function(
         ratio2 <- if (fold.frac == "Bottom") classnames[j] else classnames[k]
         fold <- colMeans(DM[which(DM$c_class == ratio1), -1], na.rm = TRUE) /
           colMeans(DM[which(DM$c_class == ratio2), -1], na.rm = TRUE)
-        if (logarithm == "log2") fold <- log2(fold) else if (
+        if (logarithm == "log2") {
+          fold <- log2(fold)
+        } else if (
           logarithm == "log10"
-        )
+        ) {
           fold <- log10(fold)
+        }
         fold.res <- cbind(fold.res, fold)
-        fname <- if (logarithm == "none")
-          paste("fold", ratio1, "VS", ratio2, sep = "_") else
+        fname <- if (logarithm == "none") {
+          paste("fold", ratio1, "VS", ratio2, sep = "_")
+        } else {
           paste(logarithm, "fold", ratio1, "VS", ratio2, sep = "_")
+        }
         fold.names <- cbind(fold.names, fname)
       }
       if (j == nb_class) {
@@ -333,7 +354,7 @@ intens_check <- function(
     if ("NA" %in% stat.list) {
       graph.colors <- c("green3", "palegreen3", "lightblue", "orangered", "red")
       par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = TRUE)
-      bp = barplot(
+      bp <- barplot(
         data_bp,
         col = graph.colors,
         main = "Proportion of NA",
@@ -346,7 +367,7 @@ intens_check <- function(
         rownames(data_bp),
         inset = c(-0.3, 0)
       )
-      stock = 0
+      stock <- 0
       for (i in 1:nrow(data_bp)) {
         text(
           bp,
@@ -373,59 +394,59 @@ intens_check <- function(
 }
 
 
-parser <- ArgumentParser(description = 'Intensity Check Tool')
+parser <- ArgumentParser(description = "Intensity Check Tool")
 
 parser$add_argument(
-  '--dataMatrix_in',
+  "--dataMatrix_in",
   required = TRUE,
-  help = 'Input data matrix file'
+  help = "Input data matrix file"
 )
 parser$add_argument(
-  '--sampleMetadata_in',
+  "--sampleMetadata_in",
   required = TRUE,
-  help = 'Input sample metadata file'
+  help = "Input sample metadata file"
 )
 parser$add_argument(
-  '--variableMetadata_in',
+  "--variableMetadata_in",
   required = TRUE,
-  help = 'Input variable metadata file'
+  help = "Input variable metadata file"
 )
-parser$add_argument('--method', required = TRUE, help = 'Computation method')
+parser$add_argument("--method", required = TRUE, help = "Computation method")
 parser$add_argument(
-  '--chosen_stat',
+  "--chosen_stat",
   required = TRUE,
-  help = 'Statistics to compute'
+  help = "Statistics to compute"
 )
 parser$add_argument(
-  '--class_col',
+  "--class_col",
   default = NULL,
-  help = 'Class column (optional)'
+  help = "Class column (optional)"
 )
 parser$add_argument(
-  '--test_fold',
+  "--test_fold",
   default = NULL,
-  help = 'Test fold (optional)'
+  help = "Test fold (optional)"
 )
-parser$add_argument('--class1', default = NULL, help = 'Class1 (optional)')
+parser$add_argument("--class1", default = NULL, help = "Class1 (optional)")
 parser$add_argument(
-  '--fold_frac',
+  "--fold_frac",
   default = NULL,
-  help = 'Fold fraction (optional)'
+  help = "Fold fraction (optional)"
 )
 parser$add_argument(
-  '--logarithm',
+  "--logarithm",
   default = NULL,
-  help = 'Logarithm (optional)'
+  help = "Logarithm (optional)"
 )
 parser$add_argument(
-  '--variableMetadata_out',
+  "--variableMetadata_out",
   required = TRUE,
-  help = 'Output variable metadata file'
+  help = "Output variable metadata file"
 )
 parser$add_argument(
-  '--graphs_out',
+  "--graphs_out",
   required = TRUE,
-  help = 'Output graphs file'
+  help = "Output graphs file"
 )
 
 args <- parser$parse_args()
@@ -437,13 +458,13 @@ if (length(args) < 7) {
 }
 
 cat(
-  '\nJob starting time:\n',
+  "\nJob starting time:\n",
   format(Sys.time(), "%a %d %b %Y %X"),
-  '\n\n--------------------------------------------------------------------',
-  '\nIntensity Check parameters:\n\n'
+  "\n\n--------------------------------------------------------------------",
+  "\nIntensity Check parameters:\n\n"
 )
 print(args)
-cat('--------------------------------------------------------------------\n\n')
+cat("--------------------------------------------------------------------\n\n")
 
 class_col <- NULL
 test_fold <- NULL
@@ -499,16 +520,16 @@ if (is.null(err_no_option)) {
 
 
 cat(
-  '\n--------------------------------------------------------------------',
-  '\nInformation about R (version, Operating System, attached or loaded packages):\n\n'
+  "\n--------------------------------------------------------------------",
+  "\nInformation about R (version, Operating System, attached or loaded packages):\n\n"
 )
 sessionInfo()
 cat(
-  '--------------------------------------------------------------------\n',
-  '\nJob ending time:\n',
+  "--------------------------------------------------------------------\n",
+  "\nJob ending time:\n",
   format(Sys.time(), "%a %d %b %Y %X")
 )
 
 
-#delete the parameters to avoid the passage to the next tool in .RData image
+# delete the parameters to avoid the passage to the next tool in .RData image
 rm(args)

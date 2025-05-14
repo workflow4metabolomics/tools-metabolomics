@@ -21,7 +21,7 @@ sessionInfo()
 
 mse = readMsExperiment(file.path('${input}'))
 mz_offset = ${tolerance_ppm} * 1e-6 * ${mz_value}
-rt_offset = ${rt_range} / 2
+rt_offset = ${rt_range}
 
 raw = mse |>
     filterMsLevel(msLevel = ${mslevel}L) |>
@@ -36,7 +36,7 @@ dev.off()
     <inputs>
         <expand macro="base_params"/>
         <param type="float" name="rt" label="Retention Time" min="0.0" value="0.0" help="Retention time for the plot"/>
-        <param type="float" name="rt_range" value="5.0" min="0.0" label="Retention Time Range" help="Retention time range for the plot"/>
+        <param type="float" name="rt_range" value="5.0" min="0.0" label="Retention Time Range" help="Retention time range for the plot. Range is applied on both sides of the specified RT value (+-)."/>
     </inputs>
     <outputs>
         <data name="output_filename" format="png" label="Plot at m/z=$mz_value and rt=$rt of $input.element_identifier"/>
@@ -47,8 +47,13 @@ dev.off()
             <param name="mz_value" value="153.06583"/>
             <param name="tolerance_ppm" value="10"/>
             <param name="rt" value="171.922"/>
-            <param name="rt_range" value="0.1"/>
-            <output name="output_filename" file="raw_plot.png" compare="sim_size" delta="5000"/>
+            <param name="rt_range" value="5"/>
+            <output name="output_filename">
+                <assert_contents>
+                    <has_image_channels channels="3"/>
+                    <has_image_center_of_mass center_of_mass="240.30, 240.51" eps="0.1"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help><![CDATA[

@@ -3,6 +3,7 @@
     <macros>
         <token name="@TOOL_VERSION@">4.4.3</token>
     </macros>
+    
     <edam_topics>
         <edam_topic>topic_3172</edam_topic>
     </edam_topics>
@@ -10,10 +11,16 @@
         <edam_operation>operation_2428</edam_operation>
         <edam_operation>operation_2428</edam_operation>
     </edam_operations>
+
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">r-base</requirement>
         <requirement type="package" version="2.2.5">r-argparse</requirement>
     </requirements>
+
+    <required_files>
+        <include path="wrapper_intensity_check.R"/>
+    </required_files>
+
     <command detect_errors="aggressive"><![CDATA[
 Rscript '$__tool_directory__/wrapper_intensity_check.R'
     --dataMatrix_in '$dataMatrix_in'

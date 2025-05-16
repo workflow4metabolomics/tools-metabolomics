@@ -1,0 +1,9 @@
+name: intensity_check
+owner: melpetera
+description: Statistical measures, number of missing values and mean fold change for metabolomics data.
+long_description: |
+  This tool performs various metrics: mean fold change calculation, number and proportion of missing values, and mean, sd and decile calculation. You can choose to perform these metrics according to sample groups defined in the sample metadata file given as input.
+homepage_url: https://workflow4metabolomics.org/
+remote_repository_url: https://github.com/your_org_or_user/tools-metabolomics
+categories:
+  - Metabolomics

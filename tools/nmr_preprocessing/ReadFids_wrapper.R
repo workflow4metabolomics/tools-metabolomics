@@ -170,7 +170,7 @@ invisible(dev.off())
 ## Saving
 ##======================================================
 # Data matrix
-write.table(t(data_matrix), file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(data_matrix, file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # Sample metadata
 write.table(data_sample, file = argLs[["sampleMetadata"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)

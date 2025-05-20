@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 ppm1	ppm2	Metabolite	score
 3.7915	1.4891	L-alanine	1
 3.7915	3.7859	L-alanine	1
 1.4861	1.4821	L-alanine	1
 1.4869	3.7859	L-alanine	1
+=======
+ppm1	ppm2	Metabolite	score
+3.7915	1.4891	L-alanine	1
+3.7915	3.7859	L-alanine	1
+1.4861	1.4821	L-alanine	1
+1.4869	3.7859	L-alanine	1
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f

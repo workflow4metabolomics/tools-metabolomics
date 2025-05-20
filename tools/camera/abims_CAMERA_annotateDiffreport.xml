@@ -1,0 +1,517 @@
+<tool id="abims_CAMERA_annotateDiffreport" name="CAMERA.annotate" version="2.2.7+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
+
+    <description>CAMERA annotate function. Returns annotation results (isotope peaks, adducts and fragments) and a diffreport if more than one condition.</description>
+
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+    <required_files>
+        <include path="CAMERA_annotateDiffreport.r" />
+        <include path="lib.r" />
+    </required_files>
+    <expand macro="stdio"/>
+
+    <command><![CDATA[
+        @COMMAND_RSCRIPT@CAMERA_annotateDiffreport.r
+        image '$image'
+
+        nSlaves \${GALAXY_SLOTS:-1}
+
+        ## groupFWHM
+        sigma $groupfwhm.sigma
+        perfwhm $groupfwhm.perfwhm
+
+        ## findGeneral
+        ppm $findgeneral.ppm
+        mzabs $findgeneral.mzabs
+
+        ## findIsotopes
+        maxcharge $findisotopes.maxcharge
+        maxiso $findisotopes.maxiso
+        minfrac $findisotopes.minfrac
+
+        quick $quick_block.quick
+        #if $quick_block.quick == "FALSE":
+            ## groupcorr
+            cor_eic_th $quick_block.groupcorr.cor_eic_th
+            graphMethod $quick_block.groupcorr.graphMethod
+            pval $quick_block.groupcorr.pval
+            calcCiS $quick_block.groupcorr.calcCiS
+            calcIso $quick_block.groupcorr.calcIso
+            calcCaS $quick_block.groupcorr.calcCaS
+
+            ## findadducts
+            polarity $quick_block.findadducts.polarity
+            max_peaks $quick_block.findadducts.max_peaks
+            #if $quick_block.findadducts.rules_block.rules_select == "FALSE":
+                multiplier $quick_block.findadducts.rules_block.multiplier
+            #else
+                rules $quick_block.findadducts.rules_block.rules
+            #end if
+        #end if
+
+        #if $diffreport.options.option == "show":
+            ## diffreport
+            runDiffreport TRUE
+            eicmax $diffreport.options.eicmax
+            eicwidth $diffreport.options.eicwidth
+            value $diffreport.options.value
+            sortpval $diffreport.options.sortpval
+            h $diffreport.options.h
+            w $diffreport.options.w
+            mzdec $diffreport.options.mzdec
+            tabular2 $diffreport.options.tabular2
+            png2 $diffreport.options.png2
+        #end if
+
+        @COMMAND_PEAKLIST@
+
+        @COMMAND_FILE_LOAD@
+
+    ]]></command>
+
+    <inputs>
+
+
+        <param name="image" type="data" label="RData file" format="rdata.xcms.fillpeaks,rdata" help="output file from another function xcms (fillPeaks)" />
+
+        <section name="groupfwhm" title="Group co-eluted peaks based on RT [groupFWHM]"  expanded="True">
+            <param name="sigma" type="integer" value="6" label="Multiplier of the standard deviation" help="[sigma]" />
+            <param name="perfwhm" type="float" value="0.6" max="1" min="0" label="Percentage of FWHM width" help="[perfwhm]" />
+        </section>
+
+        <section name="findgeneral" title="Annotation general options"  expanded="True">
+            <param name="ppm" type="integer" value="5" label="General ppm error" help="[ppm]" />
+            <param name="mzabs" type="float" value="0.015" label="General absolut error in m/z" help="[mzabs]" />
+        </section>
+
+        <section name="findisotopes" title="Annotate Isotopes [findIsotopes]"  expanded="True">
+            <param name="maxcharge" type="integer" value="3" label="Max. ion charge" help="[maxcharge]" />
+            <param name="maxiso" type="integer" value="4" label="Max. number of expected isotopes" help="[maxiso]" />
+            <param name="minfrac" type="float" value="0.5" max="1" min="0" label="The percentage number of samples, which must satisfy the C12/C13 rule for isotope annotation" help="[minfrac]" />
+        </section>
+
+        <conditional name="quick_block">
+            <param name="quick" type="select" label="Mode" help="[quick] If TRUE, use only groupFWHM and findIsotopes functions. Else if FALSE, use also groupCorr and findAdducts">
+                <option value="FALSE" selected="true">All functions</option>
+                <option value="TRUE">Only groupFWHM and findIsotopes functions [quick]</option>
+            </param>
+            <when value="FALSE">
+
+                <section name="groupcorr" title="Verifying grouping co-eluted peaks [groupCorr]"  expanded="True">
+                    <param name="cor_eic_th" type="float" value="0.75" max="1" min="0" label="groupCorr: correlation threshold (0..1)" help="[cor_eic_th]" />
+                    <param name="graphMethod" type="select" label="groupCorr: Method selection for grouping peaks after correlation analysis into pseudospectra" help="[graphMethod]">
+                        <option value="hcs" selected="true">hcs</option>
+                        <option value="lpc">lpc</option>
+                    </param>
+                    <param name="pval" type="float" value="0.05" max="1" min="0" label="groupCorr: significant correlation threshold" help="[pval]" />
+                    <param name="calcCiS" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="groupCorr: Use correlation inside samples for peak grouping" help="[calcCiS]"/>
+                    <param name="calcIso" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="groupCorr: Use isotopic relationship for peak grouping" help="[calcIso]"/>
+                    <param name="calcCaS" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="groupCorr: Use correlation across samples for peak grouping" help="[calcCaS]"/>
+                </section>
+
+                <section name="findadducts" title="Annotate Adducts [findAdducts]"  expanded="True">
+                    <param name="polarity" type="select" label="Which polarity mode was used for measuring of the ms sample" help="polarity">
+                        <option value="positive" >positive</option>
+                        <option value="negative" selected="true">negative</option>
+                    </param>
+                    <param name="max_peaks" type="integer" value="100" label="How much peaks will be calculated in every thread using the parallel mode" help="[max_peaks]" />
+                    <conditional name="rules_block">
+                        <param name="rules_select" type="select" label="Use a personal ruleset file">
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE" selected="true">FALSE</option>
+                        </param>
+                        <when value="FALSE">
+                            <param name="multiplier" type="integer" value="3" label="If no ruleset is provided, calculate ruleset with max. number n of [nM+x] clusterions" help="[multiplier]" />
+                        </when>
+                        <when value="TRUE">
+                            <param name="rules" type="data" format="csv" label="User defined ruleset" help="[rules]" />
+                        </when>
+                    </conditional>
+                </section>
+
+            </when>
+            <when value="TRUE">
+                <param name="polarity" type="hidden" value="quick" label="for the output label" help="for the output label" />
+            </when>
+        </conditional>
+
+        <!-- Diffreport specific parameters -->
+        <section name="diffreport" title="Statistics and results export: [diffreport]"  expanded="True">
+            <conditional name="options">
+                <param name="option" type="select" label="Number of condition">
+                    <option value="hide" selected="true">One condition</option>
+                    <option value="show">Two or more conditions</option>
+                </param>
+                <when value="show">
+                    <param name="eicmax" type="integer" value="0" label="Number of the most significantly different analytes to create EICs for" help="[eicmax]" />
+                    <param name="eicwidth" type="integer" value="200" label="Width (in seconds) of EICs produced" help="[eicwidth]" />
+                    <param name="value" type="select" label="Intensity values to be used for the diffreport" help="[value]">
+                        <option value="into" selected="true">into</option>
+                        <option value="maxo" >maxo</option>
+                        <option value="intb">intb</option>
+                    </param>
+                    <param name="h" type="integer" value="480" label="Numeric variable for the height of the eic and boxplots that are printed out" help="[height]" />
+                    <param name="w" type="integer" value="640" label="Numeric variable for the width of the eic and boxplots print out made" help="[width]" />
+                    <param name="mzdec" type="integer" value="2" label="Number of decimal places of title m/z values in the eic plot" help="[mzdec]" />
+                    <param name="sortpval" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="logical indicating whether the reports should be sorted by p-value" help="[sortpval]"/>
+                    <param name="tabular2" type="select" label="Export the Diffreport files in ">
+                        <option value="zip" selected="true">Zip</option>
+                        <option value="datasetcollection">Individual file in a Dataset Collection</option>
+                    </param>
+                    <param name="png2" type="select" label="Export the EIC and boxplots in ">
+                        <option value="zip" selected="true">Zip</option>
+                        <option value="pdf">Individual pdf</option>
+                    </param>
+                </when>
+                <when value="hide">
+                </when>
+            </conditional>
+        </section>
+
+        <expand macro="input_peaklist"/>
+        <expand macro="input_file_load"/>
+    </inputs>
+
+    <outputs>
+        <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.annotate.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="rdata_quick_false" format="rdata.camera.quick" label="${image.name[:-6]}.annotate.${$quick_block.findadducts.polarity}.Rdata"  from_work_dir="annotatediff.RData">
+            <filter>quick_block['quick'] == 'FALSE'</filter>
+            <change_format>
+                <when input="quick_block.findadducts.polarity" value="positive" format="rdata.camera.positive" />
+                <when input="quick_block.findadducts.polarity" value="negative" format="rdata.camera.negative" />
+            </change_format>
+        </data>
+        <data name="rdata_quick_true" format="rdata.camera.quick" label="${image.name[:-6]}.annotate.quick.Rdata" from_work_dir="annotatediff.RData">
+            <filter>quick_block['quick'] == 'TRUE'</filter>
+        </data>
+
+        <data name="output_diffreport_eic_zip" format="zip" label="${image.name[:-6]}.annotateDiffreport_eic.zip" from_work_dir="eic.zip" >
+            <filter>diffreport['options']['option'] == 'show' and diffreport['options']['eicmax'] > 0 and diffreport['options']['png2'] == 'zip'</filter>
+        </data>
+        <data name="output_diffreport_box_zip" format="zip" label="${image.name[:-6]}.annotateDiffreport_box.zip" from_work_dir="box.zip" >
+            <filter>diffreport['options']['option'] == 'show' and diffreport['options']['eicmax'] > 0 and diffreport['options']['png2'] == 'zip'</filter>
+        </data>
+        <collection name="output_diffreport_picture_pdf" type="list" label="${image.name[:-6]}.annotateDiffreport.pdf">
+            <filter>diffreport['options']['option'] == 'show' and diffreport['options']['eicmax'] > 0 and diffreport['options']['png2'] == 'pdf'</filter>
+            <discover_datasets pattern="__designation_and_ext__" directory="pdf" format="pdf" />
+        </collection>
+
+        <data name="output_diffreport_table_zip" format="zip" label="${image.name[:-6]}.annotateDiffreport_table.zip" from_work_dir="tabular.zip">
+            <filter>diffreport['options']['option'] == 'show' and diffreport['options']['tabular2'] == 'zip'</filter>
+        </data>
+        <collection name="output_diffreport_table_collection" type="list" label="${image.name[:-6]}.annotateDiffreport_table">
+            <filter>diffreport['options']['option'] == 'show' and diffreport['options']['tabular2'] == 'datasetcollection'</filter>
+            <discover_datasets pattern="__designation_and_ext__" directory="tabular" format="tabular" />
+        </collection>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="5">
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.RData"/>
+            <expand macro="test_annotate_diffreport"/>
+            <expand macro="test_annotate_quick_true"/>
+            <expand macro="test_file_load_single"/>
+            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.annotate.variableMetadata.tsv" lines_diff="2" />
+        </test>
+        <test expect_num_outputs="5">
+            <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.fillpeaks.RData"/>
+            <expand macro="test_annotate_diffreport"/>
+            <conditional name="quick_block">
+                <expand macro="test_annotate_quick_false" />
+                <section name="findadducts">
+                    <param name="polarity" value="negative"/>
+                    <conditional name="rules_block">
+                        <param name="rules_select" value="TRUE"/>
+                        <param name="rules" value="CASMI_extended_NEG_rules.csv" ftype="csv"/>
+                    </conditional>
+                </section>
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.annotate.rules.variableMetadata.tsv" lines_diff="2"/>
+        </test>
+    </tests>
+
+
+
+    <help><![CDATA[
+
+@HELP_AUTHORS@
+
+================
+CAMERA.annotate
+================
+
+-----------
+Description
+-----------
+
+The R-package CAMERA is a Collection of Algorithms for MEtabolite
+pRofile Annotation. Its primary purpose is the annotation and evaluation of
+LC-MS data. It includes algorithms for annotation of isotope peaks, adducts
+and fragments in peak lists. Additional methods cluster mass signals that
+originate from a single metabolite, based on rules for mass differences and
+peak shape comparison. To use the strength of already existing programs,
+CAMERA is designed to interact directly with processed peak data from the
+R-package **xcms**.
+
+**What it does?**
+
+The CAMERA annotation procedure can be split into two parts: We want to answer the questions which peaks occur from the same molecule and secondly compute its exact mass and annotate the ion species. Therefore CAMERA annotation workflow contains following primary functions: 1. peak grouping after retention time (**groupFWHM**) 2. peak group verification with peakshape correlation (**groupCorr**) Both methods separate peaks into different groups, which we define as ”pseu- dospectra”. Those pseudospectra can consists from one up to 100 ions, de- pending on the molecules amount and ionizability. Afterwards the exposure of the ion species can be performed with: 2 1. annotation of possible isotopes (**findIsotopes**) 2. annotation of adducts and calculating hypothetical masses for the group (**findAdducts**) This workflow results in a data-frame similar to a xcms peak table, that can be easily stored in a comma separated table .csv (Excel-readable).
+
+If you have two or more conditions, it will return a diffreport result within the annotation results.
+The diffreport result shows the most significant differences between two sets of samples. Optionally
+create extracted ion chromatograms for the most significant differences.
+
+
+-----------------
+Workflow position
+-----------------
+
+
+**Upstream tools**
+
+========================= ==================== ====================== ==========
+Name                      output file          format                 parameter
+========================= ==================== ====================== ==========
+xcms.fillPeaks            xset.fillPeaks.RData rdata.xcms.fillpeaks   RData file
+========================= ==================== ====================== ==========
+
+
+**Downstream tools**
+
++---------------------------+---------------------------------------+------------------------------------------------+
+| Name                      | Output file                           | Format                                         |
++===========================+=======================================+================================================+
+|CAMERA_combinexsAnnot      |xset.annotate.Rdata                    | rdata.camera.positive or rdata.camera.negative |
++---------------------------+---------------------------------------+------------------------------------------------+
+|Determine Vdk or Lowess    |xset.annotate.variableMetadata.tsv     | Tabular                                        |
++---------------------------+---------------------------------------+------------------------------------------------+
+|Normalization Vdk/Lowess   |xset.annotate.variableMetadata.tsv     | Tabular                                        |
++---------------------------+---------------------------------------+------------------------------------------------+
+|Anova                      |xset.annotate.variableMetadata.tsv     | Tabular                                        |
++---------------------------+---------------------------------------+------------------------------------------------+
+|PCA                        |xset.annotate.variableMetadata.tsv     | Tabular                                        |
++---------------------------+---------------------------------------+------------------------------------------------+
+|Hierarchical Clustering    |xset.annotate.variableMetadata.tsv     | Tabular                                        |
++---------------------------+---------------------------------------+------------------------------------------------+
+
+
+The output file **xset.annotate.variableMetadata.tsv** is an tabular file. You can continue your analysis using it in the following tools:
+
+    | Determine Vdk or Lowess
+    | Normalization Vdk/Lowess
+    | Anova
+    | PCA
+    | Hierarchical Clustering
+
+
+**General schema of the metabolomic workflow**
+
+.. image:: annotate_workflow.png
+
+-----------
+Input files
+-----------
+
++---------------------------+---------------------------+
+| Parameter : num + label   |   Format                  |
++===========================+===========================+
+| 1 : RData file            |   rdata.xcms.fillpeaks    |
++---------------------------+---------------------------+
+
+
+[Optional] User defined ruleset:
+--------------------------------
+
+Example:
+
+    | "name","nmol","charge","massdiff","oidscore","quasi","ips"
+    | "[M-H]-",1,-1,-1.007276,1,1,1
+    | "[M-2H]2-",1,-2,-2.014552,2,0,1
+    | "[M-3H]3-",1,-3,-3.021828,3,0,1
+    | "[M-2H+Na]-",1,-1,20.974666,4,0,0.25
+    | "[M-H+Cl]2-",1,-2,33.962126,5,0,1
+    | "[M-2H+K]-",1,-1,36.948606,6,0,0.25
+    | "[M+Cl]-",1,-1,34.969402,7,1,1
+    | "[M+2Cl]2-",1,-2,69.938804,8,0,1
+    | "[2M-H]-",2,-1,-1.007276,1,0,0.5
+
+----------
+Parameters
+----------
+
+diffreport: Intensity values to be used for the diffreport
+----------------------------------------------------------
+
+    | If **value="into"**, integrated peak intensities are used.
+    | If **value="maxo"**, maximum peak intensities are used.
+    | If **value="intb"**, baseline corrected integrated peak intensities are used (only available if peak detection was done by ‘findPeaks.centWave’).
+
+
+
+------------
+Output files
+------------
+
+xset.annotate.variableMetadata.tsv
+
+    | For each metabolite (row) :
+    | the value of the intensity in each sample, fold, anova, mzmed, mzmin, mzmax, rtmed, rtmin, rtmax, npeaks, isotopes, adduct and pcgroup
+
+xset.annotate.zip
+
+    | It contains filebase_eic, filebase_box and filebase.tsv for one conditon vs another (Anova analysis).
+
+xset.annotate.Rdata rdata.camera.quick or rdata.camera.positive or rdata.camera.negative
+
+    | Rdata file, that be used outside Galaxy in R.
+
+------
+
+.. class:: infomark
+
+The output **"xset.annotate.variableMetadata.tsv"** is a tabular file. You can continue your analysis using it in the following tools of the workflow:
+
+    | Determine Vdk or Lowess (Data correction)
+    | Normalization Vdk/Lowess (Data correction)
+    | Anova (Statistical analysis)
+    | PCA (Statistical analysis)
+    | Hierarchical Clustering (Statistical analysis)
+
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+Input files
+-----------
+
+    | RData file -> **xset.fillPeaks.RData**
+
+Parameters
+----------
+
+    | sortpval -> **false**
+    | sigma -> **6 (default)**
+    | perfwhm -> **0.6 (default)**
+    | maxcharge -> **3 (default)**
+    | maxiso -> **4 (default)**
+    | minfrac -> **0.5 (default)**
+    | ppm -> **500**
+    | mzabs -> **0.015(default)**
+    | Advanced options -> **hide**
+    | Numver of condition -> Two or more conditioons
+    | eicmax -> **200**
+    | eicwidth -> **200 (default)**
+
+
+
+Output files
+------------
+
+**Example of a part of xset.annotate.variableMetadata.tsv output**
+
+.. image:: annotatediffreport_variableMetadata.png
+
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+.. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
+
+@HELP_CAMERA_NEWVERSION_1480@
+
+@HELP_CAMERA_NEWVERSION_1460@
+
+**Version 2.2.6+camera1.42.0-galaxy1 - 09/03/2020**
+
+- BUGFIX: Fix the zip export of the pictures (eic and boxplot)
+
+@HELP_CAMERA_NEWVERSION_1420@
+
+**Version 2.2.5 - 09/04/2019**
+
+- NEW: zip export are back for pictures (eic and boxplot) and diffreport tables
+
+- UPGRADE: upgrade the CAMERA version from 1.34.0 to 1.38.1 (see CAMERA News_)
+
+- UPGRADE: refactoring of internal code
+
+**Version 2.2.4 - 09/10/2018**
+
+- NEW: CAMERA.annotate no longer export a DataMatrix. fillChromPeaks does the job
+
+**Version 2.2.3 - 30/04/2018**
+
+- NEW: support the new xcms 3.0.0 wrapper
+
+**Version 2.2.2 - 01/03/2018**
+
+- UPGRADE: upgrate the CAMERA version from 1.26.0 to 1.32.0
+
+**Version 2.2.1 - 29/11/2017**
+
+- BUGFIX: To avoid issues with accented letter in the parentFile tag of the mzXML files, we changed a hidden mechanim to LC_ALL=C
+
+**Version 2.2.0 - 28/03/2017**
+
+- BUGFIX: the diffreport ids didn't convert the rt in minute as the other export
+
+- UPDATE: the settings (digits, convertion in minutes) of the identifiants will no longer modify the native one. Because we want to be conservative and because it can be dangerous for the data integrity during a futur merge of the table, we decide to put those customization in a new column namecustom within the variableMetadata.
+
+- IMPROVEMENT: add some sections within to separate the different parts of the process
+
+- IMPROVEMENT: add the possibility to use defined ruleset
+
+- IMPROVEMENT: add the possibility to set the MZ digit within the identifiants
+
+- IMPROVEMENT: CAMERA.annotate is now compatible with merged individual data from xcms.xcmsSet
+
+
+**Version 2.1.5 - 21/04/2016**
+
+- UPGRADE: upgrade the CAMERA version from 1.22.0 to 1.26.0
+
+
+**Version 2.1.4 - 18/04/2016**
+
+- TEST: refactoring to pass planemo test using conda dependencies
+
+
+**Version 2.1.3 - 10/02/2016**
+
+- BUGFIX: better management of errors. Datasets remained green although the process failed
+
+- BUGFIX: the conversion into minutes of the retention time was applied to the diffreport outputs (several conditions)
+
+- IMPROVEMENT: when there are several conditions, the tool will generate individual datasets (tsv, pdf) instead of a zip file. The usual png (eic, boxplot) will from now be integrated in two pdf.
+
+- UPDATE: refactoring of internal management of inputs/outputs
+
+
+**VERSION 2.1.0 - 09/10/2015**
+
+- BUGFIX: There was a bug with the CAMERA.annotate (generating a bad dataMatrix (intensities which don't match with the metabolites))
+
+
+**VERSION 2.1.0 - 07/06/2015**
+
+- IMPROVEMENT: new datatype/dataset formats (rdata.camera.positive, rdata.camera.negative, rdata.camera.quick ...) will facilitate the sequence of tools and so avoid incompatibility errors.
+
+- IMPROVEMENT: parameter labels have changed to facilitate their reading.
+
+- UPDATE: merged with annotateDiffreport. Some parameters are dedicated to experiences with several conditions
+
+
+    ]]></help>
+
+    <expand macro="citation" />
+
+
+</tool>

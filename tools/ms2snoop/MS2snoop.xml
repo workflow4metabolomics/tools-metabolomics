@@ -1,0 +1,368 @@
+<tool id="ms2snoop" name="MS2 Snoop" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
+    <description>
+        MS1/MS2 spectra and associated adducts extraction and cleaning
+    </description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <edam_topics>
+        <edam_topic>topic_0091</edam_topic>
+        <edam_topic>topic_3370</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_3803</edam_operation>
+        <edam_operation>operation_3860</edam_operation>
+    </edam_operations>
+    <requirements>
+        <requirement type="package" version="4.1.3">r-base</requirement>
+        <requirement type="package" version="1.7.1">r-optparse</requirement>
+        <requirement type="package" version="4.9.15">sirius-csifingerid</requirement>
+        <requirement type="package" version="3.0">zip</requirement>
+    </requirements>
+    <required_files>
+        <include type="literal" path="MS2snoop.R"/>
+    </required_files>
+    <stdio>
+        <exit_code range="1" level="fatal" description="Missing parameter error" />
+        <exit_code range="2" level="fatal" description="Bad parameter's value" />
+        <exit_code range="3" level="fatal" description="Missing input file" />
+        <exit_code range="4:254" level="fatal" description="Unknown error" />
+        <exit_code range="255" level="fatal" description="No any result to output" />
+        <regex match="Error in\s+.*:\s+.*" />
+    </stdio>
+    <version_command>
+<![CDATA[
+@COMMAND_RSCRIPT@ '$__tool_directory__/MS2snoop.R' --version | head -n 1
+]]>
+    </version_command>
+    <command>
+<![CDATA[
+@COMMAND_RSCRIPT@ '$__tool_directory__/MS2snoop.R'
+    --output '$frag_result_txt'
+    --compounds '$compound_txt'
+    --fragments '$peaklist_frag_tsv'
+    --precursors '$peaklist_preco_tsv'
+    --tolmz '$tolmz'
+    --tolrt '$tolrt'
+    --seuil_ra '$seuil_ra'
+    --mzdecimal '$mzdecimal'
+    --r_threshold '$r_threshold'
+    --min_number_scan '$min_number_scan'
+    --ionization '$sirius.ionization'
+    --fragment_match_delta '$sirius.fragment_match_delta'
+    --fragment_match_delta_unit '$sirius.fragment_match_delta_unit'
+    #if $advenced.pdf:
+        --pdf_path './out.zip'
+    #end if
+    $advenced.debug
+    $advenced.verbose
+#if $advenced.pdf:
+&& cat ./out.zip > '$pdf_output'
+#end if
+
+]]>
+    </command>
+    <inputs>
+        <param argument="--compound_txt" type="data" format="tabular,csv,tsv"
+            label="list of compounds"
+            help="The table must fit the format: compound_name, inchikey, [elemcomposition], mz, rtsec."
+        />
+        <param argument="--peaklist_frag_tsv" type="data" format="tabular,csv,tsv"
+            label="MSpurity fragments file"
+        />
+        <param argument="--peaklist_preco_tsv" type="data" format="tabular,csv,tsv"
+            label="MSpurity precursors file"
+        />
+        <param argument="--tolmz" type="float" min="0.0001" max="10" value="0.01"
+            label="MZ Tolerence"
+            help="M/z tolerance to determine if a precursor matches a compound"
+        />
+        <param argument="--tolrt" type="integer" min="0" max="30" value="20"
+            label="RT Tolerence (in seconds)"
+            help="Retention time tolerance to determine if a precursor matches a compound"
+        />
+        <param argument="--seuil_ra" type="float" min="0" max="1" value="0.05"
+            label="R-Pearson correlation threshold used to filter fragments"
+        />
+        <param argument="--mzdecimal" type="integer" min="0" max="5" value="3"
+            label="Number of decimal to output M/z values with"
+        />
+        <param argument="--r_threshold" type="float" min="0" value="0.85"
+            label="
+                Minimun correlation with absolute intensity value to reach
+                for a fragment to be considered as valid.
+                In PDF generation, invalid fragments will be
+                displayed in grey.
+            "
+        />
+        <param argument="--min_number_scan" type="integer" min="0" max="25" value="8"
+            label="Present in at least X scan"
+            help="Mininum scan number in which a fragment must be found, to be kept."
+        />
+
+        <section title="Sirius Parameters" name="sirius">
+            <param argument="--ionization" type="select" optional="true"
+                label="Which ionization"
+                help="Select the ionization to use in sirius"
+            >
+                <option value="[M+H]+" selected="true">[M+H]+</option>
+                <option value="[M-H]-">[M-H]-</option>
+                <option value="[M+?]+">[M+?]+</option>
+                <option value="[M+K]+">[M+K]+</option>
+                <option value="[M+Na]+">[M+Na]+</option>
+                <option value="[M+H-H2O]+">[M+H-H2O]+</option>
+                <option value="[M+H-H4O2]+">[M+H-H4O2]+</option>
+                <option value="[M+NH4]+">[M+NH4]+</option>
+                <option value="[M+Cl]-">[M+Cl]-</option>
+                <option value="[M-H2O-H]-">[M-H2O-H]-</option>
+                <option value="[M+Br]-">[M+Br]-</option>
+            </param>
+
+            <param argument="--fragment_match_delta" type="float" min="0" max="25" value="10"
+                label="Fragment match delta"
+                help="
+                    Delta that determines if a fragment found by sirius
+                    is linked to a certain M/z value.
+                    Zero means all fragments found by sirius will be
+                    associated even when M/z difference is aberant.
+                "
+            />
+            <param argument="--fragment_match_delta_unit" type="select" optional="true"
+                label="Delta unit"
+                help="Select the unit of the fragment match delta"
+            >
+                <option value="ppm" selected="true">PPM</option>
+                <option value="mz">M/z</option>
+            </param>
+        </section>
+
+        <section title="Advenced Options" name="advenced">
+            <param argument="--pdf" type="boolean" value="" optional="true"
+                label="Output PDF"
+                help="The tool will output some pdf in a zip file"
+            />
+            <param argument="--verbose" type="boolean" truevalue="--verbose" falsevalue="" value="" optional="true"
+                label="Verbose logs"
+                help="The tool will print more logs"
+            />
+            <param argument="--debug" type="boolean" truevalue="--debug" falsevalue="" value="" optional="true"
+                label="Debug statements"
+                help="The tool will print debug statements"
+            />
+        </section>
+    </inputs>
+    <outputs>
+        <data name="frag_result_txt" format="tsv" label="${tool.name}_on_${peaklist_frag_tsv.name}" />
+        <data name="pdf_output" format="zip" label="${tool.name}_PDFs_for_${peaklist_frag_tsv.name}">
+            <filter>advenced['pdf']</filter>
+        </data>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="1">
+            <!-- #1 Regular test with no option -->
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test expect_num_outputs="1">
+            <!-- #2 Regular files with verbose output -->
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test expect_num_outputs="1">
+            <!-- #3 Regular test with debug outputs -->
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="debug" value="--debug" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_not_verbose_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test expect_num_outputs="1">
+            <!-- #4 Regular test with both verbose and debug outputs -->
+            <param name="compound_txt" value="compounds_pos.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.tsv" />
+            <param name="debug" value="--debug" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_smol_stdout"/>
+                <expand macro="has_debug_stdout"/>
+                <expand macro="has_smol_verbose_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test expect_num_outputs="1">
+            <!--
+            #5 This test mixes tsv, csv, and so, and ms2snoop is expected
+            handle them like usual.
+            -->
+            <param name="compound_txt" value="compounds_pos.csv" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <param name="verbose" value="--verbose" />
+            <output name="frag_result_txt" file="compound_fragments_result.txt" />
+            <assert_stdout>
+                <expand macro="has_regular_stdout"/>
+                <expand macro="has_verbose_stdout"/>
+                <expand macro="has_not_debug_stdout"/>
+            </assert_stdout>
+        </test>
+
+        <test expect_num_outputs="1">
+            <!--
+            #6 This test contains smaller datasets. This is the "regular"
+            smol test, to prepare further smolah tests.
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
+        </test>
+
+        <test expect_num_outputs="2">
+            <!--
+            #7 Test for pdf generation
+            -->
+            <param name="pdf" value="True" />
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <output name="frag_result_txt" file="smol/out-smol-base.tsv" />
+        </test>
+
+        <test expect_num_outputs="1">
+            <!--
+               #8  test for delta in ppm
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <param name="fragment_match_delta" value="8.542" />
+            <output name="frag_result_txt" file="smol/out-smol-delta-8.542.tsv" />
+        </test>
+
+        <test expect_num_outputs="1">
+            <!--
+                #9 test for delta in m/z
+            -->
+            <param name="ionization" value="[M+?]+" />
+            <param name="mzdecimal" value="3" />
+            <param name="compound_txt" value="smol/smol_compounds_pos.csv"/>
+            <param name="peaklist_frag_tsv" value="smol/smol_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="smol/smol_precursors.tsv" />
+            <param name="fragment_match_delta" value="0.05" />
+            <param name="fragment_match_delta_unit" value="mz" />
+            <output name="frag_result_txt" file="smol/out-smol-delta-0.05mz.tsv" />
+        </test>
+
+        <!--  === expected to fail tests === -->
+        <test expect_exit_code="2" expect_failure="true">
+            <!--
+            #10 This test uses old format for molecules file.
+            Is is expected to fail
+            -->
+            <param name="compound_txt" value="compounds_pos_old_format.txt" />
+            <param name="peaklist_frag_tsv" value="peaklist_fragments.tsv" />
+            <param name="peaklist_preco_tsv" value="peaklist_precursors.csv" />
+            <assert_stderr>
+                <has_line line="Error: Some columns are missing: compound_name, rtsec, inchikey" />
+            </assert_stderr>
+        </test>
+
+    </tests>
+    <help>
+<![CDATA[
+@AUTHORS@
+
+==============
+MS2 validation
+==============
+
+-----------
+Description
+-----------
+
+MS2snoop use results of msPurity to find spectra of standards listed in
+a compounds file. Check the fragments and precursor using correlation of
+among the different scans of fragments
+
+-----------------
+Workflow position
+-----------------
+
+--------------
+Upstream tools
+--------------
+
++-------------------------+-----------------+--------+------------+
+| Name                    |  output file    | format |  parameter |
++=========================+=================+========+============+
+| msPurity.purityA        |       NA        |   TSV  |    NA      |
++-------------------------+-----------------+--------+------------+
+| msPurity.frag4feature   |       NA        |   TSV  |    NA      |
++-------------------------+-----------------+--------+------------+
+
+----------------
+Downstream tools
+----------------
+
++-------------------------+-----------------+--------+------------+
+| Name                    |  output file    | format |  parameter |
++=========================+=================+========+============+
+| NA                      |       NA        |   NA   |    NA      |
++-------------------------+-----------------+--------+------------+
+
+
+-----------
+Input files
+-----------
+
++----------------------------------------------+------------+
+| Parameter : num + label                      |   Format   |
++===========================+==================+============+
+| Input from msPurity Precursor                |   TSV,CSV  |
++----------------------------------------------+------------+
+| Input from msPurity fragment                 |   TSV,CSV  |
+| Input compounds file to search in precursor  |            |
++----------------------------------------------+------------+
+| and fragment (Name + m/z + ret Time)         |   TSV,CSV  |
++----------------------------------------------+------------+
+
+@PARAMETERS@
+@OUTPUTS@
+@CHANGELOG@
+]]>
+    </help>
+    <citations>
+    <citation type="doi">10.18129/B9.bioc.msPurity</citation>
+    </citations>
+</tool>

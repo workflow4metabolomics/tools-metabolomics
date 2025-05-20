@@ -2,3 +2,6 @@ categories: [Metabolomics]
 description: metabolic flux estimation based on [in]stationary labeling
 name: influx_si
 owner: workflow4metabolomics
+long_description: Optimize free fluxes and optionaly metabolite concentrations of a given static metabolic network defined in an FTBL file to fit 13C data provided in the same FTBL file.
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/blob/master/tools/influx_si/
+homepage_url: https://github.com/sgsokol/influx

@@ -1,0 +1,102 @@
+<tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5' profile='21.05'>
+    <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
+    <macros>
+        <token name='@TOOL_VERSION@'>3.4.0</token>
+    </macros>
+
+    <requirements>
+        <requirement type='package' version="@TOOL_VERSION@">physiofit</requirement>
+    </requirements>
+    
+    <command detect_errors='exit_code'><![CDATA[
+    physiofit
+    --galaxy 
+    --config $configfile 
+    --data $datafile 
+    -or '$recap' 
+    -oz $zip 
+    2> $log 
+    ]]>
+    </command>
+    <inputs>
+        <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
+        <param name='configfile' type='data' format='yaml' multiple='true' label='Upload yaml configuration file containing run parameters'/>
+    </inputs>
+    <outputs>
+        <data name='recap' label='Summary file' format='csv'/>
+        <data name='zip' label='Results' format='zip'/>
+        <data name='log' label='Log' format='txt'/>
+    </outputs>
+    <tests>
+        <test>
+            <param name='datafile' value='data.txt'/>
+            <param name='configfile' value='config_file.yml'/>
+            <output name='recap'>
+                <assert_contents>
+                    <has_text text='experiments'/>
+                    <has_text text='growth_rate'/>
+                    <has_text text='Glc_q'/>
+                    <has_text text='Glc_M0'/>
+                    <has_text text='Ace_q'/>
+                    <has_text text='Ace_M0'/>
+                    <has_text text='optimal'/>
+                    <has_text text='mean'/>
+                </assert_contents>
+            </output>
+            <output name='zip'>
+                <assert_contents>
+                    <has_archive_member path='.*\.svg' min='3'/>
+                    <has_archive_member path='.*\.tsv' min='2'/>
+                    <has_archive_member path='.*\.pdf' min='1'/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+        **PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake & production fluxes**
+    
+        Fluxes are estimated using mathematical models by fitting time-course measurements of the concentration of
+        cells and extracellular substrates and products. PhysioFit is shipped with some common growth models, and
+        additional tailor-made models can be implemented by users.
+        
+        **PhysioFit includes the following features:**
+        
+            * **calculation of growth rate and extracellular (uptake and production) fluxes**,
+            * **a set of steady-state and dynamic models** are shipped with PhysioFit,
+            * **tailor-made models** can be constructed by users,
+            * Monte-Carlo sensitivity analysis to **estimate the precision of the calculated fluxes**,
+            * **evaluation of the goodness of fit and visual inspection of the fitted curves**,
+            * shipped as a **library** with both a **graphical** and a **command line** interface,
+            * **open-source, free and easy to install** everywhere where Python 3 and pip run,
+            * **biologist-friendly**.
+        
+        It is one of the routine tools that we use at the
+        `MetaSys team <https://www.toulouse-biotechnology-institute.fr/en/poles/equipe-metasys/>`_
+        and `MetaToul platform <https://mth-metatoul.com/>`_ to calculate fluxes.
+        
+        The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
+        
+        This documentation is available on Read the Docs (`https://physiofit.readthedocs.io <https://physiofit.readthedocs.io/>`_)
+        and can be downloaded as a `PDF file <https://readthedocs.org/projects/physiofit/downloads/pdf/latest/>`_.
+        
+]]></help>
+    <citations>
+        <citation type='bibtex'>@article{10.1101/2023.10.12.561695,
+            author = {Le Grégam, Loïc and Guitton, Yann and Bellvert, Floriant and Heux, Stéphanie and Jourdan, Fabien and Portais, Jean-Charles and Millard, Pierre},
+            title = "{Physiofit: a software to quantify cell growth parameters and extracellular fluxes}",
+            year = {2023},
+            month = {10},
+            abstract = '{Quantification of growth parameters and extracellular uptake and production fluxes is central in systems and synthetic biology. 
+                Fluxes can be estimated using various mathematical models by fitting time-course measurements of the concentration of cells and 
+                extracellular substrates and products. A single tool is available to calculate extracellular fluxes, but it is hardly interoperable and 
+                includes a single hard-coded growth model. We present our open-source flux calculation software, PhysioFit, which can be used with any 
+                growth model and is interoperable by design. PhysioFit includes by default the most common growth models, and additional models can be 
+                implemented by users to calculate fluxes and other growth parameters for metabolic systems or experimental setups that follow alternative 
+                kinetics. PhysioFit can be used as a Python library and includes a graphical user interface for intuitive use by end-users and a 
+                command-line interface to streamline integration into existing pipelines.}',
+            doi = {10.1101/2023.10.12.561695},
+            url = {https://doi.org/10.1101/2023.10.12.561695},
+        }
+        </citation>
+    </citations>
+</tool>

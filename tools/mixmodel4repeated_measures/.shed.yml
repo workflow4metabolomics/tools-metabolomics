@@ -1,0 +1,7 @@
+categories: [Metabolomics]
+description: '[Metabolomics][W4M][Statistics] Mixed models - Analysis of variance for repeated measures using mixed model'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org'
+name: mixmodel4repeated_measures
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

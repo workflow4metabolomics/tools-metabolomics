@@ -19,7 +19,6 @@ options(warn = 1)
 ##------------------------------
 ## Libraries laoding
 ##------------------------------
-# library(batch) 
 suppressPackageStartupMessages(library(ggplot2)) # nice plots
 suppressPackageStartupMessages(library(gridExtra)) # nice plots
 suppressPackageStartupMessages(library(reshape2)) # data manipulation
@@ -39,50 +38,10 @@ parse_args <- function() {
 }
 
 # R script call
-source_local <- function(fname)
-{
+source_local <- function(fname) {
   argv <- commandArgs(trailingOnly = FALSE)
   base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
   source(paste(base_dir, fname, sep="/"))
-}
-
-# This function retrieve the raw file in the working directory
-#   - if zipfile: unzip the file with its directory tree
-#   - if singlefiles: set symlink with the good filename
-retrieveRawfileInTheWorkingDir <- function(singlefile, zipfile) {
-  if (!is.null(singlefile) && (length("singlefile") > 0)) {
-    for (singlefile_sampleName in names(singlefile)) {
-      singlefile_galaxyPath <- singlefile[[singlefile_sampleName]]
-      if (!file.exists(singlefile_galaxyPath)) {
-        error_message <- paste("Cannot access the sample:", singlefile_sampleName, "located:", singlefile_galaxyPath, ". Please, contact your administrator ... if you have one!")
-        print(error_message)
-        stop(error_message)
-      }
-      
-      file.symlink(singlefile_galaxyPath, singlefile_sampleName)
-    }
-    directory <- "."
-  }
-  if (!is.null(zipfile) && (zipfile != "")) {
-    if (!file.exists(zipfile)) {
-      error_message <- paste("Cannot access the Zip file:", zipfile, ". Please, contact your administrator ... if you have one!")
-      print(error_message)
-      stop(error_message)
-    }
-    
-    # unzip
-    suppressWarnings(unzip(zipfile, unzip = "unzip"))
-    
-    # get the directory name
-    filesInZip <- unzip(zipfile, list = TRUE)
-    directories <- unique(unlist(lapply(strsplit(filesInZip$Name, "/"), function(x) x[1])))
-    directories <- directories[!(directories %in% c("__MACOSX")) & file.info(directories)$isdir]
-    directory <- "."
-    if (length(directories) == 1) directory <- directories
-    
-    cat("files_root_directory\t", directory, "\n")
-  }
-  return(directory)
 }
 
 #Import the different functions
@@ -123,14 +82,7 @@ print(argLs)
 fileType <- "Bruker"
 zipfile <- argLs[["fidzipfile"]]
 
-# rawFilePath <- retrieveRawfileInTheWorkingDir(NULL, zipfile)
-# zipfile1 <- rawFilePath
-
 directory <- unzip(zipfile, list = F)
-
-# filesInZip <- unzip(zipfile, list = TRUE)
-
-# path1 <- paste(getwd(), strsplit(zipfile1[1], "/")[[1]][2], sep = "/")
 
 path <- paste(getwd(),strsplit(directory[1], "/")[[1]][2], sep = "/")
 
@@ -148,9 +100,7 @@ if(length(error.stock) > 1)
 ##======================================================
 ## Computation
 ##======================================================
-# sink(logOut,append=TRUE)
-
-if(length(warnings()) > 0){ # or !is.null(warnings())
+if(length(warnings()) > 0) { # or !is.null(warnings())
   print("something happened")
 }
 

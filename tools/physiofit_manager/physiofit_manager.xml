@@ -1,0 +1,48 @@
+<tool id='physiofit_data_manager' name='PhysioFit data connector' profile='21.09' version='@TOOL_VERSION@+galaxy1'>
+    <description>Managing inputs for PhysioFit</description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.0.1</token>
+    </macros>
+    <requirements>
+        <requirement type='package' version='@TOOL_VERSION@'>physiofit_data_manager</requirement>
+    </requirements>
+    <command detect_errors='exit_code'><![CDATA[
+
+        physiofit_manager
+        -b '$biomass_file'
+        -c '$concentrations_file'
+        -e '$physiofit_input'
+
+    ]]></command>
+    <inputs>
+        <param name='biomass_file' type='data' format='tabular,txt' multiple='true' label='File containing the time-course measurements of biomass concentrations' />
+        <param name='concentrations_file' type='data' format='tabular,txt' multiple='true' label='File containing the time-course measurements of the different metabolite concentrations' />
+    </inputs>
+
+    <outputs>
+        <data name='physiofit_input' format='tabular' label='PhysioFit Input File' />
+    </outputs>
+
+    <tests>
+        <test>
+            <param name='biomass_file' value='biomass.tsv' />
+            <param name='concentrations_file' value='concentrations.tsv' />
+            <output name='physiofit_input' value='output.tsv' />
+        </test>
+    </tests>
+
+    <help><![CDATA[
+.. class:: warningmark
+
+Tool to handle physiofit input files
+
+    ]]></help>
+    <citations>
+        <citation type='bibtex'>
+    @misc{githubphysiofit,
+      author = {Le Gregam, Loic},
+      year = {2022},
+      title = {PhysioFit_Data_Manager},
+    }</citation>
+        </citations>
+</tool>

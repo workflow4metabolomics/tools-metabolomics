@@ -1,0 +1,39 @@
+<tool id='skyline2isocor' name='Skyline2Isocor: converting skyling outputs into IsoCor inputs' version='@TOOL_VERSION@+galaxy0' profile='20.5'>
+    <macros>
+        <token name='@TOOL_VERSION@'>1.0.0</token>
+    </macros>
+    <requirements>
+        <requirement type='package' version='@TOOL_VERSION@'>skyline2isocor</requirement>
+    </requirements>
+    <command detect_errors='exit_code'><![CDATA[
+    skyline2isocor -i '$skyline_output' -o '$isocor_input' > '$stdout' 2> '$stderr'
+    ]]></command>
+    <inputs>
+        <param type='data' format='tabular, txt' name='skyline_output' label='Skyline output file' help='Skyline output to convert'/>
+    </inputs>
+    <outputs>
+        <data format='txt' name='stdout' label='Log'/>
+        <data format='txt' name='stderr' label='Error log' />
+        <data format='tabular,txt' name='isocor_input' label='IsoCor input file' />
+    </outputs>
+    <tests>
+        <test>
+            <param name='skyline_output' value='skyline_output.txt' />
+            <output name='isocor_input' value='test_output.tsv' />
+        </test>
+    </tests>
+    <help><![CDATA[
+        Preparing skyline output data for use in IsoCor software for natural abundance isotope correction. Can be directly linked to Isocor in a workflow.
+        Input is the skyline output. Necessary columns: File Name, Molecule Name, Product Adduct, Total Area.
+        ]]></help>
+    <citations>
+        <citation type='bibtex'>
+                @misc{
+                githubskyline2isocor,
+                author = {Le Gregam, Loic},
+                year = {2024},
+                title = {Skyline2IsoCor,
+            }
+        </citation>
+    </citations>
+</tool>

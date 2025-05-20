@@ -1,5 +1,4 @@
 <tool id="NMR_Read" name="NMR_Read" version="4.0.0">
-
     <description> Read Bruker NMR raw files</description>
 
     <requirements>
@@ -7,6 +6,8 @@
         <requirement type="package">r-gridExtra</requirement>
         <requirement type="package">r-reshape2</requirement>
     </requirements>
+
+    <expand macro="requirements" />
 
     <stdio>
         <exit_code range="1:" level="fatal" />
@@ -33,7 +34,6 @@
         sampleMetadata $sampleMetadata
         logOut $logOut
         graphOut $graphOut
-
     </command>
 
     <inputs>

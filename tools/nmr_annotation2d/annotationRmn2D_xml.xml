@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0">
+=======
+<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0+galaxy2" profile="20.09">
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
 
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
@@ -11,23 +15,44 @@
         <requirement type="package" version="1.0.2">r-tidyr</requirement>
         <requirement type="package" version="3.3">r-curl</requirement>
         <requirement type="package" version="1.6">r-jsonlite</requirement>
+<<<<<<< HEAD
+=======
+        <requirement type="package" version="1">r-stringi</requirement>
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
     </requirements>
-
+    <required_files>
+        <include path="annotationRmn2DWrapper.R" />
+        <include path="annotationRmn2D.R" />
+        <include path="annotationRmn2DGlobale.R" />
+        <include path="viridis.R" />
+        <include path="BdDReference_COSY.RData" />
+        <include path="BdDReference_HMBC.RData" />
+        <include path="BdDReference_HSQC.RData" />
+        <include path="BdDReference_JRES.RData" />
+        <include path="BdDReference_NOESY.RData" />
+        <include path="BdDReference_TOCSY.RData" />
+    </required_files>
     <stdio>
         <exit_code range="1:" level="fatal" />
     </stdio>
 
-    <command>
+    <command detect_errors="aggressive"><![CDATA[
         ## Wrapper + Libraries of 2D-NMR sequences for reference compounds
         Rscript '$__tool_directory__/annotationRmn2DWrapper.R'
 
         ## XLS file
         xlsfile '$zip_xlsfile'
 
+<<<<<<< HEAD
 	## Parameters to reduce search
 	pH $pH
 	magneticField $magneticField
 
+=======
+        ## Parameters to reduce search
+        pH $pH
+        magneticField $magneticField
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
 
         ## 2D-NMR sequences to annotate
         cosy_2dsequences $cosy_2dsequences
@@ -66,7 +91,6 @@
         tolppm2 $tolppm2
         tolppmJRES $tolppmJRES
 
-
         ## Treshold (probability score)
         threshold $threshold
 
@@ -87,14 +111,18 @@
         ppmCommunTOCSY '$ppmCommunTOCSY'
         annotationCombination '$annotationCombination'
         AnnotationGraph '$AnnotationGraph'
-
-    </command>
+    ]]></command>
 
     <inputs>
         <param name="zip_xlsfile" type="data" format="xlsx" label="File to annotate in xlsx format" />
 
+<<<<<<< HEAD
 	<param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
 	<param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
+=======
+        <param name="pH" type="float" value="0" help="pH value of standards. Default value is 0 (no specific pH value required)" />
+        <param name="magneticField" type="integer" value="0" help="Magnetic filed of NMR spectrometer used to generate standard spectra. Default value is 0 (no specific field required)" />
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
 
         <param name="cosy_2dsequences" type="select" label="2D-NMR COSY sequence">
             <option value="yes" > yes </option>
@@ -177,11 +205,11 @@
             <when value="no" />
         </conditional>
 
-        <param name="tolppm1" type="float" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
-        <param name="tolppm2" type="float" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
-        <param name="tolppmJRES" type="float" value="0.002" help="Tolerance on chemical shift for the y-axis for the JRES sequence. Default value is 0.002 (Hz)" />
+        <param name="tolppm1" type="float" min="0" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
+        <param name="tolppm2" type="float" min="0" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
+        <param name="tolppmJRES" type="float" min="0" value="0.002" help="Tolerance on chemical shift for the y-axis for the JRES sequence. Default value is 0.002 (Hz)" />
 
-        <param name="threshold" type="float" value="0" help="Treshold on score of presence. Default value is 0" />
+        <param name="threshold" type="float" min="0" max="1" value="0" help="Treshold on score of presence. Default value is 0" />
 
         <param name="unicity" label="Unicity of annotation" type="select" display="radio" help="Select only chemical shifts corresponding to one one metabolite">
             <option value="no">No</option>
@@ -192,6 +220,10 @@
 
     <outputs>
         <data format="txt" name="logOut" label="${tool.name}_log" />
+<<<<<<< HEAD
+=======
+
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
         <data format="tabular" name="annotationCOSY" label="${tool.name}_annotationCOSY" >
             <filter> cosy_2dsequences != "no" </filter>
         </data>
@@ -231,6 +263,7 @@
         <data format="pdf" name="AnnotationGraph" label="${tool.name}_graph" />
     </outputs>
     <tests>
+<<<<<<< HEAD
     	<test>
     		<param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
     		<param name="cosy_2dsequences" value="yes"/>
@@ -258,6 +291,37 @@
     	</test>
 	</tests>
 <help>
+=======
+        <test expect_num_outputs="13" expect_test_failure="true">
+            <param name="zip_xlsfile" value="Template_melange.xlsx" ftype="xlsx"/>
+            <param name="cosy_2dsequences" value="yes"/>
+            <param name="jres_2dsequences" value="yes"/>
+            <param name="hmbc_2dsequences" value="yes"/>
+            <param name="hsqc_2dsequences" value="yes"/>
+            <param name="tocsy_2dsequences" value="yes"/>
+            <section name="inHouse_DB_choices">
+            <param name="choice" value="no"/>
+            </section>
+            <param name="tolppm1" value="0.01"/>
+            <param name="tolppm2" value="0.5"/>
+            <param name="tolppmJRES" value="0.002"/>
+            <param name="threshold" value="0.3"/>
+            <param name="unicity" value="no"/>
+            <output name="annotationCOSY" file="2DNMRAnnotation_annotationCOSY.tabular"/>
+            <output name="ppmCommunCOSY" file="2DNMRAnnotation_duplicateCOSY.tabular"/>
+            <output name="annotationHMBC" file="2DNMRAnnotation_annotationHMBC.tabular"/>
+            <output name="ppmCommunHMBC" file="2DNMRAnnotation_duplicateHMBC.tabular"/>
+            <output name="annotationHSQC" file="2DNMRAnnotation_annotationHSQC.tabular"/>
+            <output name="ppmCommunHSQC" file="2DNMRAnnotation_duplicateHSQC.tabular"/>
+            <output name="annotationJRES" file="2DNMRAnnotation_annotationJRES.tabular"/>
+            <output name="ppmCommunJRES" file="2DNMRAnnotation_duplicateJRES.tabular"/>
+            <output name="annotationTOCSY" file="2DNMRAnnotation_annotationTOCSY.tabular"/>
+            <output name="ppmCommunTOCSY" file="2DNMRAnnotation_duplicateTOCSY.tabular"/>
+            <output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
+        </test>
+    </tests>
+    <help>
+>>>>>>> bb7574b871cff739f7abbda62a5269ec1f98971f
 
 .. class:: infomark
 

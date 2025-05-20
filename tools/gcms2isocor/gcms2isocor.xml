@@ -1,0 +1,43 @@
+<tool id="gcms2isocor" name="Conversion GCMS PostRun Analysis to IsoCor format" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.09">
+    <macros>
+        <token name="@TOOL_VERSION@">0.2.1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <requirements>
+        <container type="docker" >inraep2m2/p2m2tools:@TOOL_VERSION@</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        p2m2tools fr.inrae.metabolomics.p2m2.command.GCMS2IsocorCommand
+            #for $input in $input_gcms_files
+                '$input'
+            #end for
+            --out '$output_isocor'
+    ]]></command>
+    <inputs>
+        <param type="data" name="input_gcms_files" multiple="true" format="txt" />
+    </inputs>   
+    <outputs>
+        <data name="output_isocor" format="tabular" />
+    </outputs>
+    <tests>
+        <test>
+            <param name="input_gcms_files" value="13CPROT1.txt,13CPROT2.txt"/>
+            <output name="output_isocor" file="input_isocor.tsv" ftype="tabular"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+        Convert the GC-MS raw data input files into a unique table suitable as input file for IsoCor.
+	
+	Processes GCMS files should be exported with the following categories: [Header], [MS Quantitative Results].
+	GC-MS raw dataset should contains a column "Name" filled with each carbon isotopologue of each fragment considered and a column "Area" filled with the area of the integrated peak. 
+	The name of each fragment must be written exactly as specified in the "Metabolite.dat" file (see https://isocor.readthedocs.io/en/latest/tutorials.html#input-data) to ensure accurate correction with
+	IsoCor. 
+
+	Example: the name “ProlineC2C5_TMS_m0” is for the GC-MS fragment m/z 142 (integrated peak) containing the C2-C3-C4-C5 carbon skeleton of proline and 1 TMS derivative. m0 refers to the carbon isotopologue
+	monitored (m0 for m/z = 142, m1 for m/z = 143, m2 for m/z = 144, m3 for m/z = 145, m4 for m/z = 146).
+    ]]></help>
+     <citations>
+        <citation type="doi">10.15454/1I9PET</citation>
+        <citation type="doi">10.3389/fpls.2022.885051</citation>
+    </citations>
+</tool>

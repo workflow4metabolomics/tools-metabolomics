@@ -1,0 +1,8 @@
+categories: 
+  - Metabolomics
+description: PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake & production fluxes
+long_description: Quantification of growth parameters and extracellular uptake and production fluxes is central in systems and synthetic biology. Fluxes can be estimated using various mathematical models by fitting time-course measurements of the concentration of cells and extracellular substrates and products. A single tool is available to calculate extracellular fluxes, but it is hardly interoperable and includes a single hard-coded growth model. We present our open-source flux calculation software, PhysioFit, which can be used with any growth model and is interoperable by design. PhysioFit includes by default the most common growth models, and additional models can be implemented by users to calculate fluxes and other growth parameters for metabolic systems or experimental setups that follow alternative kinetics. PhysioFit can be used as a Python library and includes a graphical user interface for intuitive use by end-users and a command-line interface to streamline integration into existing pipelines.
+name: physiofit
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/MetaSys-LISBP/PhysioFit
+homepage_url: physiofit.readthedocs.io

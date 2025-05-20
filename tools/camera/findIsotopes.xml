@@ -1,0 +1,144 @@
+<tool id="CAMERA_findIsotopes" name="CAMERA.findIsotopes" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+
+    <description>Annotate isotope peaks</description>
+
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+
+    <required_files>
+        <include type="literal" path="CAMERA_findIsotopes.R"/>
+        <include type="literal" path="lib.r"/>
+    </required_files>
+
+    <command detect_errors="exit_code"><![CDATA[
+		@COMMAND_RSCRIPT@CAMERA_findIsotopes.R
+		image '$image'
+		maxcharge $maxcharge
+		maxiso $maxiso
+		ppm $ppm
+		mzabs $mzabs
+		intval $intval
+		minfrac $minfrac
+		filter $filter
+		convertRTMinute $convertRTMinute
+		numDigitsMZ $numDigitsMZ
+		numDigitsRT $numDigitsRT
+        
+        @COMMAND_FILE_LOAD@
+		]]>
+    </command>
+
+    <inputs>
+        <param name="image" type="data" label="RData file" format="rdata" help="output file from another function CAMERA (groupFWHM)" />
+        <param name="maxcharge" type="integer" value="3" label="Max. ion charge" />
+        <param name="maxiso" type="integer" value="4" max="8" min="1" label="Max. number of expected isotopes" />
+        <param name="ppm" type="integer" value="5" label="ppm error for the search" />
+        <param name="mzabs" type="float" value="0.01" max="0.1" min="-0.1" label="allowed variance for the search" />
+        <param name="intval" type="select" label="choose intensity values for C12/C13 check. Allowed values are into, maxo, intb">
+            <option value="into" selected="true">into</option>
+            <option value="maxo">maxo</option>
+            <option value="intb">intb</option>
+        </param>
+        <param name="minfrac" type="float" value="0.5" max="1" min="0" label="The percentage number of samples, which must satisfy the C12/C13 rule for isotope annotation" />
+        <param name="filter" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Should C12/C13 filter be applied" />
+        <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert seconds to minutes when exporting tsv" />
+        <param name="numDigitsMZ" type="integer" value="4" max="4" min="0" label="Number of digits for MZ values (namecustom)" />
+        <param name="numDigitsRT" type="integer" value="4" max="4" min="0" label="Number of digits for RT values (namecustom)" />
+        <expand macro="input_file_load"/>
+    </inputs>
+    <outputs>
+        <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.findIsotopes.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="camera_findIsotopes_rdata" format="rdata" label="${image.name[:-6]}.findIsotopes.RData" from_work_dir="camera_findIsotopes.RData" />
+    </outputs>
+    <tests>
+        <test expect_num_outputs="2">
+            <param name="image" value="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.RData" />
+            <!--<param name="maxcharge" value="3" />
+            <param name="maxiso" value="4" />
+            <param name="ppm" value="5" />
+            <param name="mzabs" value="0.01" />
+            <param name="intval" value="into" />
+            <param name="minfrac" value="0.5" />
+            <param name="filter" value="FALSE" />-->
+            <expand macro="test_file_load_faahKO_15"/>
+            <output name="variableMetadata" file="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.findIsotopes.variableMetadata.tsv" />
+            <output name="camera_findIsotopes_rdata"  value="xset.merged.group.retcor.group.fillPeaks.fwhm.groupCorr.findIsotopes.RData" compare="sim_size" delta="5000" />
+        </test>
+    </tests>
+    <help><![CDATA[
+
+===================
+CAMERA.findIsotopes
+===================
+
+-----------
+Description
+-----------
+
+.. _link: https://bioconductor.org/packages/release/bioc/manuals/CAMERA/man/CAMERA.pdf
+
+Annotate isotope peaks for a xsAnnotate object. Returns a xsAnnotate object with annotated iso-
+topes. Click on the link to see the "Reference Manual" : link_ .
+
+---------------------------------------------------
+
+---------
+Arguments
+---------
+
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|Variables       |Descriptions                                                                                                              |
++================+==========================================================================================================================+
+|object          |the xsAnnotate object                                                                                                     |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|maxcharge       |max. number of the isotope charge                                                                                         |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|maxiso          |max. number of the isotope peaks                                                                                          |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|ppm             |ppm error for the search                                                                                                  |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|mzabs           |allowed variance for the search                                                                                           |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|intval          |choose intensity values for C12/C13 check. Allowed values are into, maxo, intb                                            |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|minfrac         |in case of multiple samples, percentaged value of samples, which have to contain the correct C12/C13 ratio and are not NA |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|isotopeMatrix   |four column m/z-diff and ratio Matrix, for matching isotopic peaks                                                        |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+|filter          |Should C12/C13 filter be applied                                                                                          |
++----------------+--------------------------------------------------------------------------------------------------------------------------+
+
+---------------------------------------------------
+
+-------
+Details
+-------
+
+Isotope peaks are annotated for a xsAnnotate object according to given rules (maxcharge, maxiso). The algorithm benefits from a earlier grouping of the data, with groupFWHM. Generates a list of all possible isotopes, which is stored in object@isotopes. Those isotope information will be used in the groupCorr funtion. The itensity of the C13 isotope peak is checked against the C12 of proper ratio. In the case of mulitiple sample, all samples will be tested. Minfrac describe the minimal percentaged of samples, which must passed the test. If peaks are NA, then this sample is skipped and the ratio is (found correct C12/C13 ratio) / (samples containing C12 and C13 peak).
+
+---------------------------------------------------
+
+------------------------------------------
+General schema of the metabolomic workflow
+------------------------------------------
+
+.. image:: findIsotopes.png
+
+---------------------------------------------------
+
+--------------
+Changelog/News        
+--------------
+
+.. _News: https://bioconductor.org/packages/release/bioc/news/CAMERA/NEWS
+
+@HELP_CAMERA_SUITE@
+
+]]>    </help>
+
+    <expand macro="citation"/>
+    <expand macro="creator"/>
+</tool>

@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<macros>
+    <token name="@TOOL_VERSION@">1.48.0</token>
+    <token name="@VERSION_SUFFIX@">2</token>
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="0.4_3">r-snow</requirement>
+            <requirement type="package" version="1.2.6">bioconductor-genomeinfodbdata</requirement>
+            <requirement type="package" version="@TOOL_VERSION@">bioconductor-camera</requirement>
+            <requirement type="package" version="2.48.0">bioconductor-multtest</requirement>
+            <requirement type="package" version="1.1_5">r-batch</requirement>
+            <requirement type="package" version="1.3.26">graphicsmagick</requirement>
+            <requirement type="package" version="3.0">zip</requirement>
+        </requirements>
+    </xml>
+    <xml name="stdio">
+        <stdio>
+            <exit_code range="1" level="fatal" />
+        </stdio>
+    </xml>
+
+    <token name="@COMMAND_RSCRIPT@">LC_ALL=C Rscript $__tool_directory__/</token>
+
+    <!-- raw file load for planemo test -->
+    <token name="@COMMAND_FILE_LOAD@">
+        #if $file_load_section.file_load_conditional.file_load_select == "yes":
+            #if $file_load_section.file_load_conditional.input[0].is_of_type("mzxml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzml") or $file_load_section.file_load_conditional.input[0].is_of_type("mzdata") or $file_load_section.file_load_conditional.input[0].is_of_type("netcdf"):
+                #set singlefile_galaxyPath = ','.join( [ str( $single_file ) for $single_file in $file_load_section.file_load_conditional.input ] )
+                #set singlefile_sampleName = ','.join( [ str( $single_file.element_identifier ) for $single_file in $file_load_section.file_load_conditional.input ] )
+                singlefile_galaxyPath '$singlefile_galaxyPath' singlefile_sampleName '$singlefile_sampleName'
+            #else
+                zipfile '$file_load_section.file_load_conditional.input'
+            #end if
+        #end if
+    </token>
+
+    <xml name="input_file_load">
+        <section name="file_load_section" title="Resubmit your raw dataset or your zip file">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" type="select" label="Resubmit your dataset or your zip file" help="Use only if you get a message which say that your original dataset or zip file have been deleted on the server.">
+                    <option value="no">no need</option>
+                    <option value="yes">yes</option>
+                </param>
+                <when value="no">
+                </when>
+                <when value="yes">
+                    <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf,no_unzip.zip,zip" multiple="true" label="File(s) from your history containing your chromatograms" help="Single file mode for the format: mzxml, mzml, mzdata and netcdf. Zip file mode for the format: no_unzip.zip, zip. See the help section below." />
+                </when>
+            </conditional>
+        </section>
+    </xml>
+
+    <xml name="test_file_load_zip">
+        <section name="file_load_section">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" value="yes" />
+                <param name="input" value="faahKO_reduce.zip" ftype="zip" />
+            </conditional>
+        </section>
+    </xml>
+
+    <xml name="test_file_load_single">
+        <section name="file_load_section">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" value="yes" />
+                <param name="input" value="wt15.CDF,ko16.CDF,ko15.CDF,wt16.CDF" ftype="netcdf" />
+            </conditional>
+        </section>
+    </xml>
+
+    <xml name="test_file_load_faahKO_15">
+        <section name="file_load_section">
+            <conditional name="file_load_conditional">
+                <param name="file_load_select" value="yes" />
+                <param name="input" value="wt15.CDF,ko15.CDF" ftype="netcdf" />
+            </conditional>
+        </section>
+    </xml>
+
+    <!-- peaklist export option management -->
+    <token name="@COMMAND_PEAKLIST@">
+        convertRTMinute $export.convertRTMinute
+        numDigitsMZ $export.numDigitsMZ
+        numDigitsRT $export.numDigitsRT
+        intval $export.intval
+    </token>
+
+    <xml name="input_peaklist">
+        <section name="export" title="Export options">
+            <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert retention time (seconds) into minutes" help="Convert the columns rtmed, rtmin and rtmax into minutes"/>
+            <param name="numDigitsMZ" type="integer" value="4" label="Number of decimal places for mass values reported in ions' identifiers." help="A minimum of 4 decimal places is recommended. Useful to avoid duplicates within identifiers" />
+            <param name="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers" />
+            <param name="intval" type="select" label="General used intensity value" help="[intval] See the help section below">
+                <option value="into" selected="true">into</option>
+                <option value="maxo">maxo</option>
+                <option value="intb">intb</option>
+            </param>
+        </section>
+    </xml>
+
+    <xml name="test_peaklist">
+        <section name="export">
+            <param name="convertRTMinute" value="True"/>
+            <param name="numDigitsMZ" value="4" />
+            <param name="numDigitsRT" value="1" />
+            <param name="intval" value="into"/>
+        </section>
+    </xml>
+
+    <!-- annotate_diffreport <test> commun part -->
+    <xml name="test_annotate_diffreport">
+        <section name="groupfwhm">
+            <param name="sigma" value="6"/>
+            <param name="perfwhm" value="0.6"/>
+        </section>
+        <section name="findisotopes">
+            <param name="maxcharge" value="3"/>
+            <param name="maxiso" value="4"/>
+            <param name="minfrac" value="0.5"/>
+        </section>
+        <section name="findgeneral">
+            <param name="ppm" value="5"/>
+            <param name="mzabs" value="0.015"/>
+            <param name="max_peaks" value="100"/>
+        </section>
+        <section name="diffreport">
+            <conditional name="options">
+                <param name="option" value="show"/>
+                <param name="eicmax" value="200"/>
+                <param name="eicwidth" value="200"/>
+                <param name="value" value="into"/>
+                <param name="h" value="480"/>
+                <param name="w" value="640"/>
+                <param name="mzdec" value="2"/>
+                <param name="sortpval" value="False"/>
+                <param name="tabular2" value="zip"/>
+                <param name="png2" value="zip"/>
+            </conditional>
+        </section>
+        <expand macro="test_peaklist"/>
+    </xml>
+
+    <xml name="test_annotate_quick_false">
+        <param name="quick" value="FALSE"/>
+        <section name="groupcorr">
+            <param name="cor_eic_th" value="0.75"/>
+            <param name="graphMethod" value="hcs"/>
+            <param name="pval" value="0.05"/>
+            <param name="calcCiS" value="True"/>
+            <param name="calcIso" value="False"/>
+            <param name="calcCaS" value="False"/>
+        </section>
+    </xml>
+
+    <xml name="test_annotate_quick_true">
+        <conditional name="quick_block">
+            <param name="quick" value="TRUE"/>
+        </conditional>
+    </xml>
+
+    <token name="@HELP_AUTHORS@">
+.. class:: infomark
+
+**Authors**  Colin A. Smith csmith@scripps.edu, Ralf Tautenhahn rtautenh@gmail.com, Steffen Neumann sneumann@ipb-halle.de, Paul Benton hpaul.benton08@imperial.ac.uk and Christopher Conley cjconley@ucdavis.edu
+
+.. class:: infomark
+
+**Galaxy integration** ABiMS TEAM - UPMC/CNRS - Station biologique de Roscoff and Yann Guitton yann.guitton@oniris-nantes.fr - part of Workflow4Metabolomics.org [W4M]
+
+ | Contact support@workflow4metabolomics.org for any questions or concerns about the Galaxy implementation of this tool.
+
+---------------------------------------------------
+
+    </token>
+
+    <token name="@HELP_CAMERA_SUITE@">
+**Version 0.1.0+camera1.48.0 - 06/11/2024**
+
+- Initial release with core functionalities for peak annotation, grouping, and visualization using CAMERA (see CAMERA News_).
+    </token>
+
+    <token name="@HELP_CAMERA_NEWVERSION_1480@">
+**Version 2.2.6+camera1.48.0 - 11/06/2021**
+
+- UPGRADE: upgrade the CAMERA version from 1.46.0 to 1.48.0 (see CAMERA News_)
+    </token>
+
+    <token name="@HELP_CAMERA_NEWVERSION_1460@">
+**Version 2.2.6+camera1.46.0 - 12/04/2021**
+
+- UPGRADE: upgrade the CAMERA version from 1.42.0 to 1.46.0 (see CAMERA News_)
+    </token>
+
+    <token name="@HELP_CAMERA_NEWVERSION_1420@">
+**Version 2.2.6+camera1.42.0 - 13/02/2020**
+
+- UPGRADE: upgrade the CAMERA version from 1.38.0 to 1.42.0 (see CAMERA News_)
+    </token>
+
+    <xml name="citation">
+        <citations>
+            <citation type="doi">10.1021/ac202450g</citation>
+            <citation type="doi">10.1093/bioinformatics/btu813</citation>
+        </citations>
+    </xml>
+
+    <xml name="creator">
+        <creator>
+            <organization name="MELISA" url="https://www.laberca.org/plateforme-melisa/presentation"></organization>
+            <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
+
+            <person givenName="Yann" familyName="Guitton" url="https://github.com/yguitton"></person>
+            <person givenName="Damien" familyName="Rat" url="https://github.com/DamienCode404"></person>
+            <person givenName="Julien" familyName="Saint-Vanne" url="https://github.com/jsaintvanne"></person>
+        </creator>
+    </xml>
+</macros>

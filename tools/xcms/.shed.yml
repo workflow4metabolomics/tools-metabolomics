@@ -1,0 +1,157 @@
+definitions:
+  include: &default-includes
+    - test-data
+    - static
+    - lib.r
+    - macros_xcms.xml
+    - macros.xml
+
+name: xcms
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/sneumann/xcms
+categories:
+- Metabolomics
+
+repositories:
+  xcms_export_samplemetadata:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Get a sample metadata file'
+    long_description: |
+      Generates a skeleton of sampleMetadata
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, xcms_export_samplemetadata.xml, xcms_export_samplemetadata.r]
+  xcms_fillpeaks:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Integrate areas of missing peaks'
+    long_description: |
+      For each sample, identify peak groups where that sample is not represented.
+      For each of those peak groups, integrate the signal in the region of that peak group and create a new peak.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_fillPeaks.xml, xcms_fillpeaks.r]
+  xcms_group:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Group peaks from different samples together'
+    long_description: |
+      Group peaks together across samples using overlapping m/z bins and
+      calculation of smoothed peak distributions in chromatographic time.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_group.xml, xcms_group.r]
+  xcms_merge:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Merge individual xcmsSet outputs'
+    long_description: |
+      Filtration and Peak Identification using xcmsSet function from xcms R
+      package to preprocess LC/MS data for relative quantification and
+      statistical analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, xcms_merge.xml, xcms_merge.r]
+  xcms_plot_chromatogram:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)'
+    long_description: |
+      Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, xcms_plot_chromatogram.xml, xcms_plot_chromatogram.r]
+  xcms_refine:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Refine choice of peaks'
+    long_description: |
+      Remove or merge chromatographic peaks based on specific criteria.
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: workflow4metabolomics
+    include:
+      [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
+  xcms_retcor:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Correct retention time from different samples'
+    long_description: |
+      Retention Time Correction using retcor function from xcms R package
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_retcor.xml, xcms_retcor.r]
+  xcms_xcmsset:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - peaks calling in NetCDF/mzXML files'
+    long_description: |
+      Filtration and Peak Identification using xcmsSet function from xcms R
+      package to preprocess LC/MS data for relative quantification and
+      statistical analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_xcmsSet.xml, xcms_xcmsSet.r]
+  xcms_summary:
+    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - HTML Summary for XCMS and CAMERA analysis'
+    long_description: |
+      This tool create a HTML summary of XCMS and CAMERA analysis
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, abims_xcms_summary.xml, xcms_summary.r]
+  msnbase_readmsdata:
+    description: '[Metabolomics][W4M][LC-MS] MSnbase R Package - Preprocessing - Imports Mass-Spectrometry Data Files'
+    long_description: |
+      Reads XML-based mass-spectrometry data files.  Can be chained with the W4M
+      xcms.findChromPeaks tool
+      Part of the W4M project: http://workflow4metabolomics.org
+      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+    owner: lecorguille
+    include:
+      [*default-includes, msnbase_readmsdata.xml, msnbase_readmsdata.r, macros_msnbase.xml]
+  xcms_plot_raw:
+    description: Plot raw mzml file content with xcms
+    long_description: |
+      This suite provides tools from the XCMS package to visualize extracted ion chromatograms and raw data 
+      from a single mzML file. Users can define m/z and retention time (rt) values, and the suite plots data 
+      with a user-defined tolerance and rt range centered around the selected m/z and rt values.
+      The MsExperiment plot function creates a two-dimensional view of three-dimensional mass spectrometry data,
+      displaying peaks in the two-dimensional m/z versus retention time plane with intensity color-coding. The plot
+      is saved as a PNG file
+    owner: workflow4metabolomics
+    type: unrestricted
+    include:
+      - xcms_plot_raw.xml
+      - macros_xcms_plot.xml
+      - test-data/raw_plot.png
+      - test-data/xcms_plot_raw_testdata.mzML
+  xcms_plot_eic:
+    description: Plot EIC using xcms
+    long_description: |
+      This suite provides tools from the XCMS package to visualize extracted ion chromatograms and raw data 
+      from a single mzML file. Users can define m/z and retention time (rt) values, and the suite plots data 
+      with a user-defined tolerance and rt range centered around the selected m/z and rt values.
+      The MsExperiment plot function creates a two-dimensional view of three-dimensional mass spectrometry data,
+      displaying peaks in the two-dimensional m/z versus retention time plane with intensity color-coding. The plot
+      is saved as a PNG file
+    owner: workflow4metabolomics
+    type: unrestricted
+    include:
+      - xcms_plot_eic.xml
+      - macros_xcms_plot.xml
+      - test-data/eic_plot.png
+      - test-data/xcms_plot_eic_testdata.mzML
+suite:
+  name: suite_xcms
+  owner: lecorguille
+  homepage_url: http://workflow4metabolomics.org
+  description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - Framework for processing data for high-throughput, untargeted analyte profiling'
+  long_description: |
+    Part of the W4M project: http://workflow4metabolomics.org XCMS:
+    http://www.bioconductor.org/packages/release/bioc/html/xcms.html
+    XCMS: processing mass spectrometry data for metabolite profiling
+    using nonlinear peak alignment, matching, and identification
+
+

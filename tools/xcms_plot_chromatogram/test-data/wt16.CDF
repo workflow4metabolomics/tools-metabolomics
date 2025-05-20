@@ -1,1 +1,0 @@
-../../xcms_test-data/wt16.CDF

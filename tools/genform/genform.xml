@@ -1,10 +1,11 @@
-<tool id="genform" name="genform" version="@GENFORM_VERSION@" python_template_version="3.5">
+<tool id="genform" name="genform" version="@GENFORM_VERSION@+galaxy1" python_template_version="3.5">
     <description>Generation of molecular formulas by high-resolution MS and MS/MS data</description>
     <macros>
         <token name="@GENFORM_VERSION@">8</token>
     </macros>
     <requirements>
         <requirement type="package" version="r@GENFORM_VERSION@">genform</requirement>
+        <requirement type="package" version="1.07.1">bc</requirement>        
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 genform 
@@ -218,7 +219,6 @@ genform
             <param type="boolean" argument="oms" checked="false" truevalue="oms" falsevalue="" label="Write scaled MS peaks output" help="" />
             <param type="boolean" argument="omsms" checked="false" truevalue="omsms" falsevalue="" label="Write scaled MS/MS peaks output" help="" />
             <param type="boolean" argument="oclean" checked="false" truevalue="oclean" falsevalue="" label="Write MS/MS with only explained peaks" help="" />
-            <param type="boolean" argument="oclean" checked="false" truevalue="oms" falsevalue="" label="Write MS/MS with only explained peaks" help="" />
         </section>
     </inputs>
     <outputs>
@@ -302,7 +302,6 @@ genform
                 <param name="oms" value="oms" />
                 <param name="omsms" value="omsms" />
                 <param name="oclean" value="oclean" />
-                <param name="oclean" value="oms"/>
             </section>
             <output name="out" ftype="tabular" file="CreatineMsMs.out"/>
             <output name="outoms" ftype="tabular" file="CreatineMsMs-oms.out"/>

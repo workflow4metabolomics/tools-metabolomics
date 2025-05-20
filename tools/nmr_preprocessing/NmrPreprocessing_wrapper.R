@@ -20,14 +20,26 @@ options(stringsAsFactors = FALSE)
 
 ## ------------------------------
 ## Libraries laoding
-## ------------------------------
-library(batch)
-library(ptw)
-library(Matrix)
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
+##------------------------------
+# library(batch)
+suppressPackageStartupMessages(library(ptw))
+suppressPackageStartupMessages(library(Matrix))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(reshape2))
 
+# In-house function for argument parsing
+parse_args <- function() {
+    args <- commandArgs()
+    start <- which(args == "--args")[1] + 1
+    if (is.na(start)) {
+        return(list())
+    }
+    seq_by2 <- seq(start, length(args), by = 2)
+    result <- as.list(args[seq_by2 + 1])
+    names(result) <- args[seq_by2]
+    return(result)
+}
 
 # R script call
 source_local <- function(fname) {
@@ -44,13 +56,14 @@ source_local("DrawFunctions.R")
 ## ------------------------------
 runExampleL <- FALSE
 
+if(!runExampleL)
+#  argLs <- parseCommandArgs(evaluate=FALSE)
+  argLs <- unlist(parse_args())
 
-if (!runExampleL) {
-    argLs <- parseCommandArgs(evaluate = FALSE)
-}
-
-sink(argLs$logOut)
-
+sink(argLs[["logOut"]])
+# input arguments
+cat("\n INPUT and OUTPUT ARGUMENTS :\n")
+print(argLs)
 
 ## ------------------------------
 ## Errors ?????????????????????
@@ -62,12 +75,6 @@ sink(argLs$logOut)
 ## ------------------------------
 topEnvC <- environment()
 flagC <- "\n"
-
-
-
-
-# log file
-# print(argLs[["logOut"]])
 
 ## Starting
 cat("\nStart of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), "\n", sep = "")
@@ -89,7 +96,6 @@ ZeroOPCGraph <- argLs[["ZeroOPCGraph"]]
 BCGraph <- argLs[["BCGraph"]]
 FinalGraph <- argLs[["FinalGraph"]]
 
-
 # 1rst order phase correction ------------------------
 # Inputs
 ## Data matrix
@@ -101,12 +107,9 @@ Fid_data0 <- as.matrix(Fid_data0)
 samplemetadataFid <- read.table(argLs[["sampleMetadataFid"]], check.names = FALSE, header = TRUE, sep = "\t")
 samplemetadataFid <- as.matrix(samplemetadataFid)
 
-
 # water and solvent(s) correction ------------------------
 # Inputs
 lambda <- argLs[["lambda"]]
-
-
 
 # apodization -----------------------------------------
 # Inputs
@@ -134,10 +137,8 @@ if (apodization == "exp") {
     gaussLB <- argLs[["gaussLB"]]
 }
 
-
 # Fourier transform ----------------------------------
 # Inputs
-
 
 # Zero Order Phase Correction -------------------------------
 # Inputs
@@ -166,20 +167,19 @@ if (excludeZoneZeroPhase == "YES") {
 
 # Internal referencering ----------------------------------
 # Inputs
-shiftTreshold <- 2 # c
+shiftTreshold <- 2
 ppm <- TRUE
-shiftReferencingRangeList <- NULL # fromto.RC
-pctNearValue <- 0.02 # pc
+shiftReferencingRangeList <- NULL  # fromto.RC
+pctNearValue <- 0.02 # pc 
 rowindex_graph <- NULL
 ppm_ref <- 0 # ppm.ref
 
-#
+
 # shiftReferencing <- argLs[["shiftReferencing"]]
 # print(shiftReferencing)
-#
-# if (shiftReferencing=="YES")
-# {
-#
+# 
+# if (shiftReferencing=="YES") {
+#   
 # shiftReferencingMethod <- argLs[["shiftReferencingMethod"]]
 #
 # if (shiftReferencingMethod == "thres")	{
@@ -205,11 +205,7 @@ if (shiftReferencingRange == "window") {
 shiftHandling <- argLs[["shiftHandling"]]
 
 ppmvalue <- argLs[["ppmvalue"]]
-
-
-
 # }
-
 
 # Baseline Correction -------------------------------
 # Inputs
@@ -234,33 +230,25 @@ if (excludeZoneBC == "YES") {
 # Inputs
 NegativetoZero <- argLs[["NegativetoZero"]]
 
-
-# Outputs
+  # Outputs
 nomGraphe <- argLs[["graphOut"]]
 # dataMatrixOut <- argLs[["dataMatrixOut"]]
 log <- argLs[["logOut"]]
-
-
 
 ## Checking arguments
 ## -------------------
 error.stock <- "\n"
 
-if (length(error.stock) > 1) {
-    stop(error.stock)
-}
-
-
-## ======================================================
-## ======================================================
+if(length(error.stock) > 1)
+  stop(error.stock)
+  
+##======================================================  
 ## Computation
-## ======================================================
-## ======================================================
-
+##======================================================
 pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
 
 # FirstOrderPhaseCorrection ---------------------------------
-Fid_data <- GroupDelayCorrection(Fid_data0, Fid_info = samplemetadataFid, group_delay = NULL)
+# Fid_data <- GroupDelayCorrection(Fid_data0, Fid_info = samplemetadataFid, group_delay = NULL)
 
 if (FirstOPCGraph == "YES") {
     title <- "FIDs after Group Delay Correction"
@@ -318,6 +306,13 @@ if (FTGraph == "YES") {
 }
 
 
+# if (FTGraph == "YES") {
+#   title = "Fourier transformed spectra"
+  # DrawSignal(Spectrum_data, subtype = "stacked",
+  #            ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T, 
+  #            xlab = "Frequency", num.stacked = 4, 
+  #            main = title, createWindow=FALSE)
+# }
 
 # ZeroOrderPhaseCorrection ---------------------------------
 Spectrum_data <- ZeroOrderPhaseCorrection(Spectrum_data,
@@ -380,6 +375,13 @@ if (BCGraph == "YES") {
     )
 }
 
+# if (BCGraph == "YES") {
+# title = "Spectra after Baseline Correction"
+# DrawSignal(Spectrum_data, subtype = "stacked",
+  #          ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T, 
+  #          xlab = "Frequency", num.stacked = 4, 
+  #          main = title, createWindow=FALSE)
+# }
 
 # NegativeValuesZeroing ---------------------------------
 if (NegativetoZero == "YES") {
@@ -396,8 +398,11 @@ if (FinalGraph == "YES") {
     )
 }
 
-invisible(dev.off())
+# invisible(dev.off())
 
+# data_variable <- matrix(NA, nrow = 1, ncol = dim(Spectrum_data)[2], dimnames = list("ID", NULL)) 
+# colnames(data_variable) <- colnames(Spectrum_data)
+# data_variable[1,] <- colnames(data_variable)
 
 data_variable <- matrix(NA, nrow = 1, ncol = dim(Spectrum_data)[2], dimnames = list("ID", NULL))
 colnames(data_variable) <- colnames(Spectrum_data)
@@ -426,7 +431,8 @@ argLs
 
 
 ## Ending
-
+cat("\nVersion of R librairies")
+sessionInfo()
 cat("\nEnd of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), sep = "")
 
 sink()

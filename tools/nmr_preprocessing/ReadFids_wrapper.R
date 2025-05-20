@@ -20,11 +20,12 @@ options(warn = 1)
 ## Libraries laoding
 ##------------------------------
 # library(batch) 
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(gridExtra))
-suppressPackageStartupMessages(library(reshape2))
+suppressPackageStartupMessages(library(ggplot2)) # nice plots
+suppressPackageStartupMessages(library(gridExtra)) # nice plots
+suppressPackageStartupMessages(library(reshape2)) # data manipulation
+suppressPackageStartupMessages(library(stringr)) # string of characters manipulation
 
-# In-house function for argument parsing
+# In-house function for argument parsing instead of the R batch library)
 parse_args <- function() {
     args <- commandArgs()
     start <- which(args == "--args")[1] + 1
@@ -122,16 +123,16 @@ print(argLs)
 fileType <- "Bruker"
 zipfile <- argLs[["fidzipfile"]]
 
-rawFilePath <- retrieveRawfileInTheWorkingDir(NULL, zipfile)
-zipfile1 <- rawFilePath
+# rawFilePath <- retrieveRawfileInTheWorkingDir(NULL, zipfile)
+# zipfile1 <- rawFilePath
 
 directory <- unzip(zipfile, list = F)
 
-filesInZip <- unzip(zipfile, list = TRUE)
+# filesInZip <- unzip(zipfile, list = TRUE)
 
-path1 <- paste(getwd(), strsplit(zipfile1[1], "/")[[1]][2], sep = "/")
+# path1 <- paste(getwd(), strsplit(zipfile1[1], "/")[[1]][2], sep = "/")
 
-path <- paste(getwd(),strsplit(directory[1],"/")[[1]][2],sep="/")
+path <- paste(getwd(),strsplit(directory[1], "/")[[1]][2], sep = "/")
 
      # other inputs from ReadFids
 l <- argLs[["title_line"]]
@@ -169,7 +170,7 @@ invisible(dev.off())
 ## Saving
 ##======================================================
 # Data matrix
-write.table(data_matrix, file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(t(data_matrix), file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # Sample metadata
 write.table(data_sample, file = argLs[["sampleMetadata"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)

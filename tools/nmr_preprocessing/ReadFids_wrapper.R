@@ -29,6 +29,45 @@ suppressPackageStartupMessages(library(gridExtra)) # nice plots
 suppressPackageStartupMessages(library(reshape2)) # data manipulation
 suppressPackageStartupMessages(library(stringr)) # string of characters manipulation
 
+# This function retrieve the raw file in the working directory
+#   - if zipfile: unzip the file with its directory tree
+#   - if singlefiles: set symlink with the good filename
+retrieveRawfileInTheWorkingDir <- function(singlefile, zipfile) {
+  if (!is.null(singlefile) && (length("singlefile") > 0)) {
+    for (singlefile_sampleName in names(singlefile)) {
+      singlefile_galaxyPath <- singlefile[[singlefile_sampleName]]
+      if (!file.exists(singlefile_galaxyPath)) {
+        error_message <- paste("Cannot access the sample:", singlefile_sampleName, "located:", singlefile_galaxyPath, ". Please, contact your administrator ... if you have one!")
+        print(error_message)
+        stop(error_message)
+      }
+      
+      file.symlink(singlefile_galaxyPath, singlefile_sampleName)
+    }
+    directory <- "."
+  }
+  if (!is.null(zipfile) && (zipfile != "")) {
+    if (!file.exists(zipfile)) {
+      error_message <- paste("Cannot access the Zip file:", zipfile, ". Please, contact your administrator ... if you have one!")
+      print(error_message)
+      stop(error_message)
+    }
+    
+    # unzip
+    suppressWarnings(unzip(zipfile, unzip = "unzip"))
+    
+    # get the directory name
+    filesInZip <- unzip(zipfile, list = TRUE)
+    directories <- unique(unlist(lapply(strsplit(filesInZip$Name, "/"), function(x) x[1])))
+    directories <- directories[!(directories %in% c("__MACOSX")) & file.info(directories)$isdir]
+    directory <- "."
+    if (length(directories) == 1) directory <- directories
+    
+    cat("files_root_directory\t", directory, "\n")
+  }
+  return(directory)
+}
+
 # In-house function for argument parsing instead of the R batch library)
 parse_args <- function() {
     args <- commandArgs()
@@ -97,7 +136,17 @@ directory <- unzip(zipfile, list = F)
 
 path <- paste(getwd(),strsplit(directory[1], "/")[[1]][2], sep = "/")
 
-     # other inputs from ReadFids
+zipfile1 <- rawFilePath[[1]]
+print(zipfile1)
+
+path1 <- paste(paste(getwd(), zipfile1, sep = "/"), "/", sep = "")
+print(path1)
+
+path <- paste(paste(getwd(), strsplit(directory, "/")[[1]][2], sep = "/"), "/", sep = "")
+print(path)
+
+
+  # other inputs from ReadFids
 l <- argLs[["title_line"]]
 subdirs <- argLs[["subdirectories"]]
 dirs.names <- argLs[["dirs_names"]]
@@ -175,8 +224,7 @@ cat("\nEnd of 'ReadFids' Galaxy module call: ", as.character(Sys.time()), sep = 
 
 sink()
 
-
 options(stringsAsFactors = strAsFacL)
 
 rm(list = ls())
-sink()
+

@@ -28,7 +28,10 @@ These are the default steps to be completed - if something is not applicable, pl
 - [ ] Add citations -> default should be latest W4M publication
 - [ ] Update tool wrapper version
 
-## Improvements 
+## Improvements
+
+This is an [example](https://github.com/workflow4metabolomics/tools-metabolomics/blob/master/tools/xcms/xcms_plot_raw.xml) of a recent tool wrapper that complies with recent best practices.
+
 - [ ] Make the tool work with Pulsar (see [including required files](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-required-files-include)
 - [ ] Add [EDAM](https://edamontology.github.io/edam-browser/#topic_0091) topics and operations (see [here](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-edam-topics))
 - [ ] Add creator tag (see [here](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-creator))

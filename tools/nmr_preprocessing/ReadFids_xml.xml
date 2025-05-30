@@ -41,7 +41,7 @@
     </command>
 
     <inputs>
-        <param name="fidzipfile" type="data" format="no_unzip.zip,zip" label="Bruker FID file" />
+        <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />
         <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" size="100" help="Default value is line 1"/>
 
         <param name="subdirectories" label="Presence of subdirectories?" type="select" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories">

@@ -1,4 +1,4 @@
-<tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5' profile='21.05'>
+<tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy1' python_template_version='3.5' profile='21.05'>
     <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
     <macros>
         <token name='@TOOL_VERSION@'>3.4.0</token>
@@ -15,12 +15,14 @@
     --data $datafile 
     -or '$recap' 
     -oz $zip 
+    $verbose
     2> $log 
     ]]>
     </command>
     <inputs>
         <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
         <param name='configfile' type='data' format='yaml' multiple='true' label='Upload yaml configuration file containing run parameters'/>
+        <param name='verbose' type='boolean' truevalue='--debug_mode' falsevalue='' label='Debug mode' help='Select "Yes" to have debug logs be printed out'/>
     </inputs>
     <outputs>
         <data name='recap' label='Summary file' format='csv'/>

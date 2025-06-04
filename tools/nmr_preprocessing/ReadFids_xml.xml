@@ -1,18 +1,15 @@
-<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy1">
+<tool id="NMR_Read" name="NMR_Read" version="4.0.0">
     <description> Read Bruker NMR raw files</description>
 
-    <macros>
-        <import>macros.xml</import>
-    </macros>
+    <requirements>
+        <requirement type="package">r-ggplot2</requirement>
+        <requirement type="package">r-gridExtra</requirement>
+        <requirement type="package">r-reshape2</requirement>
+    </requirements>
 
-    <expand macro="requirements" />
-    <required_files>
-        <include path="ReadFids_wrapper.R" />
-        <include path="ReadFids_script.R" />
-        <include path="DrawFunctions.R" />
-    </required_files>
-
-    <expand macro="stdio"/>
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
 
     <command>
         ## Wrapper
@@ -35,11 +32,10 @@
         sampleMetadata $sampleMetadata
         logOut $logOut
         graphOut $graphOut
-
     </command>
 
     <inputs>
-        <param name="fidzipfile" type="data" format="no_unzip.zip,zip" label="Bruker FID file" />
+        <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />
         <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" size="100" help="Default value is line 1"/>
 
         <param name="subdirectories" label="Presence of subdirectories?" type="select" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories">

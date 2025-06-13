@@ -49,29 +49,29 @@
         tocsy_2dsequences $tocsy_2dsequences
 
         ## In-house databases
-        inHouse_DB_choices.choice ${inHouse_DB_choices.choice}
-        #if str($inHouse_DB_choices.choice) == 'yes':
-            inHouse_DB_cosy.choice ${inHouse_DB_choices.inHouse_DB_cosy.choice}
-            #if str($inHouse_DB_choices.inHouse_DB_cosy.choice) == 'yes':
-                cosyDB $inHouse_DB_choices.inHouse_DB_cosy.cosyDB
-            #end if
-            inHouse_DB_hmbc.choice ${inHouse_DB_choices.inHouse_DB_hmbc.choice}
-            #if str($inHouse_DB_choices.inHouse_DB_hmbc.choice) == 'yes':
-                hmbcDB $inHouse_DB_choices.inHouse_DB_hmbc.hmbcDB
-            #end if
-            inHouse_DB_hsqc.choice ${inHouse_DB_choices.inHouse_DB_hsqc.choice}
-            #if str($inHouse_DB_choices.inHouse_DB_hsqc.choice) == 'yes':
-                hsqcDB $inHouse_DB_choices.inHouse_DB_hsqc.hsqcDB
-            #end if
-            inHouse_DB_jres.choice ${inHouse_DB_choices.inHouse_DB_jres.choice}
-            #if str($inHouse_DB_choices.inHouse_DB_jres.choice) == 'yes':
-                jresDB $inHouse_DB_choices.inHouse_DB_jres.jresDB
-            #end if
-            inHouse_DB_tocsy.choice ${inHouse_DB_choices.inHouse_DB_tocsy.choice}
-            #if str($inHouse_DB_choices.inHouse_DB_tocsy.choice) == 'yes':
-                tocsyDB $inHouse_DB_choices.inHouse_DB_tocsy.tocsyDB
-            #end if
-        #end if
+        ## inHouse_DB_choices.choice ${inHouse_DB_choices.choice}
+        ## #if str($inHouse_DB_choices.choice) == 'yes':
+        ##     inHouse_DB_cosy.choice ${inHouse_DB_choices.inHouse_DB_cosy.choice}
+        ##     #if str($inHouse_DB_choices.inHouse_DB_cosy.choice) == 'yes':
+        ##         cosyDB $inHouse_DB_choices.inHouse_DB_cosy.cosyDB
+        ##     #end if
+        ##     inHouse_DB_hmbc.choice ${inHouse_DB_choices.inHouse_DB_hmbc.choice}
+        ##     #if str($inHouse_DB_choices.inHouse_DB_hmbc.choice) == 'yes':
+        ##         hmbcDB $inHouse_DB_choices.inHouse_DB_hmbc.hmbcDB
+        ##     #end if
+        ##     inHouse_DB_hsqc.choice ${inHouse_DB_choices.inHouse_DB_hsqc.choice}
+        ##     #if str($inHouse_DB_choices.inHouse_DB_hsqc.choice) == 'yes':
+        ##         hsqcDB $inHouse_DB_choices.inHouse_DB_hsqc.hsqcDB
+        ##     #end if
+        ##     inHouse_DB_jres.choice ${inHouse_DB_choices.inHouse_DB_jres.choice}
+        ##     #if str($inHouse_DB_choices.inHouse_DB_jres.choice) == 'yes':
+        ##         jresDB $inHouse_DB_choices.inHouse_DB_jres.jresDB
+        ##     #end if
+        ##     inHouse_DB_tocsy.choice ${inHouse_DB_choices.inHouse_DB_tocsy.choice}
+        ##     #if str($inHouse_DB_choices.inHouse_DB_tocsy.choice) == 'yes':
+        ##         tocsyDB $inHouse_DB_choices.inHouse_DB_tocsy.tocsyDB
+        ##     #end if
+        ## #end if
 
         ## Tolerances
         tolppm1 $tolppm1
@@ -139,7 +139,7 @@
                         <option value="no" selected="true"> no </option>
                     </param>
                     <when value="yes">
-                        <param name="cosyDB" type="data" format="no_unzip.zip" label="Zip file of the COSY RData object" />
+                        <param name="cosyDB" type="data" format="zip" label="Zip file of the COSY RData object" />
                     </when>
                     <when value="no" />
                 </conditional>
@@ -149,7 +149,7 @@
                         <option value="no" selected="true"> no </option>
                     </param>
                     <when value="yes">
-                        <param name="hmbcDB" type="data" format="no_unzip.zip" label="Zip file of the HMBC RData object" />
+                        <param name="hmbcDB" type="data" format="zip" label="Zip file of the HMBC RData object" />
                     </when>
                     <when value="no" />
                 </conditional>
@@ -159,7 +159,7 @@
                         <option value="no" selected="true"> no </option>
                     </param>
                     <when value="yes">
-                        <param name="hsqcDB" type="data" format="no_unzip.zip" label="Zip file of the HSQC RData object" />
+                        <param name="hsqcDB" type="data" format="zip" label="Zip file of the HSQC RData object" />
                     </when>
                     <when value="no" />
                 </conditional>
@@ -169,7 +169,7 @@
                         <option value="no" selected="true"> no </option>
                     </param>
                     <when value="yes">
-                        <param name="jresDB" type="data" format="no_unzip.zip" label="Zip file of the JRES RData object" />
+                        <param name="jresDB" type="data" format="zip" label="Zip file of the JRES RData object" />
                     </when>
                     <when value="no" />
                 </conditional>
@@ -179,7 +179,7 @@
                         <option value="no" selected="true"> no </option>
                     </param>
                     <when value="yes">
-                        <param name="tocsyDB" type="data" format="no_unzip.zip" label="Zip file of the TOCSY RData object" />
+                        <param name="tocsyDB" type="data" format="zip" label="Zip file of the TOCSY RData object" />
                     </when>
                     <when value="no" />
                 </conditional>
@@ -270,6 +270,7 @@
             <output name="annotationCombination" file="2DNMRAnnotation_annotationCombination.tabular"/>
         </test>
     </tests>
+
     <help>
 
 .. class:: infomark

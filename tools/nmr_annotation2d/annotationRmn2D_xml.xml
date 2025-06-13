@@ -1,5 +1,4 @@
 <tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0+galaxy2" profile="20.09">
-
     <description> Annotation of complex mixture bidimensional NMR spectra </description>
 
     <requirements>
@@ -13,6 +12,7 @@
         <requirement type="package" version="1.6">r-jsonlite</requirement>
         <requirement type="package" version="1">r-stringi</requirement>
     </requirements>
+
     <required_files>
         <include path="annotationRmn2DWrapper.R" />
         <include path="annotationRmn2D.R" />
@@ -25,6 +25,7 @@
         <include path="BdDReference_NOESY.RData" />
         <include path="BdDReference_TOCSY.RData" />
     </required_files>
+
     <stdio>
         <exit_code range="1:" level="fatal" />
     </stdio>
@@ -438,5 +439,4 @@ Example of output files obtaining wehn running the algorithm on a mix of 23 know
     <citations>
         <citation type="doi">10.1093/bioinformatics/btu813</citation>
     </citations>
-
 </tool>

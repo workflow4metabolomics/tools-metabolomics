@@ -47,31 +47,6 @@
         hsqc_2dsequences $hsqc_2dsequences
         tocsy_2dsequences $tocsy_2dsequences
 
-        ## In-house databases
-        ## inHouse_DB_choices.choice ${inHouse_DB_choices.choice}
-        ## #if str($inHouse_DB_choices.choice) == 'yes':
-        ##     inHouse_DB_cosy.choice ${inHouse_DB_choices.inHouse_DB_cosy.choice}
-        ##     #if str($inHouse_DB_choices.inHouse_DB_cosy.choice) == 'yes':
-        ##         cosyDB $inHouse_DB_choices.inHouse_DB_cosy.cosyDB
-        ##     #end if
-        ##     inHouse_DB_hmbc.choice ${inHouse_DB_choices.inHouse_DB_hmbc.choice}
-        ##     #if str($inHouse_DB_choices.inHouse_DB_hmbc.choice) == 'yes':
-        ##         hmbcDB $inHouse_DB_choices.inHouse_DB_hmbc.hmbcDB
-        ##     #end if
-        ##     inHouse_DB_hsqc.choice ${inHouse_DB_choices.inHouse_DB_hsqc.choice}
-        ##     #if str($inHouse_DB_choices.inHouse_DB_hsqc.choice) == 'yes':
-        ##         hsqcDB $inHouse_DB_choices.inHouse_DB_hsqc.hsqcDB
-        ##     #end if
-        ##     inHouse_DB_jres.choice ${inHouse_DB_choices.inHouse_DB_jres.choice}
-        ##     #if str($inHouse_DB_choices.inHouse_DB_jres.choice) == 'yes':
-        ##         jresDB $inHouse_DB_choices.inHouse_DB_jres.jresDB
-        ##     #end if
-        ##     inHouse_DB_tocsy.choice ${inHouse_DB_choices.inHouse_DB_tocsy.choice}
-        ##     #if str($inHouse_DB_choices.inHouse_DB_tocsy.choice) == 'yes':
-        ##         tocsyDB $inHouse_DB_choices.inHouse_DB_tocsy.tocsyDB
-        ##     #end if
-        ## #end if
-
         ## Tolerances
         tolppm1 $tolppm1
         tolppm2 $tolppm2
@@ -125,66 +100,6 @@
             <option value="yes" > yes </option>
             <option value="no" selected="true"> no </option>
         </param>
-
-        ## <conditional name="inHouse_DB_choices">
-        ##     <param name="choice" type="select" label="In-house database" help="Choose if you want to use use in-house database to annotate" >
-        ##         <option value="yes" > yes </option>
-        ##         <option value="no" selected="true"> no </option>
-        ##     </param>
-        ##     <when value="yes">
-        ##         <conditional name="inHouse_DB_cosy">
-        ##             <param name="choice" type="select" label="COSY In-house database" help="Choose if you want to use use in-house database to annotate COSY sequence" >
-        ##                 <option value="yes" > yes </option>
-        ##                 <option value="no" selected="true"> no </option>
-        ##             </param>
-        ##             <when value="yes">
-        ##                 <param name="cosyDB" type="data" format="zip" label="Zip file of the COSY RData object" />
-        ##             </when>
-        ##             <when value="no" />
-        ##         </conditional>
-        ##         <conditional name="inHouse_DB_hmbc">
-        ##             <param name="choice" type="select" label="HMBC In-house database" help="Choose if you want to use use in-house database to annotate HMBC sequence" >
-        ##                 <option value="yes" > yes </option>
-        ##                 <option value="no" selected="true"> no </option>
-        ##             </param>
-        ##             <when value="yes">
-        ##                 <param name="hmbcDB" type="data" format="zip" label="Zip file of the HMBC RData object" />
-        ##             </when>
-        ##             <when value="no" />
-        ##         </conditional>
-        ##         <conditional name="inHouse_DB_hsqc">
-        ##             <param name="choice" type="select" label="HSQC In-house database" help="Choose if you want to use use in-house database to annotate HSQC sequence" >
-        ##                 <option value="yes" > yes </option>
-        ##                 <option value="no" selected="true"> no </option>
-        ##             </param>
-        ##             <when value="yes">
-        ##                 <param name="hsqcDB" type="data" format="zip" label="Zip file of the HSQC RData object" />
-        ##             </when>
-        ##             <when value="no" />
-        ##         </conditional>
-        ##         <conditional name="inHouse_DB_jres">
-        ##             <param name="choice" type="select" label="JRES In-house database" help="Choose if you want to use use in-house database to annotate JRES sequence" >
-        ##                 <option value="yes" > yes </option>
-        ##                 <option value="no" selected="true"> no </option>
-        ##             </param>
-        ##             <when value="yes">
-        ##                 <param name="jresDB" type="data" format="zip" label="Zip file of the JRES RData object" />
-        ##             </when>
-        ##             <when value="no" />
-        ##         </conditional>
-        ##         <conditional name="inHouse_DB_tocsy">
-        ##             <param name="choice" type="select" label="TOCSY In-house database" help="Choose if you want to use use in-house database to annotate TOCSY sequence" >
-        ##                 <option value="yes" > yes </option>
-        ##                 <option value="no" selected="true"> no </option>
-        ##             </param>
-        ##             <when value="yes">
-        ##                 <param name="tocsyDB" type="data" format="zip" label="Zip file of the TOCSY RData object" />
-        ##             </when>
-        ##             <when value="no" />
-        ##         </conditional>
-        ##     </when>
-        ##     <when value="no" />
-        ## </conditional>
 
         <param name="tolppm1" type="float" min="0" value="0.01" help="Tolerance on chemical shift for the x-axis (H). Default value is 0.01ppm" />
         <param name="tolppm2" type="float" min="0" value="0.5" help="Tolerance on chemical shift for the y-axis (C). Default value is 0.01ppm" />
@@ -250,7 +165,6 @@
     		<param name="hmbc_2dsequences" value="yes"/>
     		<param name="hsqc_2dsequences" value="yes"/>
     		<param name="tocsy_2dsequences" value="yes"/>
-    		## <param name="inHouse_DB_choices.choice" value="no"/>
     		<param name="tolppm1" value="0.01"/>
     		<param name="tolppm2" value="0.5"/>
     		<param name="tolppmJRES" value="0.002"/>

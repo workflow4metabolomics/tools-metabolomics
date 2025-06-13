@@ -14,11 +14,9 @@ runExampleL <- FALSE
 
 ## ------------------------------
 ## Options
-## ------------------------------
 strAsFacL <- options()$stringsAsFactors
 options(stringsAsFactors = FALSE)
 
-## ------------------------------
 ## Libraries laoding
 ##------------------------------
 # library(batch)
@@ -60,7 +58,8 @@ if(!runExampleL)
 #  argLs <- parseCommandArgs(evaluate=FALSE)
   argLs <- unlist(parse_args())
 
-sink(argLs[["logOut"]])
+print(argLs[["logOut"]])
+
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
 print(argLs)

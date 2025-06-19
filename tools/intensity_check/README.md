@@ -26,7 +26,7 @@ Configuration
 
 ### Requirement:
  * R software: version > 3.0.0 recommended
- * Specific R libraries: 'batch' 
+ * Specific R libraries: 'argparse' (for the Galaxy wrapper only)
 
 
 Technical description

@@ -5,7 +5,7 @@ Metadata
 -----------
 
  * **@name**: Intensity check
- * **@version**: 1.2.8
+ * **@version**: 2.0.0
  * **@authors**: Original code: Anthony Fernandes (PFEM - INRA) - Maintainer: Melanie Petera (PFEM - INRAE - MetaboHUB)
  * **@init date**: 2018, September
  * **@main usage**: This tool computes some statistical measures, number of missing values and mean fold change.

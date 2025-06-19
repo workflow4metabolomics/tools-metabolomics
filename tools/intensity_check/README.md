@@ -42,7 +42,7 @@ Main files:
 Services provided
 -----------
 
- * Help and support: support@workflow4metabolomics.org
+ * Help and support: https://community.france-bioinformatique.fr/c/workflow4metabolomics/10
 
 
 License

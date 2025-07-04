@@ -169,7 +169,7 @@ intens_check <- function(
         }
         if (method == "one_class") {
             if (!(class1 %in% classnames)) {
-                stop("The class ", class1, " does not appear in the column ", class.col)
+                stop("The '", class1, "' class does not appear in the '", class.col, "'column.")
             }
             c_class <- factor(
                 ifelse(c_class == class1, class1, "Other"),

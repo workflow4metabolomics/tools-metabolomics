@@ -159,9 +159,9 @@ intens_check <- function(
         classnames <- levels(c_class)
         if (nb_class < 2 && test.fold == "Yes") {
             cat(
-                "The column",
+                "The '",
                 class.col,
-                "contains only one class, fold calculation could not be executed.\n"
+                "' column contains only one class, fold calculation could not be executed.\n"
             )
         }
         if (nb_class > (nrow(SM)) / 3 && method == "each_class") {

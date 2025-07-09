@@ -1,5 +1,5 @@
 <tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0+galaxy2" profile="20.09">
-    <description> Annotation of complex mixture bidimensional NMR spectra </description>
+    <description>Annotation of complex mixture bidimensional NMR spectra</description>
 
     <requirements>
         <requirement type="package" version="1.1_5">r-batch</requirement>

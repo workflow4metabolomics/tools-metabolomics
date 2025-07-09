@@ -12,49 +12,29 @@
         <include path="ReadFids_script.R" />
     </required_files>
 
-    <command detect_errors="aggressive">
-        ## Wrapper
-        Rscript $__tool_directory__/ReadFids_wrapper.R
-        ## File input
-        fidzipfile $fidzipfile
-
-        ## Title line
-        title_line $title_line
-
-        ## Subdirectories
-        subdirectories $subdirectories
-
-        ## Use subdirectories names as FID names?
-        dirs_names $dirs_names
-
-        ## Outputs
-        dataMatrix $dataMatrix
-        sampleMetadata $sampleMetadata
-        logOut $logOut
-        graphOut $graphOut
-
-    </command>
+    <command detect_errors="aggressive"><![CDATA[
+        Rscript
+            -e 'source("${__tool_directory__}/DrawFunctions.R")'
+            -e 'source("${__tool_directory__}/ReadFids_script.R")'
+            "${__tool_directory__}/ReadFids_wrapper.R"
+                --fidzipfile "$fidzipfile"
+                --title_line $title_line
+                $subdirectories
+                $dirs_names
+]]></command>
 
     <inputs>
         <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />
-        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" size="100" help="Default value is line 1"/>
-
-        <param name="subdirectories" label="Presence of subdirectories?" type="select" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories">
-            <option value="FALSE"> FALSE </option>
-            <option value="TRUE"> TRUE </option>
-        </param>
-
-        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="select" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)">
-            <option value="FALSE"> FALSE </option>
-            <option value="TRUE"> TRUE </option>
-        </param>
+        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" help="Default value is line 1"/>
+        <param name="subdirectories" label="Presence of subdirectories?" type="boolean" truevalue="--subdirectories" falsevalue="" checked="false" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories"/>
+        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="boolean" truevalue="--dirs_names" falsevalue="" checked="false" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)"/>
     </inputs>
 
     <outputs>
-        <data format="tabular" name="dataMatrix" label="${tool.name}_dataMatrix" />
-        <data format="tabular" name="sampleMetadata" label="${tool.name}_sampleMetadata" />
-        <data format="txt" name="logOut" label="${tool.name}_log" />
-        <data format="pdf" name="graphOut" label="${tool.name}_graph" />
+        <data format="tabular" name="dataMatrix" from_work_dir="dataMatrix.tsv" label="${tool.name}_dataMatrix" />
+        <data format="tabular" name="sampleMetadata" from_work_dir="sampleMetada.tsv" label="${tool.name}_sampleMetadata" />
+        <data format="txt" name="logOut" from_work_dir="logOut.txt" label="${tool.name}_log" />
+        <data format="pdf" name="graphOut" from_work_dir="graphOut.pdf" label="${tool.name}_graph" />
     </outputs>
 
 

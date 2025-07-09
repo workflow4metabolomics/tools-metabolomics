@@ -1,25 +1,3 @@
-#!/usr/local/public/bin/Rscript --vanilla --slave --no-site-file
-
-## 08122016_ReadFids_wrapper.R
-## Manon Martin
-## manon.martin@uclouvain.be
-
-## ======================================================
-## ======================================================
-# Preamble
-## ======================================================
-## ======================================================
-
-runExampleL <- FALSE
-
-
-## ------------------------------
-## Options
-## ------------------------------
-strAsFacL <- options()$stringsAsFactors
-options(stringsAsFactors = FALSE)
-options(warn = 1)
-
 ## ------------------------------
 ## Libraries laoding
 ## ------------------------------
@@ -28,56 +6,30 @@ suppressPackageStartupMessages(library(ggplot2)) # nice plots
 suppressPackageStartupMessages(library(gridExtra)) # nice plots
 suppressPackageStartupMessages(library(reshape2)) # data manipulation
 suppressPackageStartupMessages(library(stringr)) # string of characters manipulation
+suppressPackageStartupMessages(library(optparse)) # argument parsing
 
-# In-house function for argument parsing instead of the R batch library)
-parse_args <- function() {
-  args <- commandArgs()
-  start <- which(args == "--args")[1] + 1
-  if (is.na(start)) {
-    return(list())
-  }
-  seq_by2 <- seq(start, length(args), by = 2)
-  result <- as.list(args[seq_by2 + 1])
-  names(result) <- args[seq_by2]
-  return(result)
-}
-
-# R script call
-source_local <- function(fname) {
-  argv <- commandArgs(trailingOnly = FALSE)
-  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-  source(paste(base_dir, fname, sep = "/"))
-}
-
-# Import the different functions
-source_local("ReadFids_script.R")
-source_local("DrawFunctions.R")
-## ------------------------------
-## Errors ?????????????????????
-## ------------------------------
-
-
-## ------------------------------
-## Constants
-## ------------------------------
-topEnvC <- environment()
-flagC <- "\n"
-
-
-## ------------------------------
-## Script
-## ------------------------------
-if (!runExampleL) {
-  argLs <- unlist(parse_args())
-}
 
 ## Outputs
-logOut <- argLs[["logOut"]]
-nomGraphe <- argLs[["graphOut"]]
-
+dataMatrix <- "dataMatrix.tsv"
+sampleMetadata <- "sampleMetadata.tsv"
+nomGraphe <- "graphOut.pdf"
+logOut <- "logOut.txt"
 sink(logOut, append = TRUE)
 
-print(argLs)
+# ------------------------------
+# Command line interface (optparse)
+# ------------------------------
+option_list <- list(
+  make_option(c("--fidzipfile"), type = "character", help = "Path to zipped Bruker FID file"),
+  make_option(c("--title_line"), type = "character", help = "Title line for output"),
+  make_option(c("--subdirectories"), action = "store_true", default = FALSE, help = "Whether to use subdirectories (boolean flag)"),
+  make_option(c("--dirs_names"), action = "store_true", default = FALSE, help = "Whether to use dirs_names (boolean flag)")
+)
+
+opt_parser <- OptionParser(option_list = option_list)
+args <- parse_args(opt_parser)
+print(args)
+
 
 ## ======================================================
 ## ======================================================
@@ -89,38 +41,15 @@ print(argLs)
 # Path
 ## Bruker FIDs
 fileType <- "Bruker"
-zipfile <- argLs[["fidzipfile"]]
-
+zipfile <- args$fidzipfile
 directory <- unzip(zipfile, list = F)
-
 path <- paste(getwd(), strsplit(directory[1], "/")[[1]][2], sep = "/")
-path <- paste(paste(getwd(), strsplit(directory, "/")[[1]][2], sep = "/"), "/", sep = "")
-
 print(path)
 
-
 # other inputs from ReadFids
-l <- argLs[["title_line"]]
-subdirs <- argLs[["subdirectories"]]
-dirs.names <- argLs[["dirs_names"]]
-
-
-# Outputs
-# dataMatrix <- argLs[["dataMatrix"]]
-# sampleMetadata <- argLs[["sampleMetadata"]]
-logOut <- argLs[["logOut"]]
-nomGraphe <- argLs[["graphOut"]]
-
-
-
-## Checking arguments
-## -------------------
-error.stock <- "\n"
-
-if (length(error.stock) > 1) {
-  stop(error.stock)
-}
-
+l <- args$title_line
+subdirs <- args$subdirectories
+dirs.names <- args$dirs_names
 
 
 ## ======================================================
@@ -128,8 +57,6 @@ if (length(error.stock) > 1) {
 ## Computation
 ## ======================================================
 ## ======================================================
-sink(logOut, append = TRUE)
-
 if (length(warnings()) > 0) { # or !is.null(warnings())
   print("something happened")
 }
@@ -142,12 +69,11 @@ data_matrix <- outputs[["Fid_data"]] # Data matrix
 data_sample <- outputs[["Fid_info"]] # Sample metadata
 
 pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
-title <- "Raw FID data"
 DrawSignal(data_matrix,
   subtype = "stacked",
   ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
   xlab = "Frequency", num.stacked = 4,
-  main = title, createWindow = FALSE
+  main = "Raw FID data", createWindow = FALSE
 )
 invisible(dev.off())
 
@@ -158,13 +84,10 @@ invisible(dev.off())
 ## ======================================================
 
 # Data matrix
-write.table(data_matrix, file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(data_matrix, file = dataMatrix, quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # Sample metadata
-write.table(data_sample, file = argLs$sampleMetadata, quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
-
-# log file
-# write.table(t(data.frame(argLs)), file = argLs$logOut, col.names = FALSE, quote=FALSE)
+write.table(data_sample, file = sampleMetadata, quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")

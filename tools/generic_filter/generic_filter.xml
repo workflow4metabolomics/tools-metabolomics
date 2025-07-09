@@ -5,37 +5,37 @@
         <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
   <command>
-	Rscript '$__tool_directory__/filter_wrap.R'
+    Rscript '$__tool_directory__/filter_wrap.R'
       dataMatrix_in "$dataMatrix_in"
       sampleMetadata_in "$sampleMetadata_in"
       variableMetadata_in "$variableMetadata_in"
  
-	  Numeric "${numeric_condition.Factors}"
-	  #if str($numeric_condition.Factors) == 'TRUE':
-		#for $i in $numeric_condition.numeric_repeat:
-		  num_file "${i.num_file}"
-		  parm_col "${i.parm_col_num}"
-		  Interval "${i.interval_condition.interval}"
-		  #if str($i.interval_condition.interval) == 'lower':
-		    low_value "${i.interval_condition.low_value}"
-		  #elif str($i.interval_condition.interval) == 'upper':
-		    up_value "${i.interval_condition.up_value}"
-		  #elif str($i.interval_condition.interval) == 'between':
-		    low_value "${i.interval_condition.low_value}"
-		    up_value "${i.interval_condition.up_value}"
-		  #elif str($i.interval_condition.interval) == 'extremity':
-		    low_value "${i.interval_condition.low_value}"
-		    up_value "${i.interval_condition.up_value}"
-		  #end if
-		#end for
-	  #end if
+      Numeric "${numeric_condition.Factors}"
+      #if str($numeric_condition.Factors) == 'TRUE':
+        #for $i in $numeric_condition.numeric_repeat:
+          num_file "${i.num_file}"
+          parm_col "${i.parm_col_num}"
+          Interval "${i.interval_condition.interval}"
+          #if str($i.interval_condition.interval) == 'lower':
+            low_value "${i.interval_condition.low_value}"
+          #elif str($i.interval_condition.interval) == 'upper':
+            up_value "${i.interval_condition.up_value}"
+          #elif str($i.interval_condition.interval) == 'between':
+            low_value "${i.interval_condition.low_value}"
+            up_value "${i.interval_condition.up_value}"
+          #elif str($i.interval_condition.interval) == 'extremity':
+            low_value "${i.interval_condition.low_value}"
+            up_value "${i.interval_condition.up_value}"
+          #end if
+        #end for
+      #end if
       
       Factors "${qualitative_condition.Factors}"
       #if str($qualitative_condition.Factors) == 'TRUE':
         #for $i in $qualitative_condition.qualitative_repeat:
-		  qual_file "${i.qual_file}"
-		  factor_col "${i.factor_col}"
-		  factors_value "${i.factors_value}"
+          qual_file "${i.qual_file}"
+          factor_col "${i.factor_col}"
+          factors_value "${i.factors_value}"
         #end for
       #end if
       
@@ -48,8 +48,8 @@
     <param name="dataMatrix_in" type="data" label="Data Matrix file" help="" format="tabular" />
     <param name="sampleMetadata_in" type="data" label="Sample metadata file" help="" format="tabular" />
     <param name="variableMetadata_in" type="data" label="Variable metadata file" help="" format="tabular" />
-    	
-	<conditional name="numeric_condition">
+        
+    <conditional name="numeric_condition">
       <param name="Factors" type="select" label="Deleting samples and/or variables according to Numerical values" help="">
           <option value="FALSE">no</option>
           <option value="TRUE">yes</option>
@@ -61,34 +61,34 @@
               <option value="variable">Variable metadata</option>
             </param>
             <param name="parm_col_num" label="Name of the column to filter" type="text" value="" help="" />
-			<conditional name="interval_condition">
+            <conditional name="interval_condition">
               <param name="interval" type="select" label="Interval of values to remove" help="">
                 <option value="lower">lower</option>
                 <option value="upper">upper</option>
                 <option value="between">between</option>
                 <option value="extremity">extremity</option>
               </param>
-			  <when value="lower">
-			    <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
-			  </when>
-			  <when value="upper">
-			    <param name="up_value" type="float" label="Remove all values upper than"  optional="true" value="0" help=""/>
-			  </when>
-			  <when value="between">
-			    <param name="low_value" type="float" label="Remove all values between"  optional="true" value="0" help=""/>
-			    <param name="up_value" type="float" label="And"  optional="true" value="1" help=""/>
-			  </when>
-			  <when value="extremity">
-			    <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
-			    <param name="up_value" type="float" label="And upper than"  optional="true" value="1" help=""/>
-			  </when>
-			</conditional>
+              <when value="lower">
+                <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
+              </when>
+              <when value="upper">
+                <param name="up_value" type="float" label="Remove all values upper than"  optional="true" value="0" help=""/>
+              </when>
+              <when value="between">
+                <param name="low_value" type="float" label="Remove all values between"  optional="true" value="0" help=""/>
+                <param name="up_value" type="float" label="And"  optional="true" value="1" help=""/>
+              </when>
+              <when value="extremity">
+                <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
+                <param name="up_value" type="float" label="And upper than"  optional="true" value="1" help=""/>
+              </when>
+            </conditional>
         </repeat>
       </when>
-	  <when value="FALSE">
-	  </when>
+      <when value="FALSE">
+      </when>
     </conditional>
-	
+    
     <conditional name="qualitative_condition">
       <param name="Factors" type="select" label="Deleting samples and/or variables according to Qualitative values" help="">
           <option value="FALSE">no</option>
@@ -104,8 +104,8 @@
             <param name="factors_value" type="text" label="Remove factor when" help="" value="" />
         </repeat>
       </when>
-	  <when value="FALSE">
-	  </when>
+      <when value="FALSE">
+      </when>
     </conditional>
   </inputs>
   
@@ -116,8 +116,8 @@
   </outputs>
   
   <tests>
-	<test>
-	  <param name="dataMatrix_in" value="in_DM1.tabular"/>
+    <test>
+      <param name="dataMatrix_in" value="in_DM1.tabular"/>
       <param name="sampleMetadata_in" value="in_SM1.tabular"/>
       <param name="variableMetadata_in" value="in_VM1.tabular"/>
       <conditional name="numeric_condition">
@@ -125,8 +125,8 @@
           <param name="numeric_repeat_0|num_file" value="variable"/>
           <param name="numeric_repeat_0|parm_col_num" value="rt"/>
           <param name="numeric_repeat_0|interval_condition|interval" value="lower"/>
-	      <param name="numeric_repeat_0|interval_condition|low_value" value="1.2"/>
-	  </conditional>
+          <param name="numeric_repeat_0|interval_condition|low_value" value="1.2"/>
+      </conditional>
       <conditional name="qualitative_condition">
           <param name="Factors" value="TRUE"/>
           <param name="qualitative_repeat_0|qual_file" value="sample"/>
@@ -136,7 +136,7 @@
       <output name="dataMatrix_out" file="out_DM1.tabular"/>
       <output name="sampleMetadata_out" file="out_SM1.tabular"/>
       <output name="variableMetadata_out" file="out_VM1.tabular"/>
-	</test>
+    </test>
   </tests>
   
   <help>
@@ -194,10 +194,10 @@ Parameters
 ----------
 
 Deleting samples and/or variables according to Numerical values:
-	| If 'yes' (not default): execution deletes all samples or variables (according to selection) for which the designated 
-	| numerical parameter ("Name of the column to remove" field) equals the selected range of values (depending on the "Interval of values to remove" chosen).
-	| To delete multiple independent intervals of value from the same parameter, it is necessary to add as many times as necessary 
-	| the corresponding column via the "Insert Identify the parameter to filter" button.
+    | If 'yes' (not default): execution deletes all samples or variables (according to selection) for which the designated 
+    | numerical parameter ("Name of the column to remove" field) equals the selected range of values (depending on the "Interval of values to remove" chosen).
+    | To delete multiple independent intervals of value from the same parameter, it is necessary to add as many times as necessary 
+    | the corresponding column via the "Insert Identify the parameter to filter" button.
 
 | *On file (only if 'yes')*
 | Choice between sample and variable filtering (referring to the input file containing the factor).
@@ -227,11 +227,11 @@ Deleting samples and/or variables according to Numerical values:
 
 
 Deleting samples and/or variables according to Qualitative values
-	| If 'yes' (not default): execution deletes all data samples or variables (according to selection) for which the designated
-	| factor ("Name of the column to remove" field) equals the selected level ("Remove factor when" field).
-	| To delete multiple values of the same factor, it is necessary to add as many times as necessary the corresponding factor 
-	| via the "Insert Removing a level in factor" button.
-	
+    | If 'yes' (not default): execution deletes all data samples or variables (according to selection) for which the designated
+    | factor ("Name of the column to remove" field) equals the selected level ("Remove factor when" field).
+    | To delete multiple values of the same factor, it is necessary to add as many times as necessary the corresponding factor 
+    | via the "Insert Removing a level in factor" button.
+    
 | *On file (only if 'yes')*
 | Choice between sample and variable filtering (referring to the input file containing the factor).
 |
@@ -257,19 +257,19 @@ Output files
 
 
 dataMatrix
-	| tabular output
-	| Identical to the input Data matrix file with the sample columns and variable lines deleted according to specified filters
-	|
+    | tabular output
+    | Identical to the input Data matrix file with the sample columns and variable lines deleted according to specified filters
+    |
 
 sampleMetadata
-	| tabular output
-	| Identical to the input Sample metadata file with the sample lines deleted according to specified filters
-	|
+    | tabular output
+    | Identical to the input Sample metadata file with the sample lines deleted according to specified filters
+    |
 
 variableMetadata
-	| tabular output
-	| Identical to the input Variable metadata file with the variable lines deleted according to specified filters
-	|
+    | tabular output
+    | Identical to the input Variable metadata file with the variable lines deleted according to specified filters
+    |
 
 
 ---------------------------------------------------
@@ -294,8 +294,8 @@ Changelog/News
 - NEW FEATURE: The tool does not rely on the batch package anymore to parse its command line.
 
 
-	</help>
-	<citations>
+    </help>
+    <citations>
       <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
 </tool>

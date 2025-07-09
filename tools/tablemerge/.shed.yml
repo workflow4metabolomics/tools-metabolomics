@@ -1,0 +1,8 @@
+categories: [Metabolomics]
+description: '[W4M][Utils] Merging dataMatrix with a metadata table.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The
+  R script merges the data matrix with a selected metadata file (sample metadata or
+  variable metadata) to obtain a single file.'
+name: tablemerge
+owner: melpetera

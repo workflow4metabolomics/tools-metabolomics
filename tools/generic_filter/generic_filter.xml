@@ -4,7 +4,7 @@
         <requirement type="package" version="4.2.1">r-base</requirement>
         <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
-  <command>
+  <command><![CDATA[
     Rscript '$__tool_directory__/filter_wrap.R'
       dataMatrix_in "$dataMatrix_in"
       sampleMetadata_in "$sampleMetadata_in"
@@ -42,7 +42,7 @@
       dataMatrix_out "$dataMatrix_out"
       sampleMetadata_out "$sampleMetadata_out"
       variableMetadata_out "$variableMetadata_out"
-  </command>
+  ]]></command>
   
   <inputs>
     <param name="dataMatrix_in" type="data" label="Data Matrix file" help="" format="tabular" />
@@ -139,7 +139,7 @@
     </test>
   </tests>
   
-  <help>
+  <help><![CDATA[
 
 .. class:: infomark
 
@@ -294,7 +294,7 @@ Changelog/News
 - NEW FEATURE: The tool does not rely on the batch package anymore to parse its command line.
 
 
-    </help>
+    ]]></help>
     <citations>
       <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>

@@ -4,20 +4,12 @@
 
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="1.1_4">r-batch</requirement>
             <requirement type="package" version="2.2.1">r-ggplot2</requirement>
             <requirement type="package" version="2.3">r-gridextra</requirement>
             <requirement type="package" version="1.4.3">r-reshape2</requirement>
             <yield />
         </requirements>
     </xml>
-
-    <xml name="stdio">
-        <stdio>
-            <exit_code range="1" level="fatal" />
-        </stdio>
-    </xml>
-
 
     <token name="@HELP_AUTHORS@">
 .. class:: infomark

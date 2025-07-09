@@ -4,26 +4,15 @@
     <macros>
        <import>macros.xml</import>
     </macros>
+    
     <expand macro="requirements"/>
-    <expand macro="stdio"/>
-
-    <requirements>
-        <requirement type="package">r-ggplot2</requirement>
-        <requirement type="package">r-gridExtra</requirement>
-        <requirement type="package">r-reshape2</requirement>
-    </requirements>
 
     <required_files>
         <include path="ReadFids_wrapper.R" />
         <include path="ReadFids_script.R" />
     </required_files>
 
-
-    <stdio>
-        <exit_code range="1:" level="fatal" />
-    </stdio>
-    
-    <command>
+    <command detect_errors="aggressive">
         ## Wrapper
         Rscript $__tool_directory__/ReadFids_wrapper.R
         ## File input

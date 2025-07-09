@@ -51,9 +51,9 @@ filters <- function(ion.file.in, meta.samp.file.in, meta.ion.file.in,
   
 # Input -----------------------------------------------------------------------------------
 
-ion.data <- read.table(ion.file.in,sep="\t",header=TRUE,check.names=FALSE)
-meta.samp.data <- read.table(meta.samp.file.in,sep="\t",header=TRUE,check.names=FALSE)
-meta.ion.data <- read.table(meta.ion.file.in,sep="\t",header=TRUE,check.names=FALSE)
+ion.data <- read.table(ion.file.in, sep = "\t", header = TRUE, check.names = FALSE)
+meta.samp.data <- read.table(meta.samp.file.in, sep = "\t", header = TRUE, check.names = FALSE, stringsAsFactors = TRUE)
+meta.ion.data <- read.table(meta.ion.file.in, sep = "\t", header = TRUE, check.names = FALSE, stringsAsFactors = TRUE)
 
 # Error vector
 err.stock <- "\n"
@@ -61,10 +61,10 @@ err.stock <- "\n"
 
 # Table match check 
 table.check <- match3(ion.data,meta.samp.data,meta.ion.data)
-check.err(table.check)
+check_err(table.check)
 
 # StockID
-samp.id <- stockID(ion.data,meta.samp.data,"sample")
+samp.id <- stock_id(ion.data,meta.samp.data,"sample")
 ion.data <- samp.id$dataMatrix
 meta.samp.data <- samp.id$Metadata
 samp.id <- samp.id$id.match
@@ -199,7 +199,7 @@ if(nrow(meta.ion.data)==0){
 # Output ----------------------------------------------------------------------------------
 
 # Getting back original identifiers
-id.ori <- reproduceID(ion.data,meta.samp.data,"sample",samp.id)
+id.ori <- reproduce_id(ion.data,meta.samp.data,"sample",samp.id)
 ion.data <- id.ori$dataMatrix
 meta.samp.data <- id.ori$Metadata
 

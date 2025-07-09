@@ -55,7 +55,8 @@ source_local <- function(...){
 	for(i in 1:length(list(...))){source(paste(base_dir, list(...)[[i]], sep="/"))}
 }
 #Import the different functions
-source_local("filter_script.R","RcheckLibrary.R","miniTools.R")
+source_local("filter_script.R")
+library(W4MRUtils)
 
 
 if(length(args) < 8){ stop("NOT enough argument !!!") }

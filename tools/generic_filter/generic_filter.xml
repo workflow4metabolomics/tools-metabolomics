@@ -1,7 +1,8 @@
 <tool id="generic_filter" name="Generic_Filter" version="2.6">
   <description>Removes elements according to numerical or qualitative values</description>
   <requirements>
-	    <requirement type="package" version="4.2.1">r-base</requirement>
+        <requirement type="package" version="4.2.1">r-base</requirement>
+        <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
   <command>
 	Rscript '$__tool_directory__/filter_wrap.R'

@@ -1,6 +1,7 @@
 categories: [Metabolomics]
 description: '[W4M][Utils] Filtering according to specific variables'
 homepage_url: http://workflow4metabolomics.org
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics
 long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The
   R script removes all samples and/or variables corresponding to specific values 
   regarding designated factors or numerical variables, in datasets corresponding to 

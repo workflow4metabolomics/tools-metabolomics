@@ -15,14 +15,14 @@
 
     <command detect_errors="aggressive"><![CDATA[
         Rscript
-            -e 'source("${__tool_directory__}/DrawFunctions.R")'
-            -e 'source("${__tool_directory__}/ReadFids_script.R")'
-            "${__tool_directory__}/ReadFids_wrapper.R"
+            -e "source('${__tool_directory__}/DrawFunctions.R')"
+            -e "source('${__tool_directory__}/ReadFids_script.R')"
+            -e "source('${__tool_directory__}/ReadFids_wrapper.R')"
                 --fidzipfile "$fidzipfile"
                 --title_line $title_line
                 $subdirectories
                 $dirs_names
-]]></command>
+    ]]></command>
 
     <inputs>
         <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />

@@ -1,5 +1,3 @@
-library(stringr) # string of characters manipulation
-
 ################################################################################################
 #
 #   Read FIDs in Bruker format
@@ -20,8 +18,8 @@ ReadFid <- function(path) {
   params <- readParams(paramFile, c("TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS", "SW_h", "SW", "O1"))
 
   # Version of the TopSpin software
-  title <- str_split(readLines(paramFile)[1], ",", simplify = TRUE)[1, 2]
-  version <- as.numeric(substr(str_split(title, " ", simplify = TRUE)[1, 3], 1, 1))
+  line <- readLines(paramFile)[1]
+  version <- as.numeric(substr(strsplit(line, " ")[[1]][5], 1, 1))
   neo <- (version > 3)
 
   # The group delay first order phase correction is given directly from version 20
@@ -163,69 +161,82 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       stop(deparse(substitute(arg)), " is null.")
     }
   }
+}
 
 
-  # Function to get arguments
-  getArg <- function(arg, info, argname, can.be.absent = FALSE) {
-    if (is.null(arg)) {
-      start <- paste("impossible to get argument", argname, "it was not given directly and")
-      if (!is.matrix(info)) {
-        stop(paste(start, "the info matrix was not given"))
-      }
-      if (!(argname %in% colnames(info))) {
-        if (can.be.absent) {
-          return(NULL)
-        } else {
-          stop(paste(start, "is not in the info matrix"))
-        }
-      }
-      if (nrow(info) < 1) {
-        stop(paste(start, "the info matrix has no row"))
-      }
-      arg <- info[1, argname]
-      if (is.na(arg)) {
-        stop(paste(start, "it is NA in the info matrix"))
+# Function to get arguments
+getArg <- function(arg, info, argname, can.be.absent = FALSE) {
+  if (is.null(arg)) {
+    start <- paste("impossible to get argument", argname, "it was not given directly and")
+    if (!is.matrix(info)) {
+      stop(paste(start, "the info matrix was not given"))
+    }
+    if (!(argname %in% colnames(info))) {
+      if (can.be.absent) {
+        return(NULL)
+      } else {
+        stop(paste(start, "is not in the info matrix"))
       }
     }
-    return(arg)
+    if (nrow(info) < 1) {
+      stop(paste(start, "the info matrix has no row"))
+    }
+    arg <- info[1, argname]
+    if (is.na(arg)) {
+      stop(paste(start, "it is NA in the info matrix"))
+    }
   }
+  return(arg)
+}
 
-  # Function to get title and name samples
-  # Get the name of the signal from the title file or from the name of the subdirectory
-  getTitle <- function(path, l, subdirs) {
-    title <- NULL
-    title_file <- file.path(file.path(file.path(path, "pdata"), "1"), "title")
-    if (file.exists(title_file)) {
-      lines <- readLines(title_file, warn = FALSE)
-      if (length(lines) >= 1) {
-        first_line <- gsub("^\\s+|\\s+$", "", lines[l])
-        if (nchar(first_line) >= 1) {
-          title <- first_line
-        } else {
-          warning(paste("The", l, "line of the title file is blank for directory ", path, "and the (sub)dirs names are used instead"))
-        }
+# Function to get title and name samples
+# Get the name of the signal from the title file or from the name of the subdirectory
+getTitle <- function(path, l, subdirs) {
+  title <- NULL
+  title_file <- file.path(file.path(file.path(path, "pdata"), "1"), "title")
+  if (file.exists(title_file)) {
+    lines <- readLines(title_file, warn = FALSE)
+    if (length(lines) >= 1) {
+      first_line <- gsub("^\\s+|\\s+$", "", lines[l])
+      if (nchar(first_line) >= 1) {
+        title <- first_line
       } else {
-        warning(paste("Title file doesn't exists for directory ", path, "\n the (sub)dirs names are  used instead"))
+        warning(paste("The", l, "line of the title file is blank for directory ", path, "and the (sub)dirs names are used instead"))
       }
     } else {
       warning(paste("Title file doesn't exists for directory ", path, "\n the (sub)dirs names are  used instead"))
     }
-    if (is.null(title)) {
-      if (subdirs) {
-        separator <- .Platform$file.sep
-        path_elem <- strsplit(path, separator)[[1]]
-        title <- paste(path_elem[length(path_elem) - 1], path_elem[length(path_elem)], sep = "_")
-      } else {
-        title <- basename(path)
-      }
-    }
-    return(title)
+  } else {
+    warning(paste("Title file doesn't exists for directory ", path, "\n the (sub)dirs names are  used instead"))
   }
+  if (is.null(title)) {
+    if (subdirs) {
+      separator <- .Platform$file.sep
+      path_elem <- strsplit(path, separator)[[1]]
+      title <- paste(path_elem[length(path_elem) - 1], path_elem[length(path_elem)], sep = "_")
+    } else {
+      title <- basename(path)
+    }
+  }
+  return(title)
+}
 
-  # Function to read parameter values for Fid_info in the ReadFids function
-  readParams <- function(file, paramsName) {
-    isDigit <- function(c) {
-      return(suppressWarnings(!is.na(as.numeric(c))))
+# Function to read parameter values for Fid_info in the ReadFids function
+readParams <- function(file, paramsName) {
+  isDigit <- function(c) {
+    return(suppressWarnings(!is.na(as.numeric(c))))
+  }
+  lines <- readLines(file)
+  params <- sapply(paramsName, function(x) NULL)
+
+  for (paramName in paramsName) {
+    # Find the line with the parameter I add a '$' '=' in the pattern so that for
+    # example 'TD0' is not found where I look for 'TD' and LOCSW and WBSW when I look
+    # for 'SW'
+    pattern <- paste("\\$", paramName, "=", sep = "")
+    occurences <- grep(pattern, lines)
+    if (length(occurences) == 0L) {
+      stop(paste(file, "has no field", pattern))
     }
     lines <- readLines(file)
     params <- sapply(paramsName, function(x) NULL)
@@ -239,35 +250,8 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       if (length(occurences) == 0L) {
         stop(paste(file, "has no field", pattern))
       }
-      lines <- readLines(file)
-      params <- sapply(paramsName, function(x) NULL)
-
-      for (paramName in paramsName) {
-        # Find the line with the parameter I add a '$' '=' in the pattern so that for
-        # example 'TD0' is not found where I look for 'TD' and LOCSW and WBSW when I look
-        # for 'SW'
-        pattern <- paste("\\$", paramName, "=", sep = "")
-        occurences <- grep(pattern, lines)
-        if (length(occurences) == 0L) {
-          stop(paste(file, "has no field", pattern))
-        }
-        if (length(occurences) > 1L) {
-          warning(paste(file, "has more that one field", pattern, " I take the first one"))
-        }
-        line <- lines[occurences[1]]
-
-        # Cut beginning and end of the line '##$TD= 65536' -> '65536'
-        igual <- as.numeric(regexpr("=", line))
-
-        first <- igual
-        while (first <= nchar(line) & !isDigit(substr(line, first, first))) {
-          first <- first + 1
-        }
-        last <- nchar(line)
-        while (last > 0 & !isDigit(substr(line, last, last))) {
-          last <- last - 1
-        }
-        params[paramName] <- as.numeric(substr(line, first, last))
+      if (length(occurences) > 1L) {
+        warning(paste(file, "has more that one field", pattern, " I take the first one"))
       }
       line <- lines[occurences[1]]
 
@@ -284,106 +268,35 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       }
       params[paramName] <- as.numeric(substr(line, first, last))
     }
-    return(params)
+    line <- lines[occurences[1]]
+
+    # Cut beginning and end of the line '##$TD= 65536' -> '65536'
+    igual <- as.numeric(regexpr("=", line))
+
+    first <- igual
+    while (first <= nchar(line) & !isDigit(substr(line, first, first))) {
+      first <- first + 1
+    }
+    last <- nchar(line)
+    while (last > 0 & !isDigit(substr(line, last, last))) {
+      last <- last - 1
+    }
+    params[paramName] <- as.numeric(substr(line, first, last))
+  }
+  return(params)
+}
+
+# Function to read all fid's in the directory
+ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
+  # Data initialisation and checks
+  begin_info <- beginTreatment("ReadFids")
+  checkArg(path, c("str"))
+  checkArg(l, c("pos"))
+  if (file.exists(path) == FALSE) {
+    stop(paste("Invalid path:", path))
   }
 
-  # Function to read all fid's in the directory
-  ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
-    # Data initialisation and checks
-    begin_info <- beginTreatment("ReadFids")
-    checkArg(path, c("str"))
-    checkArg(l, c("pos"))
-    if (file.exists(path) == FALSE) {
-      stop(paste("Invalid path:", path))
-    }
-
-    # Extract the FIDs and their info
-    if (subdirs == FALSE) {
-      fidDirs <- getDirsContainingFid(path)
-      n <- length(fidDirs)
-      if (n == 0L) {
-        stop(paste("No valid fid in", path))
-      }
-      if (dirs.names) {
-        separator <- .Platform$file.sep
-        path_elem <- strsplit(fidDirs, separator)
-        fidNames <- sapply(path_elem, function(x) x[[length(path_elem[[1]])]])
-      } else {
-        fidNames <- sapply(X = fidDirs, FUN = getTitle, l = l, subdirs = subdirs, USE.NAMES = F)
-      }
-
-      for (i in 1:n) {
-        fidList <- ReadFid(fidDirs[i])
-        fid <- fidList[["fid"]]
-        info <- fidList[["params"]]
-        m <- length(fid)
-        if (i == 1) {
-          Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
-          Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(fidNames, names(info)))
-        }
-        Fid_data[i, ] <- fid
-        Fid_info[i, ] <- unlist(info)
-      }
-    } else {
-      maindirs <- dir(path, full.names = TRUE) # subdirectories
-      Fid_data <- numeric()
-      Fid_info <- numeric()
-
-      fidDirs <- c()
-      for (j in maindirs) {
-        fd <- getDirsContainingFid(j) # recoved FIDs from subdirectories
-        n <- length(fd)
-        if (n > 0L) {
-          fidDirs <- c(fidDirs, fd)
-        } else {
-          warning(paste("No valid fid in", j))
-        }
-      }
-
-      if (dirs.names == TRUE) {
-        if (length(fidDirs) != length(dir(path))) { # at least one subdir contains more than 1 FID
-          separator <- .Platform$file.sep
-          path_elem <- strsplit(fidDirs, separator)
-          fidNames <- sapply(path_elem, function(x) paste(x[[length(path_elem[[1]]) - 1]], x[[length(path_elem[[1]])]], sep = "_"))
-        } else {
-          fidNames <- dir(path)
-        }
-      } else {
-        fidNames <- sapply(X = fidDirs, FUN = getTitle, l = l, subdirs = subdirs, USE.NAMES = F)
-      }
-
-      for (i in 1:length(fidNames)) {
-        fidList <- ReadFid(fidDirs[i])
-        fid <- fidList[["fid"]]
-        info <- fidList[["params"]]
-        m <- length(fid)
-        if (i == 1) {
-          Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
-          Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(fidNames, names(info)))
-        }
-        print(paste("i=", i, "Fid_data=", ncol(Fid_data), "fid=", length(fid)))
-
-        Fid_data[i, ] <- fid
-        Fid_info[i, ] <- unlist(info)
-      }
-    }
-
-    # Check for non-unique IDs
-    NonnuniqueIds <- sum(duplicated(row.names(Fid_data)))
-    cat("dim Fid_data: ", dim(Fid_data), "\n")
-    cat("IDs: ", rownames(Fid_data), "\n")
-    cat("non-unique IDs?", NonnuniqueIds, "\n")
-    if (NonnuniqueIds > 0) {
-      warning("There are duplicated IDs: ", Fid_data[duplicated(Fid_data)])
-    }
-
-    # Return the results
-    return(list(Fid_data = endTreatment("ReadFids", begin_info, Fid_data), Fid_info = Fid_info))
-  }
-
-
-  # Extract the FIDs and their info ----------------------------------------------
-
+  # Extract the FIDs and their info
   if (subdirs == FALSE) {
     fidDirs <- getDirsContainingFid(path)
     n <- length(fidDirs)
@@ -404,14 +317,8 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       info <- fidList[["params"]]
       m <- length(fid)
       if (i == 1) {
-        Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(
-          fidNames,
-          info[["DT"]] * (0:(m - 1))
-        ))
-        Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(
-          fidNames,
-          names(info)
-        ))
+        Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
+        Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(fidNames, names(info)))
       }
       Fid_data[i, ] <- fid
       Fid_info[i, ] <- unlist(info)
@@ -436,12 +343,7 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       if (length(fidDirs) != length(dir(path))) { # at least one subdir contains more than 1 FID
         separator <- .Platform$file.sep
         path_elem <- strsplit(fidDirs, separator)
-        fidNames <- sapply(path_elem, function(x) {
-          paste(x[[length(path_elem[[1]]) - 1]],
-            x[[length(path_elem[[1]])]],
-            sep = "_"
-          )
-        })
+        fidNames <- sapply(path_elem, function(x) paste(x[[length(path_elem[[1]]) - 1]], x[[length(path_elem[[1]])]], sep = "_"))
       } else {
         fidNames <- dir(path)
       }
@@ -455,21 +357,17 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
       info <- fidList[["params"]]
       m <- length(fid)
       if (i == 1) {
-        Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(
-          fidNames,
-          info[["DT"]] * (0:(m - 1))
-        ))
-        Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(
-          fidNames,
-          names(info)
-        ))
+        Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
+        Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(fidNames, names(info)))
       }
+      print(paste("i=", i, "Fid_data=", ncol(Fid_data), "fid=", length(fid)))
+
       Fid_data[i, ] <- fid
       Fid_info[i, ] <- unlist(info)
     }
   }
 
-  # Check for non-unique IDs ----------------------------------------------
+  # Check for non-unique IDs
   NonnuniqueIds <- sum(duplicated(row.names(Fid_data)))
   cat("dim Fid_data: ", dim(Fid_data), "\n")
   cat("IDs: ", rownames(Fid_data), "\n")
@@ -478,7 +376,6 @@ checkArg <- function(arg, checks, can.be.null = FALSE) {
     warning("There are duplicated IDs: ", Fid_data[duplicated(Fid_data)])
   }
 
-
-  # Return the results ----------------------------------------------
+  # Return the results
   return(list(Fid_data = endTreatment("ReadFids", begin_info, Fid_data), Fid_info = Fid_info))
 }

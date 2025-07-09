@@ -1,7 +1,6 @@
 library(ggplot2) # nice plots
 library(gridExtra) # nice plots
-library(reshape2) # data manipulation
-
+library(tidyr) # data manipulation
 Draw <- function(Signal_data, type.draw = c("signal", "pca"), output = c(
                    "default",
                    "window", "png", "pdf"
@@ -198,7 +197,7 @@ DrawSignal <- function(Signal_data, subtype = c(
               Var = as.numeric(scale), value = elements[[name]][i, ]
             )
           } else {
-            melted <- reshape2::melt(elements[[name]][i:last, ],
+            melted <- pivot_longer(elements[[name]][i:last, ],
               varnames = c("rowname", "Var")
             )
           }
@@ -259,7 +258,7 @@ DrawSignal <- function(Signal_data, subtype = c(
       }
 
 
-      melted <- reshape2::melt(elements[[name]], varnames = c("rowname", "Var"))
+      melted <- pivot_longer(elements[[name]], varnames = c("rowname", "Var"))
 
 
       plots[[name]] <- ggplot2::ggplot(melted, ggplot2::aes(

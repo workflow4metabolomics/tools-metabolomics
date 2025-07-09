@@ -16,10 +16,10 @@ sink(logOut, append = TRUE, split = TRUE)
 # Command line interface (optparse)
 # ------------------------------
 option_list <- list(
-  make_option(c("--fidzipfile"), type = "character", help = "Path to zipped Bruker FID file"),
-  make_option(c("--title_line"), type = "character", help = "Title line for output"),
-  make_option(c("--subdirectories"), action = "store_true", default = FALSE, help = "Whether to use subdirectories (boolean flag)"),
-  make_option(c("--dirs_names"), action = "store_true", default = FALSE, help = "Whether to use dirs_names (boolean flag)")
+  make_option(c("-f", "--fidzipfile"), type = "character", help = "Path to zipped Bruker FID file"),
+  make_option(c("-t", "--title_line"), type = "character", help = "Title line for output"),
+  make_option(c("-s", "--subdirectories"), action = "store_true", dest = "subdirectories", default = FALSE, help = "Whether to use subdirectories (boolean flag)"),
+  make_option(c("-d", "--dirs_names"), action = "store_true", dest = "dirs_names", default = FALSE, help = "Whether to use dirs_names (boolean flag)")
 )
 
 opt_parser <- OptionParser(option_list = option_list)
@@ -95,7 +95,3 @@ sessionInfo()
 cat("\nEnd of 'ReadFids' Galaxy module call: ", as.character(Sys.time()), sep = "")
 
 sink()
-
-options(stringsAsFactors = strAsFacL)
-
-rm(list = ls())

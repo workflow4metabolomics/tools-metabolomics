@@ -2,11 +2,7 @@
 ## Libraries laoding
 ## ------------------------------
 # library(batch)
-suppressPackageStartupMessages(library(ggplot2)) # nice plots
-suppressPackageStartupMessages(library(gridExtra)) # nice plots
-suppressPackageStartupMessages(library(reshape2)) # data manipulation
-suppressPackageStartupMessages(library(stringr)) # string of characters manipulation
-suppressPackageStartupMessages(library(optparse)) # argument parsing
+library(optparse) # argument parsing
 
 
 ## Outputs
@@ -14,7 +10,7 @@ dataMatrix <- "dataMatrix.tsv"
 sampleMetadata <- "sampleMetadata.tsv"
 nomGraphe <- "graphOut.pdf"
 logOut <- "logOut.txt"
-sink(logOut, append = TRUE)
+sink(logOut, append = TRUE, split = TRUE)
 
 # ------------------------------
 # Command line interface (optparse)
@@ -42,7 +38,7 @@ print(args)
 ## Bruker FIDs
 fileType <- "Bruker"
 zipfile <- args$fidzipfile
-directory <- unzip(zipfile, list = F)
+directory <- unzip(zipfile, list = FALSE)
 path <- paste(getwd(), strsplit(directory[1], "/")[[1]][2], sep = "/")
 print(path)
 

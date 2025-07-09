@@ -1,7 +1,6 @@
-require(ggplot2)
-require(gridExtra)
-require(reshape2)
-
+library(ggplot2) # nice plots
+library(gridExtra) # nice plots
+library(reshape2) # data manipulation
 
 Draw <- function(Signal_data, type.draw = c("signal", "pca"), output = c(
                    "default",

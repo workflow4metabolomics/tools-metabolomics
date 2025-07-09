@@ -8,6 +8,7 @@
     <expand macro="requirements"/>
 
     <required_files>
+        <include path="DrawFunctions.R" />
         <include path="ReadFids_wrapper.R" />
         <include path="ReadFids_script.R" />
     </required_files>
@@ -46,6 +47,9 @@
           <param name="dirs_names" value="TRUE" />
 
           <output name="dataMatrix" value="NMR_ReadFids_dataMatrix.tabular" />
+          <output name="sampleMetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
+          <output name="logOut" value="NMR_ReadFids_log.txt" />
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" />
         </test>
     </tests>
 

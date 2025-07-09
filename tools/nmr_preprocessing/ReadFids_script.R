@@ -1,3 +1,5 @@
+library(stringr) # string of characters manipulation
+
 ################################################################################################
 #
 #   Read FIDs in Bruker format

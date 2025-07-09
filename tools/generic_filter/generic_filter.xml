@@ -1,0 +1,300 @@
+<tool id="generic_filter" name="Generic_Filter" version="2.6">
+  <description>Removes elements according to numerical or qualitative values</description>
+  <requirements>
+	    <requirement type="package" version="4.2.1">r-base</requirement>
+  </requirements>
+  <command>
+	Rscript '$__tool_directory__/filter_wrap.R'
+      dataMatrix_in "$dataMatrix_in"
+      sampleMetadata_in "$sampleMetadata_in"
+      variableMetadata_in "$variableMetadata_in"
+ 
+	  Numeric "${numeric_condition.Factors}"
+	  #if str($numeric_condition.Factors) == 'TRUE':
+		#for $i in $numeric_condition.numeric_repeat:
+		  num_file "${i.num_file}"
+		  parm_col "${i.parm_col_num}"
+		  Interval "${i.interval_condition.interval}"
+		  #if str($i.interval_condition.interval) == 'lower':
+		    low_value "${i.interval_condition.low_value}"
+		  #elif str($i.interval_condition.interval) == 'upper':
+		    up_value "${i.interval_condition.up_value}"
+		  #elif str($i.interval_condition.interval) == 'between':
+		    low_value "${i.interval_condition.low_value}"
+		    up_value "${i.interval_condition.up_value}"
+		  #elif str($i.interval_condition.interval) == 'extremity':
+		    low_value "${i.interval_condition.low_value}"
+		    up_value "${i.interval_condition.up_value}"
+		  #end if
+		#end for
+	  #end if
+      
+      Factors "${qualitative_condition.Factors}"
+      #if str($qualitative_condition.Factors) == 'TRUE':
+        #for $i in $qualitative_condition.qualitative_repeat:
+		  qual_file "${i.qual_file}"
+		  factor_col "${i.factor_col}"
+		  factors_value "${i.factors_value}"
+        #end for
+      #end if
+      
+      dataMatrix_out "$dataMatrix_out"
+      sampleMetadata_out "$sampleMetadata_out"
+      variableMetadata_out "$variableMetadata_out"
+  </command>
+  
+  <inputs>
+    <param name="dataMatrix_in" type="data" label="Data Matrix file" help="" format="tabular" />
+    <param name="sampleMetadata_in" type="data" label="Sample metadata file" help="" format="tabular" />
+    <param name="variableMetadata_in" type="data" label="Variable metadata file" help="" format="tabular" />
+    	
+	<conditional name="numeric_condition">
+      <param name="Factors" type="select" label="Deleting samples and/or variables according to Numerical values" help="">
+          <option value="FALSE">no</option>
+          <option value="TRUE">yes</option>
+      </param>
+      <when value="TRUE">
+        <repeat name="numeric_repeat" title="Identify the parameter to filter " min="1">
+            <param name="num_file" label="On file" type="select" display="radio" help="">
+              <option value="sample">Sample metadata</option>
+              <option value="variable">Variable metadata</option>
+            </param>
+            <param name="parm_col_num" label="Name of the column to filter" type="text" value="" help="" />
+			<conditional name="interval_condition">
+              <param name="interval" type="select" label="Interval of values to remove" help="">
+                <option value="lower">lower</option>
+                <option value="upper">upper</option>
+                <option value="between">between</option>
+                <option value="extremity">extremity</option>
+              </param>
+			  <when value="lower">
+			    <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
+			  </when>
+			  <when value="upper">
+			    <param name="up_value" type="float" label="Remove all values upper than"  optional="true" value="0" help=""/>
+			  </when>
+			  <when value="between">
+			    <param name="low_value" type="float" label="Remove all values between"  optional="true" value="0" help=""/>
+			    <param name="up_value" type="float" label="And"  optional="true" value="1" help=""/>
+			  </when>
+			  <when value="extremity">
+			    <param name="low_value" type="float" label="Remove all values lower than"  optional="true" value="0" help=""/>
+			    <param name="up_value" type="float" label="And upper than"  optional="true" value="1" help=""/>
+			  </when>
+			</conditional>
+        </repeat>
+      </when>
+	  <when value="FALSE">
+	  </when>
+    </conditional>
+	
+    <conditional name="qualitative_condition">
+      <param name="Factors" type="select" label="Deleting samples and/or variables according to Qualitative values" help="">
+          <option value="FALSE">no</option>
+          <option value="TRUE">yes</option>
+      </param>
+      <when value="TRUE">
+        <repeat name="qualitative_repeat" title="Removing a level in factor" min="1">
+            <param name="qual_file" label="On file" type="select" display="radio" help="">
+              <option value="sample">Sample metadata</option>
+              <option value="variable">Variable metadata</option>
+            </param>
+            <param name="factor_col" label="Name of the column to filter" type="text" value="" help="" />
+            <param name="factors_value" type="text" label="Remove factor when" help="" value="" />
+        </repeat>
+      </when>
+	  <when value="FALSE">
+	  </when>
+    </conditional>
+  </inputs>
+  
+  <outputs>
+    <data name="dataMatrix_out" label="${tool.name}_${dataMatrix_in.name}" format="tabular" ></data>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular" ></data>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+  </outputs>
+  
+  <tests>
+	<test>
+	  <param name="dataMatrix_in" value="in_DM1.tabular"/>
+      <param name="sampleMetadata_in" value="in_SM1.tabular"/>
+      <param name="variableMetadata_in" value="in_VM1.tabular"/>
+      <conditional name="numeric_condition">
+          <param name="Factors" value="TRUE"/>
+          <param name="numeric_repeat_0|num_file" value="variable"/>
+          <param name="numeric_repeat_0|parm_col_num" value="rt"/>
+          <param name="numeric_repeat_0|interval_condition|interval" value="lower"/>
+	      <param name="numeric_repeat_0|interval_condition|low_value" value="1.2"/>
+	  </conditional>
+      <conditional name="qualitative_condition">
+          <param name="Factors" value="TRUE"/>
+          <param name="qualitative_repeat_0|qual_file" value="sample"/>
+          <param name="qualitative_repeat_0|factor_col" value="Time"/>
+          <param name="qualitative_repeat_0|factors_value" value="3"/>
+      </conditional>
+      <output name="dataMatrix_out" file="out_DM1.tabular"/>
+      <output name="sampleMetadata_out" file="out_SM1.tabular"/>
+      <output name="variableMetadata_out" file="out_VM1.tabular"/>
+	</test>
+  </tests>
+  
+  <help>
+
+.. class:: infomark
+
+**Authors:** 
+Melanie Petera for original R code - Marion Landi and Melanie Petera for original Galaxy wrapper
+**Maintainer:** Melanie Petera (PFEM - INRAE - MetaboHUB)
+
+---------------------------------------------------
+
+==============
+Generic Filter
+==============
+
+-----------
+Description
+-----------
+
+ | Allows to remove all samples and/or variables corresponding to specific values regarding designated factors or numerical variables. 
+ | 
+
+ 
+-----------------
+Workflow position
+-----------------
+
+
+.. image:: filter.png
+        :width: 700
+
+
+
+-----------
+Input files
+-----------
+
++----------------------------+------------+
+| Parameter : num + label    |   Format   |
++============================+============+
+| 1 : Data matrix file       |   tabular  |
++----------------------------+------------+
+| 2 : Sample metadata file   |   tabular  |
++----------------------------+------------+
+| 3 : Variable metadata file |   tabular  |
++----------------------------+------------+
+
+| 
+| Missing values in numerical columns of data must be coded NA if you want to use the Numerical filter on them. 
+
+
+----------
+Parameters
+----------
+
+Deleting samples and/or variables according to Numerical values:
+	| If 'yes' (not default): execution deletes all samples or variables (according to selection) for which the designated 
+	| numerical parameter ("Name of the column to remove" field) equals the selected range of values (depending on the "Interval of values to remove" chosen).
+	| To delete multiple independent intervals of value from the same parameter, it is necessary to add as many times as necessary 
+	| the corresponding column via the "Insert Identify the parameter to filter" button.
+
+| *On file (only if 'yes')*
+| Choice between sample and variable filtering (referring to the input file containing the factor).
+|
+
+| *Name of the column to filter (only if 'yes')*
+| Column name of the numerical parameter from which we want to remove a range of values.
+|
+
+| *Interval of values to remove (only if 'yes')*
+| Allows to choose which type of interval should be removed:
+| - lower: removes all values below a specified value
+| - upper: removes all values above a specified value
+| - between: removes all values both greater than a specified value and lower than another (upper) one
+| - extremity: removes all values that are either lower than a specified value or greater than another (upper) one
+|
+
+| *'Remove all values' + interval chosen (only if 'yes')*
+| Numerical value(s) used as threshold, depending on the type of interval chosen above.
+| Only one value for 'lower' and 'upper'; two values for 'between' and 'extremity'. 
+|
+
+| *Notes:* 
+| - these parameters can be used several times using the "Insert Identify the parameter to filter" button
+| - Numerical filter does not remove NA values; if you want to suppress them, use the Qualitative filter below
+|
+
+
+Deleting samples and/or variables according to Qualitative values
+	| If 'yes' (not default): execution deletes all data samples or variables (according to selection) for which the designated
+	| factor ("Name of the column to remove" field) equals the selected level ("Remove factor when" field).
+	| To delete multiple values of the same factor, it is necessary to add as many times as necessary the corresponding factor 
+	| via the "Insert Removing a level in factor" button.
+	
+| *On file (only if 'yes')*
+| Choice between sample and variable filtering (referring to the input file containing the factor).
+|
+
+| *Name of the column to filter (only if 'yes')*
+| Column name of the factor from which we want to remove a level.
+|
+
+| *Remove factor when (only if 'yes')*
+| Value that you want to delete from the selected column.
+| Each line with that value of designated factor will be deleted.
+|
+
+| *Notes:* 
+| - these parameters can be used several times using the "Insert Removing a level in factor" button
+| - this filter can be used to filter NA in numerical parameters, or to remove a specific numerical value
+|
+
+
+------------
+Output files
+------------
+
+
+dataMatrix
+	| tabular output
+	| Identical to the input Data matrix file with the sample columns and variable lines deleted according to specified filters
+	|
+
+sampleMetadata
+	| tabular output
+	| Identical to the input Sample metadata file with the sample lines deleted according to specified filters
+	|
+
+variableMetadata
+	| tabular output
+	| Identical to the input Variable metadata file with the variable lines deleted according to specified filters
+	|
+
+
+---------------------------------------------------
+
+----------------------
+Additional information
+----------------------
+
+
+.. class:: warningmark
+
+For more information about input files, refer to the corresponding "W4M HowTo" page:
+ | `W4M table format for Galaxy &lt;http://workflow4metabolomics.org/sites/workflow4metabolomics.org/files/files/w4m_TableFormatForGalaxy_150908.pdf&gt;`_
+ |
+
+--------------
+Changelog/News
+--------------
+
+**Version 2.6 - September 2022**
+
+- NEW FEATURE: The tool does not rely on the batch package anymore to parse its command line.
+
+
+	</help>
+	<citations>
+      <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+</tool>

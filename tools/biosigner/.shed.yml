@@ -11,7 +11,8 @@ Notes:
 1) Only "binary" classification is currently available,
 2) If the "dataMatrix" contains "missing" values (NA), these features will be removed prior to modeling with Random Forest and SVM (in contrast, the NIPALS algorithm from PLS-DA can handle missing values),
 3) As the algorithm relies on bootstrapping, re-running the module may result in slightly different results. To ensure that returned results are exactly the same, the "seed" (advanced) parameter can be used.'
-remote_repository_url: https://github.com/workflow4metabolomics/biosigner.git
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/odisce/
 categories:
 - Metabolomics
 - Transcriptomics

@@ -1,0 +1,231 @@
+<tool id="Determine_BC" name="Determine_batch_correction" version="3.0.0">
+  <description>to choose between linear, lowess and loess methods</description>
+  
+  <macros>
+    <import>macros.xml</import>
+  </macros>
+  
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.7_8">r-ade4</requirement>
+    <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
+  </requirements>
+
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+ 
+  <command><![CDATA[
+    Rscript $__tool_directory__/batch_correction_3Lwrapper.R
+      analyse "determine_bc"
+      sampleMetadata "$sampleMetadata"
+      dataMatrix "$dataMatrix"
+      ref_factor "$ref_factor"
+      #if str($advance.option ) == 'show':
+        span $advance.span
+      #else:
+        span "none"
+      #end if
+      out_graph_pdf "$out_graph_pdf"
+      out_preNormSummary "$out_preNormSummary"
+      @SM_CUSTOM@
+  ]]></command>
+  
+  <inputs>
+    <param name="dataMatrix" type="data" label="Data matrix file " help="" format="tabular" />
+    <param name="sampleMetadata" type="data" label="Sample metadata file " help="must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'" format="tabular" />
+    <expand macro="sm_customisation"/>
+    <expand macro="foi"/>
+    <conditional name="advance">
+        <param name="option" type="select" label="Advanced options" help="should only be put at 'show' if you have good understanding of the span parameter and are willing to adjust it">
+            <option value="show">show</option>
+            <option value="hide" selected="true">hide</option>
+        </param>
+        <when value="show">
+            <param name="span" type="float" value="0.85" label="span" help="applied to lowess and loess regression"/>
+        </when>
+        <when value="hide"/>
+    </conditional>
+  </inputs>
+  
+  <outputs>
+    <data name="out_graph_pdf" label="Determine_BC_graph" format="pdf" ></data>
+    <data name="out_preNormSummary" label="Determine_BC_preNormSummary" format="tabular" ></data>
+  </outputs>
+
+  <tests>
+    <test>
+      <param name="dataMatrix" value="input-determinebc-dataMatrix.tsv"/>
+      <param name="sampleMetadata" value="input-determinebc-sampleMetadata.tsv"/>
+      <param name="ref_factor" value="batch"/>
+      <param name="option" value="hide"/>
+      <param name="span" value="none"/>
+      <output name="out_preNormSummary" file="output-determinebc-preNormSummary.txt"/>
+    </test>
+  </tests>
+
+  <help>
+
+.. class:: infomark
+
+**Authors**
+  | Jean-Francois Martin - PF MetaToul-AXIOM ; INRAE ; MetaboHUB (for original version of this tool and overall development of the R script)
+
+.. class:: infomark
+
+**Contributors**
+  | Melanie Petera - PFEM ; INRAE ; MetaboHUB (for R wrapper and R script improvement)
+
+.. class:: infomark
+
+**Wrapping**
+  | Marion Landi - FLAME ; PFEM (for original xml interface and R wrapper)
+  | Franck Giacomoni - PFEM ; INRAE ; MetaboHUB (for original xml interface and R wrapper)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite** If you use this tool, please cite:
+  | `F.M. van der Kloet, I. Bobeldijk, E.R. Verheij, R.H. Jellema. (2009). "Analytical error reduction using single point calibration for accurate and precise metabolomic phenotyping." Journal of Proteome Research p5132-5141 &lt;http://www.ncbi.nlm.nih.gov/pubmed/19754161&gt;`_
+
+---------------------------------------------------
+
+==========================
+Determine_batch_correction
+==========================
+
+| 
+
+-----------
+Description
+-----------
+
+| 
+
+Generates outputs to help to determine what type of regression to use between linear or non-linear (lowess or loess) functions for batch correction
+using quality control pooled samples (QC-pools) with correction algorithm as described by Van Der Kloet (J Prot Res 2009).
+
+
+Warning: this module does *not* deliver which choice should be made in model type;
+it only provides information to help users in determining which choice may be appropriate, based on their own expertise.
+
+
+This tool is meant to be used prior to the Batch_correction tool to help to make a choice in parameters,
+but it is not a requirement and thus can be avoided.
+
+| 
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: determine_batch_correction.png
+        :width: 600
+
+
+-----------
+Input files
+-----------
+
++--------------------------+-----------+
+| Parameter : num + label  |   Format  |
++==========================+===========+
+| 1 : Data matrix file     |   tabular |
++--------------------------+-----------+
+| 2 : Sample metadata file |   tabular |
++--------------------------+-----------+
+
+| 
+
+The data matrix file must contain the intensity values of variables.
+ | First line must contain all the samples' names.
+ | First column must contain all the variables' ID.
+
+
+The sample metadata file must contain at least the three following columns: 
+ | - a batch column (default to "*batch*") to identify the batches of analyses
+ | - an injection order column (default to "*injectionOrder*") composed of integers defining the injection order of samples
+ | - a sample type column (default to "*sampleType*") indicating if a sample is a biological one ("*sample*"), a QC-pool ("*pool*") or a blank ("*blank*")
+ | *Default values* can be changed according to your data coding using the customisation parameters in the "**Sample metadata file coding parameters**" section.
+
+
+**Notes concerning your design:** 
+ | - the 3 mandatory columns must not contain NA
+ | - your data should contain at least 3 QC-pools in each batch for intra-batch **linear** adjustment and 8 for **lo(w)ess** adjustment
+
+
+
+----------
+Parameters
+----------
+
+Sample metadata file coding parameters
+ | Enables to give the names of columns in the sample metadata table that contain the injection order, the batches and the sample types.
+ | Also enables to specify the sample type coding used in the sampletype column. 
+ |
+
+Factor of interest
+ | Name of the factor (column header) that will be used as a categorical variable for design plots (often a biological factor ; if none, put the batch column name).
+ | This factor does not affect correction calculation.
+ |
+
+Advanced options
+ | Should only be put at "show" if you have good understanding of the span parameter and are willing to adjust it.
+ |
+
+Span
+ | - When advanced option is at "hide" (default):
+ | default is 1 for loess regression and is two times the ratio between number of pools and number of samples for lowess regression.
+ | - When advanced option is at "show": 
+ | filled value is used for lowess and loess regressions.
+
+
+------------
+Output files
+------------
+
+Determine_BC_preNormSummary.tabular
+ | tabular output
+ | Meaning of results of diagnosis analysis
+ | 0 - no preliminary-condition problem
+ | 1 - standard deviation of QC-pools or samples = 0
+ | 2 - insufficient number of QC-pools within a batch (n=3 for linear, n=8 for lowess or loess)
+ | 2.5 - less than 2 samples within a batch
+ | 3 - significant difference between QC-pools' and samples' means
+ | 4 - denominator =0 when on 1 pool per batch non-zero
+ | 5 - (linear regression only) the slopes ratio “QC-pools/samples” is lower than -0.2
+ | 6 - (linear regression only) none of the pool or sample could be corrected if negative and infinite values are turned into NA
+ |
+
+Determine_BC_graph.pdf
+ | graphical output
+ | One page per ion. Plots regression curves for all methods allowed and plot.design results regarding the factor of interest. 
+
+
+---------------------------------------------------
+
+----------------------
+Additional information
+----------------------
+
+
+.. class:: warningmark
+
+Refer to the corresponding "W4M HowTo" page:
+ | `MS data processing - Filters and normalisation &lt;https://download.workflow4metabolomics.org/docs/w4e2018/2018-10_EC_W4E%20-%20Dataprocessing_Filter_and_normalisation.pdf&gt;`_
+ |
+ |
+
+
+</help>
+
+      <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
+    <citations>
+        <!-- [HELP] As DOI or BibTex entry -->
+        <citation type="doi">10.1021/pr900499r</citation>
+    </citations>
+  
+
+
+</tool>

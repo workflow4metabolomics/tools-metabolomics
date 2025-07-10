@@ -1,0 +1,400 @@
+<tool id="Batch_correction" name="Batch_correction" version="3.0.0">
+  <description>Corrects intensities for signal drift and batch-effects</description>
+  
+  <macros>
+    <import>macros.xml</import>
+  </macros>
+
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.7_8">r-ade4</requirement>
+    <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
+    <requirement type="package" version="1.10.0">bioconductor-ropls</requirement>
+  </requirements>
+
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command><![CDATA[
+    #if str($span_condition.method) == 'all_loess_pool':
+        Rscript $__tool_directory__/batch_correction_all_loess_wrapper.R
+        dataMatrix "$dataMatrix"
+        sampleMetadata "$sampleMetadata"
+        variableMetadata "$variableMetadata"
+        method "all_loess_pool"
+        span "${span_condition.span}"
+    
+    #elif str($span_condition.method) == 'all_loess_sample':
+        Rscript $__tool_directory__/batch_correction_all_loess_wrapper.R
+        dataMatrix "$dataMatrix"
+        sampleMetadata "$sampleMetadata"
+        variableMetadata "$variableMetadata"
+        method "all_loess_sample"
+        span "${span_condition.span}"
+    #else:
+        Rscript $__tool_directory__/batch_correction_3Lwrapper.R
+        analyse "batch_correction"
+        dataMatrix "$dataMatrix"
+        sampleMetadata "$sampleMetadata"
+        variableMetadata "$variableMetadata"
+        method "${span_condition.method}"
+        #if str($span_condition.method) == 'linear':
+            span "none"
+        #else:
+            span "${span_condition.span}"
+        #end if
+        valnull "${span_condition.valnull}"
+        ref_factor "${span_condition.ref_factor}"
+        detail "${span_condition.detail}"
+    #end if
+    dataMatrix_out "$dataMatrix_out" variableMetadata_out "$variableMetadata_out"
+    graph_output "$graph_output"  rdata_output "$rdata_output"
+    @SM_CUSTOM@
+  ]]></command>
+
+    <inputs>
+        <param name="dataMatrix" label="Data matrix file " format="tabular" type="data" />
+        <param name="sampleMetadata" label="Sample metadata file " format="tabular" type="data" help="must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'"/>
+        <param name="variableMetadata" label="Variable metadata file " format="tabular" type="data" />
+
+        <expand macro="sm_customisation"/>
+        
+        <conditional name="span_condition">
+            <param name="method" label="Type of regression model " type="select" help="To select between linear or non-linear (lowess or loess) methods to be used in Van der Kloet algorithm ; when using loess, you can choose to use pools or samples to model batch effect.">
+                <option value="linear">linear</option>
+                <option value="lowess">lowess</option>
+                <option value="loess">loess</option>
+                <option value="all_loess_pool">all loess pool</option>
+                <option value="all_loess_sample">all loess sample</option>
+            </param>
+            <when value="linear">
+                <expand macro="lll_options"/>
+            </when>
+            <when value="lowess">
+                <expand macro="lll_span"/>
+                <expand macro="lll_options"/>
+            </when>
+            <when value="loess">
+                <expand macro="lll_span"/>
+                <expand macro="lll_options"/>
+            </when>
+            <when value="all_loess_pool">
+                <param name="span" type="float" value="1" label="span" help="smoothing parameter; must be > 0"/>
+            </when>
+            <when value="all_loess_sample">
+                <param name="span" type="float" value="1" label="span" help="smoothing parameter; must be > 0"/>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <data name="dataMatrix_out" label="BC_${span_condition.method}_${dataMatrix.name}" format="tabular"/>
+        <data name="variableMetadata_out" label="BC_${span_condition.method}_${variableMetadata.name}" format="tabular"/>
+        <data name="graph_output" label="${tool.name}_${span_condition.method}_graph" format="pdf"/>
+        <data name="rdata_output" label="${tool.name}_${span_condition.method}_rdata" format="rdata">
+            <filter>span_condition['method'] == 'all_loess_pool' or span_condition['method'] == 'all_loess_sample'</filter>
+        </data>
+    </outputs>
+
+  <tests>
+    <test>
+      <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
+      <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata.tsv"/>
+      <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>
+      <param name="method" value="all_loess_pool"/>
+      <param name="span" value="1"/>
+      <output name="dataMatrix_out" file="output-batchcorrection-dataMatrix.tsv"/>
+    </test>
+    <test>
+      <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
+      <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata-customSampleType.tsv"/>
+      <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>
+      <param name="method" value="loess"/>
+      <param name="span" value="1"/>
+      <param name="sample_type_col_name" value="MySampType"/>
+      <param name="sampleTypeTagPool" value="lot"/>
+      <param name="sampleTypeTagBlank" value="blanc"/>
+      <param name="sampleTypeTagSample" value="echant"/>
+      <output name="dataMatrix_out" file="output-batchcorrection-dataMatrix-3L.tsv"/>
+    </test>
+  </tests>
+
+    <help>
+
+.. class:: infomark
+
+**Authors**
+  | Jean-Francois Martin - PF MetaToul-AXIOM ; INRAE ; MetaboHUB (for original version of this tool and overall development of the R script)
+  | Melanie Petera - PFEM ; INRAE ; MetaboHUB (for R wrapper and R script improvement regarding "linear/lowess/loess" methods)
+  | Marion Landi - FLAME ; PFEM (for original xml interface and R wrapper)
+  | Franck Giacomoni - PFEM ; INRAE ; MetaboHUB (for original xml interface and R wrapper)
+  | Etienne Thevenot - LIST/LADIS ; CEA ; MetaboHUB (for R script and wrapper regarding "all loess pool" and "all loess sample" methods)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite** If you use this tool, please cite:
+
+when using the **linear**, **lowess** or **loess** methods:
+  | `F.M. Van Der Kloet, I. Bobeldijk, E.R. Verheij, R.H. Jellema. (2009). "Analytical error reduction using single point calibration for accurate and precise metabolomic phenotyping." Journal of Proteome Research p5132-5141 &lt;http://www.ncbi.nlm.nih.gov/pubmed/19754161&gt;`_
+
+when using the **all loess pool** or **all loess sample** method:
+  | `Dunn et al (2011). Procedures for large-scale metabolic profiling of serum and plasma using gas chromatography and liquid chromatography coupled to mass spectrometry. Nature Protocols, 6:1060-1083 &lt;http://dx.doi.org/10.1038/nprot.2011.335&gt;`_
+  | Cleveland et al (1997). In Statistical Models in S; Chambers JM. and Hastie TJ. Ed.; Chapman et Hall: London; pp. 309-376
+  | Etienne A. Thevenot, Aurelie Roux, Ying Xu, Eric Ezan, and Christophe Junot (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (http://dx.doi.org/10.1021/acs.jproteome.5b00354).
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+================
+Batch_correction
+================
+
+|
+
+-----------
+Description
+-----------
+
+| **Instrumental drift** and **offset differences** between batches have been described in **LC-MS** experiments when the number of samples is large and/or multiple batches of acquisition are needed.
+| Recently a normalization strategy relying on the measurements of a **pooled** (or QC) sample injected periodically has been described: for each variable, a **regression model** is fitted to the values of the **pool** and subsequently used to adjust the intensities of the samples of interest (van der Kloet et al, 2009; Dunn et al, 2011).
+|
+| The current tool implements **two strategies** which differ in the way the regression model is applied to the variables (either depending on variable quality metrics, or 'loess' model for all variables) and also in the generated figure.
+|
+
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: batch_correction.png
+        :width: 800
+
+
+-----------
+Input files
+-----------
+
++----------------------------+------------+
+| Parameter : num + label    |   Format   |
++============================+============+
+| 1 : Data Matrix file       |   tabular  |
++----------------------------+------------+
+| 2 : Sample metadata file   |   tabular  |
++----------------------------+------------+
+| 3 : Variable metadata file |   tabular  |
++----------------------------+------------+
+
+ | 
+
+Data Matrix file must contain the intensity values of variables.
+ | First line must contain all the samples' names
+ | First column must contain all the variables' ID
+
+
+Sample metadata file must contain at least the three following columns: 
+ | - a batch column (default to "*batch*") to identify the batches of analyses
+ | - an injection order column (default to "*injectionOrder*") composed of integers defining the injection order of samples
+ | - a sample type column (default to "*sampleType*") indicating if a sample is a biological one ("*sample*"), a QC-pool ("*pool*") or a blank ("*blank*")
+ | *Default values* can be changed according to your data coding using the customisation parameters in the "**Sample metadata file coding parameters**" section.
+
+
+**Notes concerning your design:** 
+ | - the 3 mandatory columns must not contain NA
+ | - your data should contain at least 3 QC-pools in each batch for intra-batch **linear** adjustment and 8 for **lo(w)ess** adjustment (minimum of 5 for **all loess** methods)
+
+
+
+----------
+Parameters
+----------
+
+
+Sample metadata file coding parameters
+ | Enables to give the names of columns in the sample metadata table that contain the injection order, the batches and the sample types.
+ | Also enables to specify the sample type coding used in the sampletype column. 
+ |
+
+Type of regression model
+ | To choose between *linear*, *lowess*, *loess*, *all loess pool*, and *all loess sample* strategies
+ | **- Option 1** (**linear**, **lowess**, and **loess** methods): before the normalisation of each variable, some quality metrics are computed (see the "Determine Batch Correction" module); depending on the result, the variable can be normalized or not, with either the **linear**, **lowess** or **loess** model.
+ | **- Option 2** (**all loess pool** and **all loess sample**): each variable is normalized by using the 'loess' model;
+ | in the case **all loess pool** is chosen and the number of pool observations is below 5, the linear method is used (for all variables) and a warning is generated;
+ | if the pool intensities are not representative of the samples (which can be viewed on the figure where both trends are shown), the case **all loess sample** enables using the sample intensities (instead of the pool intensities) as the reference for the loess curve.
+ | In all "option 2" cases: the **median intensity of the reference observations** (either 'pool' or 'sample') is used as the scaling factor after the initial intensities have been divided by the loess predictions.
+ |
+
+Span
+ | Smoothing parameter, advanced option for *lo(w)ess* and *all loess* methods
+ | In case of a loess fit, the **span** parameter (between 0 and 1) controls the smoothing
+ | (the higher the smoother; higher values are prefered to avoid overfitting; Cleveland et al, 1997).
+ |
+
+Unconsistant values
+ | available for regression model *linear*, *lowess* and *loess*
+ | Controls what is done regarding negative or infinite values that can be generated during regression estimation. 
+ | *Prevent it* will change the normalisation term leading to an unconsistant value to prevent it:
+ | when intra batch denominator term is below 1, it is turned to the minimum >1 one obtained in the concerned batch.
+ | *Consider it as a missing value* will switch concerned intensities to NA;
+ | this option implies that concerned ions will not be considered in PCA display. 
+ | *Consider it as a null intensity* will switch concerned intensities to 0.
+ | 
+
+Factor of interest
+ | available for regression model *linear*, *lowess* and *loess*
+ | Name of the factor (column header) that will be used as a categorical variable for design plots (often a biological factor ; if none, put the batch column name).
+ | This factor does not affect correction calculation.
+ | 
+
+Level of details for plots
+ | available for regression model *linear*, *lowess* and *loess*
+ | *basic*: Sum of intensities + PCA + CV boxplot (before and after correction)
+ | *standard*: 'basic' plots + before/after-correction plots of intensities over injection order, and design effects for each ion
+ | *complete*: 'standard' plots + QC-pool regression plots per batch with samples' intensities over injection order
+ | This factor is not used by the *all loess* methods where a unique figure is generated showing the sum of intensities along injection order, and the first 4 PCA scores.
+ | 
+
+
+------------
+Output files
+------------
+
+Batch_correction_$method_rdata.rdata ('all_loess' methods only)
+ | binary data
+ | Download, open R and use the 'load' function; objects are in the 'res' list
+ |
+
+Batch_correction_$method_graph.pdf
+ | graphical output
+ | For the *linear* and *lo(w)ess* methods, content depends on level of details chosen 
+ |
+
+Batch_correction_$method_variableMetadata.tabular
+ | tsv output
+ | Identical to the variable metadata input file, with x more columns (where x is the number of batches) in case of *linear*, *lowess* and *loess* methods
+ |
+
+Batch_correction_$method_dataMatrix.tabular
+ | tsv output (tabulated)
+ | Same formatting as the data matrix file; contains corrected intensities
+ |
+
+
+---------------------------------------------------
+
+----------------------
+Additional information
+----------------------
+
+.. class:: infomark
+
+Refer to the corresponding "W4M HowTo" page:
+ | `MS data processing - Filters and normalisation &lt;https://download.workflow4metabolomics.org/docs/w4e2018/2018-10_EC_W4E%20-%20Dataprocessing_Filter_and_normalisation.pdf&gt;`_
+ |
+
+See also the reference history:
+ | `W4M00001_Sacurine-statistics (DOI:10.15454/1.4811121736910142E12) &lt;http://dx.doi.org/10.15454/1.4811121736910142E12&gt;`_
+
+
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 3.0.0  
+========================  
+
+NEW FEATURES 
+
+| - Specific names for the 'sampleType', 'injectionOrder', and 'batch' from sampleMetadata are now available in a dedicated parameter section
+| - Addition of a sum of ions before/after plot for linear/lowess/loess methods
+| - Addition of a third option in "Null values" parameter (renamed "unconsistant values") in linear/lowess/loess methods
+| - linear/lowess/loess methods now handle NA in intensities and allow "blank" samples in the dataset
+|
+
+INTERNAL MODIFICATIONS
+
+| - XML optimisation using macros
+| - Output name changes
+| - linear/lowess/loess methods: disabling of RData output
+| - linear/lowess/loess methods: split of tool-linked code and script-linked one
+| - linear/lowess/loess methods: adjustments in the normalisation process to match matters linked to NA acceptance
+| - linear/lowess/loess methods: better handling of special characters in IDs and column names
+|
+
+CHANGES IN VERSION 2.2.4  
+========================  
+
+INTERNAL MODIFICATIONS  
+
+Fixed bug for pool selection ("all_loess" methods)  
+
+CHANGES IN VERSION 2.2.2  
+========================  
+
+INTERNAL MODIFICATIONS  
+
+Fixed bug for color plot ("all_loess" methods)  
+
+CHANGES IN VERSION 2.2.0  
+========================  
+
+NEW FEATURE  
+
+Specific names for the 'sampleType', 'injectionOrder', and 'batch' from sampleMetadata can be selected by the user (for compatibility with the MTBLS downloader)
+
+CHANGES IN VERSION 2.1.2  
+========================  
+
+INTERNAL MODIFICATIONS  
+
+Minor modifications in config file  
+
+CHANGES IN VERSION 2.1.0
+========================
+
+INTERNAL MODIFICATIONS  
+
+For PCA figure display only (**all_loess** options): missing values are set to the minimum value before PCA computation is performed (with svd)
+
+Additional running and installation tests added with planemo, conda, and travis
+
+BUG FIX
+
+Variables with NA or 0 values in all reference samples are discarded before applying the **all_loess** normalization
+
+INTERNAL MODIFICATIONS
+
+Modifications of the **all_loess_wrapper** file to handle the recent **ropls** package versions (i.e. 1.3.15 and above) which use S4 classes
+
+  </help>
+      <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
+    <citations>
+        <!-- [HELP] As DOI or BibTex entry -->
+        <citation type="doi">10.1021/pr900499r</citation>
+        <citation type="doi">10.1038/nprot.2011.335</citation>
+        <citation type="bibtex">@ARTICLE{Cleveland91,
+            author = {Cleveland et al},
+            year = {1991},
+            journal = {Statistical Models in S, Chambers JM. and Hastie TJ. Ed., Chapman et Hall: London},
+            title = {Local Regression Models},
+            pages = {309-376},
+            editor = {Chambers JM. and Hastie TJ. Ed.},
+            publisher = {Chapman et Hall: London},
+            chapter = {8}
+        }</citation>
+    <citation type="doi">10.1021/acs.jproteome.5b00354</citation>
+    </citations>
+
+
+</tool>

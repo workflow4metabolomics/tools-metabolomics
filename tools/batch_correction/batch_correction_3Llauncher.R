@@ -149,10 +149,10 @@ meth3L <- function(idsample, iddata, sample_type_col_name, injection_order_col_n
         ## Launch
         res <- norm_QCpool(ids, nbid, outlog, factbio, metaion, detail, FALSE, FALSE, method, span, valnull, sm.meta, min.norm)
         ## Get back original IDs
-        var.id <- reproduceID(res[[1]], res[[2]], "variable", var.id)
+        var.id <- reproduce_id(res[[1]], res[[2]], "variable", var.id)
         res[[1]] <- var.id$dataMatrix
         res[[2]] <- var.id$Metadata
-        samp.id <- reproduceID(res[[1]], res[[3]], "sample", samp.id)
+        samp.id <- reproduce_id(res[[1]], res[[3]], "sample", samp.id)
         res[[1]] <- samp.id$dataMatrix
         res[[3]] <- samp.id$Metadata
         ## Save files

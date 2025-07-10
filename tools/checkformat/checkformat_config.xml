@@ -2,24 +2,21 @@
   <description>Checking/formatting the sample and variable names of the dataMatrix, sampleMetadata, and variableMetadata files</description>
   
   <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="4.3.3">r-base</requirement>
   </requirements>
 
-  <command detect_errors="aggressive"><![CDATA[
-  Rscript $__tool_directory__/checkformat_wrapper.R
-  dataMatrix_in "$dataMatrix_in"
-  sampleMetadata_in "$sampleMetadata_in"
-  variableMetadata_in "$variableMetadata_in"
-  makeNameL "$makeNameL"
+  <required_files>
+    <include path="checkformat_script.R" />
+  </required_files>
 
-  dataMatrix_out "$dataMatrix_out"
-  sampleMetadata_out "$sampleMetadata_out"
-  variableMetadata_out "$variableMetadata_out"
-  information "$information"
+  <command detect_errors="aggressive"><![CDATA[
+    Rscript -e 'source("$__tool_directory__/checkformat_script.R")' -e "source('$run_script')"
   ]]></command>
 
   <configfiles>
     <configfile name="run_script"><![CDATA[
+sink("$information", append=TRUE, split=TRUE)
+
 resLs <- readAndCheckF(
   '$dataMatrix_in',
   '$sampleMetadata_in',
@@ -27,52 +24,16 @@ resLs <- readAndCheckF(
   $makeNameL
 )
 
-datMN <- resLs[["datMN"]]
-datDF <- cbind.data.frame(
-    dataMatrix = colnames(datMN),
-    as.data.frame(t(datMN))
-)
-write.table(datDF,
-    file = '$dataMatrix_out',
-    quote = FALSE,
-    row.names = FALSE,
-    sep = "\t"
-)
-
-## sampleMetadata
-
-samDF <- resLs[["samDF"]]
-samDF <- cbind.data.frame(
-    sampleMetadata = rownames(samDF),
-    samDF
-)
-write.table(samDF,
-    file = '$sampleMetadata_out',
-    quote = FALSE,
-    row.names = FALSE,
-    sep = "\t"
-)
-
-## variableMetadata
-
-varDF <- resLs[["varDF"]]
-varDF <- cbind.data.frame(
-    variableMetadata = rownames(varDF),
-    varDF
-)
-write.table(varDF,
-    file = '$variableMetadata_out',
-    quote = FALSE,
-    row.names = FALSE,
-    sep = "\t"
-)
+write_dataMatrix(resLs[["datMN"]], "$dataMatrix_out")
+write_metadata(resLs[["samDF"]], "$sampleMetadata_out")
+write_metadata(resLs[["varDF"]], "$variableMetadata_out")
 
 if (resLs[["chkL"]]) {
-    if (resLs[["newL"]]) {
-        cat("\nWarning: The sample and/or variable names or orders from the input tables have been modified\n(see the information file for details); please use the new output tables for your analyses.\n")
-    } else {
-        cat("\nThe input tables have a correct format and can be used for your analyses.\n")
-    }
+  if (resLs[["newL"]]) {
+    cat("\nWarning: The sample and/or variable names or orders from the input tables have been modified\n(see the information file for details); please use the new output tables for your analyses.\n")
+  } else {
+    cat("\nThe input tables have a correct format and can be used for your analyses.\n")
+  }
 }
     ]]></configfile>
   </configfiles>
@@ -103,7 +64,7 @@ if (resLs[["chkL"]]) {
       <output name="information">
         <assert_contents>
           <has_text text="Message: Converting sample and variable names to the standard R format" />
-	  <has_text text="Warning: The sample and/or variable names or orders from the input tables have been modified" />
+	        <has_text text="Warning: The sample and/or variable names or orders from the input tables have been modified" />
         </assert_contents>
       </output>
     </test>
@@ -157,7 +118,7 @@ Input files
 | 3 : Variable metadata file | tabular |
 +----------------------------+---------+
 
-| The **required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org.
+| The **required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org (https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY).
 
 
 ----------

@@ -189,3 +189,30 @@ readAndCheckF <- function(datFilC = "dataMatrix.tsv",
 
     return(resLs)
 } ## end of checkAndReadF
+
+write_dataMatrix <- function(dataMatrix, path) {
+    datDF <- cbind.data.frame(
+        dataMatrix = colnames(dataMatrix),
+        as.data.frame(t(dataMatrix))
+    )
+    write.table(datDF,
+        file = path,
+        quote = FALSE,
+        row.names = FALSE,
+        sep = "\t"
+    )
+}
+
+## sampleMetadata & variableMetadata
+write_metadata <- function(sampleMetadata, path) {
+    samDF <- cbind.data.frame(
+        sampleMetadata = rownames(sampleMetadata),
+        sampleMetadata
+    )
+    write.table(samDF,
+        file = path,
+        quote = FALSE,
+        row.names = FALSE,
+        sep = "\t"
+    )
+}

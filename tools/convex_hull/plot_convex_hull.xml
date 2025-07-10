@@ -1,0 +1,82 @@
+<tool id="plot_convex_hull" name="Plot Convex Hull" version="0.1+galaxy0" python_template_version="3.5" profile="21.05">
+    <description>This script plots a convex polygon around intensities based on injection order to visualize batch variability.   </description>
+
+    <requirements>
+        <requirement type="package" version="4.1.2">R-base</requirement>
+	<requirement type="package" version="3.3.5">r-ggplot2</requirement>
+	<requirement type="package" version="1.6.6">r-optparse</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript '$__tool_directory__/plot_convex_hull.R'
+        --dataMatrix '$dataMatrix'
+        --sampleMetadata '$sampleMetadata'
+        --variableMetadata '$variableMetadata'
+        --global '$global'
+        --multiple '$multiple'
+        --metabolite '$metabolite'
+        --points '$points'
+        --output '$output_name'
+    ]]></command>
+
+    <inputs>
+    	<param name='dataMatrix' type='data' format='txt' label='TSV File dataMatrix'/>
+    	<param name='sampleMetadata' type='data' format='txt' label='TSV File sampleMetadata'/>
+    	<param name='variableMetadata' type='data' format='txt' label='TSV File variableMetadata'/>
+    	<param name='global' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use the global injection order not by batch'/>
+    	<param name='multiple' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Make multiple plot for multiple metabolite'/>
+    	<param name='metabolite' type='text' label='Metabolite name' value='Metabolite X'/>
+    	<param name='points' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Display points on the graph'/>
+    	<param name='output_name' type='text' label='Output file name' value='plot_convex_hull.pdf'/>
+</inputs>
+
+
+<outputs>
+    <data name="output_file" format="pdf" label="Convex Hull Plot(s)" from_work_dir="$output_name"/>
+</outputs>
+
+<tests>
+    <test>
+        <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+        <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+        <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+        <param name="global" value="TRUE"/>
+        <param name="multiple" value="TRUE"/>
+        <param name="metabolite" value="Metabolite X"/>
+        <param name="points" value="TRUE"/>
+        <param name="output_name" value="expected_plot.pdf"/>
+        <output name="output_file" file="expected_plot.pdf"/>
+    </test>
+
+</tests>
+
+    <help><![CDATA[
+This tool generates a plot showing the convex hull of a metabolite’s intensity by injection order, grouped by batch.
+
+The user provides a CSV file with columns: InjectionOrder, InjectionOrder2, Intensity, and Batch.
+The tool offers options to customize the plot title, output file name, output folder, and whether to display individual points.
+If the point display is disabled, the injection order is recalculated within each batch.
+The final plot is saved as a .png image in the specified directory.
+
+**Paramètres** :
+- `input` : CSV file containing the columns InjectionOrder, InjectionOrder2, Intensity, Batch
+- `metabolite` : name of the metabolite for the plot title
+- `points` : TRUE/FALSE to display data points
+- `output_name` : name of the generated PNG image file
+
+]]></help>
+
+    <citations>
+        <citation type="bibtex">
+@misc{githubseqtk,
+  author = {Mulot, Brice},
+  year = {2025},
+  title = {plot_convex_hull},
+  publisher = {Gitlab},
+  journal = {Gitlab repository},
+  url = {https://unh-pfem-gitlab.ara.inrae.fr/marie.lefebvre/code_indicateur_galaxy},
+}</citation>
+    </citations>
+    
+</tool>
+

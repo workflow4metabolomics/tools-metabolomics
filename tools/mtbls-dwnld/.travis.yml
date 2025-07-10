@@ -1,0 +1,16 @@
+dist: bionic
+
+notifications:
+ email:
+  recipients:
+   - pierrick.roger@cea.fr
+
+install:
+  - wget https://download.asperasoft.com/download/sw/cli/3.7.7/aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
+  - bash aspera-cli-3.7.7.608.927cce8-linux-64-release.sh
+
+script:
+    - export PATH=$PATH:$HOME/.aspera/cli/bin
+    - TEST_THAT_NO_FCT=test_ascp_private_study make test
+    - make plint
+    - make ptest

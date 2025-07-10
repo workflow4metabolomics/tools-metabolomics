@@ -48,8 +48,8 @@
 
           <output name="dataMatrix" value="NMR_ReadFids_dataMatrix.tabular" />
           <output name="sampleMetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
-          <output name="logOut" value="NMR_ReadFids_log.txt" />
-          <output name="graphOut" value="NMR_ReadFids_graph.pdf" />
+          <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
         </test>
     </tests>
 

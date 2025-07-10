@@ -1,30 +1,10 @@
-#!/usr/local/public/bin/Rscript --vanilla --slave --no-site-file
-
-## 170116_NmrPreprocessing.R
-## Manon Martin and Marie Tremblay-Franco
-
-## ======================================================
-## ======================================================
-# Preamble
-## ======================================================
-## ======================================================
-
-runExampleL <- FALSE
-
-
-## ------------------------------
-## Options
-strAsFacL <- options()$stringsAsFactors
-options(stringsAsFactors = FALSE)
-
 ## Libraries laoding
 ## ------------------------------
-# library(batch)
-suppressPackageStartupMessages(library(ptw))
-suppressPackageStartupMessages(library(Matrix))
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(gridExtra))
-suppressPackageStartupMessages(library(reshape2))
+library(ptw)
+library(Matrix)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
 
 # In-house function for argument parsing
 parse_args <- function() {
@@ -55,20 +35,11 @@ source_local("DrawFunctions.R")
 runExampleL <- FALSE
 
 if (!runExampleL) {
-  #  argLs <- parseCommandArgs(evaluate=FALSE)
   argLs <- unlist(parse_args())
 }
-
-print(argLs[["logOut"]])
-
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
 print(argLs)
-
-## ------------------------------
-## Errors ?????????????????????
-## ------------------------------
-
 
 ## ------------------------------
 ## Constants
@@ -78,7 +49,6 @@ flagC <- "\n"
 
 ## Starting
 cat("\nStart of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), "\n", sep = "")
-
 
 ## ======================================================
 ## ======================================================
@@ -109,7 +79,7 @@ samplemetadataFid <- as.matrix(samplemetadataFid)
 
 # water and solvent(s) correction ------------------------
 # Inputs
-lambda <- argLs[["lambda"]]
+lambda <- as.numeric(argLs[["lambda"]])
 
 # apodization -----------------------------------------
 # Inputs
@@ -120,21 +90,21 @@ expLB <- 1
 apodization <- argLs[["apodizationMethod"]]
 
 if (apodization == "exp") {
-  expLB <- argLs[["expLB"]]
+  expLB <- as.numeric(argLs[["expLB"]])
 } else if (apodization == "cos2") {
-  phase <- argLs[["phase"]]
+  phase <- as.numeric(argLs[["phase"]])
 } else if (apodization == "hanning") {
-  phase <- argLs[["phase"]]
+  phase <- as.numeric(argLs[["phase"]])
 } else if (apodization == "hamming") {
-  phase <- argLs[["phase"]]
+  phase <- as.numeric(argLs[["phase"]])
 } else if (apodization == "blockexp") {
-  rectRatio <- argLs[["rectRatio"]]
-  expLB <- argLs[["expLB"]]
+  rectRatio <- as.numeric(argLs[["rectRatio"]])
+  expLB <- as.numeric(argLs[["expLB"]])
 } else if (apodization == "blockcos2") {
-  rectRatio <- argLs[["rectRatio"]]
+  rectRatio <- as.numeric(argLs[["rectRatio"]])
 } else if (apodization == "gauss") {
-  rectRatio <- argLs[["rectRatio"]]
-  gaussLB <- argLs[["gaussLB"]]
+  rectRatio <- as.numeric(argLs[["rectRatio"]])
+  gaussLB <- as.numeric(argLs[["gaussLB"]])
 }
 
 # Fourier transform ----------------------------------
@@ -142,10 +112,8 @@ if (apodization == "exp") {
 
 # Zero Order Phase Correction -------------------------------
 # Inputs
-
 angle <- NULL
 excludeZOPC <- NULL
-
 
 zeroOrderPhaseMethod <- argLs[["zeroOrderPhaseMethod"]]
 
@@ -157,13 +125,12 @@ excludeZoneZeroPhase <- argLs[["excludeZoneZeroPhase.choice"]]
 if (excludeZoneZeroPhase == "YES") {
   excludeZoneZeroPhaseList <- list()
   for (i in which(names(argLs) == "excludeZoneZeroPhase_left")) {
-    excludeZoneZeroPhaseLeft <- argLs[[i]]
-    excludeZoneZeroPhaseRight <- argLs[[i + 1]]
+    excludeZoneZeroPhaseLeft <- as.numeric(argLs[[i]])
+    excludeZoneZeroPhaseRight <- as.numeric(argLs[[i + 1]])
     excludeZoneZeroPhaseList <- c(excludeZoneZeroPhaseList, list(c(excludeZoneZeroPhaseLeft, excludeZoneZeroPhaseRight)))
   }
   excludeZOPC <- excludeZoneZeroPhaseList
 }
-
 
 # Internal referencering ----------------------------------
 # Inputs
@@ -173,7 +140,6 @@ shiftReferencingRangeList <- NULL # fromto.RC
 pctNearValue <- 0.02 # pc
 rowindex_graph <- NULL
 ppm_ref <- 0 # ppm.ref
-
 
 # shiftReferencing <- argLs[["shiftReferencing"]]
 # print(shiftReferencing)
@@ -187,31 +153,29 @@ ppm_ref <- 0 # ppm.ref
 # }
 
 shiftReferencingRange <- argLs[["shiftReferencingRange"]]
-
 if (shiftReferencingRange == "near0") {
-  pctNearValue <- argLs[["pctNearValue"]]
+  pctNearValue <- as.numeric(argLs[["pctNearValue"]])
 }
 
 if (shiftReferencingRange == "window") {
   shiftReferencingRangeList <- list()
   for (i in which(names(argLs) == "shiftReferencingRangeLeft"))
   {
-    shiftReferencingRangeLeft <- argLs[[i]]
-    shiftReferencingRangeRight <- argLs[[i + 1]]
+    shiftReferencingRangeLeft <- as.numeric(argLs[[i]])
+    shiftReferencingRangeRight <- as.numeric(argLs[[i + 1]])
     shiftReferencingRangeList <- c(shiftReferencingRangeList, list(c(shiftReferencingRangeLeft, shiftReferencingRangeRight)))
   }
 }
-
 shiftHandling <- argLs[["shiftHandling"]]
 
-ppmvalue <- argLs[["ppmvalue"]]
+ppmvalue <- as.numeric(argLs[["ppmvalue"]])
 # }
 
 # Baseline Correction -------------------------------
 # Inputs
-lambdaBc <- argLs[["lambdaBc"]]
-pBc <- argLs[["pBc"]]
-epsilon <- argLs[["epsilon"]]
+lambdaBc <- as.numeric(argLs[["lambdaBc"]])
+pBc <- as.numeric(argLs[["pBc"]])
+epsilon <- as.numeric(argLs[["epsilon"]])
 
 excludeBC <- NULL
 
@@ -219,8 +183,8 @@ excludeZoneBC <- argLs[["excludeZoneBC.choice"]]
 if (excludeZoneBC == "YES") {
   excludeZoneBCList <- list()
   for (i in which(names(argLs) == "excludeZoneBC_left")) {
-    excludeZoneBCLeft <- argLs[[i]]
-    excludeZoneBCRight <- argLs[[i + 1]]
+    excludeZoneBCLeft <- as.numeric(argLs[[i]])
+    excludeZoneBCRight <- as.numeric(argLs[[i + 1]])
     excludeZoneBCList <- c(excludeZoneBCList, list(c(excludeZoneBCLeft, excludeZoneBCRight)))
   }
   excludeBC <- excludeZoneBCList
@@ -232,13 +196,11 @@ NegativetoZero <- argLs[["NegativetoZero"]]
 
 # Outputs
 nomGraphe <- argLs[["graphOut"]]
-# dataMatrixOut <- argLs[["dataMatrixOut"]]
 log <- argLs[["logOut"]]
 
 ## Checking arguments
 ## -------------------
 error.stock <- "\n"
-
 if (length(error.stock) > 1) {
   stop(error.stock)
 }
@@ -249,7 +211,7 @@ if (length(error.stock) > 1) {
 pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
 
 # FirstOrderPhaseCorrection ---------------------------------
-# Fid_data <- GroupDelayCorrection(Fid_data0, Fid_info = samplemetadataFid, group_delay = NULL)
+Fid_data <- GroupDelayCorrection(Fid_data0, Fid_info = samplemetadataFid, group_delay = NULL)
 
 if (FirstOPCGraph == "YES") {
   title <- "FIDs after Group Delay Correction"
@@ -388,7 +350,7 @@ if (BCGraph == "YES") {
 if (NegativetoZero == "YES") {
   Spectrum_data <- NegativeValuesZeroing(Spectrum_data)
 }
-
+print(Spectrum_data[1:5, 1:5])
 if (FinalGraph == "YES") {
   title <- "Final preprocessed spectra"
   DrawSignal(Spectrum_data,
@@ -398,8 +360,7 @@ if (FinalGraph == "YES") {
     main = title, createWindow = FALSE
   )
 }
-
-# invisible(dev.off())
+invisible(dev.off())
 
 # data_variable <- matrix(NA, nrow = 1, ncol = dim(Spectrum_data)[2], dimnames = list("ID", NULL))
 # colnames(data_variable) <- colnames(Spectrum_data)
@@ -417,27 +378,18 @@ data_variable[1, ] <- colnames(data_variable)
 ## ======================================================
 
 # Data Matrix
-write.table(round(t(Re(Spectrum_data)), 6), file = argLs$dataMatrix, quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(round(t(Re(Spectrum_data)), 6), file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # Variable metadata
-write.table(data_variable, file = argLs$variableMetadata, quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
-
-# log file
-# write.table(t(data.frame(argLs)), file = argLs$logOut, col.names = FALSE, quote=FALSE)
+write.table(data_variable, file = argLs[["variableMetadata"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
-
 argLs
-
 
 ## Ending
 cat("\nVersion of R librairies")
-sessionInfo()
+print(sessionInfo())
 cat("\nEnd of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), sep = "")
-
-sink()
-
-options(stringsAsFactors = strAsFacL)
 
 rm(list = ls())

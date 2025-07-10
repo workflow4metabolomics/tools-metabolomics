@@ -64,14 +64,14 @@ outputs <- ReadFids(path = path, l = l, subdirs = subdirs, dirs.names = dirs.nam
 data_matrix <- outputs[["Fid_data"]] # Data matrix
 data_sample <- outputs[["Fid_info"]] # Sample metadata
 
-# pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
-# DrawSignal(data_matrix,
-#   subtype = "stacked",
-#   ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-#   xlab = "Frequency", num.stacked = 4,
-#   main = "Raw FID data", createWindow = FALSE
-# )
-# invisible(dev.off())
+pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
+DrawSignal(data_matrix,
+  subtype = "stacked",
+  ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
+  xlab = "Frequency", num.stacked = 4,
+  main = "Raw FID data", createWindow = FALSE
+)
+invisible(dev.off())
 
 ## ======================================================
 ## ======================================================
@@ -89,7 +89,7 @@ write.table(data_sample, file = sampleMetadata, quote = FALSE, row.names = TRUE,
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
 
 # Reproductibility
-sessionInfo()
+print(sessionInfo())
 ## Ending
 
 cat("\nEnd of 'ReadFids' Galaxy module call: ", as.character(Sys.time()), sep = "")

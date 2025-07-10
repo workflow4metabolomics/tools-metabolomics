@@ -1,5 +1,11 @@
 <tool id="tablemerge" name="Table Merge" version="1.0.2+galaxy1" profile="24.2">
   <description>Merging dataMatrix with a metadata table</description>
+  <edam_topics>
+    <edam_topic>topic_0769</edam_topic>
+  </edam_topics>
+  <edam_operations>
+    <edam_operation>operation_3436</edam_operation>
+  </edam_operations>
   <creator>
     <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics" />
   </creator>
@@ -146,12 +152,6 @@ MINORFIX: removal batch package
 
 
 	]]></help>
-	<edam_topics>
-    <edam_topic>topic_0769</edam_topic>
-  </edam_topics>
-  <edam_operations>
-    <edam_operation>operation_3436</edam_operation>
-  </edam_operations>
 	<citations>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>

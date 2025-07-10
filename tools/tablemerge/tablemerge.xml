@@ -1,5 +1,8 @@
 <tool id="tablemerge" name="Table Merge" version="1.0.2+galaxy1" profile="24.2">
   <description>Merging dataMatrix with a metadata table</description>
+  <creator>
+    <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics" />
+  </creator>
   <requirements>
 	    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
@@ -47,26 +50,34 @@
 
 .. class:: infomark
 
-**Authors** 
-  | Melanie Petera - PFEM ; INRA ; MetaboHUB 
+**Credits** 
+  | **Original tool code & wrapping:** Melanie Petera - PFEM ; INRAE ; MetaboHUB
+  | **Original tool code & wrapping maintainer:** Melanie Petera - PFEM ; INRAE ; MetaboHUB
+
+.. class:: infomark
+
+**Contact:** For any questions or support: community.france-bioinformatique.fr/c/workflow4metabolomics/
 
 ---------------------------------------------------
 
-========================
+******************
 Table Merge
-========================
+******************
+
+===========
+DESCRIPTION
+===========
+
+Merges the data matrix with a selected metadata file (sample metadata or variable metadata) to obtain a single file. 
+
+---------------------------------------------------
+
+==========================
+ALIGNMENT WITH OTHER TOOLS
+==========================
 
 -----------
-Description
------------
-
-Merges the data matrix with a selected metadata file (sample metadata or variable metadata)
-to obtain a single file. 
-
-
-
------------
-Input files
+INPUT FILES
 -----------
 
 +----------------------------+---------+
@@ -77,53 +88,59 @@ Input files
 | 2 : Metadata file          | tabular |
 +----------------------------+---------+
 
-
 Data matrix file contains the intensity values of the variables.
 	| 
 
 Metadata file is meant to be chosen from sample metadata and variable metadata files. 
 	| 
-
-----------
-Parameter
-----------
-
-Type of metadata
-	| Specify which type of metadata table is given as Metadata file
-	| 
-
-
-------------
-Output file
-------------
-
-
-Combined_Metadata
-	| tabular output
-	| Corresponds to the input metadata file completed as new columns by the intensities in the input data matrix file
-	|
-
-
----------------------------------------------------
-
----------------
-Working example
----------------
-
-
+	
 .. class:: warningmark
 
 For more information about input files, refer to the corresponding "W4M HowTo" page:
  | `W4M table format for Galaxy <https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY>`_
  |
 
----------------
-Changelog/News
----------------
+------------
+OUTPUT FILES
+------------
 
+Combined_Metadata
+	| tabular output
+	| Corresponds to the input metadata file completed as new columns by the intensities in the input data matrix file
+	|
 
-**Version 1.0.2 - September 2022**
+----------------------------
+EXAMPLE OF WORKFLOW POSITION
+----------------------------
 
+Can be used as a last step before leaving galaxy, to gather informations into a single file. Might be handy to make further analysis with Symca for instance.
+
+---------------------------------------------------
+
+===============
+TOOL PARAMETERS
+===============
+
+Type of metadata
+	| Specify which type of metadata table is given as Metadata file
+	| 
+
+---------------------------------------------------
+
+==========
+CHANGE LOG
+==========
+-------------------------------
+Version 1.0.2+galaxy1 - September 2022
+-------------------------------
+INTERNAL MODIFICATION
+- Logic of the tool called from generic repository W4MUtils
+- Update of tool wrapper to comply with good practices
+- Update of help section
+
+-------------------------------
+Version 1.0.2 - September 2022
+-------------------------------
 MINORFIX: removal batch package
 
 
@@ -132,4 +149,10 @@ MINORFIX: removal batch package
 	<citations>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
+  <edam_topics>
+    <edam_topic>topic_0769</edam_topic>
+  </edam_topics>
+  <edam_operations>
+    <edam_operation>operation_3436</edam_operation>
+  </edam_operations>
 </tool>

@@ -5,7 +5,9 @@
     <import>macros.xml</import>
   </macros>
   
-  <expand macro="requirements"/>
+  <expand macro="requirements">
+    <requirement type="package" version="3.0.0">libgfortran</requirement>
+  </expand>
  
   <command detect_errors="aggressive"><![CDATA[
     Rscript $__tool_directory__/batch_correction_3Lwrapper.R

@@ -27,6 +27,7 @@
 
 
 library(batch) # necessary for parseCommandArgs function
+library(W4MRUtils)
 
 ## ------------------------------
 ## test help option
@@ -117,7 +118,7 @@ source_local <- function(...) {
     }
 }
 # Import the different functions
-source_local("batch_correction_3Lfct.R", "batch_correction_3Llauncher.R", "easyrlibrary-lib/RcheckLibrary.R", "easyrlibrary-lib/miniTools.R")
+source_local("batch_correction_3Lfct.R", "batch_correction_3Llauncher.R")
 
 # Specificities of BC and DBC
 if (args$analyse == "batch_correction") {

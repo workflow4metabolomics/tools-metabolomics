@@ -1,0 +1,14 @@
+dist
+*-output.tsv
+*-output-peaks.tsv
+*.html
+dist-test
+.DS_Store
+tool_test_output.*
+lcms.biodb.cache
+planemo-venv
+!test-data/*
+.swp
+.*.swp
+*.zip
+.Rproj.user

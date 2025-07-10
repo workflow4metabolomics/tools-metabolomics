@@ -123,6 +123,7 @@
   | Marion Landi - FLAME ; PFEM (for original xml interface and R wrapper)
   | Franck Giacomoni - PFEM ; INRAE ; MetaboHUB (for original xml interface and R wrapper)
   | Etienne Thevenot - LIST/LADIS ; CEA ; MetaboHUB (for R script and wrapper regarding "all loess pool" and "all loess sample" methods)
+  | Helge Hecht - RECETOX ; Masaryk University ; for maintenance
 
 ---------------------------------------------------
 
@@ -296,79 +297,6 @@ Refer to the corresponding "W4M HowTo" page:
 
 See also the reference history:
  | `W4M00001_Sacurine-statistics (DOI:10.15454/1.4811121736910142E12) &lt;http://dx.doi.org/10.15454/1.4811121736910142E12&gt;`_
-
-
----------------------------------------------------
-
-----
-NEWS
-----
-
-CHANGES IN VERSION 3.0.0  
-========================  
-
-NEW FEATURES 
-
-| - Specific names for the 'sampleType', 'injectionOrder', and 'batch' from sampleMetadata are now available in a dedicated parameter section
-| - Addition of a sum of ions before/after plot for linear/lowess/loess methods
-| - Addition of a third option in "Null values" parameter (renamed "unconsistant values") in linear/lowess/loess methods
-| - linear/lowess/loess methods now handle NA in intensities and allow "blank" samples in the dataset
-|
-
-INTERNAL MODIFICATIONS
-
-| - XML optimisation using macros
-| - Output name changes
-| - linear/lowess/loess methods: disabling of RData output
-| - linear/lowess/loess methods: split of tool-linked code and script-linked one
-| - linear/lowess/loess methods: adjustments in the normalisation process to match matters linked to NA acceptance
-| - linear/lowess/loess methods: better handling of special characters in IDs and column names
-|
-
-CHANGES IN VERSION 2.2.4  
-========================  
-
-INTERNAL MODIFICATIONS  
-
-Fixed bug for pool selection ("all_loess" methods)  
-
-CHANGES IN VERSION 2.2.2  
-========================  
-
-INTERNAL MODIFICATIONS  
-
-Fixed bug for color plot ("all_loess" methods)  
-
-CHANGES IN VERSION 2.2.0  
-========================  
-
-NEW FEATURE  
-
-Specific names for the 'sampleType', 'injectionOrder', and 'batch' from sampleMetadata can be selected by the user (for compatibility with the MTBLS downloader)
-
-CHANGES IN VERSION 2.1.2  
-========================  
-
-INTERNAL MODIFICATIONS  
-
-Minor modifications in config file  
-
-CHANGES IN VERSION 2.1.0
-========================
-
-INTERNAL MODIFICATIONS  
-
-For PCA figure display only (**all_loess** options): missing values are set to the minimum value before PCA computation is performed (with svd)
-
-Additional running and installation tests added with planemo, conda, and travis
-
-BUG FIX
-
-Variables with NA or 0 values in all reference samples are discarded before applying the **all_loess** normalization
-
-INTERNAL MODIFICATIONS
-
-Modifications of the **all_loess_wrapper** file to handle the recent **ropls** package versions (i.e. 1.3.15 and above) which use S4 classes
 
   </help>
       <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->

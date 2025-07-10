@@ -1,9 +1,16 @@
-<tool id="generic_filter" name="Generic_Filter" version="2.6">
+<tool id="generic_filter" name="Generic_Filter" version="1.0.0+galaxy0", profile="24.2">
   <description>Removes elements according to numerical or qualitative values</description>
+  <creator>
+    <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics" />
+  </creator>
   <requirements>
         <requirement type="package" version="4.3.3">r-base</requirement>
         <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
+  <required_files>
+    <include path="filter_wrap.R" />
+    <include path="filter_script.R" />
+  </required_files>
   <command><![CDATA[
     Rscript '$__tool_directory__/filter_wrap.R'
       dataMatrix_in "$dataMatrix_in"

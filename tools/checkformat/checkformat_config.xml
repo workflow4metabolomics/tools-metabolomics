@@ -1,4 +1,4 @@
-<tool id="checkFormat" name="Check Format" version="3.0.0">
+<tool id="checkFormat" name="Check Format" version="3.0.0+galaxy0" license="CECILL-2.1" profile="23.0">
   <description>Checking/formatting the sample and variable names of the dataMatrix, sampleMetadata, and variableMetadata files</description>
   
   <requirements>

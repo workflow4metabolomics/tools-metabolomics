@@ -16,7 +16,66 @@
   sampleMetadata_out "$sampleMetadata_out"
   variableMetadata_out "$variableMetadata_out"
   information "$information"
-  ]]></command>    
+  ]]></command>
+
+  <configfiles>
+    <configfile name="run_script"><![CDATA[
+resLs <- readAndCheckF(
+  '$dataMatrix_in',
+  '$sampleMetadata_in',
+  '$variableMetadata_in',
+  $makeNameL
+)
+
+datMN <- resLs[["datMN"]]
+datDF <- cbind.data.frame(
+    dataMatrix = colnames(datMN),
+    as.data.frame(t(datMN))
+)
+write.table(datDF,
+    file = '$dataMatrix_out',
+    quote = FALSE,
+    row.names = FALSE,
+    sep = "\t"
+)
+
+## sampleMetadata
+
+samDF <- resLs[["samDF"]]
+samDF <- cbind.data.frame(
+    sampleMetadata = rownames(samDF),
+    samDF
+)
+write.table(samDF,
+    file = '$sampleMetadata_out',
+    quote = FALSE,
+    row.names = FALSE,
+    sep = "\t"
+)
+
+## variableMetadata
+
+varDF <- resLs[["varDF"]]
+varDF <- cbind.data.frame(
+    variableMetadata = rownames(varDF),
+    varDF
+)
+write.table(varDF,
+    file = '$variableMetadata_out',
+    quote = FALSE,
+    row.names = FALSE,
+    sep = "\t"
+)
+
+if (resLs[["chkL"]]) {
+    if (resLs[["newL"]]) {
+        cat("\nWarning: The sample and/or variable names or orders from the input tables have been modified\n(see the information file for details); please use the new output tables for your analyses.\n")
+    } else {
+        cat("\nThe input tables have a correct format and can be used for your analyses.\n")
+    }
+}
+    ]]></configfile>
+  </configfiles>
   
   <inputs>
     <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular" />
@@ -29,9 +88,9 @@
   </inputs>
   
   <outputs>
-    <data name="dataMatrix_out" label="${tool.name}_${dataMatrix_in.name}" format="tabular" ></data>
-    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular" ></data>
-    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="dataMatrix_out" label="${tool.name}_${dataMatrix_in.name}" format="tabular"/>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular"/>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular"/>
     <data name="information" label="${tool.name}_information.txt" format="txt"/>
   </outputs>
   
@@ -98,7 +157,7 @@ Input files
 | 3 : Variable metadata file | tabular |
 +----------------------------+---------+
 
-| The **required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org (https://workflow4metabolomics.org/)
+| The **required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org.
 
 
 ----------
@@ -149,7 +208,7 @@ Working example
     
 .. class:: infomark
   
-See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-complete**, **W4M00002_mtbls2**, or **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-complete**, **W4M00002_mtbls2**, or **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu.
     
 ---------------------------------------------------
     

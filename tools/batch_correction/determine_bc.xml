@@ -214,12 +214,9 @@ Refer to the corresponding "W4M HowTo" page:
 
 </help>
 
-      <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
-    <citations>
-        <!-- [HELP] As DOI or BibTex entry -->
-        <citation type="doi">10.1021/pr900499r</citation>
-    </citations>
-  
-
-
+  <!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
+  <citations>
+      <!-- [HELP] As DOI or BibTex entry -->
+      <citation type="doi">10.1021/pr900499r</citation>
+  </citations>
 </tool>

@@ -95,16 +95,20 @@
       <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
       <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata.tsv"/>
       <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>
-      <param name="method" value="all_loess_pool"/>
-      <param name="span" value="1"/>
+      <conditional name="span_condition">
+        <param name="method" value="all_loess_pool"/>
+        <param name="span" value="1"/>
+      </conditional>
       <output name="dataMatrix_out" file="output-batchcorrection-dataMatrix.tsv"/>
     </test>
     <test expect_num_outputs="3">
       <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
       <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata-customSampleType.tsv"/>
       <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>
-      <param name="method" value="loess"/>
-      <param name="span" value="1"/>
+      <conditional name="span_condition">
+        <param name="method" value="loess"/>
+        <param name="span" value="1"/>
+      </conditional>
       <param name="sample_type_col_name" value="MySampType"/>
       <param name="sampleTypeTagPool" value="lot"/>
       <param name="sampleTypeTagBlank" value="blanc"/>

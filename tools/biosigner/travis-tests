@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -ev
+
+# Plain tests
+if [[ -z $PLANEMO ]] ; then
+
+	sudo sed -i -e '$adeb http://cran.univ-paris1.fr/bin/linux/ubuntu trusty/' /etc/apt/sources.list
+	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+	sudo apt-get update
+	sudo apt-get install -y --no-install-recommends r-base gfortran
+	sudo R -e "install.packages(c('batch', 'randomForest'), dependencies = TRUE, repos = 'https://cloud.r-project.org/')"
+	sudo R -e 'source("http://bioconductor.org/biocLite.R") ; biocLite("biosigner")'
+	make test
+
+# Planemo tests
+else
+	sudo apt-get update
+	sudo apt-get install -y python-virtualenv
+	make planemolint || exit 1
+	make planemotest || exit 2
+fi

@@ -60,9 +60,9 @@
 
 ---------------------------------------------------
 
-******************
+***********
 Table Merge
-******************
+***********
 
 ===========
 DESCRIPTION
@@ -130,9 +130,9 @@ Type of metadata
 ==========
 CHANGE LOG
 ==========
--------------------------------
+--------------------------------------
 Version 1.0.2+galaxy1 - September 2022
--------------------------------
+--------------------------------------
 INTERNAL MODIFICATION
 - Logic of the tool called from generic repository W4MUtils
 - Update of tool wrapper to comply with good practices
@@ -146,13 +146,13 @@ MINORFIX: removal batch package
 
 
 	]]></help>
-	<citations>
-    <citation type="doi">10.1093/bioinformatics/btu813</citation>
-  </citations>
-  <edam_topics>
+	<edam_topics>
     <edam_topic>topic_0769</edam_topic>
   </edam_topics>
   <edam_operations>
     <edam_operation>operation_3436</edam_operation>
   </edam_operations>
+	<citations>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
 </tool>

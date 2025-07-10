@@ -41,11 +41,11 @@ meth3L <- function(idsample, iddata, sample_type_col_name, injection_order_col_n
     ### Table match check
     table.check <- match2(iddata, idsample, "sample")
     if (length(table.check) > 1) {
-        check.err(table.check)
+        check_err(table.check)
     }
 
     ### StockID
-    samp.id <- stockID(iddata, idsample, "sample")
+    samp.id <- stock_id(iddata, idsample, "sample")
     iddata <- samp.id$dataMatrix
     idsample <- samp.id$Metadata
     samp.id <- samp.id$id.match
@@ -66,7 +66,7 @@ meth3L <- function(idsample, iddata, sample_type_col_name, injection_order_col_n
             "\n http://workflow4metabolomics.org/sites/",
             "workflow4metabolomics.org/files/files/w4e-2016-data_processing.pdf\n"
         )
-        check.err(mand.check)
+        check_err(mand.check)
     }
 
     if (analyse == "batch_correction") {
@@ -75,7 +75,7 @@ meth3L <- function(idsample, iddata, sample_type_col_name, injection_order_col_n
         ## Table match check
         table.check <- c(table.check, match2(iddata, metaion, "variable"))
         ## StockID
-        var.id <- stockID(iddata, metaion, "variable")
+        var.id <- stock_id(iddata, metaion, "variable")
         iddata <- var.id$dataMatrix
         metaion <- var.id$Metadata
         var.id <- var.id$id.match
@@ -137,7 +137,7 @@ meth3L <- function(idsample, iddata, sample_type_col_name, injection_order_col_n
     }
 
     ## error check
-    check.err(table.check)
+    check_err(table.check)
 
 
     ### BC/DBC-specific processing

@@ -7,7 +7,6 @@
 
   <expand macro="requirements">
     <requirement type="package" version="1.30.0">bioconductor-ropls</requirement>
-    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </expand>
 
   <command detect_errors="aggressive"><![CDATA[

@@ -129,7 +129,7 @@ plotBatchF <- function(datMN, samDF.arg, spnN.arg) {
         pcaMN[is.na(pcaMN)] <- minN
     }
 
-    pcaLs <- opls(pcaMN, predI = 4, algoC = "svd", printL = FALSE, plotL = FALSE)
+    pcaLs <- opls(pcaMN, predI = 4, algoC = "svd")
     tMN <- getScoreMN(pcaLs)
     vRelVn <- pcaLs@modelDF[, "R2X"]
 

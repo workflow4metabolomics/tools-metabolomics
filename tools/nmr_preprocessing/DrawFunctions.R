@@ -258,7 +258,7 @@ DrawSignal <- function(Signal_data, subtype = c(
       }
 
 
-      melted <- pivot_longer(elements[[name]], varnames = c("rowname", "Var"))
+      melted <- pivot_longer(as.data.frame(elements[[name]]), cols = c("rowname", "Var"))
 
 
       plots[[name]] <- ggplot2::ggplot(melted, ggplot2::aes(

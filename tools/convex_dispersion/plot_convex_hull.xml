@@ -1,0 +1,217 @@
+<tool id="plot_convex_hull" name="Plot Convex Hull" version="0.1+galaxy1" python_template_version="3.5" profile="24.2">
+    <description>This script plots a convex polygon around intensities based on injection order to visualize batch variability.</description>
+    <edam_topics>
+      <edam_topic>topic_3172</edam_topic>
+      <edam_topic>topic_0092</edam_topic>
+    </edam_topics>
+    <creator>
+      <person givenName="Brice" familyName="Mulot" email="brice.mulot@inrae.fr" />
+      <person givenName="Etienne" familyName="Jules" email="etienne.jules@inrae.fr" />
+    </creator>
+    <requirements>
+      <requirement type="package" version="4.1.2">r-base</requirement>
+	    <requirement type="package" version="3.3.5">r-ggplot2</requirement>
+	    <requirement type="package" version="1.6.6">r-optparse</requirement>
+	    <requirement type="package" version="1.0.10">r-dplyr</requirement>
+    </requirements>
+    
+    <required_files>
+      <include path="plot_convex_hull.R" />
+    </required_files>
+
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript '$__tool_directory__/plot_convex_hull.R'
+        --dataMatrix '$dataMatrix'
+        --sampleMetadata '$sampleMetadata'
+        --variableMetadata '$variableMetadata'
+        --global '$global'
+        --multiple '$multiple'
+        --metabolite '$metabolite'
+        --points '$points'
+        --output '$output_name'
+    ]]></command>
+
+    <inputs>
+    	<param name='dataMatrix' type='data' format='txt' label='TSV File dataMatrix'/>
+    	<param name='sampleMetadata' type='data' format='txt' label='TSV File sampleMetadata'/>
+    	<param name='variableMetadata' type='data' format='txt' label='TSV File variableMetadata'/>
+    	<param name='global' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use the global injection order not by batch'/>
+    	<param name='multiple' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Make multiple plot for multiple metabolite'/>
+    	<param name='metabolite' type='text' label='Metabolite name' value='Metabolite X'/>
+    	<param name='points' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Display points on the graph'/>
+    	<param name='output_name' type='text' label='Output file name' value='plot_convex_hull.pdf'/>
+    </inputs>
+
+
+    <outputs>
+      <data name="output_file" format="pdf" label="Convex Hull Plot(s)" from_work_dir="$output_name"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="global" value="TRUE"/>
+            <param name="multiple" value="TRUE"/>
+            <param name="metabolite" value="Metabolite X"/>
+            <param name="points" value="TRUE"/>
+            <param name="output_name" value="expected_plot.pdf"/>
+            <output name="output_file" file="expected_plot.pdf"/>
+        </test>
+
+    </tests>
+
+    <help><![CDATA[
+
+.. class:: infomark
+
+**Credits**
+  | **Original tool code:** Brice Mulot - PFEM ; UNH ; INRAE 
+  | **Original tool wrapping:** Etienne Jules & Brice Mulot - PFEM ; UNH ; INRAE ; MetaboHub 
+  | **Tool maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
+  | **Wrapper maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
+
+.. class:: infomark
+
+**Contact:** For any questions or support: community.france-bioinformatique.fr/c/workflow4metabolomics/
+
+---------------------------------------------------
+
+******************
+Convex dispersion
+******************
+
+===========
+DESCRIPTION
+===========
+
+This tool generates a plot showing the convex hull of a metabolite’s intensity by injection order, grouped by batch. It also computes three indicators for dispersion based on these convex hulls.
+
+---------------------------------------------------
+
+==========================
+ALIGNMENT WITH OTHER TOOLS
+==========================
+
+-----------
+INPUT FILES
+-----------
+
++----------------------------+---------+
+| Parameter : num + label    |  Format |
++============================+=========+
+| 1 : Data matrix file       | tabular |
++----------------------------+---------+
+| 2 : SampleMetadata file    | tabular |
++----------------------------+---------+
+| 3 : VariableMetadata file  | tabular |
++----------------------------+---------+
+
+Data matrix file contains the intensity values of the variables.
+	| 
+
+SampleMetadata contains all the metadata about the samples corresponding to the Data matrix 
+	|
+	
+VariableMetadata contains all the metadata about the variables (ions) corresponding to the Data matrix 
+	| 
+	
+.. class:: warningmark
+
+For more information about input files, refer to the corresponding "W4M HowTo" page:
+ | `W4M table format for Galaxy <https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY>`_
+ |
+
+------------
+OUTPUT FILES
+------------
+
+The output is a pdf or png file and cannot be used as input to another tool.
+The output can be used to asses the dispersion of intensity values of metabolites on similar repeated samples within batches (QC, pool, reference materials...)
+
+----------------------------
+EXAMPLE OF WORKFLOW POSITION
+----------------------------
+
+|- After a MS extraction workflow, before batch correction
+|- After batch correction
+
+---------------------------------------------------
+
+===============
+TOOL PARAMETERS
+===============
+global
+  | Boolean
+  | Whether to use the global injection order or the injection order within the batch.
+  
+multiple
+  | Boolean
+  | Whether to plot all the metabolites in different plots or on the same one.
+  
+points
+  | Boolean
+  | Whether to display individual points for each intensity value on the plot.
+
+metabolite
+  | ?? probably useless parameter
+  
+output_name
+  | Str
+  | Name of the output file.
+
+
+---------------------------------------------------
+
+==================
+OUTPUT DESCRIPTION
+==================
+
+List of the different possible outputs generated by the Galaxy module, with a content description. 
+
+If information relevant to the users is displayed in the "standard output" when running the module, do not forget to mention it here. 
+
+---------------------------------------------------
+
+==============
+EXAMPLE OF USE
+==============
+
+Can be either the following:
+
+- a working with accessible inputs, the list of parameters to use and the display of expected outputs
+- a step-by-step procedure to illustrate how to set the different parameters and what result should be expected
+- a reference to existing examples or use-cases, for example specific sections of existing GTN materials using the tool
+
+If not mentioned elsewhere, you can also add a subsection regarding known issues (when relevant). 
+
+Example:
+
+------------
+KNOWN ISSUES
+------------
+
+A list of issues users may run into when using the Galaxy module (*e.g.* case-sensitivity issues)
+
+---------------------------------------------------
+
+==========
+CHANGE LOG
+==========
+
+-------------------------------
+Version 0.1+galaxy1
+-------------------------------
+
+Initial version
+
+    ]]></help>
+
+
+    <citations>
+        <citation type="doi">10.1016/j.chemolab.2024.105148</citation>
+    </citations>
+    
+</tool>
+

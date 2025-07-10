@@ -1,0 +1,6 @@
+categories: [Metabolomics]
+description: 'Generates convex hull plots of metabolite intensities relative injection order.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'The R script generates convex hull plots of metabolite intensities relative to the injection order of their sample, across different batches. It also provides dispersion indicators of the intensity values based on the convex hull.'
+name: convex_dispersion
+owner: workflow4metabolomics

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Constants {{{1
+################################################################
+
+PROG_PATH=$(dirname $0)
+
+# Run same test as Galaxy XML {{{1
+################################################################
+
+run_same_test_as_Galaxy_XML() {
+
+	$PROG_PATH/../biosigner_wrapper.R dataMatrix_in $PROG_PATH/../test-data/dataMatrix.tsv sampleMetadata_in $PROG_PATH/../test-data/sampleMetadata.tsv variableMetadata_in $PROG_PATH/../test-data/variableMetadata.tsv respC gender opcC full methodC all bootI 5 tierC S pvalN 0.05 seedI 123 variableMetadata_out $PROG_PATH/outputVariableMetadata.tsv || exit 1
+
+	if ! diff "$PROG_PATH/outputVariableMetadata.tsv" "$PROG_PATH/../test-data/variableMetadata.out" ; then
+		echo "Incorrect output variable metadata." >&2
+		exit 1
+	fi
+}
+
+# Bug 20180713_1739 {{{1
+################################################################
+
+check_bug_20180713_1739() {
+
+	local res_dir="$PROG_PATH/res/mtbls404"
+	local data_file="$res_dir/Generic_Filter_MTBLS404_W4M_data.tsv"
+	local samp_file="$res_dir/Multivariate_Generic_Filter_MTBLS404_W4M_samp.tsv"
+	local var_file="$res_dir/Multivariate_Univariate_Generic_Filter_MTBLS404_W4M_var.tsv"
+
+	$PROG_PATH/../biosigner_wrapper.R dataMatrix_in "$data_file" sampleMetadata_in "$samp_file" variableMetadata_in "$var_file" respC Factor.Value.Gender. methodC all tierC S pvalN 0.05 seedI 123 variableMetadata_out $PROG_PATH/outputVariableMetadata.tsv || exit 2
+}
+
+# MAIN {{{1
+################################################################
+
+run_same_test_as_Galaxy_XML
+check_bug_20180713_1739

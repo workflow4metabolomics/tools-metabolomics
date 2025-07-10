@@ -1,4 +1,4 @@
-<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0+galaxy2" profile="20.09">
+<tool id="2DNmrAnnotation" name="2DNMRAnnotation" version="2.0.0+galaxy3" profile="20.09">
     <description>Annotation of complex mixture bidimensional NMR spectra</description>
 
     <requirements>

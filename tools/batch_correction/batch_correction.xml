@@ -1,4 +1,4 @@
-<tool id="Batch_correction" name="Batch_correction" version="3.0.0+galaxy0" profile="24.2">
+<tool id="Batch_correction" name="Batch_correction" version="3.0.0+galaxy0" profile="23.0">
   <description>Corrects intensities for signal drift and batch-effects</description>
   
   <macros>

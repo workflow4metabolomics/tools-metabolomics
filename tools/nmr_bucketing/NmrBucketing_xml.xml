@@ -1,0 +1,302 @@
+<tool id="NmrBucketing" name="NMR_Bucketing" version="2.0.3">
+
+    <description> Bucketing and integration of NMR Bruker raw data</description>
+
+    <requirements>
+	    <requirement type="package" version="1.1_4">r-batch</requirement>
+	    <requirement type="package" version="1.8.8">r-pracma</requirement>
+    </requirements>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
+
+    <command>
+        Rscript '$__tool_directory__/NmrBucketing_wrapper.R'
+
+        #if $inputs.input == "tsv_file":
+            tsvfile '$inputs.tsv_file'
+        #elif $inputs.input == "zip_file":
+            zipfile '$inputs.zip_file'
+        #end if
+
+
+        ## Bucket width
+        bucket_width $bucket_width
+
+        ## Spectra borders
+        left_border $left_border
+        right_border $right_border
+
+
+        ## Spectra representation
+        graphType $graphType
+
+        ## Exclusion zone
+        zone_exclusion_choices.choice ${zone_exclusion_choices.choice}
+        #if str($zone_exclusion_choices.choice) == 'yes':
+            #for $i in $zone_exclusion_choices.conditions:
+                zone_exclusion_left ${i.zone_exclusion_left}
+                zone_exclusion_right ${i.zone_exclusion_right}
+            #end for
+        #end if
+
+        ## Outputs
+        logOut $logOut
+        dataMatrixOut '$dataMatrixOut'
+        sampleOut '$sampleOut'
+        variableOut '$variableOut'
+        graphOut '$graphOut'
+    </command>
+
+    <inputs>
+        <conditional name="inputs">
+            <param name="input" type="select" label="Choose your inputs method" >
+                <option value="zip_file" selected="true">Zip file from your history containing your Bruker directories</option>
+                <option value="tsv_file">Tsv file containing preprocessed spectra (from your history)</option>
+            </param>
+            <when value="zip_file">
+                <param name="zip_file" type="data" format="no_unzip.zip" label="Zip file" />
+            </when>
+            <when value="tsv_file">
+                <param name="tsv_file" type="data" format="tabular" label="Tsv file" />
+            </when>
+        </conditional>
+
+        <param name="bucket_width" label="Bucket width" type="float" value="0.04" help="Default value is 0.04 ppm"/>
+
+        <param name="left_border" label="Left Border" type="float" value="10.0" size="10" help="Default value is 10 ppm"/>
+        <param name="right_border" label="Right Border" type="float" value="0.5" size="10" help="Default value is 0.5 ppm"/>
+
+        <conditional name="zone_exclusion_choices">
+            <param name="choice" type="select" label="Exclusion zone(s)" help="Choose if you want to exclude particular zone(s)" >
+                <option value="yes" > yes </option>
+                <option value="no" selected="true"> no </option>
+            </param>
+            <when value="yes">
+                <repeat name="conditions" title="exclusion zones">
+                    <param name="zone_exclusion_left" label="Left exclusion zone border" type="float" value="10.0" />
+                    <param name="zone_exclusion_right" label="Right exclusion zone border" type="float" value="10.0" />
+                </repeat>
+            </when>
+            <when value="no">
+            </when>
+        </conditional>
+
+        <param name="graphType" label="Spectra representation" type="select" help="Select 'None' for no representation,'Overlay' to overlay all spectra on a unique chart and 'One per individual' to generate an individual chart for each observation">
+            <option value="None"> none </option>
+            <option value="Overlay"> Overlay </option>
+            <option value="One_per_individual"> One_per_individual </option>
+        </param>
+
+    </inputs>
+
+    <outputs>
+		<data format="txt" name="logOut" label="${tool.name}_log" />
+        <data format="tabular" name="sampleOut" label="${tool.name}_sampleMetadata" />
+        <data format="tabular" name="variableOut" label="${tool.name}_variableMetadata" />
+        <data format="tabular" name="dataMatrixOut" label="${tool.name}_bucketedData" />
+        <data format="pdf" name="graphOut" label="${tool.name}_spectra" >
+            <filter> graphType != "None" </filter>
+        </data>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="inputs|input" value="zip_file" />
+            <param name="inputs|zip_file" value="MTBLS1.zip"  ftype="zip" />
+            <param name="bucket_width" value="0.01"  ftype="zip" />
+            <param name="left_border" value="9.3" />
+            <param name="right_border" value="0.8" />
+            <param name="zone_exclusion_choices|choice" value="yes" />
+            <param name="zone_exclusion_choices|conditions_0|zone_exclusion_left" value="6.0" />
+            <param name="zone_exclusion_choices|conditions_0|zone_exclusion_right" value="4.24" />
+            <param name="zone_exclusion_choices|conditions_1|zone_exclusion_left" value="3.99" />
+            <param name="zone_exclusion_choices|conditions_1|zone_exclusion_right" value="3.19" />
+            <param name="graphType" value="Overlay" />
+            <output name="dataMatrixOut" file="MTBLS1_bucketedData.tabular" />
+            <output name="sampleOut" file="MTBLS1_sampleMetadata.tabular" />
+            <output name="variableOut" file="MTBLS1_variableMetadata.tabular" />
+        </test>
+    </tests>
+
+    <help>
+
+.. class:: infomark
+
+**Authors** Marie Tremblay-Franco (marie.tremblay-franco@toulouse.inra.fr), Marion Landi (marion.landi@clermont.inra.fr) and Franck Giacomoni (fgiacomoni@clermont.inra.fr)
+
+
+=============
+NMR Bucketing
+=============
+
+-----------
+Description
+-----------
+
+Bucketing / Binning (spectra segmentation in fixed-size windows) and integration (sum of absolute intensities inside each bucket) to preprocess NMR data
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+========================= ============================ =======
+Name                      output file                  format
+========================= ============================ =======
+NMRAlignment              NMR_Alignment_alignedSpectra tsv
+========================= ============================ =======
+
+**Downstream tools**
+
++---------------------------+----------------------+--------+
+| Name                      | Output file          | Format |
++===========================+======================+========+
+|NmrNormalization           | dataMatrix.tsv       | Tabular|
++---------------------------+----------------------+--------+
+|Univariate                 | variableMetadata.tsv | Tabular|
++---------------------------+----------------------+--------+
+|Multivariate               | sampleMetadata.tsv   | Tabular|
++---------------------------+----------------------+--------+
+|                           | variableMetadata.tsv | Tabular|
++---------------------------+----------------------+--------+
+
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| Parameter : num + label   |   Format   |
++===========================+============+
+| 1 : Choose your inputs    |   zip      |
++---------------------------+------------+
+| 1 : Choose your inputs    |   tsv      |
++---------------------------+------------+
+
+**Choose your inputs**
+
+You have three methods for your inputs:
+
+| Zip file (recommended): You can put a zip file containing your inputs as raw Bruker files: myinputs.zip (containing all your conditions as sub-directories).
+| Tsv file: You can put a tsv file containing your inputs as preprocessed spectra: myinputs.tsv (containing all your conditions in columns and chemical shifts in rows).
+
+.. image:: ./static/images/Mth_Architecture_Repertoire_Bruker.png
+:width: 800
+
+----------
+Parameters
+----------
+
+Bucket width
+| size of windows
+|
+
+Left limit
+| Upper boundary: values greater than this value are not used in the bucketing. Default value is 10.0 ppm
+|
+
+Right limit
+| Lower boundary: values lower than this value are not used in the bucketing. Default value is 0.5 ppm
+|
+
+Exclusion zone(s)
+| Spectral regions to exclude, water, solvents, ... resonance
+| If YES: parameters **Lower exclusion zone** and **Upper exclusion zone** are visible,
+| If NO: no zone to exclude
+| Default value is NO
+|
+
+Left exclusion zone
+| Upper boundary of exclusion zone
+|
+
+Right exclusion zone
+| Lower boundary of exclusion zone
+
+| *Notes:*
+| - these parameters can be used several times using the "Add new exclusion zones" button
+|
+
+Spectra representation:
+| Graphical chart of bucketed and integrated raw files
+| If "Overlay": the n (sample number) spectra are overlaid on the same figure
+| If "One_per_individual": pdf file includes n pages (1 per sample)
+|
+
+
+------------
+Output files
+------------
+
+
+bucketedData.tsv
+| tabular output
+| Data matrix with p rows (buckets) and n columns (samples) containing the intensities
+|
+
+sampleMetadata.tsv
+| tabular output
+| file with n rows (samples) and 2 columns containing sample identifier (rownames) and sample order: the rownames of sampleMetadata must be identical to the colnames of the bucketedData. Can add columns with numeric and/or character sample metadata. This file is optional in the normalization step and mandatory in the statistical analysis step of the workflow.
+|
+
+variableMetadata.tsv
+| tabular output
+| file with p rows (buckets) and 2 columns containing variable identifier (rownames) and bucket order: the rownames of variableMetadata must be identical to the rownames of the bucketedData. Can add columns with numeric and/or character variable metadata. This file is mandatory in the statistical analysis step of the workflow.
+|
+
+spectra.pdf
+| pdf output
+| Graphical chart of bucketed and integrated data
+|
+
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+
+.. class:: warningmark
+
+Under construction
+
+.. image:: ./static/images/Mth_Travaux.png
+:width: 100
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+**Version 2.0.3 - 25/09/2018**
+
+- Removal of zero's for normalisation
+
+**Version 2.0.2 - 21/04/2017**
+
+- IMPROVEMENT: Add “zoomed” representations of bucketed spectra, depending on exclusion zone borders
+
+**Version 1.0.3 - 24/10/2016**
+
+- ENHANCEMENT: add possibility of bucketing processed files (upstream tools)
+
+**Version 1.0.2 - 12/08/2016**
+
+- ENHANCEMENT: x-axis customization: add chemical shift labels
+
+**Version 1.0.1 - 04/04/2016**
+
+- TEST: refactoring to pass planemo test using conda dependencies
+
+
+**Version 2015-01-08 - 08/01/2015**
+
+    </help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
+</tool>

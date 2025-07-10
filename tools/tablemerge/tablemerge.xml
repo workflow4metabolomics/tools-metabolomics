@@ -1,20 +1,17 @@
 <tool id="tablemerge" name="Table Merge" version="1.0.2+galaxy1" profile="24.2">
   <description>Merging dataMatrix with a metadata table</description>
   <requirements>
-	    <requirement type="package" version="4.2.1">r-base</requirement>
+	    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
-  <command detect_errors="exit_code"><![CDATA[
-	    Rscript '$__tool_directory__/tablemerge_wrap.R'
-	    
-      dataMatrix_in "$dataMatrix_in"
-      Metadata_in "$Metadata_in"
-      
-      metatype "$metatype"
-      
-      combined_out "$combined_out"
 
+  <required_files>
+    <include path="tablemerge_script.R" />
+  </required_files>
+
+  <command detect_errors="exit_code"><![CDATA[
+	  Rscript -e 'source("$__tool_directory__/tablemerge_script.R")' -e 'tab.merge("$dataMatrix_in", "$Metadata_in", "$metatype", "$combined_out")'
   ]]></command>
-  
+
   <inputs>
     <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular" />
     <param name="Metadata_in" type="data" label="Metadata file" help="Sample metadata or variable metadata" format="tabular" />
@@ -31,18 +28,18 @@
   </outputs>
   
   <tests>
-	<test>
+	  <test>
       <param name="dataMatrix_in" value="input_TM12_dataMatrix.txt"/>
       <param name="Metadata_in" value="input_TM1_variableMetadata.txt"/>
       <param name="metatype" value="variable"/>
       <output name="combined_out" file="output_TM1_expected.tabular"/>
-	</test>
-	<test>
+	  </test>
+	  <test>
       <param name="dataMatrix_in" value="input_TM12_dataMatrix.txt"/>
       <param name="Metadata_in" value="input_TM2_sampleMetadata.txt"/>
       <param name="metatype" value="sample"/>
       <output name="combined_out" file="output_TM2_expected.tabular"/>
-	</test>
+	  </test>
   </tests>
   
   

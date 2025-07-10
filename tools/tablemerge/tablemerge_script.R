@@ -13,6 +13,7 @@
 # Dependencies: RcheckLibrary.R ; miniTools.R                                                  #
 #                                                                                              #
 ################################################################################################
+library(W4MRUtils)
 
 # Parameters (for dev)
 if (FALSE) {
@@ -35,15 +36,16 @@ tab.merge <- function(DM.name, meta.name, metype, output) {
 
     # Input --------------------------------------------------------------
 
-    DM <- read.table(DM.name, header = TRUE, sep = "\t", check.names = FALSE)
-    meta <- read.table(meta.name, header = TRUE, sep = "\t", check.names = FALSE, colClasses = "character")
+    combined <- import2(DM.name, meta.name, metype, disable_comm = FALSE)
+    DM <- combined$dataMatrix
+    meta <- combined$metadata
 
     # Table match check
     table.check <- match2(DM, meta, metype)
-    check.err(table.check)
+    check_err(table.check)
 
     # StockID
-    meta.id <- stockID(DM, meta, metype)
+    meta.id <- stock_id(DM, meta, metype)
     DM <- meta.id$dataMatrix
     meta <- meta.id$Metadata
     meta.id <- meta.id$id.match
@@ -67,9 +69,9 @@ tab.merge <- function(DM.name, meta.name, metype, output) {
 
     # Getting back original identifiers
     if (metype == "sample") {
-        id.ori <- reproduceID(ori.DM, comb.data, metype, meta.id)
+        id.ori <- reproduce_id(ori.DM, comb.data, metype, meta.id)
     } else {
-        id.ori <- reproduceID(DM, comb.data, metype, meta.id)
+        id.ori <- reproduce_id(DM, comb.data, metype, meta.id)
     }
     comb.data <- id.ori$Metadata
 

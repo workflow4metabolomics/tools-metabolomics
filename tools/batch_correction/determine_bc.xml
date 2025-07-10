@@ -10,12 +10,8 @@
     <requirement type="package" version="1.7_8">r-ade4</requirement>
     <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
   </requirements>
-
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
  
-  <command><![CDATA[
+  <command detect_errors="aggressive"><![CDATA[
     Rscript $__tool_directory__/batch_correction_3Lwrapper.R
       analyse "determine_bc"
       sampleMetadata "$sampleMetadata"

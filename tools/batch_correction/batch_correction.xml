@@ -11,12 +11,8 @@
     <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
     <requirement type="package" version="1.10.0">bioconductor-ropls</requirement>
   </requirements>
-
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
-  
-  <command><![CDATA[
+ 
+  <command detect_errors="aggressive"><![CDATA[
     #if str($span_condition.method) == 'all_loess_pool':
         Rscript $__tool_directory__/batch_correction_all_loess_wrapper.R
         dataMatrix "$dataMatrix"

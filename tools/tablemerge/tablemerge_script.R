@@ -36,7 +36,7 @@ tab.merge <- function(DM.name, meta.name, metype, output) {
 
     # Input --------------------------------------------------------------
     DM <- read.table(DM.name, header = TRUE, sep = "\t", check.names = FALSE)
-    meta <- read.table(meta.name, header = TRUE, sep = "\t", check.names = FALSE, colClasses = "character", comment.char="")
+    meta <- read.table(meta.name, header = TRUE, sep = "\t", check.names = FALSE, colClasses = "character", comment.char = "")
 
     # Table match check
     table.check <- match2(DM, meta, metype)

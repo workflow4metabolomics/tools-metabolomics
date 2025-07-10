@@ -109,10 +109,12 @@
         <param name="method" value="loess"/>
         <param name="span" value="1"/>
       </conditional>
-      <param name="sample_type_col_name" value="MySampType"/>
-      <param name="sampleTypeTagPool" value="lot"/>
-      <param name="sampleTypeTagBlank" value="blanc"/>
-      <param name="sampleTypeTagSample" value="echant"/>
+      <section name="smcust">
+        <param name="sample_type_col_name" value="MySampType"/>
+        <param name="sampleTypeTagPool" value="lot"/>
+        <param name="sampleTypeTagBlank" value="blanc"/>
+        <param name="sampleTypeTagSample" value="echant"/>
+      </section>
       <output name="dataMatrix_out" file="output-batchcorrection-dataMatrix-3L.tsv"/>
     </test>
   </tests>

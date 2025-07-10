@@ -26,7 +26,6 @@
 ################################################################################################
 
 
-library(batch) # necessary for parseCommandArgs function
 library(W4MRUtils)
 
 ## ------------------------------
@@ -70,7 +69,7 @@ if (length(grep("-h", argv.help)) > 0) {
 ## init. params
 ## ------------------------------
 
-args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+args <- parse_args() # interpretation of arguments given in command line as an R list of objects
 
 
 cat(

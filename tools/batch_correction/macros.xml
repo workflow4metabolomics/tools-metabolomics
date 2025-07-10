@@ -4,7 +4,7 @@
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="1.7_20">r-ade4</requirement>
-            <requirement type="package" version="1.98.0">bioconductor-pcamethods</requirement>
+            <requirement type="package" version="1.90.0">bioconductor-pcamethods</requirement>
             <yield />
         </requirements>
     </xml>

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-library(batch) ## necessary for parseCommandArgs function
+library(W4MRUtils) ## necessary for parseCommandArgs function
 
 ## ------------------------------
 ## test help option
@@ -40,7 +40,7 @@ if (length(grep("-h", argv.help)) > 0) {
 ## init. params
 ## ------------------------------
 
-args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+args <- parse_args() # interpretation of arguments given in command line as an R list of objects
 
 # Set default col names
 if (!"batch_col_name" %in% names(args)) {

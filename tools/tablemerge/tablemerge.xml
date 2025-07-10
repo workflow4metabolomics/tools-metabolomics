@@ -1,4 +1,4 @@
-<tool id="tablemerge" name="Table Merge" version="1.0.2">
+<tool id="tablemerge" name="Table Merge" version="1.0.2+galaxy1" profile="24.2">
   <description>Merging dataMatrix with a metadata table</description>
   <requirements>
 	    <requirement type="package" version="4.2.1">r-base</requirement>

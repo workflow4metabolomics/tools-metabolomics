@@ -1,0 +1,8 @@
+name: qualitymetrics
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS] Metrics and graphics to check the quality of the data.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'The "Quality Metrics" module provides quality metrics of the samples and variables, and visualization of the data matrix. The optional "Coefficient of Variation" arguments allows to flag the variables with a pool CV (or a pool CV over sample CV ratio) above a specific threshold. The advanced "PoolAsPool1" argument is used when correlations with pool dilutions are computed: When set to TRUE (default), samples indicated as "pool" will be considered as "pool1" for the correlation together with the other pool dilutions (e.g. "pool2", "pool4", etc.); otherwise, "pool" samples will not be considered to compute the correlation (this enables the experimenter to have distinct "pool" samples for the computation of CV and "pool1" samples for the computation of dilution). The "sampleMetadata" is returned as output with 3 additional columns containing the p-values for the Hotellings T2 and Z-scores of intensity deciles and proportion of missing values. The "variableMetadata" is returned as output; in case a "sampleType" column is included in the input sampleMetadata file, additional columns will be added to indicate the variable quality metrics (eg mean, sd, CV on "pool", "sample" or "blank", or correlation with pool dilutions, depending on the known type present in the "sampleType" column). A "figure" is generated (pdf file) which illustrates the main computed sample and variable metric values.'
+remote_repository_url: https://github.com/workflow4metabolomics/qualitymetrics.git
+categories:
+- Metabolomics

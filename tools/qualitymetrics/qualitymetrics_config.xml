@@ -1,0 +1,314 @@
+<tool id="quality_metrics" name="Quality Metrics" version="2.2.8+galaxy0">
+  <description>Metrics and graphics to check the quality of the data</description>
+
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.10.0">bioconductor-ropls</requirement>
+  </requirements>
+	
+  <required_files>
+    <include path="qualitymetrics_wrapper.R" />
+    <include path="qualitymetrics_script.R" />
+    <include path="easyrlibrary-lib/miniTools.R" />
+    <include path="easyrlibrary-lib/RcheckLibrary.R" />
+  </required_files>  
+	
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command><![CDATA[
+  Rscript $__tool_directory__/qualitymetrics_wrapper.R
+  dataMatrix_in "$dataMatrix_in"
+  sampleMetadata_in "$sampleMetadata_in"
+  variableMetadata_in "$variableMetadata_in"
+  
+  CV "${CV_condition.CV}"
+  #if str($CV_condition.CV ) == 'TRUE':
+  Compa "${CV_condition.Compa}"
+  seuil  "${CV_condition.seuil}"
+  #else:
+  Compa "TRUE"
+  seuil "1"
+  #end if
+  
+  #if $advPar.optC == "full"
+  poolAsPool1L "$advPar.poolAsPool1L"
+  #else:
+  poolAsPool1L "TRUE"
+  #end if
+  
+  sampleMetadata_out "$sampleMetadata_out"      
+  variableMetadata_out "$variableMetadata_out"
+  figure "$figure"
+  information "$information"
+  ]]></command>
+  
+  <inputs>
+    <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular" />
+    <param name="sampleMetadata_in" type="data" label="Sample metadata file" help="" format="tabular" />
+    <param name="variableMetadata_in" type="data" label="Variable metadata file" help="" format="tabular" />
+    
+    <conditional name="CV_condition">
+      <param name="CV" type="select" label="Coefficient of Variation" help="">
+        <option value="FALSE">no</option>
+        <option value="TRUE">yes</option>
+      </param>
+      <when value="TRUE">
+        <param name="Compa" label="Which type of CV calculation should be done" type="select" display="radio" help="">
+          <option value="TRUE">ratio between pool and sample CVs</option>
+          <option value="FALSE">only pool CV</option>
+        </param>
+        <param name="seuil" type="float" label="Threshold" value="1.25" min="0.0000000000000001" help="if comparing pool and sample CVs, corresponds to the max ratio tolerated (basically between 1.0 and 1.25) ; else corresponds to the max pool CV tolerated (basically 0.3)"/>
+      </when>
+      <when value="FALSE">
+	<param name="Compa" type="hidden" value="TRUE"/>
+	<param name="seuil" type="hidden" value="1"/>
+      </when>	
+    </conditional>
+    
+    <conditional name="advPar">
+      <param name="optC" type="select" label="Advanced parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full parameter list</option>
+      </param>     
+      <when value="full">
+	<param name="poolAsPool1L" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Use 'pool' samples as 'pool1' when computing the correlation with dilution?"/>
+      </when>
+      <when value="default">
+      	<param name="poolAsPool1L" type="hidden" value="TRUE"/>
+      </when>
+    </conditional>
+    
+  </inputs>
+  
+  <outputs>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular" ></data>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+  </outputs>
+
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="input-dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="input-sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="input-variableMetadata.tsv"/>
+      <param name="CV" value="FALSE"/>
+      <param name="optC" value="default"/>
+      <output name="sampleMetadata_out" file="output-sampleMetadata.tsv"/>
+      <output name="variableMetadata_out" file="output-variableMetadata.tsv"/>
+    </test>
+  </tests>
+  
+  <help>
+    
+.. class:: infomark
+
+**Authors** Marion Landi, Melanie Petera and Etienne Thevenot (W4M Core Development Team)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+.. class:: infomark
+
+**References**
+
+| Thevenot EA., Roux A., Xu Y., Ezan E., and Junot C. (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (http://dx.doi.org/10.1021/acs.jproteome.5b00354)
+| Mason R., Tracy N. and Young J. (1997). A practical approach for interpreting multivariate T2 control chart signals. *Journal of Quality Technology*, **29**:396-406.
+| Alonso A., Julia A., Beltran A., Vinaixa M., Diaz M., Ibanez L., Correig X. and Marsal S. (2011). AStream: an R package for annotating LC/MS metabolomic data. *Bioinformatics*, **27**:1339-1340. (http://dx.doi.org/10.1093/bioinformatics/btr138)
+
+---------------------------------------------------
+
+========================
+Quality Metrics
+========================
+
+-----------
+Description
+-----------
+
+ | The **Quality Metrics** tool provides quality metrics of the samples and variables, and visualization of the data matrix
+ | The optional *Coefficient of Variation* arguments allows to flag the variables with a pool CV (or a pool CV over sample CV ratio) above a specific threshold
+  | The advanced *PoolAsPool1* argument is used when correlations with pool dilutions are computed: When set to TRUE [default], samples indicated as "pool" will be considered as "pool1" for the correlation together with the other pool dilutions (e.g. "pool2", "pool4", etc.); otherwise, "pool" samples will not be considered to compute the correlation (this enables the experimenter to have distinct "pool" samples for the computation of CV and "pool1" samples for the computation of dilution)
+ | The **sampleMetadata** is returned as output with 3 additional columns containing the p-values for the Hotellings'T2 and Z-scores of intensity deciles and proportion of missing values
+ | The **variableMetadata** is returned as output; in case a **sampleType** column is included in the input sampleMetadata file, additional columns will be added to indicate the variable quality metrics (eg mean, sd, CV on 'pool', 'sample' or 'blank', or correlation with pool dilutions, depending on the known type present in the 'sampleType' column)
+ | A **figure** is generated (pdf file) which illustrates the main computed sample and variable metric values
+
+ 
+ 
+-----------------
+Workflow position
+-----------------
+
+.. image:: QualityControl.png
+        :width: 800
+
+
+
+-----------
+Input files
+-----------
+
++----------------------------+---------+
+| Parameter : num + label    |  Format |
++============================+=========+
+| 1 : Data matrix file       | tabular |
++----------------------------+---------+
+| 2 : Sample metadata file   | tabular |
++----------------------------+---------+
+| 3 : Variable metadata file | tabular |
++----------------------------+---------+
+
+----------
+Parameters
+----------
+
+Data matrix
+	| contains the intensity values of the variables.
+	|
+
+Sample metadata file
+	| contains the metadata of the samples; in particular
+	| when the 'sampleType' column is available, with known types such as 'blank', 'sample', 'pool', 'poolN' (where N is a dilution factor of the pool), metrics will be computed (eg mean, sd, CV, correlation with the dilution factor, etc) for each variable (see the 'PoolAsPool1' argument below)
+	| 'pool' (and 'sample') should be present in the 'sampleType' column when setting the 'coefficient of variation' to TRUE
+	| 
+	
+Variable metadata file
+	| contains variable information.
+	|
+
+Note:
+	| **Required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org (http://web11.sb-roscoff.fr/download/w4m/howto/w4m_HowToFormatDataForPostprocessing_v02.pdf)
+	| The formats of the 3 tables can be further checked with the **Check Format** module
+	|
+
+
+Coefficient of Variation
+	| If 'yes' (not default): variables are classed according to the Coefficient of Variation (CV)
+	| i.e.: CV of pools (and CV of samples if needed) are calculated and compared to a defined threshold;
+	| then variables are classed with a 0/1 coding. 
+	| 
+
+Which type of CV calculation should be done (only if CV=yes)
+	| Type of CV comparison that will be used.
+	| 'ratio between pool and sample CVs' **OR** 'only pool CV'
+	|
+
+Threshold (only if CV=yes)
+	| If comparing pool and sample CVs, corresponds to the max ratio tolerated (basically between 1.0 and 1.25).
+	| Else corresponds to the max pool CV tolerated (basically 0.3).
+	|
+
+PoolAsPool1 (Advanced parameter)
+	| If 'poolN' (where N is a dilution factor) sample types are present in the 'sampleType' column of the sample metadata file, the Pearson correlation of the intensity with the dilution factor is computed for each variable; the 'PoolAsPool1' parameter indicates whether samples of 'pool' types should be considered as 'pool1' (and hence included in the computation of dilution correlations); default is TRUE
+	
+
+------------
+Output files
+------------
+
+
+sampleMetadata.tabular
+	| tsv output
+	| 3 additional columns have been added to the input sampleMetadata file and contain the **p-values** of
+	|  1) the **Hotelling's T2** test in the first plane of PC components (Mason et al, 1997)
+	|  2) the **Z-score** of **intensity deciles** (Alonso et al, 2011)
+	|  3) the **Z-score** of the proportion of **missing values** (Alonso et al, 2011)
+	| for each test, low p-values indicate samples with extreme behaviour
+	|
+
+variableMetadata.tabular
+	| tsv output
+	| When the type of samples is available (ie the **sampleType** column is included in the input sampleMetadata file), variable metrics are computed: **sample**, **pool**, and **blank** **mean**, **sd** and **CV** (if the corresponding types are present in the 'sampleType' column), as well as **'blank' mean / 'sample' mean**, and **'pool' CV / 'sample' CV ratio**
+	| If pool dilutions have been used and are indicated in the 'sampleType' column as **poolN** where N is an integer indicating the dilution factor (eg **pool2** for a two-fold dilution of the pool; note that the non-diluted pool remains indicated as 'pool') the Pearson **correlation** (and corresponding p-value) between the intensity and the dilution factor is computed for each variable.
+	| When the **Coefficient of variation** argument is set to 'TRUE', the variableMetadata begins with 2 (or 3) columns indicating the pool CV (and the sample CV) and if the pool CV (or the ratio between pool CV and sample CV) is above the selected threshold
+	|
+	
+figure.pdf
+	| Figure summarizing the various values of the computed metrics and tests; includes several visualizations of the samples (eg, PCA scores) and intensities (eg, image of the data matrix)
+	|
+	
+information.txt
+	| Text file with informations regarding the metrics computed, eg those depending on the availability of the 'sampleMetadata' column, and specific types such as 'sample', 'pool', pool dilutions ('poolN'), or 'blank'
+	|
+	
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+|
+
+.. class:: infomark
+
+See the **W4M00001b_sacurine-complete** shared history in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 2.2.8
+========================
+
+MINOR MODIFICATION
+
+In the case of a distinct sample order between dataMatrix and sampleMetadata, the sample order from the dataMatrix is matched to sampleMetadata internally for the computations and graphics without modifying the order in the sampleMetadata output (a warning is generated in the information file); to get the re-ordered dataMatrix as output, please use the Check Format module
+
+CHANGES IN VERSION 2.2.6
+========================
+
+MINOR MODIFICATION
+
+Graphic: pool_CV inferior to 30%: pools with a NaN value are now counted as having a superior to 30% value (to avoid generating an NA metric value)
+
+CHANGES IN VERSION 2.2.4
+========================
+
+Additional running and installation tests added with planemo, conda, and travis
+
+CHANGES IN VERSION 2.2.3
+========================
+
+INTERNAL MODIFICATIONS
+
+Modifications of the **qualitymetrics_script.R** file to handle the recent **ropls** package versions (i.e. 1.3.15 and above) which use S4 classes
+
+Creating tests for the R code
+
+CHANGES IN VERSION 2.2.2
+========================
+
+Minor internal changes
+
+
+</help>
+
+<citations>
+  <citation type="doi">10.1021/acs.jproteome.5b00354</citation>
+  <citation type="doi">10.1093/bioinformatics/btr138</citation>
+  <citation type="bibtex">@Article{Mason1997,
+  Title                    = {A practical approach for interpreting multivariate T2 control chart signals},
+  Author                   = {Mason, RL. and Tracy, ND. and Young, JC.},
+  Journal                  = {Journal of Quality Technology},
+  Year                     = {1997},
+  Number                   = {4},
+  Pages                    = {396-406},
+  Volume                   = {29},
+  }</citation>
+  <citation type="doi">10.1016/j.biocel.2017.07.002</citation>
+  <citation type="doi">10.1093/bioinformatics/btu813</citation>
+</citations>
+
+</tool>

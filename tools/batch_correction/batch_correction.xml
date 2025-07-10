@@ -1,4 +1,4 @@
-<tool id="Batch_correction" name="Batch_correction" version="3.0.0">
+<tool id="Batch_correction" name="Batch_correction" version="3.0.0+galaxy0" profile="24.2">
   <description>Corrects intensities for signal drift and batch-effects</description>
   
   <macros>
@@ -98,7 +98,7 @@
     </outputs>
 
   <tests>
-    <test>
+    <test expect_num_outputs="1">
       <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
       <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata.tsv"/>
       <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>
@@ -106,7 +106,7 @@
       <param name="span" value="1"/>
       <output name="dataMatrix_out" file="output-batchcorrection-dataMatrix.tsv"/>
     </test>
-    <test>
+    <test expect_num_outputs="1">
       <param name="dataMatrix" value="input-batchcorrection-dataMatrix.tsv"/>
       <param name="sampleMetadata" value="input-batchcorrection-sampleMetadata-customSampleType.tsv"/>
       <param name="variableMetadata" value="input-batchcorrection-variableMetadata.tsv"/>

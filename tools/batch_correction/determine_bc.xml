@@ -5,11 +5,7 @@
     <import>macros.xml</import>
   </macros>
   
-  <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
-    <requirement type="package" version="1.7_8">r-ade4</requirement>
-    <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
-  </requirements>
+  <expand macro="requirements"/>
  
   <command detect_errors="aggressive"><![CDATA[
     Rscript $__tool_directory__/batch_correction_3Lwrapper.R
@@ -45,12 +41,12 @@
   </inputs>
   
   <outputs>
-    <data name="out_graph_pdf" label="Determine_BC_graph" format="pdf" ></data>
-    <data name="out_preNormSummary" label="Determine_BC_preNormSummary" format="tabular" ></data>
+    <data name="out_graph_pdf" label="Determine_BC_graph" format="pdf"/>
+    <data name="out_preNormSummary" label="Determine_BC_preNormSummary" format="tabular"/>
   </outputs>
 
   <tests>
-    <test>
+    <test expect_num_outputs="2">
       <param name="dataMatrix" value="input-determinebc-dataMatrix.tsv"/>
       <param name="sampleMetadata" value="input-determinebc-sampleMetadata.tsv"/>
       <param name="ref_factor" value="batch"/>

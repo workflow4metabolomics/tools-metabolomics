@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <macros>
 
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="1.1_4">r-batch</requirement>
+            <requirement type="package" version="1.7_8">r-ade4</requirement>
+            <requirement type="package" version="1.70.0">bioconductor-pcamethods</requirement>
+            <yield />
+        </requirements>
+    </xml>
+
     <xml name="sm_customisation">
       <section name="smcust" title="Sample metadata file coding parameters" expanded="False">
         <param name="batch_col_name" label="Batch column name" type="text" size="64" value="batch" help="The name of the column containing the batch values."/>

@@ -1,13 +1,3 @@
-#!/usr/local/public/bin/Rscript --vanilla --slave --no-site-file
-
-## 070115_NmrBucketing2galaxy_v1.R
-## Marie Tremblay-Franco
-## MetaboHUB: The French Infrastructure for Metabolomics and Fluxomics
-## www.metabohub.fr/en
-## marie.tremblay-franco@toulouse.inra.fr
-
-runExampleL <- FALSE
-
 if(runExampleL) {
 ##------------------------------
 ## Example of arguments
@@ -27,13 +17,6 @@ argLs <- c(argLs,
                 graphOut = paste(directory,"_NmrBucketing_graph.pdf",sep=""),
                 logOut = paste(directory,"_NmrBucketing_log.txt",sep="")))
 }
-
-##------------------------------
-## Options
-##------------------------------
-strAsFacL <- options()$stringsAsFactors
-options(stringsAsFactors = FALSE)
-
 
 ##------------------------------
 ## Libraries laoding

@@ -3,11 +3,12 @@
   <requirements>
 	    <requirement type="package" version="4.2.1">r-base</requirement>
   </requirements>
-  <command interpreter="Rscript"><![CDATA[
-	tablemerge_wrap.R
+  <command detect_errors="exit_code"><![CDATA[
+	    Rscript '$__tool_directory__/tablemerge_wrap.R'
+	    
       dataMatrix_in "$dataMatrix_in"
       Metadata_in "$Metadata_in"
-              
+      
       metatype "$metatype"
       
       combined_out "$combined_out"

@@ -1,0 +1,2 @@
+name	mz	mzmin	mzmax	rt	Rtminutes	rtmin	rtmax	npeaks	Bio	Blanc	QC	isotopes	adduct	pcgroup	blank_mean	blank_sd	blank_CV	sample_mean	sample_sd	sample_CV	blankMean_over_sampleMean	pool_mean	pool_sd	pool_CV	poolCV_over_sampleCV	poolDil_correl	poolDil_pval
+M88.0404T450	88.04041791	88.04033911	88.04058254	450.3258761	7.505431268	446.2509518	454.4939103	36	16	4	16			10	599220.4242	172763.0717	0.288313056	8393909.794	9476486.874	1.128971731	0.071387522	7975519.296	344279.7317	0.043167061	0.038235733	0.98401	8.01E-09

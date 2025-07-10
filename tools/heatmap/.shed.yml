@@ -1,0 +1,11 @@
+name: heatmap
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Heatmap of the data matrix.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'The heatmap is produced by using the "hclust" hierarchical clustering function from R. By default, the dissimilarity used is "1-correlation" (with the Pearson correlation coefficient), and the Ward agglomeration method. Other distances (e.g., "euclidean") or agglomeration methods (e.g., "average") can be used. For visulization, a scaling argument is suggested by default to enhance contrast (does not modify the clustering computation). Note that computation times for big matrices (e.g. with thousands of features) can be long.'
+remote_repository_url: https://github.com/workflow4metabolomics/heatmap.git
+categories:
+- Metabolomics
+- Transcriptomics
+- Proteomics
+- Statistics

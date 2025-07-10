@@ -1,0 +1,557 @@
+<tool id="Multivariate" name="Multivariate" version="2.3.14">
+  <description>PCA, PLS and OPLS</description>
+  
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.10.0">bioconductor-ropls</requirement>
+  </requirements>
+  
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command><![CDATA[
+  Rscript $__tool_directory__/multivariate_wrapper.R
+  
+  dataMatrix_in "$dataMatrix_in"
+  sampleMetadata_in "$sampleMetadata_in"
+  variableMetadata_in "$variableMetadata_in"
+  
+  respC "$respC"
+  predI "$predI"
+  orthoI "$orthoI"
+  testL "$testL"
+  
+  #if $advGph.opgC == "full"
+  typeC "$advGph.typeC"
+  parAsColC "$advGph.parAsColC"
+  parCexN "$advGph.parCexN"
+  parPc1I "$advGph.parPc1I"
+  parPc2I "$advGph.parPc2I"
+  parMahalC "$advGph.parMahalC"
+  parLabVc "$advGph.parLabVc"
+  #end if
+  
+  #if $advCpt.opcC == "full"
+  algoC "$advCpt.algoC"
+  crossvalI "$advCpt.crossvalI"
+  log10L "$advCpt.log10L"
+  permI "$advCpt.permI"
+  scaleC "$advCpt.scaleC"
+  #end if
+  
+  sampleMetadata_out "$sampleMetadata_out"
+  variableMetadata_out "$variableMetadata_out"
+  figure "$figure"
+  information "$information"
+
+  #if $save_rdata:
+    ropls_out "$ropls_out"
+  #end if
+  ]]></command>
+  
+  <inputs>
+    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
+    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+    <param name="respC" label="Y Response (for (O)PLS(-DA) only)" type="text" value = "none" help="Notes: 1) PCA: keep the default (none); 2) (O)PLS(-DA): indicate the name of the column of the sample table to be modeled" />
+    
+    <param name="predI" label="Number of predictive components" type="select" help="Notes: 1) PCA and PLS(-DA): NA can be selected to get a suggestion of the optimal number of predictive components; 2) OPLS(-DA) modeling: select 1 predictive component">
+      <option value="NA" selected="true">NA</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </param>
+    <param name="orthoI" label="Number of orthogonal components (for OPLS(-DA) only)" type="select" help="Notes: 1) PCA and PLS(-DA): keep the default value (0); 2) OPLS(-DA): NA can be selected to get a suggestion of the optimal number of orthogonal components">
+      <option value="0">0</option>
+      <option value="NA">NA</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </param>
+    
+    <param name="testL" label="Samples to be tested" type="select" help="In case predictions should be computed on test samples, provide in your sampleMetadata a column named test. (use exactly this column name, with the dot at the end) and containing yes and no values to indicate which samples should be tested; for those samples, the values of the response will not be used (you can leave NA in the response column of the sample metadata)">
+      <option value="TRUE">yes</option>
+      <option value="FALSE" selected="true">no</option>
+    </param>    
+    
+    <conditional name="advGph">
+      <param name="opgC" type="select" label="Advanced graphical parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full parameter list</option>
+      </param>
+      
+      <when value="default"/>
+      <when value="full">
+	<param name="typeC" label="Graphic type" type="select" help="">
+	  <option value="correlation">correlation</option>
+	  <option value="outlier">outlier</option>
+	  <option value="overview">overview</option>
+	  <option value="permutation">permutation</option>
+	  <option value="predict-train">predict-train</option>
+	  <option value="summary" selected="true">summary</option>                
+	  <option value="x-loading">x-loading</option>
+	  <option value="x-score">x-score</option>
+	  <option value="x-variance">x-variance</option>
+	  <option value="xy-score">xy-score</option>
+	  <option value="xy-weight">xy-weight</option>
+	</param>		
+	<param name="parMahalC" label="Ellipses" type="text" value = "NA" help="Name of the sample metadata column with the classes to be used for drawing ellipses; for (O)PLS-DA, the default 'NA' means that the same name as the 'Response' argument above will be used; if you do not want ellipses, use none instead of NA" />
+	<param name="parAsColC" label="Sample colors" type="text" value = "none" help="Indicate the name of the sample metadata column with the names to be converted into colors; by default (none), data matrix sample names will be used" />
+        <param name="parLabVc" label="Sample labels" type="text" value = "none" help="Indicate the name of the sample metadata column with the names to be used as labels; By default (none), sample names from the data matrix will be used" />
+	<param name="parPc1I" label="Component to be displayed as abscissa" type="select" value = "-" help="In case of OPLS(-DA), the first component (i.e. the predictive component) must be set to 1">
+	  <option value="1">1</option>
+	  <option value="2">2</option>
+	  <option value="3">3</option>
+	  <option value="4">4</option>
+	  <option value="5">5</option>
+	  <option value="6">6</option>
+	  <option value="7">7</option>
+	  <option value="8">8</option>
+	  <option value="9">9</option>
+	  <option value="10">10</option>
+	</param>
+	<param name="parPc2I" label="Component to be displayed as ordinate" type="select" help="In case of OPLS(-DA), the orthogonal component of the selected value - 1 will be displayed (e.g. to see the first orthogonal component, select the value '2' below)">
+	  <option value="2">2</option>
+	  <option value="3">3</option>
+	  <option value="4">4</option>
+	  <option value="5">5</option>
+	  <option value="6">6</option>
+	  <option value="7">7</option>
+	  <option value="8">8</option>
+	  <option value="9">9</option>
+	  <option value="10">10</option>
+	</param>
+        <param name="parCexN" type="float" value="0.8" label="Amount by which plotting text should be magnified relative to the default"/>
+	
+      </when>
+    </conditional>
+    
+    <conditional name="advCpt">
+      <param name="opcC" type="select" label="Advanced computational parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full parameter list</option>
+      </param>
+      
+      <when value="default"/>
+      <when value="full">
+        <param name="scaleC" label="Scaling" type="select" help="Select 'standard' for mean-centering and unit-variance scaling">
+          <option value="standard">standard</option>
+          <option value="center">mean centering</option>
+          <option value="pareto">Pareto scaling</option>
+        </param>
+	<param name="permI" label="Permutation testing for (O)PLS(-DA): Number of permutations" type="select" help="Default is 20 for single response models without train/test partition, and 0 otherwise">
+	  <option value="0">0</option>
+          <option value="20" selected="true">20</option>
+	  <option value="100">100</option>
+	  <option value="1000">1000</option>
+	</param>		
+	<param name="log10L" label="logarithmic transformation (log10)" type="select" help="">
+          <option value="TRUE">yes</option>
+	  <option value="FALSE" selected="true">no</option>
+	</param>
+	<param name="algoC" label="Algorithm" type="select" help="Default algorithm is 'svd' for PCA and 'nipals' for PLS and OPLS; when performing PCA with 'svd' on an data matrix containing missing values, NAs are set to half the minimum of non-missing values and a warning is generated; an alternative is to use the 'nipals' algorithm (able to handle a moderate amount of missing values)">
+	  <option value="default">default</option>
+	  <option value="nipals">nipals</option>
+	  <option value="svd">svd</option>
+	</param>
+	<param name="crossvalI" label="Number of cross-validation segments" type="select" help="Must be less than or equal to the number of samples">
+	  <option value="1">1</option>
+	  <option value="2">2</option>
+	  <option value="3">3</option>
+	  <option value="4">4</option>
+	  <option value="5">5</option>
+	  <option value="6">6</option>
+	  <option value="7" selected="true">7</option>
+	  <option value="8">8</option>
+	  <option value="9">9</option>
+	  <option value="10">10</option>
+	</param>	
+	
+      </when>
+    </conditional>
+    <param name="save_rdata" type="boolean" truevalue="yes" falsevalue="no" checked="false" label="Save RData in your history"
+           help="Save the R ropls::opls object in your history for ad hoc analysis and graphing (outside Galaxy, this requires package 'bioconductor-ropls')"/>
+  </inputs>
+  
+  <outputs>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular" ></data>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+    <!-- how would an ropls.rdata datatype be added if that were the desired choice here instead?  Specifically, could it be created as part of tool installation? -->
+    <data name="ropls_out" label="${tool.name}_${dataMatrix_in.name}.RData" format="rdata">
+      <filter>save_rdata</filter>
+    </data>
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="input-dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="input-sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="input-variableMetadata.tsv"/>
+      <param name="respC" value="age"/>
+      <param name="predI" value="1"/>
+      <param name="orthoI" value="1"/>
+      <param name="testL" value="FALSE"/>
+      <output name="sampleMetadata_out">
+	<assert_contents>
+	  <has_n_columns n="9"/>
+	</assert_contents>
+      </output>
+      <output name="variableMetadata_out">
+	<assert_contents>
+	  <has_n_columns n="7"/>
+	</assert_contents>
+      </output>
+    </test>
+  </tests>
+  
+  <help>	
+
+.. class:: infomark
+
+**Author**	Etienne Thevenot (CEA, LIST, MetaboHUB Paris, etienne.thevenot@cea.fr)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite**
+
+Etienne A. Thevenot, Aurelie Roux, Ying Xu, Eric Ezan, and Christophe Junot (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (http://dx.doi.org/10.1021/acs.jproteome.5b00354).
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**R package**
+
+The *ropls* package is available from the bioconductor repository (http://bioconductor.org/packages/ropls).
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+==============================================
+Multivariate analysis with PCA and (O)PLS(-DA)
+==============================================
+
+-----------
+Description
+-----------
+
+**Latent variable modeling** with Principal Component Analysis (**PCA**) and Partial Least Squares (**PLS**) are powerful methods for **visualization**, **regression**, **classification**, and feature selection of **omics data** where the number of variables exceeds the number of samples and with multicollinearity among variables (Wold et al, 2001; Thenenhaus, 1998; Wehrens, 2011; Eriksson et al, 2006; Trygg et al, 2007). Orthogonal Partial Least Squares (**OPLS**) enables to separately model the variation correlated (predictive) to the factor of interest and the uncorrelated (orthogonal) variation (Trygg and Wold, 2002). While performing similarly to PLS, OPLS facilitates interpretation. Successful applications of these chemometrics techniques include spectroscopic data such as Raman spectroscopy, nuclear magnetic resonance (NMR), mass spectrometry (MS) in metabolomics and proteomics, but also transcriptomics data. In addition to **scores**, **loadings** and **weights** plots, the module provides metrics and graphics to determine the optimal number of components (e.g. with the **R2** and **Q2** coefficients; Wold et al, 2001; Thenenhaus, 1998; Eriksson et al, 2006), check the **validity of the model** by permutation testing (Szymanska et al, 2012), detect **outliers** (Wold et al, 2001; Thenenhaus, 1998; Hubert et al, 2005), and provide several metrics to assess the importance of the variables in the model (e.g. **Variable Importance in Projection** or regression coefficients; Wold et al, 2001; Mehmood et al, 2012; Galindo-Prieto et al, 2014). The module is an implementation of the **ropls** R package available from Bioconductor (Thevenot et al, 2015).
+
+--------
+Comments
+--------
+
+1) Overfitting
+    | Overfitting (i.e., building a model with good performances on the training set but poor performances on a new test set) is a major caveat of machine learning techniques applied to data sets with more variables than samples. A simple simulation with a random dataMatrix and a random response shows that perfect PLS-DA classification can be achieved as soon as the number of variables exceeds the number of samples (Wehrens, 2011). It is therefore essential to check that the Q2 value of the model is significant by random permutation of the labels: the number of permutations (advanced computational parameter) is set to 20 by default but should be increased for confirmation of the results.
+    
+2) VIP from OPLS models
+    | The classical VIP metric is not useful for OPLS modeling of a single response since (Galindo-Prieto et al, 2014; Thevenot et al, 2015). In fact, when features are standardized, we can demonstrate a mathematical relationship between VIP and *p*-values from a Pearson correlation test (Thevenot et al, 2015): classical VIP are therefore univariate for OPLS(-DA) models (and identical whatever the number of orthogonal components of the model).
+    | Galindo-Prieto et al. (2014) have therefore recently suggested new VIP metrics for OPLS, VIP*pred* and VIP*ortho*, to separately measure the influence of the features in the modeling of the dispersion correlated to, and orthogonal to the response, respectively.
+    | For OPLS(-DA) models, the output variableMetadata contains the 2 metrics: VIP_pred is a measure of the variable importance in prediction and VIP_ortho is a measure of the variable importance in orthogonal modeling. VIP_pred and VIP_ortho are scaled as the classical VIP (i.e., the mean of their squared values equals 1).
+
+3) (Orthogonal) Partial Least Squares Discriminant Analysis: (O)PLS-DA
+    | The approach for discriminant analysis implemented in the module relies on internal conversion of the response into a dummy vector (resp. a matrix when the number of classes is > 2), mean-centering and unit-variance scaling of the vector (resp. the matrix), and PLS (resp. PLS2) regression modeling.
+    | When the sizes of the 2 classes are unbalanced, Brereton and Lloyd (2014) have demonstrated that a bias is introduced in the computation of the decision rule, which penalizes the class with the highest size. In the multiclass case, the proportions of 0 and 1 in the columns is usually unbalanced (even in the case of balanced size of the classes) resulting in a bias (Brereton and Llyod, 2014).
+    | With the current implementation of the module, we thus recommend to stick to binary discrimination and use balanced classes for optimal use.
+
+----------
+References
+----------
+
+| Brereton R.G. and Lloyd G.R. (2014). Partial least squares discriminant analysis: taking the magic away. *Journal of Chemometrics*, 28:213-225. http://dx.doi.org/10.1002/cem.2609
+| Eriksson I., Johansson E., Kettaneh-Wold N. and Wold S. (2001). Multi- and megavariate data analysis. Principles and applications. *Umetrics Academy*.
+| Galindo-Prieto B., Eriksson L. and Trygg J. (2014). Variable influence on projection (VIP) for orthogonal projections to latent structures (OPLS). *Journal of Chemometrics*, 28:623-632. http://dx.doi.org/10.1002/cem.2627 
+| Hubert M., Rousseeuw P. and Vanden Branden K. (2005). ROBPCA: a new approach to robust principal component analysis. *Technometrics*, 47:64-79. http://dx.doi.org/10.1198/004017004000000563
+| Mehmood T., Liland K.H., Snipen L. and Saebo S. (2012). A review of variable selection methods in Partial Least Squares Regression. *Chemometrics and Intelligent Laboratory Systems*, 118:62-69. http://dx.doi.org/10.1016/j.chemolab.2012.07.010 
+| Szymanska E., Saccenti E., Smilde A. and Westerhuis J. (2012). Double-check: validation of diagnostic statistics for PLS-DA models in metabolomics studies. *Metabolomics*, 8:3-16. http://dx.doi.org/10.1007/s11306-011-0330-3
+| Tenenhaus M. (1998). La regression PLS : theorie et pratique. *Technip*.
+| Thevenot E.A., Roux A., Xu Y., Ezan E. and Junot C. (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, 14:3322-3335. http://dx.doi.org/10.1021/acs.jproteome.5b00354
+| Trygg J. and Wold S. (2002). Orthogonal projection to latent structures (O-PLS). *Journal of Chemometrics*, 16:119-128. http://dx.doi.org/10.1002/cem.695
+| Trygg J., Holmes E. and Lundstedt T. (2007). Chemometrics in Metabonomics. *Journal of Proteome Research*, 6:469-479. http://dx.doi.org/10.1021/pr060594q
+| Wehrens W. (2011). Chemometrics with R. *Springer*.
+| Wold S., Sjostrom M. and Eriksson L. (2001). PLS-regression: a basic tool of chemometrics. *Chemometrics and Intelligent Laboratory Systems*, 58:109-130. http://dx.doi.org/10.1016/S0169-7439(01)00155-1
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: multivariate_workflowPositionImage.png
+        :width: 600
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| File                      |   Format   |
++===========================+============+
+| 1)  Data matrix           |   tabular  |
++---------------------------+------------+
+| 2)  Sample metadata       |   tabular  |
++---------------------------+------------+
+| 3)  Variable metadata     |   tabular  |
++---------------------------+------------+
+
+
+----------
+Parameters
+----------
+
+Data matrix file
+	| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+	| 
+
+Sample metadata file
+	| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+	| 
+
+Variable metadata file
+	| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+	| 
+
+Y Response (mandatory for PLS and OPLS; keep the default, none, for PCA)
+	| Column of the sample metadata table to be used as (qualitative or quantitative) response for (O)PLS(-DA)
+	| 
+
+Number of (predictive) components (default = NA)
+	| For OPLS(-DA), this number is automatically converted to 1; otherwise if set to **NA**, the optimal number of components is automatically determined by cross-validation: components are extracted until (i) PCA case: the variance is less than the mean variance of all components (note that this rule requires all components to be computed and can be quite time-consuming for large datasets) or (ii) PLS case: either R2Y of the component is less than 0.01 or Q2Y is less than 0 (when the dataset contains more than 100 samples) or 0.05 otherwise
+	|
+	
+Number of orthogonal components (mandatory for OPLS(-DA); default = 0 otherwise)
+	| When set to **0** [default], PLS will be performed; otherwise OPLS will be peformed; when set to **NA**, OPLS is performed and the number of orthogonal components is automatically computed by using cross-validation
+	| 
+
+Samples for prediction (for (O)PLS(-DA) only; default is no)
+  | In case predictions should be computed on test samples, provide in your **sampleMetadata** a column named **test.** (use exactly this column name, with the dot at the end) and containing **yes** and **no** values to indicate which samples should be tested; for those samples, the values of the response will not be used (you can leave **NA** in the response column of the **sampleMetadata**)
+  |
+	
+Advanced graphical parameters
+	|
+
+Graphic type (default = summary)
+	| **summary** 4-plot graphics showing **overview** (or **permutation** when the number of permutations is superior to 0; see below), **outlier**, **x-loading** and **x-score**
+	| **correlation** Variable correlations with the components
+	| **outlier** Observation diagnostics (score and orthogonal distances)
+	| **overview** Model overview showing R2Ycum and Q2cum (or 'Variance explained' for PCA)
+	| **permutation** Scatterplot of R2Y and Q2Y actual and simulated models after random permutation of response values
+	| **predict-train** Predicted vs Actual Y for the reference set (only if Y has a single column)
+	| **x-loading** X-Loadings
+	| **x-score** X-Scores
+	| **x-varcor** Spread of raw variables corresp. to quantile variances and, if the number of variables is less than 100, correlations between the X-variables    
+	| **xy-score** XY-Scores,
+	| **xy-weight** XY-Weights
+	| .pdf image files can be converted to high-resolution .tif images (e.g. for publication) by using in the open-source Gimp software: open the .pdf with resolution = 300, and export as a .tif image without compression
+	| 
+	
+Ellipses (default = NA)
+	| If 'NA' ellipses are drawn automatically for (O)PLS-DA, or for PCA, when a column of characters is selected in the 'sample colors' argument below. If you do not want ellipses, set to none.
+	| 	
+	
+Sample colors (default = none)
+	| Name of the column of the sample table with the classes to be used for coloring the samples on plots (e.g. for PCA or if you wish to highlight a factor distinct from the response above); by default (none) sample names are converted into a color palette"
+	| 
+
+Sample labels (default = none)
+	| Name of the column of the sample table with the classes to be used for labeling the samples on plots; by default (none), sample names will be used
+	| 
+	
+Component to be displayed as abscissa (default = 1)
+	| In case of OPLS(-DA), the first component (i.e. the predictive component) must be set to 1"
+	| 
+
+Component to be displayed as ordinate (default = 2)
+	| Note: In case of OPLS(-DA), the orthogonal component of the value below - 1 will be displayed (e.g. to see the first orthogonal component, select the value **2** (default)
+	|
+	
+Number of variables most contributing to loadings to be highlighted (default = 3)
+	| Such variables will be colored in red on the loading plot; In addition, the loading values and the correlation with the components will be printed in the text summary
+	| 
+	
+Advanced computational parameters
+	|
+	
+Scaling (default = standard)
+	| Either **mean-centering** alone (http://purl.obolibrary.org/obo/OBI_0200029), or followed by **pareto scaling** (http://purl.obolibrary.org/obo/OBI_0200037), or unit-variance scaling (**standard**)
+	| 
+
+Permutation testing for (O)PLS(-DA) models: Number of permutations (default = 20)
+	| Number of random permutations of response labels to estimate R2Y and Q2Y significance; Default is 10 for single response models and 0 otherwise
+	| 
+	
+Log10 transformation (default = no)
+	| Should the data matrix values be log10 transformed? Note: zeros are set to 1 prior to transformation
+	| (http://purl.obolibrary.org/obo/OBI_0200094)
+	| 
+	
+Train/test partition (default = none)
+	| When set to **odd**, samples with odd indices are used to train the model, which is subsequently tested on the samples with even indices; a RMSEP (root mean square error estimation of prediction) is computed, in addition to the RMSEE  (error of estimation). Note that in case of a qualitative response, the proportion of samples in each class in the full dataset is preserved within the reference and train subsets
+	| 
+
+Algorithm (default = svd for PCA and nipals for PLS and OPLS)
+  | When using **svd** (singular value decomposition) for PCA on an **dataMatrix** containing missing values (NA), the latters are set to half the minimum of non-missing values and a warning is generated; an alternative is to use the **nipals** algorithm (non-linear iterative partial least squares, based on a power method to find eigenvalues, and able to handle a small amount of missing values); For PLS and OPLS, only the **nipals** algorithm is available 
+	| 
+	
+Number of cross-validation segments (default = 7)
+	| 
+
+	
+------------
+Output files
+------------
+
+	
+sampleMetadata_out.tabular
+	| **sampleMetadata** tabular separated file identical to the file given as argument, except that two columns with the x-scores of the displayed components have been added
+	| 
+	
+variableMetadata_out.tabular
+	| **variableMetadata** tabular separated file identical to the file given as argument, except that i) 3 columns with the x-loadings of the displayed components, and the regression coefficients, have been added, ii) in the case of PLS, a column with the VIP values (variable importance in projection of the model with all components) has been added, iii) in the case of OPLS, 2 columns with the VIP_pred and VIP_ortho have been added.
+	| 
+
+figure.pdf
+	| Graphic
+	| 
+			
+information.txt
+	| Text file with all messages and warnings generated during the computation
+	|
+
+---------------------------------------------------
+
+----------------
+Working examples
+----------------
+
+|
+
+.. class:: infomark
+
+See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-complete**, **W4M00002_mtbls2** or **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+
+
+Figure output
+=============
+
+.. image:: multivariate_workingExampleImage.png
+        :width: 600
+        
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 2.3.14
+=========================
+
+MINOR CORRECTION
+
+Score plot (x-score) advanced parameters (labels and colors) in case of test samples in the dataset
+
+CHANGES IN VERSION 2.3.12
+=========================
+
+NEW FEATURE
+
+Some of the parameters were renamed according to the controlled vocabulary of the Ontology for Biomedical Investigations (OBI; http://obi-ontology.org/) and the statistics ontology (STATO; http://stato-ontology.org/), in collaboration with Philippe Rocca-Serra (University of Oxford)
+
+CHANGES IN VERSION 2.3.8
+========================
+
+MINOR CORRECTION
+
+(O)PLS(-DA) coefficients display in case of multiple quantitative (or multiclass) response: now the column names of the coefficients for each response are correctly labelled in the variableMetadata file 
+
+CHANGES IN VERSION 2.3.6
+========================
+
+INTERNAL MODIFICATIONS
+
+Minor internal modifications
+
+CHANGES IN VERSION 2.3.4
+========================
+
+INTERNAL MODIFICATIONS
+
+Minor update in .shed.yml file
+
+CHANGES IN VERSION 2.3.2
+========================
+
+NEW FEATURES
+
+Error messages are generated in OPLS(-DA) models in case of non-significance of either the predictive or the first orthogonal component
+
+INTERNAL MODIFICATIONS
+
+Modifications of the **wrapper** file to handle the recent **ropls** package versions (i.e. 1.3.15 and above) which use S4 classes
+
+CHANGES IN VERSION 2.3.0
+========================
+
+NEW FEATURES
+
+1) **Predictions** now available (see the 'Samples to be tested' argument)
+2) OPLS(-DA): **Predictive and Orthogonal VIP** are now computed (see the 'comments' section)
+3) **Multiclass PLS-DA** implemented (see the 'comments' section)
+
+MINOR MODIFICATIONS
+
+1) Changes in color palette: black/grey colors for diagnostics and other colors for scores 
+2) Default number of permutations set to 20 (instead of 10)
+3) Predictive components denoted in the tables by 'p' (instead of 'h' previously)
+
+CHANGES IN VERSION 2.2.4
+========================
+
+1) Correction in the Galaxy wrapper (in the previous version, the number of predictive components was sometimes set to the maximum by mistake)
+2) The regression coefficients are now provided as a new column of the variableMetadata output
+
+CHANGES IN VERSION 2.2.3
+========================
+
+The default number of permutations is set to 10 (instead of 100) as a compromise to enable both a quick computation and a first hint at model significance
+
+CHANGES IN VERSION 2.2.2
+========================
+
+1) A default of 100 permutations has been set in order to check for overfitting; in addition, 'permutation', 'overview', and 'outlier' plots are now displayed by default
+2) Classification is currently implemented for two-class responses only
+3) *dataMatrix* is not modified by the tool, so it does not appear as an output files
+4) Double cross-validation (advanced computational parameters): 'odd' now refers to train (instead to test) indices
+
+  </help>
+
+  <citations>
+    <citation type="doi">10.1021/acs.jproteome.5b00354</citation>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+  
+</tool>

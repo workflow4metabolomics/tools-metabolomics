@@ -1,0 +1,10 @@
+name: profia
+owner: ethevenot
+description: '[W4M][Metabolomics][FIA-HRMS] Preprocessing of Flow Injection Analysis coupled to High-Resolution Mass Spectrometry (FIA-HRMS) data.'
+homepage_url: http://workflow4metabolomics.org
+long_description: '"Flow Injection Analysis coupled to High-Resolution Mass Spectrometry (FIA-HRMS)" is a promising approach for "high-throughput metabolomics". FIA- HRMS data, however, cannot be preprocessed with current software tools which rely on liquid chromatography separation, or handle low resolution data only.
+
+The "proFIA module" is a workflow allowing to preprocess FIA-HRMS raw data in "centroid" mode and open format (netCDF, mzData, mzXML, and mzML), and generates the table of peak intensities ("peak table"). The workflow consists in "peak detection and quantification" within individual sample files, followed by "alignment" between files in the mz dimension, and "imputation" of the missing values in the final peak table (Delabriere et al., submitted). For each ion, the graph representing the intensity as a function of time is called a "flowgram". A flowgram can be modeled as I = kP + ME(P) + B + e, where k is the response factor (corresponding to the ionization properties of the analyte), P is the "sample peak" (normalized profile which is common for all analytes from a sample and depends on the flow injection conditions only), ME is the "matrix effect", B is the "solvent baseline", and e is the heteroscedastic noise. The generated peak table is available in the "3 table" W4M tabular format ("dataMatrix", "sampleMetadata", and "variableMetadata") for downstream statistical analysis and annotation with W4M modules. A figure provides "diagnostics" and visualization of the preprocessed data set.'
+remote_repository_url: https://github.com/workflow4metabolomics/profia.git
+categories:
+- Metabolomics

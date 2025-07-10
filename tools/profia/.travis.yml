@@ -1,0 +1,16 @@
+language: python
+
+before_install:
+ - sudo apt-get install -y python-virtualenv
+ - virtualenv planemo-venv
+ - . planemo-venv/bin/activate
+ - pip install --upgrade pip setuptools
+ - pip install planemo
+ - planemo conda_init
+
+install:
+- planemo conda_install ${TRAVIS_BUILD_DIR}/profia_config.xml
+
+script:
+ - planemo lint ${TRAVIS_BUILD_DIR}/profia_config.xml
+ - planemo test --conda_auto_init --conda_auto_install --conda_dependency_resolution --galaxy_branch release_17.05 --no_cache_galaxy ${TRAVIS_BUILD_DIR}/profia_config.xml

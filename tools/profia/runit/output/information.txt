@@ -1,0 +1,73 @@
+
+Start of the 'proFIA' Galaxy module call: Mon 08 Jan 2018 07:23:11 PM
+files_root_directory	 plasFIA 
+
+1) Peak detection step ('proFIAset'):
+
+2) Peak alignment ('group.FIA'):
+
+ 707  groups have been done .
+
+3) Creating the peak table ('makeDataMatrix'):
+
+4) Imputing missing values ('impute.randomForest'):
+  missForest iteration 1 in progress...done!
+  missForest iteration 2 in progress...done!
+  missForest iteration 3 in progress...done!
+  missForest iteration 4 in progress...done!
+  missForest iteration 5 in progress...done!
+  missForest iteration 6 in progress...done!
+  missForest iteration 7 in progress...done!
+  missForest iteration 8 in progress...done!
+  missForest iteration 9 in progress...done!
+  missForest iteration 10 in progress...done!
+
+5) Plotting ('plot'):
+PCA
+3 samples x 707 variables
+standard scaling of predictors
+      R2X(cum) pre ort
+Total        1   2   0
+null device 
+          1 
+
+6) Printing ('show'):
+A "proFIAset" object containing  1  classes.
+Data matrix has been created. 
+2089  peaks detected.
+707  features have been grouped.
+The data matrix is avalaible.
+Memory usage: 0.409 MB
+
+7) Exporting ('exportDataMatrix', 'exportSampleMetadata', 'exportVariableMetadata'):
+
+End of 'proFIA' Galaxy module call: 2018-01-08 19:27:06
+
+
+
+============================================================================
+Additional information about the call:
+
+1) Parameters:
+                     value                          
+dataMatrix_out       "./output/dataMatrix.tsv"      
+sampleMetadata_out   "./output/sampleMetadata.tsv"  
+variableMetadata_out "./output/variableMetadata.tsv"
+figure               "./output/figure.pdf"          
+information          "./output/information.txt"     
+zipfile              "./plasfia/plasFIA.zip"        
+library              "NULL"                         
+ppmN                 "2"                            
+dmzN                 "5e-04"                        
+ppmGroupN            "1"                            
+dmzGroupN            "5e-04"                        
+fracGroupN           "0.1"                          
+imputeC              "randomForest"                 
+
+2) Session Info:
+R version 3.3.1 (2016-06-21) 
+Main packages:
+proFIA 1.4.0 	xcms 1.50.1 	Biobase 2.34.0 	ProtGenerics 1.6.0 	BiocGenerics 0.20.0 	mzR 2.8.1 	Rcpp 0.12.10 	batch 1.1.4 	
+Other loaded packages:
+splines 3.3.1 	itertools 0.1.3 	MASS 7.3.45 	BiocParallel 1.8.1 	missForest 1.4 	lattice 0.20.34 	quadprog 1.5.5 	foreach 1.4.4 	plyr 1.8.4 	grid 3.3.1 	iterators 1.0.9 	multtest 2.30.0 	survival 2.41.2 	randomForest 4.6.12 	Matrix 1.2.8 	RColorBrewer 1.1.2 	S4Vectors 0.12.2 	codetools 0.2.15 	MassSpecWavelet 1.40.0 	pracma 1.9.9 	ropls 1.6.2 	stats4 3.3.1 	minpack.lm 1.2.1 	RANN 2.5 	
+============================================================================

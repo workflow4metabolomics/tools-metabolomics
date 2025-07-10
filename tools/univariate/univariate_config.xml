@@ -1,0 +1,293 @@
+<tool id="Univariate" name="Univariate" version="2.2.4">
+  <description>Univariate statistics</description>
+  
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="4.1">r-PMCMR</requirement>
+  </requirements>
+
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command><![CDATA[
+  Rscript $__tool_directory__/univariate_wrapper.R
+
+  dataMatrix_in "$dataMatrix_in"
+  sampleMetadata_in "$sampleMetadata_in"
+  variableMetadata_in "$variableMetadata_in"
+  
+  facC "$facC"
+  tesC "$tesC"
+  adjC "$adjC"
+  thrN "$thrN"	  
+  
+  variableMetadata_out "$variableMetadata_out"
+  figure "$figure"
+  information "$information"
+  ]]></command>
+  <inputs>
+    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
+    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"  />
+    <param name="facC" label="Factor of interest" type="text" help="Name of the column of the sample metadata table corresponding to the qualitative or quantitative variable"/>
+    <param name="tesC" label="Test" type="select" help="">
+      <option value="ttest">ttest (qualitative, 2 levels)</option>
+      <option value="wilcoxon">Wilcoxon test (qualitative, 2 levels)</option>      
+      <option value="anova">Analysis of variance (qualitative, more than 2 levels)</option>
+      <option value="kruskal">Kruskal-Wallis rank test (qualitative, more than 2 levels)</option>
+      <option value="pearson">Pearson correlation test (quantitative)</option>
+      <option value="spearman">Spearman correlation rank test (quantitative)</option>
+    </param>
+    <param name="adjC" label="Method for multiple testing correction" type="select" help="">
+      <option value="fdr">fdr</option>
+      <option value="BH">BH</option>
+      <option value="bonferroni">bonferroni</option>
+      <option value="BY">BY</option>
+      <option value="hochberg">hochberg</option>
+      <option value="holm">holm</option>
+      <option value="hommel">hommel</option>
+      <option value="none">none</option>
+    </param>
+    <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
+  </inputs>
+  
+  <outputs>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="variableMetadata.tsv"/>
+      <param name="facC" value="qual"/>
+      <param name="tesC" value="kruskal"/>
+      <param name="adjC" value="fdr"/>
+      <param name="thrN" value="0.05"/>
+      <output name="variableMetadata_out" file="output-variableMetadata.tsv"/>
+    </test>
+  </tests>
+  
+  <help>
+    
+.. class:: infomark
+
+| **Tool update: See the 'NEWS' section at the bottom of the page**
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Authors**
+
+| **Marie Tremblay-Franco (marie.tremblay-franco@toulouse.inra.fr)** and **Etienne Thevenot (etienne.thevenot@cea.fr)** wrote this wrapper of R univariate statistical tests.
+| MetaboHUB: The French National Infrastructure for Metabolomics and Fluxomics (http://www.metabohub.fr/en)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite**
+
+R Core Team (2013). R: A language and Environment for Statistical Computing. http://www.r-project.org
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**References**
+
+| Benjamini Y. and Hochberg Y. (1995). Controlling the false discovery rate: a practical and powerful approach for multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57:289-300.
+| Dalgaard P. (2002). Introductory statistics with R. Springer.
+| Kvam P. and Vidakovic B. (2007). Nonparametric statistics with applications to science and engineering. Wiley.
+| Van Belle G., Fisher L., Heagerty P. and Lumley T. (2004). Biostatistics - a methodology for the health sciences. Wiley.
+| Pohlert T. (2015). PMCMR: Calculate pairwise multiple comparisons of mean rank sums. R package on CRAN.
+
+---------------------------------------------------
+
+=====================
+Univariate statistics
+=====================
+
+-----------
+Description
+-----------
+
+| The module performs two sample tests (t-test and Wilcoxon rank test), analysis of variance and Kruskal-Wallis rank test, and correlation tests (by using either the pearson or the spearman correlation)
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: univariate_workflowPositionImage.png
+        :width: 584
+
+-----------
+Input files
+-----------
+
++------------------------------+------------+
+| File                         |   Format   |
++==============================+============+
+| 1)  Data matrix              |   tabular  |
++------------------------------+------------+
+| 2)  Sample metadata          |   tabular  |
++------------------------------+------------+
+| 3)  Variable metadata        |   tabular  |
++------------------------------+------------+
+
+----------
+Parameters
+----------
+	  
+Data matrix file
+	| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+	|
+
+Sample metadata file
+	| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+	|
+	
+Variable metadata file
+	| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+	|
+
+Factor
+	| Column of the sample metadata table to be used as qualitative factor (t-test, Wilcoxon test, Analysis of variance, Kruskal-Wallis test) or quantitative variable (correlation)
+	|
+
+Test
+	| Depending on the factor of interest (qualitative with 2 or more levels, or quantitative), and on the normality of the sample values (determining whether a parametric or nonparametric test is required), you can choose one of the 6 tests available:
+
+
++---------------------------+------------------+----------------------+----------------------+
+| Factor to be tested       | Number of levels |    Parametric test   |  Nonparametric test  |
++===========================+==================+======================+======================+
+| Qualitative               |         2        |       t-test         |    Wilcoxon test     |
++                           +------------------+----------------------+----------------------+
+|                           |        > 2       | Analysis of variance |    Kruskal-Wallis    |
++---------------------------+------------------+----------------------+----------------------+
+| Quantitative              |                  | Pearson correlation  | Spearman correlation |
++---------------------------+------------------+----------------------+----------------------+
+
+Method for multiple testing correction
+	| The 7 methods implemented in the 'p.adjust' R function are available and documented as follows:
+	| "The adjustment methods include the Bonferroni correction ("bonferroni") in which the p-values are multiplied by the number of comparisons. Less conservative corrections are also included by Holm (1979) ("holm"), Hochberg (1988) ("hochberg"), Hommel (1988) ("hommel"), Benjamini and Hochberg (1995) ("BH" or its alias "fdr"), and Benjamini and Yekutieli (2001) ("BY"), respectively. A pass-through option ("none") is also included. The set of methods are contained in the p.adjust.methods vector for the benefit of methods that need to have the method as an option and pass it on to p.adjust. The first four methods are designed to give strong control of the family-wise error rate. There seems no reason to use the unmodified Bonferroni correction because it is dominated by Holm's method, which is also valid under arbitrary assumptions. Hochberg's and Hommel's methods are valid when the hypothesis tests are independent or when they are non-negatively associated (Sarkar, 1998; Sarkar and Chang, 1997). Hommel's method is more powerful than Hochberg's, but the difference is usually small and the Hochberg p-values are faster to compute. The "BH" (aka "fdr") and "BY" method of Benjamini, Hochberg, and Yekutieli control the false discovery rate, the expected proportion of false discoveries amongst the rejected hypotheses. The false discovery rate is a less stringent condition than the family-wise error rate, so these methods are more powerful than the others."
+	|
+
+(Corrected) p-value significance threshold
+	|
+	|
+
+
+------------
+Output files
+------------
+	
+variableMetadata_out.tabular
+	| **variableMetadata** file identical to the file given as argument, except that (at least) three columns have been added:
+	| 1) [factor]_[test]_[class'a'].[class'b']_dif or [factor]_[test]_cor: difference of the means (ttest) or the medians (wilcoxon) between the two classes, or 'pearson' or 'spearman' correlations
+	| 2) [factor]_[test]_[class'a'].[class'b']_[method] or [factor]_[test]_[method]: adjusted p-values
+	| 3) [factor]_[test]_[class'a'].[class'b']_sig or [factor]_[test]_sig: significance (coded as '1' if below the threshold and '0' otherwise)
+	| In the case of 'anova' and 'kruskal', the columns 2) and 3) appear first to give the results from the ANOVA or Kruskal Wallis test, and then the results of the pairwise comparisons are reported in additional columns (otherwise NA in these columns): in the case of ANOVA, the Tukey HSD post-hoc analysis is used (for each comparison, the difference between means, p value, and significance are provided); in the case of Kruskal Wallis, the Nemenyi is performed (PMCMR package) (for each pairwise comparison, the difference between medians, p value and significance are provided); note that since version 2.2.0, the p-values of the post-hoc pairwise comparisons (ANOVA or Kruskal) are further corrected for multiple testing over all variables (as the p-value of the omnibus test in column 2)
+	|
+	
+figure.pdf
+	| File containing the graphics of all significant tests: boxplots (respectively scatterplots with the regression line in red and the R2 value) are displayed when the factor of interest is qualitative (respectively quantitative). The variable name and the corrected p-value is indicated in the title of each plot
+	|
+
+information.txt
+	| File with all messages and warnings generated during the computation
+	|
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+.. class:: infomark
+
+See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-complete**, **W4M00002_mtbls2**, **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 2.2.4
+========================
+
+MINOR MODIFICATION
+
+Internal minor modifications for building and testing
+
+
+CHANGES IN VERSION 2.2.0
+========================
+
+MAJOR MODIFICATION
+
+ANOVA and Kruskal-Wallis: The p-values of the post-hoc tests (i.e. from pairwise comparisons) are now further corrected for multiple testing over all variables (previously, only the p-value of the omnibus test was corrected over all variables)
+
+MINOR MODIFICATION
+
+All values in the 'dif', adjusted p-value, and 'sig' columns are now displayed (previously, the values were set to NA when the p-value of the omnibus test was not significant)
+
+NEW FEATURE
+
+Graphic: a single pdf file containing the graphics of all significant tests is now produced as '_figure.pdf' output: boxplots (respectively scatterplots with the regression line in red and the R2 value) are displayed when the factor of interest is qualitative (respectively quantitative). The corrected p-value is indicated in the title of each plot
+
+CHANGES IN VERSION 2.1.4
+========================
+
+NEW FEATURE
+
+Level names are now separated by '.' instead of '-' previously in the column names of the output variableMetadata table (e.g., 'jour_ttest_J3.J10_fdr' instead of 'jour_ttest_J3-J10_fdr' previously)
+
+INTERNAL MODIFICATIONS
+
+Minor internal changes for toolshed export
+
+CHANGES IN VERSION 2.1.2
+========================
+
+INTERNAL MODIFICATIONS
+
+Minor internal changes for toolshed export
+
+CHANGES IN VERSION 2.1.1
+========================
+
+INTERNAL MODIFICATIONS
+
+Internal handling of 'NA' p-values (e.g. when intensities are identical in all samples)
+
+CHANGES IN VERSION 2.0.1
+========================
+
+NEW FEATURE
+
+(corrected) p-value threshold can be set to any value between 0 and 1
+    
+  </help>
+  
+  <citations>
+    <citation type="bibtex">@Manual{,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2016},
+    url = {https://www.R-project.org/},
+    }</citation>
+    <citation type="doi">10.1021/acs.jproteome.5b00354</citation>
+    <citation type="doi">10.1016/j.biocel.2017.07.002</citation>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+  
+</tool>

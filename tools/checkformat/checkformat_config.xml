@@ -5,10 +5,6 @@
     <requirement type="package" version="1.1_4">r-batch</requirement>
   </requirements>
 
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
-  
   <command detect_errors="aggressive"><![CDATA[
   Rscript $__tool_directory__/checkformat_wrapper.R
   dataMatrix_in "$dataMatrix_in"

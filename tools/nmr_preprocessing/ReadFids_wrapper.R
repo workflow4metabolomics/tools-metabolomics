@@ -71,7 +71,7 @@ data_sample <- outputs[["Fid_info"]] # Sample metadata
 #   xlab = "Frequency", num.stacked = 4,
 #   main = "Raw FID data", createWindow = FALSE
 # )
-# nvisible(dev.off())
+# invisible(dev.off())
 
 ## ======================================================
 ## ======================================================

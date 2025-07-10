@@ -33,7 +33,7 @@
 
     <outputs>
         <data format="tabular" name="dataMatrix" from_work_dir="dataMatrix.tsv" label="${tool.name}_dataMatrix" />
-        <data format="tabular" name="sampleMetadata" from_work_dir="sampleMetada.tsv" label="${tool.name}_sampleMetadata" />
+        <data format="tabular" name="sampleMetadata" from_work_dir="sampleMetadata.tsv" label="${tool.name}_sampleMetadata" />
         <data format="txt" name="logOut" from_work_dir="logOut.txt" label="${tool.name}_log" />
         <data format="pdf" name="graphOut" from_work_dir="graphOut.pdf" label="${tool.name}_graph" />
     </outputs>

@@ -131,5 +131,7 @@ MINORFIX: removal batch package
 
 
 	]]></help>
-	<citations></citations>
+	<citations>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
 </tool>

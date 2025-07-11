@@ -1,6 +1,6 @@
 <tool id="Univariate" name="Univariate" version="2.2.4">
   <description>Univariate statistics</description>
-  
+
   <requirements>
     <requirement type="package" version="1.1_4">r-batch</requirement>
     <requirement type="package" version="4.1">r-PMCMR</requirement>
@@ -9,22 +9,22 @@
   <stdio>
     <exit_code range="1:" level="fatal" />
   </stdio>
-  
+
   <command><![CDATA[
   Rscript $__tool_directory__/univariate_wrapper.R
 
   dataMatrix_in "$dataMatrix_in"
   sampleMetadata_in "$sampleMetadata_in"
   variableMetadata_in "$variableMetadata_in"
-  
+
   facC "$facC"
   tesC "$tesC"
   adjC "$adjC"
-  thrN "$thrN"	  
-  
-  variableMetadata_out "$variableMetadata_out"
-  figure "$figure"
-  information "$information"
+  thrN "$thrN"
+
+  variableMetadata_out '$variableMetadata_out'
+  figure '$figure'
+  information '$information'
   ]]></command>
   <inputs>
     <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
@@ -33,7 +33,7 @@
     <param name="facC" label="Factor of interest" type="text" help="Name of the column of the sample metadata table corresponding to the qualitative or quantitative variable"/>
     <param name="tesC" label="Test" type="select" help="">
       <option value="ttest">ttest (qualitative, 2 levels)</option>
-      <option value="wilcoxon">Wilcoxon test (qualitative, 2 levels)</option>      
+      <option value="wilcoxon">Wilcoxon test (qualitative, 2 levels)</option>
       <option value="anova">Analysis of variance (qualitative, more than 2 levels)</option>
       <option value="kruskal">Kruskal-Wallis rank test (qualitative, more than 2 levels)</option>
       <option value="pearson">Pearson correlation test (quantitative)</option>
@@ -51,13 +51,13 @@
     </param>
     <param name="thrN" type="float" value="0.05" label="(Corrected) p-value significance threshold" help="Must be between 0 and 1"/>
   </inputs>
-  
+
   <outputs>
     <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
     <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
     <data name="information" label="${tool.name}_information.txt" format="txt"/>
   </outputs>
-  
+
   <tests>
     <test>
       <param name="dataMatrix_in" value="dataMatrix.tsv"/>
@@ -70,9 +70,9 @@
       <output name="variableMetadata_out" file="output-variableMetadata.tsv"/>
     </test>
   </tests>
-  
+
   <help>
-    
+
 .. class:: infomark
 
 | **Tool update: See the 'NEWS' section at the bottom of the page**
@@ -142,7 +142,7 @@ Input files
 ----------
 Parameters
 ----------
-	  
+
 Data matrix file
 	| variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
 	|
@@ -150,7 +150,7 @@ Data matrix file
 Sample metadata file
 	| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
 	|
-	
+
 Variable metadata file
 	| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
 	|
@@ -186,7 +186,7 @@ Method for multiple testing correction
 ------------
 Output files
 ------------
-	
+
 variableMetadata_out.tabular
 	| **variableMetadata** file identical to the file given as argument, except that (at least) three columns have been added:
 	| 1) [factor]_[test]_[class'a'].[class'b']_dif or [factor]_[test]_cor: difference of the means (ttest) or the medians (wilcoxon) between the two classes, or 'pearson' or 'spearman' correlations
@@ -194,7 +194,7 @@ variableMetadata_out.tabular
 	| 3) [factor]_[test]_[class'a'].[class'b']_sig or [factor]_[test]_sig: significance (coded as '1' if below the threshold and '0' otherwise)
 	| In the case of 'anova' and 'kruskal', the columns 2) and 3) appear first to give the results from the ANOVA or Kruskal Wallis test, and then the results of the pairwise comparisons are reported in additional columns (otherwise NA in these columns): in the case of ANOVA, the Tukey HSD post-hoc analysis is used (for each comparison, the difference between means, p value, and significance are provided); in the case of Kruskal Wallis, the Nemenyi is performed (PMCMR package) (for each pairwise comparison, the difference between medians, p value and significance are provided); note that since version 2.2.0, the p-values of the post-hoc pairwise comparisons (ANOVA or Kruskal) are further corrected for multiple testing over all variables (as the p-value of the omnibus test in column 2)
 	|
-	
+
 figure.pdf
 	| File containing the graphics of all significant tests: boxplots (respectively scatterplots with the regression line in red and the R2 value) are displayed when the factor of interest is qualitative (respectively quantitative). The variable name and the corrected p-value is indicated in the title of each plot
 	|
@@ -273,9 +273,9 @@ CHANGES IN VERSION 2.0.1
 NEW FEATURE
 
 (corrected) p-value threshold can be set to any value between 0 and 1
-    
+
   </help>
-  
+
   <citations>
     <citation type="bibtex">@Manual{,
     title = {R: A Language and Environment for Statistical Computing},
@@ -289,5 +289,5 @@ NEW FEATURE
     <citation type="doi">10.1016/j.biocel.2017.07.002</citation>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
-  
+
 </tool>

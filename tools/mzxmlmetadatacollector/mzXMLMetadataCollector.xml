@@ -5,6 +5,9 @@
   <requirements>
     <requirement type="package" version="2.1.0">numpy</requirement>
   </requirements>
+  <required_files>
+    <include path="mzXMLMetadataCollector.py" />
+  </required_files>
   <command detect_errors="aggressive"><![CDATA[
     python '$__tool_directory__/mzXMLMetadataCollector.py' '$outputFile' '$input.singleFile' 
     #if $input.singleFile=="MULTIPLE"

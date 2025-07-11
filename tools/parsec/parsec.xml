@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool id="batch_cohort_correction" name="Batch-Cohort Correction" version="1.1" profile="16.01">
+    <description>Corrects for batch and cohort effects on ion intensities using a mixed-model approach</description>
+
+    <command>
+        <![CDATA[
+            Rscript '$__tool_directory__/parsec.R' -d '$dataMatrix' -s '$sampleMetadata' -v '$variableMetadata' -o '$output'
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="dataMatrix" type="data" format="tabular" label="Data Matrix (samples × variables)" />
+        <param name="sampleMetadata" type="data" format="tabular" label="Sample Metadata" />
+        <param name="variableMetadata" type="data" format="tabular" label="Variable Metadata" />
+    </inputs>
+
+    <outputs>
+        <data name="output" format="csv" label="Corrected Intensities Table" />
+    </outputs>
+
+    <tests>
+        <!-- Test with valid example files -->
+        <test>
+            <param name="dataMatrix" value="Dataprocessing_dataMatrix.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+            <output name="output" file="corrected_output_test.csv" />
+        </test>
+
+        <!-- Test: Missing injection order -->
+        <test expect_failure="true">
+            <param name="dataMatrix" value="missing_injectionOrder_matrix.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+        </test>
+
+        <!-- Test: Empty file -->
+        <test expect_failure="true">
+            <param name="dataMatrix" value="empty_file.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+        </test>
+    </tests>
+
+    <requirements>
+        <requirement type="package" version="4.4.2">r-base</requirement>
+        <requirement type="package" version="1.7.5">r-optparse</requirement>
+        <requirement type="package" version="1.1.4">r-dplyr</requirement>
+        <requirement type="package" version="1.1.36">r-lme4</requirement>
+    </requirements>
+
+    <help><![CDATA[
+            # 📌 Batch-Cohort Correction Tool
+
+            ## 🧬 Description
+            This Galaxy tool corrects batch and injection order effects in metabolomics data using a mixed-effects model. It supports standard **Workflow4Metabolomics** inputs:  
+            - `dataMatrix`
+            - `sampleMetadata`
+            - `variableMetadata`
+            
+            ---
+            
+            ## 📥 Inputs
+            
+            1. **Data Matrix** (`tabular`)  
+               - Samples in columns, variables in rows.
+               - Will be transposed inside the script.
+               - Example: `Dataprocessing_dataMatrix.txt`
+            
+            2. **Sample Metadata** (`tabular`)  
+               - Must include columns:
+                 - `SampleID`
+                 - `Batch` or `batch`
+                 - `Injection_Order` or `injectionOrder`
+            
+            3. **Variable Metadata** (`tabular`)  
+               - One row per ion/variable.
+               - Will be used to rename variables to `Ion1`, `Ion2`, etc.
+            
+            ---
+            
+            ## 📤 Output
+            
+            - A `CSV` file with the corrected ion intensities for each sample:
+              - `SampleID`, `Batch`, `Injection_Order`, `Ion1` ... `IonN`
+            
+            ---
+            
+            ## 💡 Example
+            
+            - **Sample Metadata:**
+            ```
+            sampleMetadata	Group	Osmo	batch	sampleType	injectionOrder
+            Samp1	A	389	B2	sample	36
+            Samp2	A	857	B2	sample	34
+            ```
+            
+            - **Variable Metadata:**
+            ```
+            variableMetadata	mz	mzmin	mzmax	rt	rtmin	rtmax
+            Var1	411.324949062189	411.324949060944	411.328101409696	9.83875936348509	9.83610100762266	9.84265924099634
+            Var2	132.868473699965	132.867360812174	132.869181044469	16.4318977259949	16.1310904303817	16.7378976534623
+            ```
+            
+            - **Data Matrix (transposed in script):**
+            ```
+            dataMatrix	Samp1	Samp2	Samp(n)
+            Var1	8396	4803	1736
+            Var2	6195	4797	6526
+            
+            ```
+            
+            - **Corrected Output (after processing):**
+            
+            ```
+            "SampleID","Group","Osmo","Batch","sampleType","Injection_Order","Ion1","Ion2","Ion(n)"
+            "Samp1","A",389,"B2","sample",36,0.0786625631354747,0.420410954232145,0.913940318799482
+            "Samp2","A",857,"B2","sample",34,-0.183851139155772,0.0983057506878457,-0.0813877735862746
+            
+            ```
+            ## ⚠️ Notes
+            - File must not be empty.
+            - `Injection_Order` must be numeric.
+            - All `IonX` columns must be convertible to numbers.
+            - The tool automatically renames `batch` → `Batch` and `injectionOrder` → `Injection_Order`.
+            
+            ---
+            
+            ## 📦 Dependencies
+            - R (≥ 4.2.2)
+            - `optparse`
+            - `dplyr`
+            - `lme4`
+            
+            ---
+            
+    ]]></help>
+
+    <citations>
+        <citation type="bibtex">
+            @article{
+                10.1101/2023.10.12.561695,
+                author = {Nom, Prénom et al.},
+                title = {Tool: a software to quantify cell growth parameters and extracellular fluxes},
+                year = {2023},
+                journal = {bioRxiv},
+                doi = {10.1101/2023.10.12.561695}
+            }
+        </citation>
+    </citations>
+</tool>

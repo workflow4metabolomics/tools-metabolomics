@@ -1,0 +1,5 @@
+SampleID,Batch,Injection_Order,Ion1
+1,1,5,500
+2,1,15,520
+3,2,25,490
+4,2,35,505

@@ -45,7 +45,7 @@
     </test>
     <test>
       <param name="singleFile" value="SINGLE"/>
-      <param name="SingleInputFile" value="BlancFin_POS_RA1_1_6869.mzML"/>
+      <param name="SingleInputFile" location="https://nextcloud.inrae.fr/s/YPFKGaBrWgrfdnE/download/BlancFin_POS_RA1_1_6869.mzML"/>
       <output name="outputFile" file="metadata_single.tabular" ftype="tabular"/>
     </test>
   </tests>

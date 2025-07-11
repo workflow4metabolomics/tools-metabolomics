@@ -11,7 +11,7 @@
   </stdio>
 
   <command><![CDATA[
-  Rscript $__tool_directory__/univariate_wrapper.R
+  Rscript '$__tool_directory__/univariate_wrapper.R'
 
   dataMatrix_in "$dataMatrix_in"
   sampleMetadata_in "$sampleMetadata_in"

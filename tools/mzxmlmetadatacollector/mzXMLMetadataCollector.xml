@@ -136,4 +136,9 @@ The fact that the software you use does not appear in this list does not mean th
 <citations>
   <citation type="doi">10.1093/bioinformatics/btu813</citation>
 </citations>
+<creator>
+  <person givenName="Quentin" familyName="Ruin" jobTitle="Research engineer"></person>
+  <organization name="PFEM" url="https://eng-pfem.isc.inrae.fr/"></organization>
+  <organization name="MetaboHUB" url="https://www.metabohub.fr/home.html"></organization>
+</creator>
 </tool>

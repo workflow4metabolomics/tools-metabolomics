@@ -1,30 +1,33 @@
-<tool id="mzxmlmetadatacollector" name="mz(X)MLMetadataCollector" version="1.0.0+galaxy0" profile="21.01">
+<tool id="mzxmlmetadatacollector" name="mz(X)MLMetadataCollector" version="1.0.0+galaxy0" profile="23.0">
   <description>
     gathers mzML and mzXML metadata into a tabular file
   </description>
+  
   <requirements>
     <requirement type="package" version="2.1.0">numpy</requirement>
   </requirements>
+
   <required_files>
     <include path="mzXMLMetadataCollector.py" />
   </required_files>
+
   <command detect_errors="aggressive"><![CDATA[
-    python '$__tool_directory__/mzXMLMetadataCollector.py' '$outputFile' '$input.singleFile' 
-    #if $input.singleFile=="MULTIPLE"
+    python '$__tool_directory__/mzXMLMetadataCollector.py' '$outputFile' '$input.files' 
+    #if $input.files=="MULTIPLE"
       '$input.inputFiles'
       #for $i in $input.inputFiles
         '$i.name'
       #end for 
-    #else if $input.singleFile=="SINGLE"
+    #else if $input.files=="SINGLE"
       '$input.SingleInputFile'
       '$input.SingleInputFile.name'
     #end if
   ]]></command>
   <inputs>
-    <conditional name = "input">
-      <param name="singleFile" type="select" label="Number of files to process">
-        <option value = "MULTIPLE">Multiple Files or collection</option> 
-        <option value = "SINGLE">Single File</option>
+    <conditional name="input">
+      <param name="files" type="select" label="Number of files to process">
+        <option value="MULTIPLE">Multiple Files or collection</option> 
+        <option value="SINGLE">Single File</option>
       </param>
       <when value="MULTIPLE">
         <param name="inputFiles" type="data" format="mzml,mzxml" label="Files to examine" help="Multiple files to examine" multiple="true"/>
@@ -39,13 +42,17 @@
   </outputs>
   <tests>
     <test>
-      <param name="singleFile" value="MULTIPLE"/>
-      <param name="inputFiles" value="QC autoMSMS_10_1_2969.mzML,QC_20autoMSMS_10_1_2969.mzXML,Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A2.mzML,Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A.mzML,OE240_DS_QC_ID_012.mzML,OE240_DS_QC_ID_01.mzML,Impact_DA53_mzml.mzML,Bruker_inhouse_mzml.mzML,Blank1_POS_RA1_1_6727.mzXML,BlancFin_POS_RA1_1_6869.mzXML,BlancFin_POS_RA1_1_6869.mzML"/>
+      <conditional name="input">
+        <param name="files" value="MULTIPLE"/>
+        <param name="inputFiles" value="QC autoMSMS_10_1_2969.mzML,QC_20autoMSMS_10_1_2969.mzXML,Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A2.mzML,Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A.mzML,OE240_DS_QC_ID_012.mzML,OE240_DS_QC_ID_01.mzML,Impact_DA53_mzml.mzML,Bruker_inhouse_mzml.mzML,Blank1_POS_RA1_1_6727.mzXML,BlancFin_POS_RA1_1_6869.mzXML,BlancFin_POS_RA1_1_6869.mzML"/>
+      </conditional>
       <output name="outputFile" file="metadata_multiple.tabular" ftype="tabular"/>
     </test>
     <test>
-      <param name="singleFile" value="SINGLE"/>
-      <param name="SingleInputFile" location="https://nextcloud.inrae.fr/s/YPFKGaBrWgrfdnE/download/BlancFin_POS_RA1_1_6869.mzML"/>
+      <conditional name="input">
+        <param name="files" value="SINGLE"/>
+        <param name="SingleInputFile" location="https://nextcloud.inrae.fr/s/YPFKGaBrWgrfdnE/download/BlancFin_POS_RA1_1_6869.mzML"/>
+      </conditional>
       <output name="outputFile" file="metadata_single.tabular" ftype="tabular"/>
     </test>
   </tests>

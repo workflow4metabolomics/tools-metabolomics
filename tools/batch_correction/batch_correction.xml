@@ -11,7 +11,7 @@
 
   <command detect_errors="aggressive"><![CDATA[
     #if str($span_condition.method) == 'all_loess_pool':
-        Rscript $__tool_directory__/batch_correction_all_loess_wrapper.R
+        Rscript '$__tool_directory__/batch_correction_all_loess_wrapper.R'
         dataMatrix "$dataMatrix"
         sampleMetadata "$sampleMetadata"
         variableMetadata "$variableMetadata"
@@ -19,14 +19,14 @@
         span "${span_condition.span}"
     
     #elif str($span_condition.method) == 'all_loess_sample':
-        Rscript $__tool_directory__/batch_correction_all_loess_wrapper.R
+        Rscript '$__tool_directory__/batch_correction_all_loess_wrapper.R'
         dataMatrix "$dataMatrix"
         sampleMetadata "$sampleMetadata"
         variableMetadata "$variableMetadata"
         method "all_loess_sample"
         span "${span_condition.span}"
     #else:
-        Rscript $__tool_directory__/batch_correction_3Lwrapper.R
+        Rscript '$__tool_directory__/batch_correction_3Lwrapper.R'
         analyse "batch_correction"
         dataMatrix "$dataMatrix"
         sampleMetadata "$sampleMetadata"
@@ -48,7 +48,7 @@
 
     <inputs>
         <param name="dataMatrix" label="Data matrix file" format="tabular" type="data" />
-        <param name="sampleMetadata" label="Sample metadata file" format="tabular" type="data" help="must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'"/>
+        <param name="sampleMetadata" label="Sample metadata file" format="tabular" type="data" help="Must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'"/>
         <param name="variableMetadata" label="Variable metadata file" format="tabular" type="data" />
 
         <expand macro="sm_customisation"/>
@@ -73,10 +73,10 @@
                 <expand macro="lll_options"/>
             </when>
             <when value="all_loess_pool">
-                <param name="span" type="float" value="1" label="span" help="smoothing parameter; must be > 0"/>
+                <param name="span" type="float" value="1" label="span" min="0.0001" help="smoothing parameter; must be > 0"/>
             </when>
             <when value="all_loess_sample">
-                <param name="span" type="float" value="1" label="span" help="smoothing parameter; must be > 0"/>
+                <param name="span" type="float" value="1" label="span" min="0.0001" help="smoothing parameter; must be > 0"/>
             </when>
         </conditional>
     </inputs>

@@ -10,7 +10,7 @@
   </expand>
  
   <command detect_errors="aggressive"><![CDATA[
-    Rscript $__tool_directory__/batch_correction_3Lwrapper.R
+    Rscript '$__tool_directory__/batch_correction_3Lwrapper.R'
       analyse "determine_bc"
       sampleMetadata "$sampleMetadata"
       dataMatrix "$dataMatrix"

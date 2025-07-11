@@ -41,12 +41,12 @@
 
     <tests>
         <test>
-          <param name="fidzipfile" value="MTBLS1.zip" ftype="zip" />
+          <param name="fidzipfile" location="https://nextcloud.inrae.fr/s/ksGZq9GZfL9R6PD/download/MTBLS1.zip" ftype="zip" />
           <param name="title_line" value="1" />
           <param name="subdirectories" value="TRUE" />
           <param name="dirs_names" value="TRUE" />
 
-          <output name="dataMatrix" value="NMR_ReadFids_dataMatrix.tabular" />
+          <output name="dataMatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
           <output name="sampleMetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
           <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
           <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />

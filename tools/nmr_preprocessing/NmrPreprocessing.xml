@@ -322,7 +322,7 @@
 
     <tests>
         <test>
-            <param name="dataMatrixFid" value="NMR_ReadFids_dataMatrix.tabular"/>
+            <param name="dataMatrixFid" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular"/>
             <param name="sampleMetadataFid" value="sampleMetadata.tabular"/>
             <section name="GDC">
                 <param name="FirstOPCGraph" value="NO"/>

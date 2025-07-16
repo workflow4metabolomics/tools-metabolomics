@@ -1,4 +1,4 @@
-<tool id="parsec" name="Parsec batch correction" version="0.1+galaxy1" profile="17.09">
+<tool id="parsec" name="Parsec batch correction" version="0.1+galaxy1" profile="23.0">
     <description>Corrects for batch and cohort effects on ion intensities using a mixed-model approach</description>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>
@@ -38,7 +38,7 @@
             <param name="dataMatrix" value="Dataprocessing_dataMatrix.txt" />
             <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
             <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
-            <output name="output" file="corrected_output_test.csv" />
+            <output name="output" file="corrected_output_test.txt" />
         </test>
 
         <!-- Test: Missing injection order -->

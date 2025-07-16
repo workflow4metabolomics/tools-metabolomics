@@ -110,9 +110,10 @@ corrected_data <- batch_cohort_correction(
 )
 
 # --- EXPORT FINAL ---
-write.csv(
-    corrected_data,
+write.table(
+    corrected_data %>% dplyr::mutate(across(where(is.numeric), round, 6)),
     file = opt$output,
     quote = TRUE,
-    row.names = FALSE
+    row.names = FALSE,
+    sep="\t"
 )

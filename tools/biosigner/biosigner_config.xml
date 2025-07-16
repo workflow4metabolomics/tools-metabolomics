@@ -1,0 +1,307 @@
+<tool id="biosigner" name="Biosigner" version="2.2.8">
+  <description>Molecular signature discovery from omics data</description>
+  
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.6.0">bioconductor-biosigner</requirement>
+  </requirements>
+  
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command><![CDATA[
+  Rscript $__tool_directory__/biosigner_wrapper.R
+  
+  dataMatrix_in "$dataMatrix_in"
+  sampleMetadata_in "$sampleMetadata_in"
+  variableMetadata_in "$variableMetadata_in"
+  
+  respC "$respC"
+  
+  #if $advCpt.opcC == "full"
+  methodC "$advCpt.methodC"
+  bootI "$advCpt.bootI"
+  tierC "$advCpt.tierC"        
+  pvalN "$advCpt.pvalN"
+  seedI "$advCpt.seedI"
+  #end if
+  
+  variableMetadata_out "$variableMetadata_out"
+  figure_tier "$figure_tier"
+  figure_boxplot "$figure_boxplot"
+  information "$information"
+  ]]></command>
+  
+  <inputs>
+    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
+    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
+    <param name="respC" label="Sample classes" type="text" value = "" help="Column of sampleMetadata containing 2 types of strings (e.g., 'case' and 'control')" />	
+    
+    <conditional name="advCpt">
+      <param name="opcC" type="select" label="Advanced computational parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full parameter list</option>
+      </param>
+      <when value="default"/>
+      <when value="full">
+        <param name="methodC" label="Classification method(s)" type="select" help="">
+          <option value="all" selected="true">all</option>
+          <option value="plsda">PLS-DA</option>
+          <option value="randomforest">Random Forest</option>
+          <option value="svm">SVM</option>
+        </param>
+	<param name="bootI" type="integer" value="50" label="Number of bootstraps" help=""/>
+        <param name="tierC" label="Selection tier(s)" type="select" help="">
+          <option value="S" selected="true">S</option>
+          <option value="A">S+A</option>
+        </param>
+        <param name="pvalN" type="float" value="0.05" label="p-value threshold" help="Must be between 0 and 1"/>
+        <param name="seedI" type="integer" value="0" label="Seed" help="Select an integer (e.g., 123) if you want to obtain exactly the same signatures when re-running the algorithm; 0 means that no seed is selected"/>
+      </when>
+    </conditional>   
+  </inputs>
+  
+  <outputs>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="figure_tier" label="${tool.name}__figure-tier.pdf" format="pdf"/>
+    <data name="figure_boxplot" label="${tool.name}__figure-boxplot.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}__information.txt" format="txt"/>
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="variableMetadata.tsv"/>
+      <param name="respC" value="gender"/>
+      <param name="opcC" value="full"/>
+      <param name="methodC" value="all"/>
+      <param name="bootI" value="5"/>
+      <param name="tierC" value="S"/>
+      <param name="pvalN" value="0.05"/>
+      <param name="seedI" value="123"/>
+      <output name="variableMetadata_out" file="variableMetadata.out"/>
+    </test>
+  </tests>
+  
+  <help>	
+
+.. class:: infomark
+
+**Author**	Philippe Rinaudo and Etienne Thevenot (CEA, LIST, MetaboHUB Paris, etienne.thevenot@cea.fr)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite**
+
+Rinaudo P., Boudah S., Junot C. and Thevenot E.A. (2016). *biosigner*: a new method for the discovery of significant molecular signatures from omics data. *Frontiers in Molecular Biosciences*, **3** (http://dx.doi.org/10.3389/fmolb.2016.00026).
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**R package**
+
+The *biosigner* package is available from the bioconductor repository (http://bioconductor.org/packages/biosigner).
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+==========================================================
+*biosigner*: Molecular signature discovery from omics data
+==========================================================
+
+-----------
+Description
+-----------
+
+High-throughput, non-targeted, technologies such as transcriptomics, proteomics and metabolomics, are widely used to **discover molecules** which allow to efficiently discriminate between biological or clinical conditions of interest (e.g., disease vs control states). Powerful **machine learning** approaches such as Partial Least Square Discriminant Analysis (PLS-DA), Random Forest (RF) and Support Vector Machines (SVM) have been shown to achieve high levels of prediction accuracy.
+
+**Feature selection**, i.e., the selection of the few features (i.e., the molecular signature) which are of highest discriminating value, is a critical step in building a robust and relevant classifier (Guyon and Elisseeff, 2003): First, dimension reduction is usefull to limit the risk of overfitting and reduce the prediction variability of the model; second, intrepretation of the molecular signature is facilitated; third, in case of the development of diagnostic product, a restricted list is required for the subsequent validation steps (Rifai et al, 2006).
+
+Since the comprehensive analysis of all combinations of features is not computationally tractable, several selection techniques have been described (Saeys et al, 2007). The major challenge for such methods is to be fast and extract **restricted and stable molecular signatures** which still provide high performance of the classifier (Gromski et al, 2014; Determan, 2015).
+
+The **biosigner** module implements a new feature selection algorithm to assess the relevance of the variables for the prediction performances of the classifier (Rinaudo et al, submitted). Three binary classifiers can be run in parallel, namely **PLS-DA**, **Random Forest** and **SVM**, as the performances of each machine learning approach may vary depending on the structure of the dataset. The algorithm  computes the *tier* of each feature for the selected classifer(s): tier *S* corresponds to the final signature, i.e., features which have been found significant in all the selection steps; features with tier *A* have been found significant in all but the last selection, and so on for tier *B* to *E*. It returns the **signature** (by default from the *S* tier) for each of the selected classifier as an additional column of the **variableMetadata** table. In addition the *tiers* and **individual boxplots** of the selected features are returned.
+
+The module has been successfully applied to **transcriptomics** and **metabolomics** data. 
+
+Note:
+    | 1) Only **binary** classification is currently available,
+    | 2) If the **dataMatrix** contains **missing** values (NA), these features will be removed prior to modeling with Random Forest and SVM (in contrast, the NIPALS algorithm from PLS-DA can handle missing values),
+    | 3) As the algorithm relies on bootstrapping, re-running the module may result in slightly different results. To ensure that returned results are exactly the same, the **seed** (advanced) parameter can be used.
+    |
+
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**References**
+
+| Determan C. (2015). Optimal algorithm for metabolomics classification and feature selection varies by dataset. International *Journal of Biology* 7, 100-115.
+| Gromski P.S., Xu Y., Correa E., Ellis D.I., Turner M.L. and Goodacre R. (2014). A comparative investigation of modern feature selection and classification approaches for the analysis of mass spectrometry data . *Analytica Chimica Acta* 829, 1-8.
+| Guyon I. and Elisseeff A. (2003). An introduction to variable and feature selection. *Journal of Machine Learning Research* 3, 1157-1182.
+| Rifai N., Gillette M.A. and Carr S.A. (2006). Protein biomarker discovery and validation: the long and uncertain path to clinical utility. *Nature Biotechnology* 24, 971-983.
+| Rinaudo P., Junot C. and Thevenot E.A. *biosigner*: A new method for the discovery of restricted and stable molecular signatures from omics data. *submitted*.
+| Saeys Y., Inza I. and Larranaga P. (2007). A review of feature selection techniques in bioinformatics. *Bioinformatics* 23, 2507-2517.
+
+---------------------------------------------------
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: biosigner_workflowPositionImage.png
+        :width: 600
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| File                      |   Format   |
++===========================+============+
+| 1)  Data matrix           |   tabular  |
++---------------------------+------------+
+| 2)  Sample metadata       |   tabular  |
++---------------------------+------------+
+| 3)  Variable metadata     |   tabular  |
++---------------------------+------------+
+
+
+----------
+Parameters
+----------
+
+Data matrix file
+	| variable x sample **dataMatrix** tabular separated file of the numeric intensities, with . as decimal, and NA for missing values; use the **Check Format** tool in the **LC-MS/Quality Control** section to check the formats of your **dataMatrix**, **sampleMetadata** and **variableMetadata** files
+	| 
+
+Sample metadata file
+	| sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values; use the **Check Format** tool in the **LC-MS/Quality Control** section to check the formats of your **dataMatrix**, **sampleMetadata** and **variableMetadata** files
+	| 
+
+Variable metadata file
+	| variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values; use the **Check Format** tool in the **LC-MS/Quality Control** section to check the formats of your **dataMatrix**, **sampleMetadata** and **variableMetadata** files
+	| 
+   
+Classes of samples
+	| Column of the sample metadata table to be used as the qualitative **binary** response to be modelled; the column should contain only two types of strings (e.g., 'case' and 'control')
+	| 
+
+Advanced: Classification method(s) (default = all)
+	| Either one or all of the following classifiers: Partial Least Squares Discriminant Analysis (PLS-DA), or Random Forest, or Support Vector Machine (SVM)
+	| 
+
+Advanced: Number of bootstraps (default = 50)
+	| This parameter controls the number of times the model performance is compared to the prediction on a test subset where the intensities of the candidate feature have been randomly permuted.
+	| 
+    
+Advanced: Selection tier(s) (default = S)
+	| Tier *S* corresponds to the final signature, i.e., features which have been found significant in all the backward selection steps; features with tier *A* have been found significant in all but the last selection, and so on for tier *B* to *E*. Default selection tier is *S*, meaning that the final signature only is returned; to view a larger number of candidate features, the *S+A* tiers can be selected. 
+	|     
+
+Advanced: p-value threshold (default = 0.05)
+	| This threshold controls the selection of the features at each selection round (tier): to be selected, the proportion of times the prediction on the test set with the randomized intensities of the feature is more accurate than on the original test set must be inferior to this threshold. For example, if the number of bootstraps is 50, no more than 2 out of the 50 predictions on the randomized test set must not be more accurate than on the original test set (since 1/50 = 0.02).
+
+Advanced: Seed (default = 0)
+	| As the algorithm relies on resampling (bootstrap), re-running the module may result in slightly different signatures. To ensure that returned results are exactly the same, the **seed** parameter (integer) can be used; the default, 0, means that no seed is used.
+	|     
+
+------------
+Output files
+------------
+
+variableMetadata_out.tabular
+	| When a least one feature has been selected, a **tier** column is added indicating for each feature the classifier(s) it was selected from.
+	| 
+
+figure-tier.pdf
+	| Graphic summarizing which features were selected, with their corresponding tier (i.e., round(s) of selection) for each classifier.
+	| 
+    
+figure-boxplot.pdf
+	| Individual boxplots of the features which were selected in at least one of the signatures. Features selected for a single classifier are colored (*red* for PLS-DA, *green* for Random Forest, and *blue* for SVM)
+	| 
+			
+information.txt
+	| Text file with all messages and warnings generated during the computation.
+	|
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+See the **W4M00001a_sacurine-subset-statistics** and **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+
+
+
+Figure output
+=============
+
+.. image:: biosigner_workingExampleImage.png
+        :width: 600
+        
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 2.2.6
+========================
+
+INTERNAL MODIFICATIONS
+
+Minor internal modifications
+
+CHANGES IN VERSION 2.2.4
+========================
+
+INTERNAL MODIFICATIONS
+
+Creating additional files for planemo and travis running and installation validation
+
+CHANGES IN VERSION 2.2.2
+========================
+
+INTERNAL MODIFICATIONS
+
+Internal updates to biosigner package versions of 1.0.0 and above, and ropls versions of 1.4.0 and above (i.e. using S4 methods instead of S3)
+
+CHANGES IN VERSION 2.2.1
+========================
+
+NEW FEATURE
+
+Creation of the tool
+
+</help>
+
+<citations>
+  <citation type="bibtex">@Article{Rinaudo2016,
+  Title                    = {biosigner: a new method for the discovery of significant molecular signatures from omics data},
+  Author                   = {Rinaudo, Philippe and Boudah, Samia and Junot, Christophe and Thevenot, Etienne A},
+  Journal                  = {Frontiers in Molecular Biosciences},
+  Year                     = {2016},
+  Pages                    = {--},
+  Volume                   = {3},
+  Doi                      = {10.3389/fmolb.2016.00026}
+  }</citation>
+  <citation type="doi">10.1093/bioinformatics/btu813</citation>
+</citations>
+
+</tool>

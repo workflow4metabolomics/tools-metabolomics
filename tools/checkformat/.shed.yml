@@ -1,0 +1,8 @@
+name: checkformat
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Checks the formats of the dataMatrix, sampleMetadata, and variableMetadata files.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'For all post-processing steps of the peak table, W4M uses a 3 table format for the data and metadata. This module therefore checks that the formats of the 3 files "dataMatrix.tsv", "sampleMetadata.tsv", and "variableMetadata.tsv" are correct. It can be used before any post-processing step (such as normalization or statistical analysis). Potential warnings or errors in the formats are returned in the "information.txt" output file.'
+remote_repository_url: https://github.com/workflow4metabolomics/checkformat.git
+categories:
+- Metabolomics

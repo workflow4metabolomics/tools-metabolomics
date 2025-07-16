@@ -1,0 +1,177 @@
+<tool id="checkFormat" name="Check Format" version="3.0.0+galaxy0" license="CECILL-2.1" profile="23.0">
+  <description>Checking/formatting the sample and variable names of the dataMatrix, sampleMetadata, and variableMetadata files</description>
+  
+  <requirements>
+    <requirement type="package" version="4.3.3">r-base</requirement>
+  </requirements>
+
+  <required_files>
+    <include path="checkformat_script.R" />
+  </required_files>
+
+  <command detect_errors="aggressive"><![CDATA[
+    Rscript -e 'source("$__tool_directory__/checkformat_script.R")' -e "source('$run_script')"
+  ]]></command>
+
+  <configfiles>
+    <configfile name="run_script"><![CDATA[
+sink("$information", append=TRUE, split=TRUE)
+
+resLs <- readAndCheckF(
+  '$dataMatrix_in',
+  '$sampleMetadata_in',
+  '$variableMetadata_in',
+  $makeNameL
+)
+
+write_dataMatrix(resLs[["datMN"]], "$dataMatrix_out")
+write_metadata(resLs[["samDF"]], "$sampleMetadata_out")
+write_metadata(resLs[["varDF"]], "$variableMetadata_out")
+
+if (resLs[["chkL"]]) {
+  if (resLs[["newL"]]) {
+    cat("\nWarning: The sample and/or variable names or orders from the input tables have been modified\n(see the information file for details); please use the new output tables for your analyses.\n")
+  } else {
+    cat("\nThe input tables have a correct format and can be used for your analyses.\n")
+  }
+}
+    ]]></configfile>
+  </configfiles>
+  
+  <inputs>
+    <param name="dataMatrix_in" type="data" label="Data matrix file" format="tabular"
+      help="Tabular file containing the numeric data matrix (variables as rows, samples as columns). Row and column names must match those in the sample and variable metadata files. Use '.' as decimal and 'NA' for missing values. No extra metadata should be present." />
+    <param name="sampleMetadata_in" type="data" label="Sample metadata file" format="tabular"
+      help="Tabular file with sample metadata (samples as rows, metadata fields as columns). Row names must match the column names of the data matrix. Use '.' as decimal and 'NA' for missing values." />
+    <param name="variableMetadata_in" type="data" label="Variable metadata file" format="tabular"
+      help="Tabular file with variable metadata (variables as rows, metadata fields as columns). Row names must match the row names of the data matrix. Use '.' as decimal and 'NA' for missing values." />
+    <param name="makeNameL" label="Make syntactically valid sample and variable names" type="select"
+      help="If set to 'yes', sample and variable names will be converted to syntactically valid R names using the 'make.names' function (e.g., names starting with a digit will be prefixed with 'X', spaces will be replaced by '.', etc.).">
+      <option value="TRUE">yes</option>
+      <option value="FALSE" selected="true">no</option>
+    </param>
+  </inputs>
+  
+  <outputs>
+    <data name="dataMatrix_out" label="${tool.name}_${dataMatrix_in.name}" format="tabular"/>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular"/>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="input-dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="input-sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="input-variableMetadata.tsv"/>
+      <param name="makeNameL" value="TRUE"/>
+      <output name="information">
+        <assert_contents>
+          <has_text text="Message: Converting sample and variable names to the standard R format" />
+          <has_text text="Warning: The sample and/or variable names or orders from the input tables have been modified" />
+        </assert_contents>
+      </output>
+    </test>
+  </tests>
+  
+  <help><![CDATA[
+    
+.. class:: infomark
+    
+**Author** Etienne Thevenot (W4M Core Development Team, MetaboHUB Paris, CEA)
+    
+---------------------------------------------------
+   
+============
+Check Format
+============
+    
+-----------
+Description
+-----------
+    
+| **Checks the format (row and column names)** of the dataMatrix, sampleMetadata and variableMetadata tables; in case of difference of orders of the samples and/or variables between (some of) the tables, the **orders from the dataMatrix are permuted** to match those of the sampleMetadata and/or the variableMetadata; sample and variables names can also be modified to be **syntactically valid** for R by selecting the corresponding argument (e.g. an 'X' is added to names starting with a digit, blanks will be converted to '.', etc.).
+    
+    
+-----------------
+Workflow position
+-----------------
+    
+.. image:: ./static/images/checkFormat_workflowPositionImage.png
+
+    
+-----------
+Input files
+-----------
+ 
++----------------------------+---------+
+| Parameter : num + label    |  Format |
++============================+=========+
+| 1 : Data matrix file       | tabular |
++----------------------------+---------+
+| 2 : Sample metadata file   | tabular |
++----------------------------+---------+
+| 3 : Variable metadata file | tabular |
++----------------------------+---------+
+
+| The **required formats** for the dataMatrix, sampleMetadata, and variableMetadata files are described in the **HowTo** entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org (https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY).
+
+
+----------
+Parameters
+----------
+    
+Data matrix file
+  | variable x sample **dataMatrix** tabular separated file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+  |
+
+Sample metadata file
+  | sample x metadata **sampleMetadata** tabular separated file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+  |
+  
+Variable metadata file
+  | variable x metadata **variableMetadata** tabular separated file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+  |
+
+Make syntactically valid sample and variable names
+  | if set to 'yes', sample and variable names will converted to syntactically valid names with the 'make.names' R function when required (e.g. an 'X' is added to names starting with a digit, blanks will be converted to '.', etc.)
+  |
+  
+------------
+Output files
+------------
+
+dataMatrix_out.tabular
+  | dataMatrix data file; may be identical to the input dataMatrix in case no renaming of sample/variable names nor re-ordering of samples/variables (see the 'information' file for the presence/absence of modifications)
+  |
+
+sampleMetadata_out.tabular
+  | sampleMetadata data file; may be identical to the input sampleMetadata in case no renaming of sample names nor re-ordering of samples (see the 'information' file for the presence/absence of modifications)
+  |
+
+variableMetadata_out.tabular
+  | variableMetadata data file; may be identical to the input variableMetadata in case no renaming of variable names nor re-ordering of variables (see the 'information' file for the presence/absence of modifications)
+  |
+
+information.txt
+  | Text file with all messages when error(s) in formats are detected
+  |
+    
+---------------------------------------------------
+    
+---------------
+Working example
+---------------
+    
+.. class:: infomark
+  
+See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-complete**, **W4M00002_mtbls2**, or **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu.
+    
+  ]]></help>
+  
+  <citations>
+    <citation type="doi">10.1021/acs.jproteome.5b00354</citation>
+    <citation type="doi">10.1016/j.biocel.2017.07.002</citation>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+</tool>

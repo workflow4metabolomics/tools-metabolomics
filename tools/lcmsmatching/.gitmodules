@@ -1,0 +1,6 @@
+[submodule "java-msdb"]
+	path = java-msdb
+	url = https://github.com/pkrog/java-msdb
+[submodule "bash-testthat"]
+	path = bash-testthat
+	url = https://github.com/pkrog/bash-testthat

@@ -1,7 +1,7 @@
-<tool id="intensity_check" name="Intensity Check" version="@TOOL_VERSION@" profile="22.05">
+<tool id="intens_check" name="Intensity Check" version="@TOOL_VERSION@" profile="22.05">
     <description>Statistical measures, number of missing values and mean fold change</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.0.0</token>
+        <token name="@TOOL_VERSION@">2.0.1</token>
     </macros>
 
     <edam_topics>

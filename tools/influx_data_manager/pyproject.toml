@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "influx-si-data-manager"
+version = "1.1.0"
+description = "Data manager for handling influx_si inputs on Workflow4Metabolomics (usegalaxy.org)"
+authors = ["legregam <legregam@insa-toulouse.fr>"]
+readme = "README.md"
+license = "GNU General Public License (GPL)"
+packages = [{include = "influx_si_data_manager"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^2.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+tox = "^4.5.1"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+influx_data_manager = 'influx_si_data_manager.__main__:main'

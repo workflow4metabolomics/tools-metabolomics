@@ -81,15 +81,7 @@ if (resLs[["chkL"]]) {
 **Author** Etienne Thevenot (W4M Core Development Team, MetaboHUB Paris, CEA)
     
 ---------------------------------------------------
-    
-.. class:: infomark
-    
-**Tool updates**
-    
-See the **NEWS** section at the bottom of this page
-    
----------------------------------------------------
-    
+   
 ============
 Check Format
 ============
@@ -175,41 +167,6 @@ Working example
   
 See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-complete**, **W4M00002_mtbls2**, or **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu.
     
----------------------------------------------------
-    
-----
-NEWS
-----
-
-CHANGES IN VERSION 3.0.0
-========================
-
-NEW FEATURES
-
-Automated re-ordering (if necessary) of sample and/or variable names from dataMatrix based on sampleMetadata and variableMetadata
-
-New argument to make sample and variable names syntactically valid
-
-Output of dataMatrix, sampleMetadata, and variableMetadata files, whether they have been modified or not
-
-CHANGES IN VERSION 2.0.4
-========================
-
-INTERNAL MODIFICATIONS
-
-Minor internal modifications
-    
-CHANGES IN VERSION 2.0.2
-========================
-    
-INTERNAL MODIFICATIONS
-    
-Test for R code
-Planemo running validation
-Planemo installing validation
-Travis automated testing
-Toolshed export
-    
   ]]></help>
   
   <citations>
@@ -217,6 +174,4 @@ Toolshed export
     <citation type="doi">10.1016/j.biocel.2017.07.002</citation>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
-
-
 </tool>

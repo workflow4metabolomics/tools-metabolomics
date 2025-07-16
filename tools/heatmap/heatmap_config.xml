@@ -1,0 +1,367 @@
+<tool id="Heatmap" name="Heatmap" version="2.2.2">
+  <description>Heatmap of the dataMatrix</description>
+  
+  <requirements>
+    <requirement type="package">r-batch</requirement>
+  </requirements>
+
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+    
+  <command><![CDATA[
+  Rscript $__tool_directory__/heatmap_wrapper.R
+  
+  dataMatrix_in "$dataMatrix_in"
+  sampleMetadata_in "$sampleMetadata_in"
+  variableMetadata_in "$variableMetadata_in"
+  
+  disC "$disC"
+  cutSamN "$cutSamN"
+  cutVarN "$cutVarN"
+  
+  #if $advPar.oppC == "full"
+  corMetC "$advPar.corMetC"
+  aggMetC "$advPar.aggMetC"
+  colC "$advPar.colC"
+  scaL "$advPar.scaL"
+  cexN "$advPar.cexN"
+  #end if
+  
+  dataMatrix_out "$dataMatrix_out"
+  sampleMetadata_out "$sampleMetadata_out"
+  variableMetadata_out "$variableMetadata_out"
+  figure "$figure"
+  information "$information"
+  ]]></command>
+  
+  <inputs>
+    <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular" />
+    <param name="sampleMetadata_in" type="data" label="Sample metadata file" help="" format="tabular" />
+    <param name="variableMetadata_in" type="data" label="Variable metadata file" help="" format="tabular" />
+    
+    <param name="disC" label="Dissimilarity to be used for clustering" type="select" help="If correlation is selected, the pearson method will be used by default unless a specific method is selected in the advanced parameters below">
+      <option value="euclidean">euclidean</option>
+      <option value="maximum">maximum</option>
+      <option value="manhattan">manhattan</option>
+      <option value="canberra">canberra</option>
+      <option value="binary">binary</option>
+      <option value="minkowski">minkowski</option>
+      <option value="1-cor" selected="true">1-correlation</option>
+      <option value="1-abs(cor)">1-abs(correlation)</option>
+    </param>
+    
+    <param name="cutSamN" label="Number of sample clusters to identify" type="select" help="">
+      <option value="1" selected="true">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+      <option value="15">15</option>
+    </param>
+    
+    <param name="cutVarN" label="Number of variable clusters to identify" type="select" help="">
+      <option value="1" selected="true">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+      <option value="15">15</option>			
+    </param>
+		
+    <conditional name="advPar">
+      <param name="oppC" type="select" label="Advanced parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full list</option>
+      </param>
+      <when value="default">
+	<param name="corMetC" type="hidden" value="pearson"/>
+	<param name="aggMetC" type="hidden" value="ward"/>
+	<param name="colC" type="hidden" value="blueOrangeRed"/>
+        <param name="scaL" type="hidden" value="TRUE"/>
+	<param name="cexN" type="hidden" value="0.8"/>
+      </when>	
+      <when value="full">
+	<param name="corMetC" label="Method of correlation to be used" type="select" help="">
+	  <option value="pearson" selected="true">pearson</option>
+	  <option value="spearman">spearman</option>
+	  <option value="kendall">kendall</option>
+	</param>
+	<param name="aggMetC" label="Method of agglomeration to be used" type="select" help="">
+	  <option value="ward" selected="true">ward</option>
+	  <option value="single">single</option>
+	  <option value="complete">complete</option>
+	  <option value="average">average</option>
+	  <option value="mcquitty">mcquitty</option>
+	  <option value="median">median</option>
+	  <option value="centroid">centroid</option>
+	</param>
+	<param name="colC" label="Color scale" type="select" help="">
+	  <option value="blueOrangeRed" selected="true">blue-orange-red</option>
+	  <option value="redBlackGreen">red-black-green</option>
+	</param>
+	<param name="scaL" label="Variable standardization (for plotting only)" type="select" help="Standardization is performed after the clustering for display only (may enhance contrast) and does not modify cluster computation nor intensities in the output files">
+	  <option value="TRUE" selected="true">yes</option>
+	  <option value="FALSE">no</option>
+	</param>
+	<param name="cexN" label="Size of labels" type="select" help="">
+	  <option value="0.5">0.5</option>
+	  <option value="0.6">0.6</option>
+	  <option value="0.7">0.7</option>
+	  <option value="0.8" selected="true">0.8</option>
+	  <option value="0.9">0.9</option>
+	  <option value="1">1</option>
+	</param>
+      </when>
+    </conditional>
+
+  </inputs>
+	
+  <outputs>
+    <data name="dataMatrix_out" label="${tool.name}_${dataMatrix_in.name}" format="tabular" ></data>
+    <data name="sampleMetadata_out" label="${tool.name}_${sampleMetadata_in.name}" format="tabular" ></data>
+    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
+    <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+  </outputs>	
+
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="input-dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="input-sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="input-variableMetadata.tsv"/>
+      <param name="disC" value="1-cor"/>
+      <param name="cutSamN" value="4"/>
+      <param name="cutVarN" value="3"/>
+      <param name="oppC" value="full"/>
+      <param name="corMetC" value="spearman"/>
+      <param name="aggMetC" value="ward"/>
+      <param name="colC" value="blueOrangeRed"/>
+      <param name="scaL" value="TRUE"/>
+      <param name="cexN" value="0.8"/>
+      <output name="variableMetadata_out" file="output-variableMetadata.tsv"/>
+    </test>
+  </tests>
+  
+  <help>
+
+.. class:: infomark
+    
+| **Tool update: See the 'NEWS' section at the bottom of the page**
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Author** Etienne Thevenot (W4M Core Development Team, MetaboHUB Paris, CEA)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**References**
+
+| Etienne A. Thevenot, Aurelie Roux, Ying Xu, Eric Ezan, and Christophe Junot (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (http://dx.doi.org/10.1021/acs.jproteome.5b00354).
+| R Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria (http://www.r-project.org)
+|
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+
+========================
+Heatmap
+========================
+
+-----------
+Description
+-----------
+
+ | Performs hierarchical clustering on both the samples (rows) and variables (columns) of the dataMatrix
+ | Displays the dataMatrix with sorted rows and samples and the dendrograms (heatmap)
+ | In the output dataMatrix, sampleMetadata and variableMetadata files sample and variables are sorted according to the dendrograms
+ | Optionally, indicates the groups of samples and/or variables obtained by cutting the dendrograms into a specific number of partitions
+ |
+ | Note: 1) Computations rely on the 'hclust' function. The dissimilarity is 1 - cor (where cor is the Spearman correlation) and the 'ward.D' aggregating method is used.
+ |       2) A "blue-orange-red" palette is generated with the function 'colorRampPalette'; **By default, variables are standardized (mean-centered and unit-scaled) to enhance contrast on the figure**; standardization can be turned off by using the full list of parameters; in any case, standardizing is performed after the computation of clusters, for display only
+ |       3) When a specific number of sample and/or variable groups (i.e. > 1) are selected, the group numbers are indicated on the plot and in an additional 'heat_clust" column in the sampleMetadata and/or variableMetadata
+ |       4) Example of computation times: for 126 variables: a few seconds; for 4324 variables: 30 min
+ |
+ 
+
+-----------------
+Workflow position
+-----------------
+
+| In the workflow example below, the structure of the dataset (dataMatrix) is visualized by using first the "Quality Metrics" (for checking potential signal drift, sample outliers, etc.), then the "Heatmap" (for correlations between samples or variables), and finally the "Multivariate" (for PCA or PLS) modules.
+|
+
+.. image:: heatmap_workflowPositionImage.png
+        :width: 600
+
+
+
+-----------
+Input files
+-----------
+
++--------------------------+-------------+
+| File type                |   Format    |
++==========================+=============+
+| 1 : Data matrix          |   tabular   |
++--------------------------+-------------+
+| 2 : Sample metadata      |   tabular   |
++--------------------------+-------------+
+| 3 : Variable metadata    |   tabular   |
++--------------------------+-------------+
+
+|
+| Required formats for the dataMatrix, sampleMetadata and variableMetadata files are described in the HowTo entitled 'Format Data For Postprocessing' available on the main page of Workflow4Metabolomics.org; formats of the three files can be further checked with the 'Check Data' module (in the 'Quality Control' section)
+|
+
+----------
+Parameters
+----------
+
+Number of sample clusters
+	| By default (cluster = 1), only dendrograms are displayed; when a specific number of sample clusters is selected, the sample dendrogram is cut at the corresponding level: the sample groups are displayed on the dendrogram and a "heat_clust" column is added in the sampleMetadata file with the group of each sample
+	|
+	
+Number of variable clusters
+	| Same as above for variables
+	|
+	
+Standardization (Full list)
+	| By default, variables are standardized for display to enhance contrast of the heatmap (note that standardization is performed after the clustering for display only and does not modify cluster computation nor intensities in the output files)
+	| 
+	
+Size of labels (Full list)
+	| The size of sample and variable names on the heatmap is 0.8 (note that names with more than 14 characters are truncated); this number may be lowered (or uppered) in case of many (few) names to display
+
+
+------------
+Output files
+------------
+
+dataMatrix_out.tabular
+	| dataMatrix file with rows and columns sorted according to the dendrogram
+	| 
+
+sampleMetadata_out.tabular
+	| sampleMetadata file with rows sorted according to the sample dendrogram; in case a number of sample groups is specified, and additional "heat_clust" column is added with the cluster group of each sample
+	| 
+	
+variableMetadata_out.tabular
+	| variableMetadata file with rows sorted according to the variable dendrogram; in case a number of variable groups is specified, and additional "heat_clust" column is added with the cluster group of each variable
+	| 
+
+figure.pdf
+	| Heatmap
+	| 	
+
+information.txt
+	| File with all messages and warnings generated during the computation
+	|
+	
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+.. class:: infomark
+
+See the **W4M00001a_sacurine-subset-statistics** shared history in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 2.2.2
+========================
+
+INTERNAL MODIFICATIONS
+
+Minor internal modifications
+
+CHANGES IN VERSION 2.2.0
+========================
+
+NEW FEATURES
+
+Default method for the correlation coefficient is now 'pearson', instead of 'spearman' previously (the latter can still be selected in the advanced parameters)
+
+The 1-abs(correlation) dissimilarity is now available (in addition to the default '1-correlation') in case the sign of correlations between samples and between variables does not matter, as well as the euclidean, maximum, manhattan, canberra, binary, and minkowski dissimilarities
+
+A new red-green color scale is available
+
+
+CHANGES IN VERSION 2.1.2
+========================
+
+INTERNAL MODIFICATIONS
+
+Creating additional files for planemo and travis running and installation validation
+
+CHANGES IN VERSION 2.1.1
+========================
+
+INTERNAL MODIFICATIONS
+
+Internal replacement of the as.hclust function which happened to produce error messages
+
+ </help>
+ 
+ <citations>
+   <citation type="bibtex">@Manual{,
+   title = {R: A Language and Environment for Statistical Computing},
+   author = {{R Core Team}},
+   organization = {R Foundation for Statistical Computing},
+   address = {Vienna, Austria},
+   year = {2016},
+   url = {https://www.R-project.org/},
+   }</citation>
+   <citation type="bibtex">@Article{Thevenot2015,
+   Title                    = {Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses},
+   Author                   = {Thevenot, Etienne A. and Roux, Aurelie and Xu, Ying and Ezan, Eric and Junot, Christophe},
+   Journal                  = {Journal of Proteome Research},
+   Year                     = {2015},
+   Note                     = {PMID: 26088811},
+   Number                   = {8},
+   Pages                    = {3322-3335},
+   Volume                   = {14},
+   
+   Doi                      = {10.1021/acs.jproteome.5b00354},
+   Url                      = {http://pubs.acs.org/doi/full/10.1021/acs.jproteome.5b00354}
+   }</citation>
+   <citation type="doi">10.1093/bioinformatics/btu813</citation>
+ </citations>
+  
+</tool>

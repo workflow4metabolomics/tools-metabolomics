@@ -1,0 +1,141 @@
+<!-- vi: se fdm=marker : -->
+<tool id="isa2w4m" name="ISA to W4M" version="1.1.3">
+
+	<description>Convert ISA data type into W4M format</description>
+
+	<requirements>
+		<requirement type="package" version="1.2.5">pandas</requirement>
+		<requirement type="package" version="0.12.2">isatools</requirement>
+	</requirements>
+
+	<!-- Command {{{1 -->
+
+	<command><![CDATA[
+		## @@@BEGIN_CHEETAH@@@
+
+		$__tool_directory__/isa2w4m.py
+		-i '$isa.extra_files_path'
+		-s '$w4m_sample_metadata'
+		-v '$w4m_variable_metadata'
+		-m '$w4m_data_matrix'
+
+		## Choose study to output
+		#if $study:
+			-n '$study'
+		#end if
+
+		## Choose assay to output
+		#if $assay:
+			-f '$assay'
+		#end if
+
+		## Filtering
+		#if $sample_na_filtering:
+			-S '$sample_na_filtering'
+		#end if
+		#if $variable_na_filtering:
+			-V '$variable_na_filtering'
+		#end if
+
+		## Redirect stderr to stdout otherwise Galaxy thinks the tool fails if
+		## it sees just one character on stderr.
+		2>&1
+
+		## @@@END_CHEETAH@@@
+	]]></command>
+
+	<!-- Inputs {{{1 -->
+
+	<inputs>
+		<param name="isa" label="ISA" type="data" format="isa-tab"/>
+		<param name="study" type="text" size="256" value="" help="Type here the name of the assay file you want to extract from the ISA archive. If unset, the first listed study will be used."/>
+		<param name="assay" type="text" size="256" value="" help="Type here the name of the study file you want to extract from the ISA archive. If unset, the first listed assay in the study will be used"/>
+		<param name="sample_na_filtering" type="text" label="Sample metadata columns NA filtering" help="The rows that contain NA value in the specified columns will be filtered out. Column names must be separated by commas."/>
+		<param name="variable_na_filtering" type="text" label="Variable metadata columns NA filtering" help="The rows that contain NA value in the specified columns will be filtered out. Column names must be separated by commas."/>
+	</inputs>
+
+	<!-- Outputs {{{1 -->
+
+    <outputs>
+		<data name="w4m_variable_metadata" label="${isa.name} W4M var" format="tabular"/>
+        <data name="w4m_sample_metadata" label="${isa.name} W4M samp" format="tabular"/>
+        <data name="w4m_data_matrix" label="${isa.name} W4M data" format="tabular"/>
+	</outputs>
+
+	<!-- Tests {{{1 -->
+	<tests>
+		<test>
+			<param name="isa" value="MTBLS30.zip" ftype="isa-tab"/>
+			<output name="w4m_variable_metadata" file="MTBLS30-w4m-variable-metadata.tsv"/>
+			<output name="w4m_sample_metadata" file="MTBLS30-w4m-sample-metadata.tsv"/>
+			<output name="w4m_data_matrix" file="MTBLS30-w4m-sample-variable-matrix.tsv"/>
+		</test>
+		<test>
+			<param name="isa" value="MTBLS174.zip" ftype="isa-tab"/>
+			<output name="w4m_variable_metadata" file="MTBLS174-w4m-variable-metadata.tsv"/>
+			<output name="w4m_sample_metadata" file="MTBLS174-w4m-sample-metadata.tsv"/>
+			<output name="w4m_data_matrix" file="MTBLS174-w4m-sample-variable-matrix.tsv"/>
+		</test>
+	</tests>
+
+	<!-- Help {{{1 -->
+    <help>
+<!-- @@@BEGIN_RST@@@ -->
+
+====================
+ISA to W4M converter
+====================
+
+Converts an ISA-Tab dataset into W4M 3 files format.
+
+------
+Inputs
+------
+
+ISA dataset
+===========
+
+The ISA-Tab dataset to convert to W4M format.
+
+Study to extract
+================
+
+The file name of the study to extract from the ISA dataset.
+
+Assay to extract
+================
+
+The file name of the assay to extract from the ISA dataset chosen study.
+
+Sample NA filtering
+===================
+
+This is a comma separated list of column names from the sample metadata dataset.
+Rows containg NA values in one or more of the listed columns will be removed from the dataset.
+
+Variable NA filtering
+=====================
+
+This is a comma separated list of column names from the variable metadata dataset.
+Rows containg NA values in one or more of the listed columns will be removed from the dataset.
+
+-------
+Outputs
+-------
+
+The output is a set of 3 datasets:
+
+ - Samples metadata.
+ - Variables metadata.
+ - Samples x variables matrix. 
+
+<!-- @@@END_RST@@@ -->
+    </help>
+
+	<!-- Citations {{{1 -->
+    <citations>
+        <citation type="doi">10.1038/ng.1054</citation> <!-- ISA -->
+        <citation type="doi">10.1093/bioinformatics/btu813</citation> <!-- W4M -->
+    </citations>
+
+</tool>

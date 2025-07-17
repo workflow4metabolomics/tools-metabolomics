@@ -143,7 +143,7 @@ when using the **linear**, **lowess** or **loess** methods:
 when using the **all loess pool** or **all loess sample** method:
   | `Dunn et al (2011). Procedures for large-scale metabolic profiling of serum and plasma using gas chromatography and liquid chromatography coupled to mass spectrometry. Nature Protocols, 6:1060-1083 &lt;https://www.nature.com/articles/nprot.2011.335&gt;`_
   | Cleveland et al (1997). In Statistical Models in S; Chambers JM. and Hastie TJ. Ed.; Chapman et Hall: London; pp. 309-376
-  | Etienne A. Thevenot, Aurelie Roux, Ying Xu, Eric Ezan, and Christophe Junot (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00354).
+  | Etienne A. Thevenot, Aurelie Roux, Ying Xu, Eric Ezan, and Christophe Junot (2015). Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. *Journal of Proteome Research*, **14**:3322-3335 (https://doi.org/10.1021/acs.jproteome.5b00354).
 
 ---------------------------------------------------
 

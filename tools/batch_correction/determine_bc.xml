@@ -27,16 +27,16 @@
   
   <inputs>
     <param name="dataMatrix" type="data" label="Data matrix file " help="" format="tabular" />
-    <param name="sampleMetadata" type="data" label="Sample metadata file " help="must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'" format="tabular" />
+    <param name="sampleMetadata" type="data" label="Sample metadata file " help="Must contain at least the three following columns: 'batch' + 'injectionOrder' + 'sampleType'." format="tabular" />
     <expand macro="sm_customisation"/>
     <expand macro="foi"/>
     <conditional name="advance">
-        <param name="option" type="select" label="Advanced options" help="should only be put at 'show' if you have good understanding of the span parameter and are willing to adjust it">
+        <param name="option" type="select" label="Advanced options" help="Should only be put at 'show' if you have good understanding of the span parameter and are willing to adjust it.">
             <option value="show">show</option>
             <option value="hide" selected="true">hide</option>
         </param>
         <when value="show">
-            <param name="span" type="float" value="0.85" label="span" help="applied to lowess and loess regression"/>
+            <param name="span" type="float" value="0.85" label="span" help="Applied to lowess and loess regression."/>
         </when>
         <when value="hide"/>
     </conditional>
@@ -207,7 +207,7 @@ Additional information
 .. class:: warningmark
 
 Refer to the corresponding "W4M HowTo" page:
- | `MS data processing - Filters and normalisation &lt;https://download.workflow4metabolomics.org/docs/w4e2018/2018-10_EC_W4E%20-%20Dataprocessing_Filter_and_normalisation.pdf&gt;`_
+ | `MS data processing - Filters and normalisation &lt;https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY&gt;`_
  |
  |
 

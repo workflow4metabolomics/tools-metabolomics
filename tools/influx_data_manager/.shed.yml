@@ -1,0 +1,7 @@
+name: influx-si-data-manager
+owner: workflow4metabolomics
+description: Handling influx_si data inputs in Galaxy workflows
+long_description: This tool is mean to handle the input files for influx_si within workflows. It is not meant to be used as a stand-alone within the platform.
+categories: [Metabolomics]
+homepage_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/tools_w4m/
+remote_repository_url: https://github.com/MetaboHUB-MetaToul-FluxoMet/tools_w4m/tree/main/tools/influx_data_manager

@@ -2,54 +2,52 @@
 #
 #   Read FIDs in Bruker format
 #
-#
 ################################################################################################
-
-
-# vec2mat ==============================================================================
+# Function to convert a vector to a matrix
 vec2mat <- function(vec) {
     return(matrix(vec, nrow = 1, dimnames = list(c(1), names(vec))))
 }
 
-
-# ReadFid ==============================================================================
+# Function to read FID files
+# Format of files depends on version of software used for spectra aquisition (< or > 4.x.x)
+# Read 1D FID using Bruker XWinNMR and TopSpin format.  It is inspired of the
+# matNMR matlab library which deals with 2D FID and also other formats
+# Based on aquisition parameters stored in the acqus file
 ReadFid <- function(path) {
-    # Read 1D FID using Bruker XWinNMR and TopSpin format.  It is inspired of the
-    # matNMR matlab library which deals with 2D FID and also other formats
-    # Read also the parameters in the acqus file
-
     paramFile <- file.path(path, "acqus")
-    # BYTEORDA: 0 -> Little Endian 1 -> Big Endian
-    params <- readParams(paramFile, c(
-        "TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS",
-        "SW_h", "SW", "O1"
-    ))
+    params <- readParams(paramFile, c("TD", "BYTORDA", "DIGMOD", "DECIM", "DSPFVS", "SW_h", "SW", "O1"))
 
+    # Version of the TopSpin software
+    line <- readLines(paramFile)[1]
+    version <- as.numeric(substr(strsplit(line, " ")[[1]][5], 1, 1))
+    neo <- (version > 3)
+
+    # The group delay first order phase correction is given directly from version 20
     if (params[["DSPFVS"]] >= 20) {
-        # The group delay first order phase correction is given directly from version 20
         grpdly <- readParams(paramFile, c("GRPDLY"))
         params[["GRPDLY"]] <- grpdly[["GRPDLY"]]
     }
     TD <- params[["TD"]]
+
     endianness <- if (params$BYTORDA) {
         "big"
     } else {
         "little"
     }
     if (TD %% 2 != 0) {
-        stop(paste(
-            "Only even numbers are allowed for size in TD because it is complex
-               data with the real and imaginary part for each element.",
-            "The TD value is in the", paramFile, "file"
-        ))
+        stop(paste("Only even numbers are allowed for size in TD because it is complex data with the real and imaginary part for each element.", "The TD value is in the", paramFile, "file"))
     }
 
     # Interpret params Dwell Time, time between 2 data points in the FID
     params[["DT"]] <- 1 / (2 * params[["SW_h"]])
 
-    # Read fid
+    # Read fid depend on version of aquisition software
     fidFile <- file.path(path, "fid")
-    fidOnDisk <- readBin(fidFile, what = "int", n = TD, size = 4L, endian = endianness)
+    if (neo) {
+        fidOnDisk <- readBin(fidFile, what = "double", n = TD, size = NA_integer_, signed = TRUE, endian = .Platform$endian)
+    } else {
+        fidOnDisk <- readBin(fidFile, what = "int", n = TD, size = 4L, endian = endianness)
+    }
 
     # Real size that is on disk (it should be equal to TD2, except for TopSpin/Bruker
     # (which is our case) according to matNMR as just discussed
@@ -72,10 +70,7 @@ ReadFid <- function(path) {
     return(list(fid = fid, params = params))
 }
 
-
-
-
-# getDirsContainingFid ==============================================================================
+# Function to obtain path to files
 getDirsContainingFid <- function(path) {
     subdirs <- dir(path, full.names = TRUE)
     if (length(subdirs) > 0) {
@@ -89,20 +84,11 @@ getDirsContainingFid <- function(path) {
     return(subdirs)
 }
 
-
-
-
-
-
-# beginTreatment ==============================================================================
-
-beginTreatment <- function(name, Signal_data = NULL, Signal_info = NULL,
-                           force.real = FALSE) {
+# Function to xxx
+beginTreatment <- function(name, Signal_data = NULL, Signal_info = NULL, force.real = FALSE) {
     cat("Begin", name, "\n")
 
-
-    # Formatting the Signal_data and Signal_info -----------------------
-
+    # Formatting the Signal_data and Signal_info
     vec <- is.vector(Signal_data)
     if (vec) {
         Signal_data <- vec2mat(Signal_data)
@@ -114,19 +100,17 @@ beginTreatment <- function(name, Signal_data = NULL, Signal_info = NULL,
         if (!is.matrix(Signal_data)) {
             stop("Signal_data is not a matrix.")
         }
-        if (!is.complex(Signal_data) && !is.numeric(Signal_data)) {
-            stop("Signal_data contains non-numerical values.")
+        if (is.vector(Signal_info)) {
+            Signal_info <- vec2mat(Signal_info)
         }
     }
     if (!is.null(Signal_info) && !is.matrix(Signal_info)) {
         stop("Signal_info is not a matrix.")
     }
 
-
     Original_data <- Signal_data
 
-    # Extract the real part of the spectrum ---------------------------
-
+    # Extract the real part of the spectrum
     if (force.real) {
         if (is.complex(Signal_data)) {
             Signal_data <- Re(Signal_data)
@@ -138,30 +122,18 @@ beginTreatment <- function(name, Signal_data = NULL, Signal_info = NULL,
         }
     }
 
-
-    # Return the formatted data and metadata entries --------------------
-
-    return(list(
-        start = proc.time(), vec = vec, force.real = force.real,
-        Original_data = Original_data, Signal_data = Signal_data, Signal_info = Signal_info
-    ))
+    # Return the formatted data and metadata entries
+    return(list(start = proc.time(), vec = vec, force.real = force.real, Original_data = Original_data, Signal_data = Signal_data, Signal_info = Signal_info))
 }
 
-
-# endTreatment ==============================================================================
-
+# Function to get information on reading end
 endTreatment <- function(name, begin_info, Signal_data) {
     end_time <- proc.time() # record it as soon as possible
     start_time <- begin_info[["start"]]
     delta_time <- end_time - start_time
     delta <- delta_time[]
     cat("End", name, "\n")
-    cat(
-        "It lasted",
-        round(delta["user.self"], 3), "s user time,",
-        round(delta["sys.self"], 3), "s system time and",
-        round(delta["elapsed"], 3), "s elapsed time.\n"
-    )
+    cat("It lasted", round(delta["user.self"], 3), "s user time,", round(delta["sys.self"], 3), "s system time and", round(delta["elapsed"], 3), "s elapsed time.\n")
     if (begin_info[["force.real"]]) {
         # The imaginary part is left untouched
         i <- complex(real = 0, imaginary = 1)
@@ -173,46 +145,26 @@ endTreatment <- function(name, begin_info, Signal_data) {
     return(Signal_data)
 }
 
-
-# checkArg ==============================================================================
-
+# Function to check arguments
 checkArg <- function(arg, checks, can.be.null = FALSE) {
-    check.list <- list(
-        bool = c(is.logical, "a boolean"),
-        int = c(function(x) {
-            x %% 1 == 0
-        }, "an integer"),
-        num = c(is.numeric, "a numeric"),
-        str = c(is.character, "a string"),
-        pos = c(function(x) {
-            x > 0
-        }, "positive"),
-        pos0 = c(function(x) {
-            x >= 0
-        }, "positive or zero"),
-        l1 = c(function(x) {
-            length(x) == 1
-        }, "of length 1")
-    )
+    check.list <- list(bool = c(is.logical, "a boolean"), int = c(function(x) {
+        x %% 1 == 0
+    }, "an integer"), num = c(is.numeric, "a numeric"), str = c(is.character, "a string"), pos = c(function(x) {
+        x > 0
+    }, "positive"), pos0 = c(function(x) {
+        x >= 0
+    }, "positive or zero"), l1 = c(function(x) {
+        length(x) == 1
+    }, "of length 1"))
     if (is.null(arg)) {
         if (!can.be.null) {
             stop(deparse(substitute(arg)), " is null.")
-        }
-    } else {
-        if (is.matrix(arg)) {
-            stop(deparse(substitute(arg)), " is not scalar.")
-        }
-        for (c in checks) {
-            if (!check.list[[c]][[1]](arg)) {
-                stop(deparse(substitute(arg)), " is not ", check.list[[c]][[2]], ".")
-            }
         }
     }
 }
 
 
-# getArg ==============================================================================
-
+# Function to get arguments
 getArg <- function(arg, info, argname, can.be.absent = FALSE) {
     if (is.null(arg)) {
         start <- paste("impossible to get argument", argname, "it was not given directly and")
@@ -237,13 +189,8 @@ getArg <- function(arg, info, argname, can.be.absent = FALSE) {
     return(arg)
 }
 
-
-
-# getTitle ==============================================================================
-
-# Get the name of the signal from the title file or fromt the name of the subdirectory
-# Get the name of the signal from the title file or fromt the name of the subdirectory
-
+# Function to get title and name samples
+# Get the name of the signal from the title file or from the name of the subdirectory
 getTitle <- function(path, l, subdirs) {
     title <- NULL
     title_file <- file.path(file.path(file.path(path, "pdata"), "1"), "title")
@@ -254,13 +201,10 @@ getTitle <- function(path, l, subdirs) {
             if (nchar(first_line) >= 1) {
                 title <- first_line
             } else {
-                warning(paste(
-                    "The", l, "line of the title file is blank for directory ",
-                    path, "and the (sub)dirs names are used instead"
-                ))
+                warning(paste("The", l, "line of the title file is blank for directory ", path, "and the (sub)dirs names are used instead"))
             }
         } else {
-            warning(paste("The title file is empty for directory ", path, "and the (sub)dirs names are used instead"))
+            warning(paste("Title file doesn't exists for directory ", path, "\n the (sub)dirs names are  used instead"))
         }
     } else {
         warning(paste("Title file doesn't exists for directory ", path, "\n the (sub)dirs names are  used instead"))
@@ -277,12 +221,7 @@ getTitle <- function(path, l, subdirs) {
     return(title)
 }
 
-
-
-
-# readParams ==============================================================================
-# Read parameter values for Fid_info in the ReadFids function
-
+# Function to read parameter values for Fid_info in the ReadFids function
 readParams <- function(file, paramsName) {
     isDigit <- function(c) {
         return(suppressWarnings(!is.na(as.numeric(c))))
@@ -299,8 +238,35 @@ readParams <- function(file, paramsName) {
         if (length(occurences) == 0L) {
             stop(paste(file, "has no field", pattern))
         }
-        if (length(occurences) > 1L) {
-            warning(paste(file, "has more that one field", pattern, " I take the first one"))
+        lines <- readLines(file)
+        params <- sapply(paramsName, function(x) NULL)
+
+        for (paramName in paramsName) {
+            # Find the line with the parameter I add a '$' '=' in the pattern so that for
+            # example 'TD0' is not found where I look for 'TD' and LOCSW and WBSW when I look
+            # for 'SW'
+            pattern <- paste("\\$", paramName, "=", sep = "")
+            occurences <- grep(pattern, lines)
+            if (length(occurences) == 0L) {
+                stop(paste(file, "has no field", pattern))
+            }
+            if (length(occurences) > 1L) {
+                warning(paste(file, "has more that one field", pattern, " I take the first one"))
+            }
+            line <- lines[occurences[1]]
+
+            # Cut beginning and end of the line '##$TD= 65536' -> '65536'
+            igual <- as.numeric(regexpr("=", line))
+
+            first <- igual
+            while (first <= nchar(line) & !isDigit(substr(line, first, first))) {
+                first <- first + 1
+            }
+            last <- nchar(line)
+            while (last > 0 & !isDigit(substr(line, last, last))) {
+                last <- last - 1
+            }
+            params[paramName] <- as.numeric(substr(line, first, last))
         }
         line <- lines[occurences[1]]
 
@@ -320,12 +286,9 @@ readParams <- function(file, paramsName) {
     return(params)
 }
 
-
-
-# ReadFids ==============================================================================
-
+# Function to read all fid's in the directory
 ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
-    # Data initialisation and checks ----------------------------------------------
+    # Data initialisation and checks
     begin_info <- beginTreatment("ReadFids")
     checkArg(path, c("str"))
     checkArg(l, c("pos"))
@@ -333,9 +296,7 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
         stop(paste("Invalid path:", path))
     }
 
-
-    # Extract the FIDs and their info ----------------------------------------------
-
+    # Extract the FIDs and their info
     if (subdirs == FALSE) {
         fidDirs <- getDirsContainingFid(path)
         n <- length(fidDirs)
@@ -356,14 +317,8 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
             info <- fidList[["params"]]
             m <- length(fid)
             if (i == 1) {
-                Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(
-                    fidNames,
-                    info[["DT"]] * (0:(m - 1))
-                ))
-                Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(
-                    fidNames,
-                    names(info)
-                ))
+                Fid_data <- matrix(nrow = n, ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
+                Fid_info <- matrix(nrow = n, ncol = length(info), dimnames = list(fidNames, names(info)))
             }
             Fid_data[i, ] <- fid
             Fid_info[i, ] <- unlist(info)
@@ -388,12 +343,7 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
             if (length(fidDirs) != length(dir(path))) { # at least one subdir contains more than 1 FID
                 separator <- .Platform$file.sep
                 path_elem <- strsplit(fidDirs, separator)
-                fidNames <- sapply(path_elem, function(x) {
-                    paste(x[[length(path_elem[[1]]) - 1]],
-                        x[[length(path_elem[[1]])]],
-                        sep = "_"
-                    )
-                })
+                fidNames <- sapply(path_elem, function(x) paste(x[[length(path_elem[[1]]) - 1]], x[[length(path_elem[[1]])]], sep = "_"))
             } else {
                 fidNames <- dir(path)
             }
@@ -407,21 +357,17 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
             info <- fidList[["params"]]
             m <- length(fid)
             if (i == 1) {
-                Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(
-                    fidNames,
-                    info[["DT"]] * (0:(m - 1))
-                ))
-                Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(
-                    fidNames,
-                    names(info)
-                ))
+                Fid_data <- matrix(nrow = length(fidNames), ncol = m, dimnames = list(fidNames, info[["DT"]] * (0:(m - 1))))
+                Fid_info <- matrix(nrow = length(fidNames), ncol = length(info), dimnames = list(fidNames, names(info)))
             }
+            print(paste("i=", i, "Fid_data=", ncol(Fid_data), "fid=", length(fid)))
+
             Fid_data[i, ] <- fid
             Fid_info[i, ] <- unlist(info)
         }
     }
 
-    # Check for non-unique IDs ----------------------------------------------
+    # Check for non-unique IDs
     NonnuniqueIds <- sum(duplicated(row.names(Fid_data)))
     cat("dim Fid_data: ", dim(Fid_data), "\n")
     cat("IDs: ", rownames(Fid_data), "\n")
@@ -430,7 +376,6 @@ ReadFids <- function(path, l = 1, subdirs = FALSE, dirs.names = FALSE) {
         warning("There are duplicated IDs: ", Fid_data[duplicated(Fid_data)])
     }
 
-
-    # Return the results ----------------------------------------------
+    # Return the results
     return(list(Fid_data = endTreatment("ReadFids", begin_info, Fid_data), Fid_info = Fid_info))
 }

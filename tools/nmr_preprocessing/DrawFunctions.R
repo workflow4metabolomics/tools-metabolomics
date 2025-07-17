@@ -1,7 +1,6 @@
-require(ggplot2)
-require(gridExtra)
-require(reshape2)
-
+library(ggplot2) # nice plots
+library(gridExtra) # nice plots
+library(reshape2) # data manipulation
 
 Draw <- function(Signal_data, type.draw = c("signal", "pca"), output = c(
                      "default",
@@ -199,9 +198,7 @@ DrawSignal <- function(Signal_data, subtype = c(
                             Var = as.numeric(scale), value = elements[[name]][i, ]
                         )
                     } else {
-                        melted <- reshape2::melt(elements[[name]][i:last, ],
-                            varnames = c("rowname", "Var")
-                        )
+                        melted <- reshape2::melt(elements[[name]][i:last, ], varnames = c("rowname", "Var"))
                     }
 
 
@@ -258,10 +255,7 @@ DrawSignal <- function(Signal_data, subtype = c(
                     element[2, ] <- tmp
                 }
             }
-
-
-            melted <- reshape2::melt(elements[[name]], varnames = c("rowname", "Var"))
-
+            melted <- reshape2::melt(elements[[name]][i:last, ], varnames = c("rowname", "Var"))
 
             plots[[name]] <- ggplot2::ggplot(melted, ggplot2::aes(
                 x = Var,

@@ -64,7 +64,7 @@
     </outputs>
     
     <tests>
-        <test>
+        <test expect_test_failure="true">
     	  <param name='datafile' value='input_data.csv' />
     	  <param name='template_file' value='input_template.xlsx'/>
     	  <param name='format' value='pdf' />

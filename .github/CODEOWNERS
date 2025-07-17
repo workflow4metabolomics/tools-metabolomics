@@ -1,8 +1,16 @@
 # See documentation here:
 # https://blog.github.com/2017-07-06-introducing-code-owners/
 
+tools/*                          @hechth @bgruening @lecorguille
 tools/camera*/*                  @lecorguille
 tools/correlation_analysis/*     @melpetera
+tools/gcms2isocor/*              @ofilangi
+tools/ipo*/*                     @lecorguille @yguitton
+tools/isoplot/*                  @llegregam
 tools/nmr*/*                     @mtremblayfr @lecorguille
 tools/normalization/*            @mtremblayfr @lecorguille
-tools/xcms*/*                    @lecorguille
+tools/influx_data_manager/*      @llegregam
+tools/physiofit/*                @llegregam
+tools/physiofit_manager/*        @llegregam
+tools/skyline2isocor/*           @llegregam
+tools/xcms*/*                    @lecorguille @yguitton

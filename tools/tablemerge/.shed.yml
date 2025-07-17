@@ -7,3 +7,4 @@ long_description: 'Part of the W4M project: http://workflow4metabolomics.org / T
   variable metadata) to obtain a single file.'
 name: tablemerge
 owner: melpetera
+type: unrestricted

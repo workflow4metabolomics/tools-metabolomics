@@ -1,4 +1,5 @@
-categories: [Metabolomics]
+categories:
+  - Metabolomics
 description: '[W4M][Utils] Merging dataMatrix with a metadata table.'
 homepage_url: http://workflow4metabolomics.org
 remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

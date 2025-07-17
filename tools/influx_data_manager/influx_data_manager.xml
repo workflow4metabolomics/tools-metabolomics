@@ -39,7 +39,10 @@
         <param type='data' format='tabular,txt' argument='--opt' label='File containing options for influx_si (.opt  file)' optional='true'/>
         <param type='data' format='tabular,txt' argument='--mapping' label='Mapping of names and corresponding new names for input files' optional='true'/>
         <conditional name='normalization'>
-            <param type='boolean' name='norm' label='Normalization of extracellular fluxes' help='Select "Yes" to normalize extracellular fluxes by specific value (glc uptake for example)'/>
+            <param type='select' name='norm' label='Normalization of extracellular fluxes' help='Select "Yes" to normalize extracellular fluxes by specific value (glc uptake for example)'>
+                <option value='true'>Yes</option>
+                <option value='false'>No</option>
+            </param>
             <when value='true'>
                 <conditional name='norm_type'>
                     <param type='select' name='norm_type' label='Normalization type' help='Select the type of normalization to apply to fluxes'>
@@ -53,6 +56,10 @@
                         <param type='float' name='norm_float' value='1.0' label='Custom value' help='Value to normalize fluxes by (e.g. 10.0)'/>
                     </when>
                 </conditional>
+            </when>
+            <when value='false'>
+                <param type='hidden' name='norm_text' value=''/>
+                <param type='hidden' name='norm_float' value='1.0'/>
             </when>
         </conditional>
         <param name='verbose' type='boolean' truevalue='--verbose' falsevalue='' label='Debug mode' help='Select "Yes" to have debug logs be printed out'/>

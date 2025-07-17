@@ -29,15 +29,15 @@
     2> '$stderr' && cat '$stdout'
     ]]></command>
     <inputs>
-        <param type='data' format='tabular,txt' argument='--netw' label='File containing network for experiments (.netw file)' optional='false'/>
-        <param type='data' format='tabular,txt' argument='--isocor' label='Output of isocor which corresponds to the .miso input (.tsv file)' optional='false'/>
-        <param type='data' format='tabular,txt' argument='--tvar' label='File containing types of variables for experiments (.tvar file)' optional='false'/>
-        <param type='data' format='tabular,txt' argument='--physiofit' label='Output of physiofit which corresponds to the .mflux input (.csv file)' optional='true'/>
-        <param type='data' format='tabular,txt' argument='--linp' label='File contianing label inputs for experiments (.linp file)' optional='true'/>
-        <param type='data' format='tabular,txt' argument='--mmet' label='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
-        <param type='data' format='tabular,txt' argument='--cnstr' label='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
-        <param type='data' format='tabular,txt' argument='--opt' label='File containing options for influx_si (.opt  file)' optional='true'/>
-        <param type='data' format='tabular,txt' argument='--mapping' label='Mapping of names and corresponding new names for input files' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--netw' label='File containing network for experiments (.netw file)' optional='false'/>
+        <param type='data' format='tabular, txt' argument='--isocor' label='Output of isocor which corresponds to the .miso input (.tsv file)' optional='false'/>
+        <param type='data' format='tabular, txt' argument='--tvar' label='File containing types of variables for experiments (.tvar file)' optional='false'/>
+        <param type='data' format='tabular, txt' argument='--physiofit' label='Output of physiofit which corresponds to the .mflux input (.csv file)' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--linp' label='File contianing label inputs for experiments (.linp file)' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--mmet' label='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--cnstr' label='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--opt' label='File containing options for influx_si (.opt  file)' optional='true'/>
+        <param type='data' format='tabular, txt' argument='--mapping' label='Mapping of names and corresponding new names for input files' optional='true'/>
         <conditional name='normalization'>
             <param type='select' name='norm' label='Normalization of extracellular fluxes' help='Select "Yes" to normalize extracellular fluxes by specific value (glc uptake for example)'>
                 <option value='true'>Yes</option>

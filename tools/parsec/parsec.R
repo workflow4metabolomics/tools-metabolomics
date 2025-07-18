@@ -72,7 +72,7 @@ batch_cohort_correction <- function(
 # --- CLI ARGUMENTS ---
 option_list <- list(
     make_option(
-        c("-d", "--dataMatrice"),
+        c("-d", "--dataMatrix"),
         type = "character",
         help = "Data matrix"
     ),
@@ -96,7 +96,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 
 # --- FILE LOADINGS ---
 if (!all(file.exists(opt$dataMatrice, opt$sampleMData, opt$variableMData))) {
-    stop("❌ Un ou plusieurs fichiers d'entrée sont introuvables.")
+    stop("❌ At least one of the input files could not be found !")
 }
 
 data_matrix <- read.csv(

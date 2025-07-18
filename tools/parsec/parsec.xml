@@ -11,7 +11,6 @@
     <requirements>
         <requirement type="package" version="4.4.2">r-base</requirement>
         <requirement type="package" version="1.7.5">r-optparse</requirement>
-        <requirement type="package" version="1.1.4">r-dplyr</requirement>
         <requirement type="package" version="1.1.36">r-lme4</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
@@ -83,7 +82,7 @@ Parsec batch correction
 DESCRIPTION
 ===========
 
-This tool corrects for batch or cohort effect in intensity values of metabolomics data. It uses an approach based on mixed-models.
+This tool corrects for batch or cohort effect in intensity values of metabolomics data. It uses an approach based on mixed-models. More precisely for each variable the new intensity values are the residuals of the original intensity values when modeled by a linear mixed-model with injectionOrder as a fixed effect and batch as a random effect.
 
 ---------------------------------------------------
 
@@ -110,7 +109,8 @@ Data matrix file contains the intensity values of the variables.
 	| 
 
 SampleMetadata contains all the metadata about the samples corresponding to the Data matrix 
-	|
+	| This table should contain a column called 'injectionOrder' containing the order of sample injections increasing with time.
+	| This table should contain a column called 'batch' containing a string in the format 'BX' with X the number of the batch corresponding to each sample.  
 	
 VariableMetadata contains all the metadata about the variables (ions) corresponding to the Data matrix 
 	|

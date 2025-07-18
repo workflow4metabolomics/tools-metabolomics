@@ -100,7 +100,7 @@ if (!all(file.exists(opt$dataMatrice, opt$sampleMData, opt$variableMData))) {
 }
 
 data_matrix <- read.csv(
-    opt$dataMatrice,
+    opt$dataMatrix,
     header = TRUE,
     sep = "\t",
     row.names = 1

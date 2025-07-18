@@ -1,0 +1,263 @@
+<tool id="parsec" name="Parsec batch correction" version="0.1+galaxy1" profile="23.0">
+    <description>Corrects for batch and cohort effects on ion intensities using a mixed-model approach</description>
+    <edam_topics>
+      <edam_topic>topic_3172</edam_topic>
+      <edam_topic>topic_0092</edam_topic>
+    </edam_topics>
+    <creator>
+      <person givenName="Salomon" familyName="Gouiri-Loembe" email="salomon.gouiri-loembe@inrae.fr" />
+      <person givenName="Etienne" familyName="Jules" email="etienne.jules@inrae.fr" />
+    </creator>
+    <requirements>
+        <requirement type="package" version="4.4.2">r-base</requirement>
+        <requirement type="package" version="1.7.5">r-optparse</requirement>
+        <requirement type="package" version="1.1.36">r-lme4</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+            Rscript '$__tool_directory__/parsec.R'
+            -d '$dataMatrix' 
+            -s '$sampleMetadata' 
+            -v '$variableMetadata' 
+            -o '$output'
+    ]]></command>
+
+    <inputs>
+        <param name="dataMatrix" type="data" format="tabular" label="DataMatrix" />
+        <param name="sampleMetadata" type="data" format="tabular" label="SampleMetadata" />
+        <param name="variableMetadata" type="data" format="tabular" label="VariableMetadata" />
+    </inputs>
+
+    <outputs>
+        <data name="output" format="tabular" label="DataMatrix with corrected intensities" />
+    </outputs>
+
+    <tests>
+        <!-- Test with valid example files -->
+        <test>
+            <param name="dataMatrix" value="Dataprocessing_dataMatrix.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+            <output name="output" file="corrected_output_test.txt" />
+        </test>
+
+        <!-- Test: Missing injection order -->
+        <test expect_failure="true">
+            <param name="dataMatrix" value="Dataprocessing_dataMatrix.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata_missing_injection_order.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+        </test>
+
+        <!-- Test: Empty file -->
+        <test expect_failure="true">
+            <param name="dataMatrix" value="empty_file.txt" />
+            <param name="sampleMetadata" value="Dataprocessing_sampleMetadata.txt" />
+            <param name="variableMetadata" value="Dataprocessing_variableMetadata.txt" />
+        </test>
+    </tests>
+
+
+
+    <help><![CDATA[
+.. class:: infomark
+
+**Credits**
+  | **Original tool code:** Salomon Gouiri-Loembe - PFEM ; UNH ; INRAE 
+  | **Original tool wrapping:** Etienne Jules & Salomon Gouiri-Loembe - PFEM ; UNH ; INRAE ; MetaboHub 
+  | **Tool maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
+  | **Wrapper maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
+
+
+.. class:: infomark
+
+**Contact:** For any questions or support: community.france-bioinformatique.fr/c/workflow4metabolomics/
+
+
+---------------------------------------------------
+
+***********************
+Parsec batch correction
+***********************
+
+===========
+DESCRIPTION
+===========
+
+This tool corrects for batch or cohort effect in intensity values of metabolomics data. It uses an approach based on mixed-models. More precisely for each variable the new intensity values are the residuals of the original intensity values when modeled by a linear mixed-model with injectionOrder as a fixed effect and batch as a random effect.
+
+---------------------------------------------------
+
+==========================
+ALIGNMENT WITH OTHER TOOLS
+==========================
+
+-----------
+INPUT FILES
+-----------
+
+
++----------------------------+---------+
+| Parameter : num + label    |  Format |
++============================+=========+
+| 1 : Data matrix file       | tabular |
++----------------------------+---------+
+| 2 : SampleMetadata file    | tabular |
++----------------------------+---------+
+| 3 : VariableMetadata file  | tabular |
++----------------------------+---------+
+
+Data matrix file contains the intensity values of the variables.
+	| 
+
+SampleMetadata contains all the metadata about the samples corresponding to the Data matrix 
+	| This table should contain a column called 'injectionOrder' containing the order of sample injections increasing with time.
+	| This table should contain a column called 'batch' containing a string in the format 'BX' with X the number of the batch corresponding to each sample.  
+	
+VariableMetadata contains all the metadata about the variables (ions) corresponding to the Data matrix 
+	|
+	
+.. class:: warningmark
+
+For more information about input files, refer to the corresponding "W4M HowTo" page:
+ | `W4M table format for Galaxy <https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY>`_
+ |
+
+
+------------
+OUTPUT FILES
+------------
+
++----------------------------+---------+
+| Parameter : num + label    |  Format |
++============================+=========+
+| 1 : Data matrix file       | tabular |
++----------------------------+---------+
+
+Data matrix file contains the new intensity values of the variables.
+  |
+  
+----------------------------
+EXAMPLE OF WORKFLOW POSITION
+----------------------------
+
+This tool can be used after a complete extraction of metabolomics data and before the statistical analysis of the data.
+
+---------------------------------------------------
+
+===============
+TOOL PARAMETERS
+===============
+
+No other parameters
+
+---------------------------------------------------
+
+==============
+EXAMPLE OF USE
+==============
+
+Example:
+
+---------------
+Sample Metadata
+---------------
+
++----------------+-------+-----+--------+------------+-----------------+
+| sampleMetadata | Group |Osmo |  batch | sampleType |  injectionOrder |
++================+=======+=====+========+============+=================+
+|      Samp1     |    A  |390  |   B2   |  sample    |	     10        |
++----------------+-------+-----+--------+------------+-----------------+
+|      Samp2     |    A	 |860  |   B2   |  sample    |       11        |
++----------------+-------+-----+--------+------------+-----------------+
+|       ...      |  ...  |...  |   ...  |   ...      |       ...       |
++----------------+-------+-----+--------+------------+-----------------+
+|      Samp(n)   |    A	 |678  |   B5   |  sample    |       350       |
++----------------+-------+-----+--------+------------+-----------------+
+        
+-----------------
+Variable Metadata
+-----------------
+
++------------------+--------+--------+--------+------+--------+--------------+
+| variableMetadata |  mz    |  mzmin | mzmax  | rt   | rtmin  |   rtmax      |
++==================+========+========+========+======+========+==============+
+|       Var1       |411.349 |411.325 |411.328 |9.839 | 9.836  |   9.843      |
++------------------+--------+--------+--------+------+--------+--------------+
+|       Var2       |132.868 |132.867 |132.869 |16.431| 16.131 |   16.738     |
++------------------+--------+--------+--------+------+--------+--------------+
+|       ...        |  ...   |  ...   |  ...   | ...  |  ...   |     ...      |
++------------------+--------+--------+--------+------+--------+--------------+
+|       Var(m)     |842.627 |842.578 |842.647 |12.592|12.567  |   12.608     |
++------------------+--------+--------+--------+------+--------+--------------+
+
+------------------------------------
+Data Matrix (transposed in the tool)
+------------------------------------
+
++----------+-------+-------+--------+
+|dataMatrix| Samp1 | Samp2 | Samp(n)|
++==========+=======+=======+========+
+|Var1      |int1.1 |int1.2 | int1.n |
++----------+-------+-------+--------+
+|Var2      |int2.1 |int2.2 | int2.n |
++----------+-------+-------+--------+
+|...       |  ...  |  ...  |  ...   |
++----------+-------+-------+--------+
+|Var(m)    |intm.1 |intm.2 | intm.n |
++----------+-------+-------+--------+
+
+-----------------------------------
+Corrected Output (after processing)
+-----------------------------------
+
++----------+-------+-------+--------+
+|dataMatrix| Samp1 | Samp2 | Samp(n)|
++==========+=======+=======+========+
+|Var1      |int1.1'|int1.2'| int1.n'|
++----------+-------+-------+--------+
+|Var2      |int2.1'|int2.2'| int2.n'|
++----------+-------+-------+--------+
+|...       |  ...  |  ...  |  ...   |
++----------+-------+-------+--------+
+|Var(m)    |intm.1'|intm.2'| intm.n'|
++----------+-------+-------+--------+
+        
+------------
+KNOWN ISSUES
+------------
+
+
+==========
+CHANGE LOG
+==========
+
+-------------------
+Version 0.1+galaxy1
+-------------------
+
+Initial version
+            
+    ]]></help>
+
+    <citations>
+           <citation type="bibtex">
+              @software{swh-dir-f166076,
+              author = "Salanon, Elfried  and Comte, Blandine  and Boccard, Julien  and Pujos-Guillot, Estelle ",
+    organization = "Université Clermont Auvergne, INRAE, UNH, Plateforme d’Exploration du Métabolisme, MetaboHUB Clermont, Clermont-Ferrand, France and School of                 Pharmaceutical Sciences, University of Geneva, Geneva, Switzerland",
+              license = "CC-BY-NC-4.0",
+              abstract = "This algorithm performs batch effect and cohort effect correction on intensity data using a statistical modeling approach based on linear mixed models (LMM). This tool is especially suited for omics or high-throughput datasets, where batch or injection order can introduce unwanted variability.",
+              date = "2025-06-13",
+              year = "2025",
+              month = jun,
+              file = "https://github.com/inrae/PARSEC",
+              repository = "https://github.com/inrae/PARSEC",
+              title = "PARSEC",
+              version = "1.0.0",
+              swhid = "swh:1:dir:f16607641d45c7ae90571e847660d9040ca5723f;origin=https://github.com/inrae/PARSEC;visit=swh:1:snp:6ead07484c3aa11bdecba951b42a5d037e1cbf0c;anchor=swh:1:rev:51c7d9c1e08354ffcccb208e3f355a4cd6a9d60b"
+              }
+           </citation>
+           <!--
+              For later, when planemo will be compatible with biblatex-software, use @softwareversion instead of @software.
+              See https://www.ctan.org/tex-archive/macros/latex/contrib/biblatex-contrib/biblatex-software
+           /!-->
+    </citations>
+</tool>

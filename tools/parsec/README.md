@@ -1,7 +1,7 @@
 # Galaxy Tool Documentation: Batch Cohort Correction
 
 ## Overview
-This Galaxy tool is designed to correct batch and cohort effects in intensity measurements from scientific studies. Using a mixed-model approach, it adjusts intensity values while accounting for batch and injection order effects.
+This Galaxy tool is designed to correct batch and cohort effects in intensity measurements from scientific studies. Using a mixed-model approach, it adjusts intensity values while accounting for batch (random) and injection order (fixed) effects.
 
 ---
 

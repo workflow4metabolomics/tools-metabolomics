@@ -1,6 +1,6 @@
 # Galaxy tools for metabolomics
 
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/bioconductor-xcms/README.html) ![Galaxy Tool Linting and Tests for push and PR](https://github.com/workflow4metabolomics/tools-metabolomics/workflows/Galaxy%20Tool%20Linting%20and%20Tests%20for%20push%20and%20PR/badge.svg)
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/bioconductor-xcms/README.html) [![Galaxy Tool Linting and Tests for push and PR](https://github.com/workflow4metabolomics/tools-metabolomics/actions/workflows/pr.yaml/badge.svg)](https://github.com/workflow4metabolomics/tools-metabolomics/actions/workflows/pr.yaml)
 
 ## Purpose
 This repository aims to gather tools and contributors from the metabolomics world.

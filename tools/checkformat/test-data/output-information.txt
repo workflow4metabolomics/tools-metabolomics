@@ -1,0 +1,26 @@
+
+Start of the 'Check Format' Galaxy module call: Thu 26 Oct 2017 10:27:44 AM
+
+Table formats are OK; enjoy your analyses!
+
+End of the 'Check Format' Galaxy module call: Thu 26 Oct 2017 10:27:44 AM
+
+
+
+============================================================================
+Additional information about the call:
+
+1) Parameters:
+                    value                                   
+dataMatrix_in       "/tmp/tmpolhAXS/files/000/dataset_1.dat"
+sampleMetadata_in   "/tmp/tmpolhAXS/files/000/dataset_2.dat"
+variableMetadata_in "/tmp/tmpolhAXS/files/000/dataset_3.dat"
+information         "/tmp/tmpolhAXS/files/000/dataset_4.dat"
+
+2) Session Info:
+R version 3.3.2 (2016-10-31) 
+Main packages:
+batch 1.1.4 	
+Other loaded packages:
+
+============================================================================

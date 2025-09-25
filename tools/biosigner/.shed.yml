@@ -1,0 +1,20 @@
+name: biosigner
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Discovery of significant signatures from omics data.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'High-throughput, non-targeted, technologies such as transcriptomics, proteomics and metabolomics, are widely used to "discover molecules" which allow to efficiently discriminate between biological or clinical conditions of interest (e.g., disease vs control states). Powerful "machine learning" approaches such as Partial Least Square Discriminant Analysis (PLS-DA), Random Forest (RF) and Support Vector Machines (SVM) have been shown to achieve high levels of prediction accuracy.
+"Feature selection", i.e., the selection of the few features (i.e., the molecular signature) which are of highest discriminating value, is a critical step in building a robust and relevant classifier (Guyon and Elisseeff, 2003): First, dimension reduction is usefull to limit the risk of overfitting and reduce the prediction variability of the model; second, intrepretation of the molecular signature is facilitated; third, in case of the development of diagnostic product, a restricted list is required for the subsequent validation steps (Rifai et al, 2006).
+Since the comprehensive analysis of all combinations of features is not computationally tractable, several selection techniques have been described (Saeys et al, 2007). The major challenge for such methods is to be fast and extract "restricted and stable molecular signatures" which still provide high performance of the classifier (Gromski et al, 2014; Determan, 2015).
+The "biosigner" module implements a new feature selection algorithm to assess the relevance of the variables for the prediction performances of the classifier (Rinaudo et al, submitted). Three binary classifiers can be run in parallel, namely "PLS-DA", "Random Forest" and "SVM", as the performances of each machine learning approach may vary depending on the structure of the dataset. The algorithm  computes the "tier" of each feature for the selected classifer(s): tier "S" corresponds to the final signature, i.e., features which have been found significant in all the selection steps; features with tier "A" have been found significant in all but the last selection, and so on for tier "B" to "E". It returns the "signature" (by default from the "S" tier) for each of the selected classifier as an additional column of the "variableMetadata" table. In addition the "tiers" and "individual boxplots" of the selected features are returned.
+The module has been successfully applied to "transcriptomics" and "metabolomics" data.
+Notes:
+1) Only "binary" classification is currently available,
+2) If the "dataMatrix" contains "missing" values (NA), these features will be removed prior to modeling with Random Forest and SVM (in contrast, the NIPALS algorithm from PLS-DA can handle missing values),
+3) As the algorithm relies on bootstrapping, re-running the module may result in slightly different results. To ensure that returned results are exactly the same, the "seed" (advanced) parameter can be used.'
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/odisce/
+categories:
+- Metabolomics
+- Transcriptomics
+- Proteomics
+- Statistics

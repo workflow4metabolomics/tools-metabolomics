@@ -1,0 +1,12 @@
+name: univariate
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Univariate statistics.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'The module performs two sample tests (t-test and Wilcoxon rank test), analysis of variance and Kruskal-Wallis rank test, and correlation tests (by using either the pearson or the spearman correlation).'
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/odisce/
+categories:
+- Metabolomics
+- Transcriptomics
+- Proteomics
+- Statistics

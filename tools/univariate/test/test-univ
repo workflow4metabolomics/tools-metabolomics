@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Constants {{{1
+################################################################
+
+PROG_PATH=$(dirname $0)
+
+# MAIN {{{1
+################################################################
+
+$PROG_PATH/../univariate_wrapper.R dataMatrix_in $PROG_PATH/../test-data/dataMatrix.tsv sampleMetadata_in $PROG_PATH/../test-data/sampleMetadata.tsv variableMetadata_in $PROG_PATH/../test-data/variableMetadata.tsv facC qual tesC kruskal adjC fdr thrN 0.05 variableMetadata_out $PROG_PATH/outputVariableMetadata.tsv
+
+if ! diff "$PROG_PATH/outputVariableMetadata.tsv" "$PROG_PATH/../test-data/output-variableMetadata.tsv" ; then
+	echo "Incorrect output variable metadata." >&2
+	exit 1
+fi

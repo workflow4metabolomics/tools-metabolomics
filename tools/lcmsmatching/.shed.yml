@@ -1,0 +1,14 @@
+categories: [Metabolomics]
+description: '[Metabolomics][W4M][LC-MS] Annotate LCMS spectrum using an in-house spectra database.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project (http://workflow4metabolomics.org). Annotate LCMS spectrum using an in-house spectra database, provided as a TSV file. Two algorithms are proposed, a simple matching on MZ and RT values, and a more complex one that makes sure for each candidate that its precursor peak is matched.'
+name: lcmsmatching
+owner: prog
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/odisce/
+exclude: 
+ - test
+ - java-msdb
+ - Makefile
+ - bash-testthat
+ - lcms.biodb.cache

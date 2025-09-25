@@ -1,0 +1,9 @@
+name: transformation
+owner: ethevenot
+description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Transforms the dataMatrix intensity values.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'The module currently currently performs log2(1+X) and log10(1+X), where X is the data matrix (missing values remain at "NA").'
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+homepage_url: https://github.com/odisce/
+categories:
+- Metabolomics

@@ -1,0 +1,7 @@
+categories: [Metabolomics]
+description: 'Batch correction for extracted metabolomics data based on mixed models'
+homepage_url: http://workflow4metabolomics.org
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics
+long_description: 'This Galaxy tool is designed to correct batch and cohort effects in intensity measurements from metabolomic studies. Using a mixed-model approach, it adjusts intensity values while accounting for batch and injection order effects.'
+name: parsec
+owner: workflow4metabolomics

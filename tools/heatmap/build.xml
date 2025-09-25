@@ -1,0 +1,78 @@
+<project name="heatmap" default="all">
+
+	<property name="tool.xml" value="heatmap_config.xml"/>
+	<property name="conda.dir" value="${user.home}/w4m-conda"/>
+
+	<!--~~~
+	~ ALL ~
+	~~~~~-->
+
+	<target name="all"/>
+
+	<!--~~~~
+	~ TEST ~
+	~~~~~-->
+
+	<target name="test" depends="planemo.lint,planemo.test"/>
+
+	<!--~~~~~~~~~~~~
+	~ PLANEMO LINT ~
+	~~~~~~~~~~~~~-->
+
+	<target name="planemo.lint">
+		<exec executable="planemo" failonerror="true">
+			<arg value="lint"/>
+			<arg value="${tool.xml}"/>
+		</exec>
+	</target>
+
+	<!--~~~~~~~~~~~~
+	~ PLANEMO TEST ~
+	~~~~~~~~~~~~~-->
+
+	<target name="planemo.test" depends="planemo.conda.install">
+		<exec executable="planemo" failonerror="true">
+			<arg value="test"/>
+			<arg value="--conda_prefix"/>
+			<arg value="${conda.dir}"/>
+			<arg value="--galaxy_branch"/>
+			<arg value="release_16.01"/>
+			<arg value="--conda_dependency_resolution"/>
+			<arg value="${tool.xml}"/>
+		</exec>
+	</target>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~
+	~ PLANEMO CONDA INSTALL ~
+	~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<target name="planemo.conda.install" depends="planemo.conda.init">
+		<exec executable="planemo" failonerror="true">
+			<arg value="conda_install"/>
+			<arg value="--conda_prefix"/>
+			<arg value="${conda.dir}"/>
+			<arg value="${tool.xml}"/>
+		</exec>
+	</target>
+
+	<!--~~~~~~~~~~~~~~~~~~
+	~ PLANEMO CONDA INIT ~
+	~~~~~~~~~~~~~~~~~~~-->
+
+	<target name="planemo.conda.init">
+		<exec executable="planemo" failonerror="true">
+			<arg value="conda_init"/>
+			<arg value="--conda_prefix"/>
+			<arg value="${conda.dir}"/>
+		</exec>
+	</target>
+
+	<!--~~~~~
+	~ CLEAN ~
+	~~~~~~-->
+
+	<target name="clean">
+		<delete dir="${conda.dir}"/>
+	</target>
+
+</project>

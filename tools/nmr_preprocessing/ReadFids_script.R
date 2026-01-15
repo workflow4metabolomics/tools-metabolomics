@@ -5,7 +5,8 @@
 ##########################################################################
 # Function to convert a vector to a matrix
 vec2mat <- function(vec) {
-  return(matrix(vec, nrow = 1, dimnames = list(c(1), names(vec))))
+  return(matrix(vec, nrow = 1, dimnames = list(c(1), names(vec)))) # nolint: return_linter, line_length_linter.
+  # nolint: return_linter.
 }
 
 # Function to read FID files
@@ -48,7 +49,8 @@ read_fid <- function(path) {
   # Read fid depend on version of aquisition software
   fid_file <- file.path(path, "fid")
   if (neo) {
-    fid_on_disk <- readBin(fid_file, what = "double", n = TD, size = NA_integer,
+    fid_on_disk <- readBin(fid_file, what = "double", n = TD,
+                           size = NA_integer, # nolint: object_usage_linter.
                            signed = TRUE, endian = .Platform$endian)
   } else {
     fid_on_disk <- readBin(fid_file, what = "int", n = TD, size = 4L,
@@ -76,7 +78,7 @@ read_fid <- function(path) {
   fid_im_part <- fid_good_size[seq(from = 2, to = TD, by = 2)]
   fid <- complex(real = fid_re_part, imaginary = fid_im_part)
 
-  return(list(fid = fid, params = params))
+  return(list(fid = fid, params = params)) # nolint: return_linter.
 }
 
 # Function to obtain path to files
@@ -86,11 +88,11 @@ get_dirs_containing_fid <- function(path) {
     cond <- sapply(subdirs, function(x) {
       content <- dir(x)
       # subdirs must contain fid, acqu and acqus files
-      return("fid" %in% content && "acqu" %in% content && "acqus" %in% content)
+      return("fid" %in% content && "acqu" %in% content && "acqus" %in% content) # nolint: return_linter, line_length_linter.
     })
     subdirs <- subdirs[cond]
   }
-  return(subdirs)
+  return(subdirs) # nolint: return_linter.
 }
 
 # Function to xxx
@@ -156,7 +158,7 @@ end_treatment <- function(name, begin_info, signal_data) {
   if (begin_info[["vec"]]) {
     signal_data <- signal_data[1, ]
   }
-  return(signal_data)
+  return(signal_data) # nolint: return_linter.
 }
 
 # Function to check arguments
@@ -240,13 +242,13 @@ get_title <- function(path, l, subdirs) {
       title <- basename(path)
     }
   }
-  return(title)
+  return(title) # nolint: return_linter.
 }
 
 # Function to read parameter values for fid_info in the read_fids function
 read_params <- function(file, params_name) {
   is_digit <- function(c) {
-    return(suppressWarnings(!is.na(as.numeric(c))))
+    return(suppressWarnings(!is.na(as.numeric(c)))) # nolint: return_linter.
   }
   lines <- readLines(file)
   params <- sapply(params_name, function(x) NULL)
@@ -307,7 +309,7 @@ read_params <- function(file, params_name) {
     }
     params[paramName] <- as.numeric(substr(line, first, last))
   }
-  return(params)
+  return(params) # nolint: return_linter.
 }
 
 # Function to read all fid's in the directory

@@ -1,5 +1,5 @@
 ## Libraries laoding
-## ------------------------------
+## -----------------
 library(ptw)
 library(Matrix)
 library(ggplot2)
@@ -8,22 +8,22 @@ library(reshape2)
 
 # In-house function for argument parsing
 parse_args <- function() {
-    args <- commandArgs()
-    start <- which(args == "--args")[1] + 1
-    if (is.na(start)) {
-        return(list())
-    }
-    seq_by2 <- seq(start, length(args), by = 2)
-    result <- as.list(args[seq_by2 + 1])
-    names(result) <- args[seq_by2]
-    return(result)
+  args <- commandArgs()
+  start <- which(args == "--args")[1] + 1
+  if (is.na(start)) {
+    return(list())
+  }
+  seq_by2 <- seq(start, length(args), by = 2)
+  result <- as.list(args[seq_by2 + 1])
+  names(result) <- args[seq_by2]
+  return(result) # nolint: return_linter.
 }
 
 # R script call
 source_local <- function(fname) {
-    argv <- commandArgs(trailingOnly = FALSE)
-    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-    source(paste(base_dir, fname, sep = "/"))
+  argv <- commandArgs(trailingOnly = FALSE)
+  base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+  source(paste(base_dir, fname, sep = "/"))
 }
 # Import the different functions
 source_local("NmrPreprocessing_script.R")
@@ -32,23 +32,24 @@ source_local("DrawFunctions.R")
 ## ------------------------------
 ## Script
 ## ------------------------------
-runExampleL <- FALSE
+run_example_l <- FALSE
 
-if (!runExampleL) {
-    argLs <- unlist(parse_args())
+if (!run_example_l) {
+  arg_ls <- unlist(parse_args())
 }
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
-print(argLs)
+print(arg_ls)
 
 ## ------------------------------
 ## Constants
 ## ------------------------------
-topEnvC <- environment()
-flagC <- "\n"
+top_env_c <- environment()
+flag_c <- "\n"
 
 ## Starting
-cat("\nStart of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), "\n", sep = "")
+cat("\nStart of 'Preprocessing' Galaxy module call: ",
+    as.character(Sys.time()), "\n", sep = "")
 
 ## ======================================================
 ## ======================================================
@@ -57,54 +58,55 @@ cat("\nStart of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()),
 ## ======================================================
 
 # graphical inputs
-FirstOPCGraph <- argLs[["FirstOPCGraph"]]
-SSGraph <- argLs[["SSGraph"]]
-ApodGraph <- argLs[["ApodGraph"]]
-FTGraph <- argLs[["FTGraph"]]
-SRGraph <- argLs[["SRGraph"]]
-ZeroOPCGraph <- argLs[["ZeroOPCGraph"]]
-BCGraph <- argLs[["BCGraph"]]
-FinalGraph <- argLs[["FinalGraph"]]
+first_opc_graph <- arg_ls[["FirstOPCGraph"]]
+ss_graph <- arg_ls[["SSGraph"]]
+apod_graph <- arg_ls[["ApodGraph"]]
+ft_graph <- arg_ls[["FTGraph"]]
+sr_graph <- arg_ls[["SRGraph"]]
+zero_opc_graph <- arg_ls[["ZeroOPCGraph"]]
+bc_graph <- arg_ls[["BCGraph"]]
+final_graph <- arg_ls[["FinalGraph"]]
 
 # 1rst order phase correction ------------------------
 # Inputs
 ## Data matrix
-Fid_data0 <- read.table(argLs[["dataMatrixFid"]], header = TRUE, check.names = FALSE, sep = "\t")
-# Fid_data0 <- Fid_data0[,-1]
-Fid_data0 <- as.matrix(Fid_data0)
+fid_data0 <- read.table(arg_ls[["dataMatrixFid"]], header = TRUE,
+                        check.names = FALSE, sep = "\t")
+fid_data0 <- as.matrix(fid_data0)
 
 ## Samplemetadata
-samplemetadataFid <- read.table(argLs[["sampleMetadataFid"]], check.names = FALSE, header = TRUE, sep = "\t")
-samplemetadataFid <- as.matrix(samplemetadataFid)
+samplemetadata_fid <- read.table(arg_ls[["sampleMetadataFid"]],
+                                 check.names = FALSE, header = TRUE, sep = "\t")
+samplemetadata_fid <- as.matrix(samplemetadata_fid)
 
 # water and solvent(s) correction ------------------------
 # Inputs
-lambda <- as.numeric(argLs[["lambda"]])
+lambda <- as.numeric(arg_ls[["lambda"]])
 
 # apodization -----------------------------------------
 # Inputs
 phase <- 0
-rectRatio <- 1 / 2
-gaussLB <- 1
-expLB <- 1
-apodization <- argLs[["apodizationMethod"]]
+rect_ratio <- 1 / 2
+gauss_lb <- 1
+exp_lb <- 1
+apodization <- arg_ls[["apodizationMethod"]]
 
 if (apodization == "exp") {
-    expLB <- as.numeric(argLs[["expLB"]])
+  exp_lb <- as.numeric(arg_ls[["expLB"]])
 } else if (apodization == "cos2") {
-    phase <- as.numeric(argLs[["phase"]])
+  phase <- as.numeric(arg_ls[["phase"]])
 } else if (apodization == "hanning") {
-    phase <- as.numeric(argLs[["phase"]])
+  phase <- as.numeric(arg_ls[["phase"]])
 } else if (apodization == "hamming") {
-    phase <- as.numeric(argLs[["phase"]])
+  phase <- as.numeric(arg_ls[["phase"]])
 } else if (apodization == "blockexp") {
-    rectRatio <- as.numeric(argLs[["rectRatio"]])
-    expLB <- as.numeric(argLs[["expLB"]])
+  rect_ratio <- as.numeric(arg_ls[["rectRatio"]])
+  exp_lb <- as.numeric(arg_ls[["expLB"]])
 } else if (apodization == "blockcos2") {
-    rectRatio <- as.numeric(argLs[["rectRatio"]])
+  rect_ratio <- as.numeric(arg_ls[["rectRatio"]])
 } else if (apodization == "gauss") {
-    rectRatio <- as.numeric(argLs[["rectRatio"]])
-    gaussLB <- as.numeric(argLs[["gaussLB"]])
+  rect_ratio <- as.numeric(arg_ls[["rectRatio"]])
+  gauss_lb <- as.numeric(arg_ls[["gaussLB"]])
 }
 
 # Fourier transform ----------------------------------
@@ -113,283 +115,243 @@ if (apodization == "exp") {
 # Zero Order Phase Correction -------------------------------
 # Inputs
 angle <- NULL
-excludeZOPC <- NULL
+exclude_zopc <- NULL
 
-zeroOrderPhaseMethod <- argLs[["zeroOrderPhaseMethod"]]
+zero_order_phase_method <- arg_ls[["zeroOrderPhaseMethod"]]
 
-if (zeroOrderPhaseMethod == "manual") {
-    angle <- argLs[["angle"]]
+if (zero_order_phase_method == "manual") {
+  angle <- arg_ls[["angle"]]
 }
 
-excludeZoneZeroPhase <- argLs[["excludeZoneZeroPhase.choice"]]
-if (excludeZoneZeroPhase == "YES") {
-    excludeZoneZeroPhaseList <- list()
-    for (i in which(names(argLs) == "excludeZoneZeroPhase_left")) {
-        excludeZoneZeroPhaseLeft <- as.numeric(argLs[[i]])
-        excludeZoneZeroPhaseRight <- as.numeric(argLs[[i + 1]])
-        excludeZoneZeroPhaseList <- c(excludeZoneZeroPhaseList, list(c(excludeZoneZeroPhaseLeft, excludeZoneZeroPhaseRight)))
-    }
-    excludeZOPC <- excludeZoneZeroPhaseList
+exclude_zone_zerophase <- arg_ls[["excludeZoneZeroPhase.choice"]]
+if (exclude_zone_zerophase == "YES") {
+  exclude_zone_zerophase_list <- list()
+  for (i in which(names(arg_ls) == "excludeZoneZeroPhase_left")) {
+    exclude_zone_zerophase_left <- as.numeric(arg_ls[[i]])
+    exclude_zone_zerophase_right <- as.numeric(arg_ls[[i + 1]])
+    exclude_zone_zerophase_list <- c(exclude_zone_zerophase_list,
+                                     list(c(exclude_zone_zerophase_left,
+                                            exclude_zone_zerophase_right)))
+  }
+  exclude_zopc <- exclude_zone_zerophase_list
 }
 
 # Internal referencering ----------------------------------
 # Inputs
-shiftTreshold <- 2
+shift_threshold <- 2
 ppm <- TRUE
-shiftReferencingRangeList <- NULL # fromto.RC
-pctNearValue <- 0.02 # pc
+shift_referencing_range_list <- NULL # fromto.RC
+pct_near_value <- 0.02 # pc
 rowindex_graph <- NULL
 ppm_ref <- 0 # ppm.ref
 
-# shiftReferencing <- argLs[["shiftReferencing"]]
-# print(shiftReferencing)
-#
-# if (shiftReferencing=="YES") {
-#
-# shiftReferencingMethod <- argLs[["shiftReferencingMethod"]]
-#
-# if (shiftReferencingMethod == "thres")	{
-# 	shiftTreshold <- argLs[["shiftTreshold"]]
-# }
-
-shiftReferencingRange <- argLs[["shiftReferencingRange"]]
-if (shiftReferencingRange == "near0") {
-    pctNearValue <- as.numeric(argLs[["pctNearValue"]])
+shift_referencing_range <- arg_ls[["shiftReferencingRange"]]
+if (shift_referencing_range == "near0") {
+  pct_near_value <- as.numeric(arg_ls[["pctNearValue"]])
 }
 
-if (shiftReferencingRange == "window") {
-    shiftReferencingRangeList <- list()
-    for (i in which(names(argLs) == "shiftReferencingRangeLeft"))
-    {
-        shiftReferencingRangeLeft <- as.numeric(argLs[[i]])
-        shiftReferencingRangeRight <- as.numeric(argLs[[i + 1]])
-        shiftReferencingRangeList <- c(shiftReferencingRangeList, list(c(shiftReferencingRangeLeft, shiftReferencingRangeRight)))
-    }
+if (shift_referencing_range == "window") {
+  shift_referencing_range_list <- list()
+  for (i in which(names(arg_ls) == "shiftReferencingRangeLeft")) {
+    shift_referencing_range_left <- as.numeric(arg_ls[[i]])
+    shift_referencing_range_right <- as.numeric(arg_ls[[i + 1]])
+    shift_referencing_range_list <- c(shift_referencing_range_list,
+                                      list(c(shift_referencing_range_left,
+                                             shift_referencing_range_right)))
+  }
 }
-shiftHandling <- argLs[["shiftHandling"]]
+shift_handling <- arg_ls[["shift_handling"]]
 
-ppmvalue <- as.numeric(argLs[["ppmvalue"]])
+ppmvalue <- as.numeric(arg_ls[["ppmvalue"]])
 # }
 
 # Baseline Correction -------------------------------
 # Inputs
-lambdaBc <- as.numeric(argLs[["lambdaBc"]])
-pBc <- as.numeric(argLs[["pBc"]])
-epsilon <- as.numeric(argLs[["epsilon"]])
+lambda_bc <- as.numeric(arg_ls[["lambdaBc"]])
+p_bc <- as.numeric(arg_ls[["pBc"]])
+epsilon <- as.numeric(arg_ls[["epsilon"]])
 
-excludeBC <- NULL
+exclude_bc <- NULL
 
-excludeZoneBC <- argLs[["excludeZoneBC.choice"]]
-if (excludeZoneBC == "YES") {
-    excludeZoneBCList <- list()
-    for (i in which(names(argLs) == "excludeZoneBC_left")) {
-        excludeZoneBCLeft <- as.numeric(argLs[[i]])
-        excludeZoneBCRight <- as.numeric(argLs[[i + 1]])
-        excludeZoneBCList <- c(excludeZoneBCList, list(c(excludeZoneBCLeft, excludeZoneBCRight)))
-    }
-    excludeBC <- excludeZoneBCList
+exclude_zone_bc <- arg_ls[["excludeZoneBC.choice"]]
+if (exclude_zone_bc == "YES") {
+  exclude_zone_bc_list <- list()
+  for (i in which(names(arg_ls) == "excludeZoneBC_left")) {
+    exclude_zone_bc_left <- as.numeric(arg_ls[[i]])
+    exclude_zone_bc_right <- as.numeric(arg_ls[[i + 1]])
+    exclude_zone_bc_list <- c(exclude_zone_bc_list,
+                              list(c(exclude_zone_bc_left,
+                                     exclude_zone_bc_right)))
+  }
+  exclude_bc <- exclude_zone_bc_list
 }
 
 # transformation of negative values -------------------------------
 # Inputs
-NegativetoZero <- argLs[["NegativetoZero"]]
+negative_to_zero <- arg_ls[["NegativetoZero"]]
 
 # Outputs
-nomGraphe <- argLs[["graphOut"]]
-log <- argLs[["logOut"]]
+nom_graphe <- arg_ls[["graphOut"]]
+log <- arg_ls[["logOut"]]
 
 ## Checking arguments
 ## -------------------
-error.stock <- "\n"
-if (length(error.stock) > 1) {
-    stop(error.stock)
+error_stock <- "\n"
+if (length(error_stock) > 1) {
+  stop(error_stock)
 }
 
 ## ======================================================
 ## Computation
 ## ======================================================
-pdf(nomGraphe, onefile = TRUE, width = 13, height = 13)
+pdf(nom_graphe, onefile = TRUE, width = 13, height = 13)
 
 # FirstOrderPhaseCorrection ---------------------------------
-Fid_data <- GroupDelayCorrection(Fid_data0, Fid_info = samplemetadataFid, group_delay = NULL)
+fid_data <- GroupDelayCorrection(fid_data0, Fid_info = samplemetadata_fid,
+                                 group_delay = NULL)
 
-if (FirstOPCGraph == "YES") {
-    title <- "FIDs after Group Delay Correction"
-    DrawSignal(Fid_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+if (first_opc_graph == "YES") {
+  title <- "FIDs after Group Delay Correction"
+  DrawSignal(fid_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4, main = title,
+    createWindow = FALSE
+  )
 }
 
 # SolventSuppression ---------------------------------
-Fid_data <- SolventSuppression(Fid_data, lambda.ss = lambda, ptw.ss = TRUE, plotSolvent = F, returnSolvent = F)
+fid_data <- SolventSuppression(fid_data, lambda.ss = lambda,
+                               ptw.ss = TRUE, plotSolvent = FALSE,
+                               returnSolvent = FALSE)
 
 if (SSGraph == "YES") {
-    title <- "FIDs after Solvent Suppression "
-    DrawSignal(Fid_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "FIDs after Solvent Suppression "
+  DrawSignal(fid_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4,
+    main = title, createWindow = FALSE
+  )
 }
 
 
 # Apodization ---------------------------------
-Fid_data <- Apodization(Fid_data,
-    Fid_info = samplemetadataFid, DT = NULL,
-    type.apod = apodization, phase = phase, rectRatio = rectRatio, gaussLB = gaussLB, expLB = expLB, plotWindow = F, returnFactor = F
+fid_data <- Apodization(fid_data, Fid_info = samplemetadata_fid, DT = NULL,
+  type.apod = apodization, phase = phase, rectRatio = rect_ratio,
+  gaussLB = gauss_lb, expLB = exp_lb, plotWindow = FALSE, returnFactor = FALSE
 )
 
 if (ApodGraph == "YES") {
-    title <- "FIDs after Apodization"
-    DrawSignal(Fid_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "FIDs after Apodization"
+  DrawSignal(fid_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4,
+    main = title, createWindow = FALSE
+  )
 }
 
-
 # FourierTransform ---------------------------------
-Spectrum_data <- FourierTransform(Fid_data, Fid_info = samplemetadataFid, reverse.axis = TRUE)
+spectrum_data <- FourierTransform(fid_data, Fid_info = samplemetadata_fid,
+                                  reverse.axis = TRUE)
 
 
 if (FTGraph == "YES") {
-    title <- "Fourier transformed spectra"
-    DrawSignal(Spectrum_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "Fourier transformed spectra"
+  DrawSignal(spectrum_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  )
 }
 
-
-# if (FTGraph == "YES") {
-#   title = "Fourier transformed spectra"
-# DrawSignal(Spectrum_data, subtype = "stacked",
-#            ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-#            xlab = "Frequency", num.stacked = 4,
-#            main = title, createWindow=FALSE)
-# }
-
 # ZeroOrderPhaseCorrection ---------------------------------
-Spectrum_data <- ZeroOrderPhaseCorrection(Spectrum_data,
-    type.zopc = zeroOrderPhaseMethod,
-    plot_rms = NULL, returnAngle = FALSE,
-    createWindow = TRUE, angle = angle,
-    plot_spectra = FALSE,
-    ppm.zopc = TRUE, exclude.zopc = excludeZOPC
+spectrum_data <- ZeroOrderPhaseCorrection(spectrum_data,
+  type.zopc = zero_order_phase_method, plot_rms = NULL, returnAngle = FALSE,
+  createWindow = TRUE, angle = angle, plot_spectra = FALSE,
+  ppm.zopc = TRUE, exclude.zopc = exclude_zopc
 )
 
 
 # InternalReferencing ---------------------------------
 # if (shiftReferencing=="YES") {
-Spectrum_data <- InternalReferencing(Spectrum_data, samplemetadataFid,
-    method = "max", range = shiftReferencingRange,
-    ppm.value = ppmvalue, shiftHandling = shiftHandling, ppm.ir = TRUE,
-    fromto.RC = shiftReferencingRangeList, pc = pctNearValue
+spectrum_data <- InternalReferencing(spectrum_data, samplemetadata_fid,
+  method = "max", range = shift_referencing_range,
+  ppm.value = ppmvalue, shiftHandling = shift_handling, ppm.ir = TRUE,
+  fromto.RC = shift_referencing_range_list, pc = pct_near_value
 )
 
 if (SRGraph == "YES") {
-    title <- "Spectra after Shift Referencing"
-    DrawSignal(Spectrum_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "Spectra after Shift Referencing"
+  DrawSignal(spectrum_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  )
 }
 
 # }
 
 if (ZeroOPCGraph == "YES") {
-    title <- "Spectra after Zero Order Phase Correction"
-    DrawSignal(Spectrum_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "Spectra after Zero Order Phase Correction"
+  DrawSignal(spectrum_data, subtype = "stacked",
+    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  )
 }
 
 
 # BaselineCorrection ---------------------------------
-Spectrum_data <- BaselineCorrection(Spectrum_data,
-    ptw.bc = TRUE, lambda.bc = lambdaBc,
-    p.bc = pBc, eps = epsilon, ppm.bc = TRUE,
-    exclude.bc = excludeBC,
-    returnBaseline = F
+spectrum_data <- BaselineCorrection(spectrum_data, ptw.bc = TRUE,
+  lambda.bc = lambda_bc, p.bc = p_bc, eps = epsilon, ppm.bc = TRUE,
+  exclude.bc = exclude_bc, returnBaseline = FALSE
 )
 
-
-
-if (BCGraph == "YES") {
-    title <- "Spectra after Baseline Correction"
-    DrawSignal(Spectrum_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+if (bc_graph == "YES") {
+  title <- "Spectra after Baseline Correction"
+  DrawSignal(spectrum_data, subtype = "stacked",
+             ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+             xlab = "Frequency", num.stacked = 4, main = title,
+             createWindow = FALSE)
 }
 
-# if (BCGraph == "YES") {
-# title = "Spectra after Baseline Correction"
-# DrawSignal(Spectrum_data, subtype = "stacked",
-#          ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-#          xlab = "Frequency", num.stacked = 4,
-#          main = title, createWindow=FALSE)
-# }
 
 # NegativeValuesZeroing ---------------------------------
-if (NegativetoZero == "YES") {
-    Spectrum_data <- NegativeValuesZeroing(Spectrum_data)
+if (negative_to_zero == "YES") {
+  spectrum_data <- NegativeValuesZeroing(spectrum_data)
 }
-print(Spectrum_data[1:5, 1:5])
+print(spectrum_data[1:5, 1:5])
 if (FinalGraph == "YES") {
-    title <- "Final preprocessed spectra"
-    DrawSignal(Spectrum_data,
-        subtype = "stacked",
-        ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = T,
-        xlab = "Frequency", num.stacked = 4,
-        main = title, createWindow = FALSE
-    )
+  title <- "Final preprocessed spectra"
+  DrawSignal(spectrum_data, subtype = "stacked",
+             ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+             xlab = "Frequency", num.stacked = 4, main = title,
+             createWindow = FALSE)
 }
 invisible(dev.off())
 
-# data_variable <- matrix(NA, nrow = 1, ncol = dim(Spectrum_data)[2], dimnames = list("ID", NULL))
-# colnames(data_variable) <- colnames(Spectrum_data)
-# data_variable[1,] <- colnames(data_variable)
-
-data_variable <- matrix(NA, nrow = 1, ncol = dim(Spectrum_data)[2], dimnames = list("ID", NULL))
-colnames(data_variable) <- colnames(Spectrum_data)
+# Variable metadata creation
+data_variable <- matrix(NA, nrow = 1, ncol = dim(spectrum_data)[2],
+                        dimnames = list("ID", NULL))
+colnames(data_variable) <- colnames(spectrum_data)
 data_variable[1, ] <- colnames(data_variable)
 
-
-## ======================================================
 ## ======================================================
 ## Saving
 ## ======================================================
-## ======================================================
 
 # Data Matrix
-write.table(round(t(Re(Spectrum_data)), 6), file = argLs[["dataMatrix"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(round(t(Re(spectrum_data)), 6), file = arg_ls[["dataMatrix"]],
+            quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # Variable metadata
-write.table(data_variable, file = argLs[["variableMetadata"]], quote = FALSE, row.names = TRUE, sep = "\t", col.names = TRUE)
+write.table(data_variable, file = arg_ls[["variableMetadata"]], quote = FALSE,
+            row.names = TRUE, sep = "\t", col.names = TRUE)
 
 # input arguments
 cat("\n INPUT and OUTPUT ARGUMENTS :\n")
-argLs
+arg_ls
 
 ## Ending
 cat("\nVersion of R librairies")
 print(sessionInfo())
-cat("\nEnd of 'Preprocessing' Galaxy module call: ", as.character(Sys.time()), sep = "")
+cat("\nEnd of 'Preprocessing' Galaxy module call: ",
+    as.character(Sys.time()), sep = "")
 
 rm(list = ls())

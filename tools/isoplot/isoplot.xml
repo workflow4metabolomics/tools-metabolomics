@@ -1,143 +1,119 @@
-<tool id='isoplot' name='Isoplot: Generate plots from isocor output' version='@TOOL_VERSION@+galaxy2' profile='20.01'>
-    <macros>
-        <token name="@TOOL_VERSION@">1.3.1</token>
-    </macros>
-    <requirements>
-        <requirement type='package' version='3.0.3'>jinja2</requirement>
-        <requirement type='package' version='1.3.1'>zlib</requirement>
-        <requirement type='package' version='@TOOL_VERSION@'>isoplot</requirement>
-    </requirements>
-    <command detect_errors="exit_code"><![CDATA[
-         isoplot '$datafile' 'galaxy' '$format' --value '$value' --template '$template_file' --zip '$plots_output' $SP.barplot $SP.meaned_barplot 
-         $SP.static_heatmap $SP.static_clustermap $IP.interactive_barplot $IP.interactive_meanplot $IP.interactive_heatmap
-#if $unstack:
-    -s
-#end if
-#if $verbosity:
-    -v
-#end if
-#if $annotation:
-    -a
-#end if
--g > '$data_output' 2> '$log_output'
-    ]]></command>
-    <inputs>
-        <param name='datafile' type='data' format='csv,tabular' multiple='true' label='Upload data that has been corrected by Isocor (.tsv format)' />
-        <param name='template_file' type='data' format='csv,xlsx' multiple='true' label='Upload template file containing plot metadata (.xlsx format)' argument='--template'/>
-        <!--param name='run_name' type='text' label='Run name' /-->
-        <param name='format' type='select' label='Plot format'>
-            <option value='pdf'>pdf</option>
-            <option value='jpeg'>jpeg</option>
-            <option value='png'>png</option>
-            <option value='svg'>svg</option>
-            <option value='html'>html</option>
-        </param>
-        <param name='value' type='select' label='Data to plot' >
-            <option value='corrected_area'>Corrected Area</option>
-            <option value='isotopologue_fraction'>Isotopologue Fraction</option>
-            <option value='mean_enrichment'>Mean Enrichment</option>
-        </param>
-        <section name='SP' title='Select static plots to generate'>
-            <param type='boolean' argument='--barplot' label='Flag to generate barplots' truevalue='-bp' falsevalue=''/>
-            <param type='boolean' argument='--meaned_barplot' label='Flag to generate meaned barplots' truevalue='-mb' falsevalue=''/>
-            <!--<param type='boolean' name='generate_areaplot' label='Flag to generate stacked area plots'
-                   argument='-sa' optional='true'/>/-->
-            <param type='boolean' argument='--static_heatmap' label='Flag to generate heatmap' truevalue='-hm' falsevalue=''/>
-            <param type='boolean' argument='--static_clustermap' label='Flag to generate clustermap' truevalue='-cm' falsevalue=''/>
-        </section>
-        <section name='IP' title='Select interactive plots to generate'>
-            <param type='boolean' argument='--interactive_barplot' label='Flag to generate barplots' truevalue='-IB' falsevalue=''/>
-            <param type='boolean' argument='--interactive_meanplot' label='Flag to generate meaned barplots' truevalue='-IM' falsevalue=''/>
-           <!-- <param type='boolean' name='generate_areaplot' label='Flag to generate stacked area plots' argument='-IS'
-                   optional='true'/>-->
-            <param type='boolean' argument='--interactive_heatmap' label='Flag to generate heatmap' truevalue='-HM' falsevalue=''/>
-        </section>
-        <param type='boolean' name='unstack' label='Flag to unstack bars in barplots' truevalue='-s' falsevalue=''/>
-        <param type='boolean' name='verbosity' label='Flag to get debug information' truevalue='-v' falsevalue=''/>
-        <param type='boolean' name='annotation' label='Flag to add annotations on the maps' truevalue='-a' falsevalue=''/>
-    </inputs>
-    
-    <outputs>
-        <data name='data_output' format='csv' label='Formatted data used for plotting' />
-        <data name='plots_output' format='zip' label='Resulting plots' />
-        <data name='log_output' format='txt' label='Run Info' />
-    </outputs>
-    
-    <tests>
-        <test expect_test_failure="true">
-    	  <param name='datafile' value='input_data.csv' />
-    	  <param name='template_file' value='input_template.xlsx'/>
-    	  <param name='format' value='pdf' />
-    	  <param name='value' value='isotopologue_fraction' />
-    	  <section name='SP' >
-    	   <param name='barplot' value='true' />
-    	  </section>
-    	  <section name='IP' >
-    	   <param name='interactive_barplot' value='true' />
-    	  </section>
-          <output name='data_output' file='data_out.csv'/>
-          <output name='plots_output'>
-            <assert_contents>
-                <has_size value='2852573' delta='1000' />
-            </assert_contents>
-            </output>
-    	  <output name='log_output'>
-            <assert_contents>
-                <has_text text='- isoplot_log.main.cli_process - INFO - Plots created. Run is terminated' />
-            </assert_contents>
-          </output>
-        </test>
-    </tests>  
-    
-    <help><![CDATA[
+<tool id="isoplot" name="IsoPlot" version="0.1">
+  <description>Exécute la fonction graphstatsr::IsoPlot()</description>
 
-.. class:: warningmark
+  <requirements>
+    <requirement type="package" version="2.6.1">r-graphstatsr</requirement>
+    <requirement type="package" version="4.4.3">r-base</requirement>
+  </requirements>
 
- We strongly encourage you to read the `documentation <https://isoplot.readthedocs.io/en/latest/>`_ before using Isoplot.
+  <stdio>
+    <regex match="Error" source="stderr" level="fatal" />
+    <regex match="Fatal" source="stderr" level="fatal" />
+    <exit_code range="1:" level="fatal" />
+  </stdio>
 
-Isoplot2: Plotting isotopic labelling MS data
-=============================================
+  <command><![CDATA[
+    Rscript -e "library(graphstatsr); print('Running GraphstatsR'); graphstatsr::IsoPlot_fun(feat_table = '$feat_tab', metadata_table = '$meta_tab', groups = '$groups', relativeCID = '$relative_cid', dodgeCID = '$dodge_cid', outpath = './isoplot_results', pdf = TRUE, img = TRUE); print('OK'); print(getwd()); tar('isoplot_results.tgz', list.files('./isoplot_results', full.names = TRUE), compression = 'gzip'); print(dir());print(file.exists('isoplot_results.tgz'))"
+  ]]></command>
 
-**Positional arguments:**
+  <inputs>
+        <param name='feat_tab' type='data' format='tabular' label='Upload feature table data that has been corrected by Isocor (tabular/tsv format)' />
+        <param name='meta_tab' type='data' format='tabular,csv' label='Upload metadata table (tabular, tsv, csv format)'/>
+        <param name='groups' type='text' value='sample' label='Column name for grouping variable'/>
+        <param name='relative_cid' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use relative CID values'/>
+        <param name='dodge_cid' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='false' label='Dodge CID values'/>
+  </inputs>
 
-  input_path		Path to datafile
-  run_name              Name of the current run
-  format                Format of generated file
+  <outputs>
+    <data name="out_tgz" label="isoplot_results.tgz" format="tgz" from_work_dir="isoplot_results.tgz"/>
+  </outputs>
 
-**optional arguments:**
-  -h, --help            show this help message and exit
-  --value		Choices: "corrected_area", "isotopologue_fraction", "mean_enrichment". Select values to plot. This option can be given multiple times
 
-  -m METABOLITE         Metabolite(s) to plot. For all, type in 'all'                        
-  -c CONDITION          Condition(s) to plot. For all, type in 'all'
-  -t TIME               Time(s) to plot. For all, type in 'all'
-  -tp, --template TEMPLATE_PATH     Path to template file
+<tests>
+    <test expect_num_outputs="1">
+        <param name="feat_tab" value="02_isoplot_quantification_table_small.tsv" ftype="tabular"/>
+        <param name="meta_tab" value="02_isoplot_metadata_small.tsv" ftype="tabular"/>
+        <output name="out_tgz" file="isoplot_results.tgz" compare="sim_size" delta="20000" />
+    </test>
 
-  -sa, --stacked_areaplot  Create static stacked areaplot
-  -bp, --barplot           Create static barplot
-  -mb, --meaned_barplot    Create static barplot with meaned replicates
+        <!-- Test négatif : fichiers inversés (doit échouer) -->
+    <test expect_failure="true">
+        <param name="feat_tab" value="02_isoplot_metadata_small.csv"/>
+        <param name="meta_tab" value="02_isoplot_quantification_table_small.tsv"/>
+        <assert_stderr>
+            <has_text text="Error"/>
+        </assert_stderr>
+    </test>
+</tests>
 
-  -IB, --interactive_barplot		Create interactive stacked barplot
-  -IM, --interactive_stacked_meanplot		Create interactive stacked barplot with meaned replicates
-  -IS, --interactive_areaplot		Create interactive stacked areaplot
-  -hm, --static_heatmap		Create a static heatmap using mean enrichment data
-  -cm, --static_clustermap		Create a static heatmap with clustering using mean enrichment data
-  -HM, --interactive_heatmap		Create interactive heatmap using mean enrichment data
+        <!-- <outputs>
+            <data name="out_tgz" from_work_dir="isoplot_results.tgz">
+                <assert_contents>
+                    <has_size value="1000000" delta="5000"/>
+                </assert_contents>
+            </data>
+        </outputs> -->
 
-  -s, --stack           Add option if barplots should be unstacked
-  -v, --verbose         Turns logger to debug mode
-  -a, --annot           Add option if annotations should be added on maps
 
-    ]]></help>
-    <citations>
-        <citation type='bibtex'>
-    @misc{githubisoplot,
-      author = {Le Gregam, Loic},
-      year = {2021},
-      title = {isoplot},
-      publisher = {GitHub},
-      journal = {GitHub repository},
-      url = {https://github.com/llegregam},
-    }</citation>
-        </citations>
-    </tool>
+  <help><![CDATA[
+
+  .. class:: warningmark
+
+================
+ISOPLOT
+================
+
+-----------
+Description
+-----------
+
+  Read the `documentation <https://graphstats-a3d646.pages-forge.inrae.fr/reference/IsoPlot_fun.html>`_ of IsoPlot.
+
+  Isoplot is a software for the visualisation of MS data from C13 labelling experiments. It takes as input corrected MS data from IsoCor in tsv format. Isoplot outputs static plots that are then used for quality assessment, biological interpretation, project reports, published papers and so forth. First version of Isoplot (https://github.com/llegregam/Isoplot) has been developed in 2021. This new version of Isoplot is now integrated in the R package GraphStatsR (https://forge.inrae.fr/etienne.rifa/graphstats). It has been re-written using the R Shiny framework to provide a more user-friendly interface and new functionalities.
+
+  Online instance of GraphstatsR including IsoPlot: `https://graphstatsr.sk8.inrae.fr/ <https://graphstatsr.sk8.inrae.fr/>`_.
+
+---------------------------------------------------
+
+-----------
+Parameters
+-----------
+
+=============  ====================================================================
+Parameter      Description
+=============  ====================================================================
+feat_table     Feature table corrected by IsoCor (CSV or TSV format)
+metadata       Metadata table describing samples and experimental groups
+groups         Column name in metadata to use for grouping samples
+relativeCID    Display relative CID values (TRUE/FALSE)
+dodgeCID       Use dodged layout for CID plots (TRUE/FALSE)
+=============  ====================================================================
+
+---------------------------------------------------
+
+-----------
+Output
+-----------
+An archive (tgz) containing the following elements:
+
+- Isoplot A list of ggplot objects containing the barplots of the experimental isotopologue fraction of each metabolite with error bars
+
+- EnrC13_TotArea A list of ggplot objects containing the barplots of the mean EnrC13 and Total Area of each metabolite (one figure per metabolite)
+
+- EnrC13_TotArea_allMet A list of ggplot objects containing the barplots of the mean EnrC13 and Total Area of all metabolites (one figure per sample or group of samples)
+      ]]>
+  </help>
+
+  <citations>
+      <citation type='bibtex'>
+      @Manual{docGraphstatsR,
+        title = {GraphstatsR, A shiny app allowing users to generate advanced interactive graphics and statistical tests for metabolomic data.},
+        author = {Etienne Rifa},
+        year = {2025},
+        note = {R package version 2.5.0},
+        url = {https://forge.inrae.fr/etienne.rifa/graphstats},
+      }
+      </citation>
+  </citations>
+
+</tool>

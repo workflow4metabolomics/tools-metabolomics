@@ -1,4 +1,4 @@
-<tool id="graphstatsr" name="GraphstatsR" version="2.6.1" profile="23.0">
+<tool id="isoplot" name="IsoPlot" version="2.6.1" profile="23.0">
   <description>Exécute la fonction graphstatsr::IsoPlot_fun()</description>
 
   <requirements>
@@ -18,21 +18,21 @@
     graphstatsr::IsoPlot_fun(feat_table = '$feat_tab', metadata_table = '$meta_tab', groups = '$groups', relativeCID = '$relative_cid', dodgeCID = '$dodge_cid', outpath = './isoplot_results', pdf = TRUE, img = TRUE);
     print('OK');
     print(getwd());
-    tar('isoplot_results.tgz', list.files('./isoplot_results', full.names = TRUE), compression = 'gzip');
+    tar('$out_tgz', list.files('./isoplot_results', full.names = TRUE), compression = 'gzip');
     print(dir());
-    print(file.exists('isoplot_results.tgz'))"
+    print(file.exists('$out_tgz'))"
   ]]></command>
 
   <inputs>
-        <param name='feat_tab' type='data' format='tabular' label='Upload feature table data that has been corrected by Isocor (tabular/tsv format)' />
-        <param name='meta_tab' type='data' format='tabular,csv' label='Upload metadata table (tabular, tsv, csv format)'/>
+        <param name='feat_tab' type='data' format='tabular,tsv' label='Feature table data that has been corrected by Isocor (tabular/tsv format)' />
+        <param name='meta_tab' type='data' format='tabular,tsv,csv' label='Metadata table (tabular, tsv, csv format)'/>
         <param name='groups' type='text' value='sample' label='Column name for grouping variable'/>
         <param name='relative_cid' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use relative CID values'/>
         <param name='dodge_cid' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='false' label='Dodge CID values'/>
   </inputs>
 
   <outputs>
-    <data name="out_tgz" label="isoplot_results.tgz" format="tgz" from_work_dir="isoplot_results.tgz"/>
+    <data name="out_tgz" label="Archive with results of Isoplot." format="tgz"/>
   </outputs>
 
 

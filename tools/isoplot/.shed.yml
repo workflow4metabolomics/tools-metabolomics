@@ -1,4 +1,4 @@
-name: graphstatsr::isoplot
+name: isoplot
 owner: workflow4metabolomics
 description: Isoplot is a software for the visualisation of MS data from C13 labelling experiments
 categories: [Metabolomics, Visualization]

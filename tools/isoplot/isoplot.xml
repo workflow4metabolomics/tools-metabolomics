@@ -92,6 +92,27 @@ dodgeCID       Use dodged layout for CID plots (TRUE/FALSE)
 ---------------------------------------------------
 
 -----------
+Inputs
+-----------
+
+- Feature table corrected by IsoCor (https://isocor.readthedocs.io/en/latest/) with folowing columns:
+
+    - 'sample' : Name of the sample containing the analyzed metabolite
+
+    - 'metabolite' : name of the metabolite
+
+    - 'isotopologue' : number of the metabolite’s Isotopologue
+
+    - 'corrected area' : area of the analyzed metabolite’s isotopologue after correction by Isocor
+
+    - 'isotopologue fraction': Fraction of an isotopologue relative to the total pool of the metabolite’s isotopologues
+
+    - 'mean enrichment': Mean molecular content in isotopic tracer in the metabolite
+
+- Metadata table describing samples and experimental groups, first column (named 'sample') must contain sample IDs matching those in the feature table
+
+
+-----------
 Output
 -----------
 An archive (tgz) containing the following elements:

@@ -1,5 +1,5 @@
-<tool id="isoplot" name="IsoPlot" version="0.1">
-  <description>Exécute la fonction graphstatsr::IsoPlot()</description>
+<tool id="graphstatsr" name="GraphstatsR" version="2.6.1" profile="23.0">
+  <description>Exécute la fonction graphstatsr::IsoPlot_fun()</description>
 
   <requirements>
     <requirement type="package" version="2.6.1">r-graphstatsr</requirement>
@@ -13,7 +13,14 @@
   </stdio>
 
   <command><![CDATA[
-    Rscript -e "library(graphstatsr); print('Running GraphstatsR'); graphstatsr::IsoPlot_fun(feat_table = '$feat_tab', metadata_table = '$meta_tab', groups = '$groups', relativeCID = '$relative_cid', dodgeCID = '$dodge_cid', outpath = './isoplot_results', pdf = TRUE, img = TRUE); print('OK'); print(getwd()); tar('isoplot_results.tgz', list.files('./isoplot_results', full.names = TRUE), compression = 'gzip'); print(dir());print(file.exists('isoplot_results.tgz'))"
+    Rscript -e "library(graphstatsr)
+    print('Running GraphstatsR')
+    graphstatsr::IsoPlot_fun(feat_table = '$feat_tab', metadata_table = '$meta_tab', groups = '$groups', relativeCID = '$relative_cid', dodgeCID = '$dodge_cid', outpath = './isoplot_results', pdf = TRUE, img = TRUE)
+    print('OK')
+    print(getwd())
+    tar('isoplot_results.tgz', list.files('./isoplot_results', full.names = TRUE), compression = 'gzip')
+    print(dir())
+    print(file.exists('isoplot_results.tgz'))"
   ]]></command>
 
   <inputs>

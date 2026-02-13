@@ -1,5 +1,7 @@
-<tool id="plot_convex_hull" name="Plot Convex Hull" version="0.1+galaxy1" python_template_version="3.5" profile="24.2">
-    <description>This script plots a convex polygon around intensities based on injection order to visualize batch variability.</description>
+<tool id="plot_convex_hull" name="Plot Convex Hull" version="0.1.5+galaxy2" python_template_version="3.5"
+      profile="24.2">
+    <description>This tool plots a convex polygon around intensities based on injection order to visualize batch
+        variability.</description>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>
       <edam_topic>topic_0092</edam_topic>
@@ -9,10 +11,11 @@
       <person givenName="Etienne" familyName="Jules" email="etienne.jules@inrae.fr" />
     </creator>
     <requirements>
-      <requirement type="package" version="4.1.2">r-base</requirement>
+        <requirement type="package" version="4.1.2">r-base</requirement>
 	    <requirement type="package" version="3.3.5">r-ggplot2</requirement>
 	    <requirement type="package" version="1.6.6">r-optparse</requirement>
 	    <requirement type="package" version="1.0.10">r-dplyr</requirement>
+        <requirement type="package" version="0.1.5">r-dispersionindicators</requirement>
     </requirements>
     
     <required_files>
@@ -24,9 +27,9 @@
         --dataMatrix '$dataMatrix'
         --sampleMetadata '$sampleMetadata'
         --variableMetadata '$variableMetadata'
+        --sample_order_col '$sample_order_col'
+        --batch_col '$batch_col'
         --global '$global'
-        --multiple '$multiple'
-        --metabolite '$metabolite'
         --points '$points'
         --output '$output_name'
     ]]></command>
@@ -35,9 +38,17 @@
     	<param name='dataMatrix' type='data' format='txt' label='TSV File dataMatrix'/>
     	<param name='sampleMetadata' type='data' format='txt' label='TSV File sampleMetadata'/>
     	<param name='variableMetadata' type='data' format='txt' label='TSV File variableMetadata'/>
+        <param name='batch_col' type='data_column'
+               data_ref="sampleMetadata" label='The sampleMetadata column with batch information'/>
+        <param name='sample_order_col' type='data_column' data_ref="sampleMetadata"
+               label='The sampleMetadata column with sample order information'/>
+        <param name='metabolite' type='select' label='An optional subset of metabolites to plot'>
+            <options from_dataset="variableMetadata">
+                <column name="name" index="0"/>
+                <column name="value" index="0"/>
+            </options>
+        </param>
     	<param name='global' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use the global injection order not by batch'/>
-    	<param name='multiple' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Make multiple plot for multiple metabolite'/>
-    	<param name='metabolite' type='text' label='Metabolite name' value='Metabolite X'/>
     	<param name='points' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Display points on the graph'/>
     	<param name='output_name' type='text' label='Output file name' value='plot_convex_hull.pdf'/>
     </inputs>
@@ -52,9 +63,9 @@
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
             <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='1'/>
+            <param name="sample_order_col" value='2'/>
             <param name="global" value="TRUE"/>
-            <param name="multiple" value="TRUE"/>
-            <param name="metabolite" value="Metabolite X"/>
             <param name="points" value="TRUE"/>
             <param name="output_name" value="expected_plot.pdf"/>
             <output name="output_file" file="expected_plot.pdf"/>
@@ -67,10 +78,10 @@
 .. class:: infomark
 
 **Credits**
-  | **Original tool code:** Brice Mulot - PFEM ; UNH ; INRAE 
-  | **Original tool wrapping:** Etienne Jules & Brice Mulot - PFEM ; UNH ; INRAE ; MetaboHub 
-  | **Tool maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
-  | **Wrapper maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub 
+  | **Original tool code:** Brice Mulot - PFEM ; UNH ; INRAE
+  | **Original tool wrapping:** Etienne Jules & Brice Mulot - PFEM ; UNH ; INRAE ; MetaboHub
+  | **Tool maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub
+  | **Wrapper maintainer:** Etienne Jules - PFEM ; UNH ; INRAE ; MetaboHub
 
 .. class:: infomark
 
@@ -134,8 +145,8 @@ The output can be used to asses the dispersion of intensity values of metabolite
 EXAMPLE OF WORKFLOW POSITION
 ----------------------------
 
-|- After a MS extraction workflow, before batch correction
-|- After batch correction
+- After a MS extraction workflow, before batch correction
+- After batch correction
 
 ---------------------------------------------------
 
@@ -206,7 +217,7 @@ Version 0.1+galaxy1
 
 Initial version
 
-    ]]></help>
+]]> </help>
 
 
     <citations>

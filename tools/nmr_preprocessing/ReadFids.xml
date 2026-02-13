@@ -2,73 +2,54 @@
     <description> Read Bruker NMR raw files</description>
 
     <macros>
-        <import>macros.xml</import>
+       <import>macros.xml</import>
     </macros>
+    
+    <expand macro="requirements"/>
 
-    <expand macro="requirements" />
     <required_files>
+        <include path="DrawFunctions.R" />
         <include path="ReadFids_wrapper.R" />
         <include path="ReadFids_script.R" />
-        <include path="DrawFunctions.R" />
     </required_files>
 
-    <expand macro="stdio"/>
-
-    <command>
-        ## Wrapper
-        Rscript $__tool_directory__/ReadFids_wrapper.R
-
-        ## File input
-        fidzipfile $fidzipfile
-
-        ## Title line
-        title_line $title_line
-
-        ## Subdirectories
-        subdirectories $subdirectories
-
-        ## Use subdirectories names as FID names?
-        dirs_names $dirs_names
-
-        ## Outputs
-        dataMatrix $dataMatrix
-        sampleMetadata $sampleMetadata
-        logOut $logOut
-        graphOut $graphOut
-
-    </command>
+    <command detect_errors="aggressive"><![CDATA[
+        Rscript
+            -e "source('${__tool_directory__}/DrawFunctions.R')"
+            -e "source('${__tool_directory__}/ReadFids_script.R')"
+            -e "source('${__tool_directory__}/ReadFids_wrapper.R')"
+                --fidzipfile "$fidzipfile"
+                --title_line $title_line
+                $subdirectories
+                $dirs_names
+    ]]></command>
 
     <inputs>
-        <param name="fidzipfile" type="data" format="no_unzip.zip,zip" label="Bruker FID file" />
-        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" size="100" help="Default value is line 1"/>
-
-        <param name="subdirectories" label="Presence of subdirectories?" type="select" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories">
-            <option value="FALSE"> FALSE </option>
-            <option value="TRUE"> TRUE </option>
-        </param>
-
-        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="select" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)">
-            <option value="FALSE"> FALSE </option>
-            <option value="TRUE"> TRUE </option>
-        </param>
+        <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />
+        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" help="Default value is line 1"/>
+        <param name="subdirectories" label="Presence of subdirectories?" type="boolean" truevalue="--subdirectories" falsevalue="" checked="false" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories"/>
+        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="boolean" truevalue="--dirs_names" falsevalue="" checked="false" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)"/>
     </inputs>
 
     <outputs>
-        <data format="tabular" name="dataMatrix" label="${tool.name}_dataMatrix" />
-        <data format="tabular" name="sampleMetadata" label="${tool.name}_sampleMetadata" />
-        <data format="txt" name="logOut" label="${tool.name}_log" />
-        <data format="pdf" name="graphOut" label="${tool.name}_graph" />
+        <data format="tabular" name="dataMatrix" from_work_dir="dataMatrix.tsv" label="${tool.name}_dataMatrix" />
+        <data format="tabular" name="sampleMetadata" from_work_dir="sampleMetadata.tsv" label="${tool.name}_sampleMetadata" />
+        <data format="txt" name="logOut" from_work_dir="logOut.txt" label="${tool.name}_log" />
+        <data format="pdf" name="graphOut" from_work_dir="graphOut.pdf" label="${tool.name}_graph" />
     </outputs>
 
 
     <tests>
         <test>
-          <param name="fidzipfile" value="MTBLS1.zip" ftype="zip" />
+          <param name="fidzipfile" location="https://nextcloud.inrae.fr/s/ksGZq9GZfL9R6PD/download/MTBLS1.zip" ftype="zip" />
           <param name="title_line" value="1" />
           <param name="subdirectories" value="TRUE" />
           <param name="dirs_names" value="TRUE" />
 
-          <output name="dataMatrix" value="NMR_ReadFids_dataMatrix.tabular" />
+          <output name="dataMatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
+          <output name="sampleMetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
+          <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
         </test>
     </tests>
 

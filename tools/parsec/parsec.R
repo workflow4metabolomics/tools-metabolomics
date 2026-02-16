@@ -7,10 +7,11 @@ suppressPackageStartupMessages({
 
 # --- MAIN FUNCTION (CORRECTION) ---
 batch_cohort_correction <- function(
-    data,
-    batch_col,
-    injection_order_col,
-    intensity_cols) {
+  data,
+  batch_col,
+  injection_order_col,
+  intensity_cols
+) {
     # Checks for mandatory columns
     missing_cols <- setdiff(
         c(batch_col, intensity_cols, injection_order_col),

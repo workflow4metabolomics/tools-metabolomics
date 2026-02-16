@@ -5,20 +5,21 @@
         <import>macros.xml</import>
     </macros>
 
-    <expand macro="requirements">
-        <requirement type="package" version="3.0.0">libgfortran</requirement>
-        <requirement type="package" version="1.9_12">r-ptw</requirement>
-        <requirement type="package" version="1.2_12">r-matrix</requirement>
-    </expand>
+    <requirements>
+            <requirement type="package" version="3.4.4">r-ggplot2</requirement>
+            <requirement type="package" version="2.3">r-gridextra</requirement>
+            <requirement type="package" version="1.6_1.1">r-matrix</requirement>
+            <requirement type="package" version="1.9_16">r-ptw</requirement>
+            <requirement type="package" version="1.4.4">r-reshape2</requirement>
+    </requirements>
+
     <required_files>
         <include path="NmrPreprocessing_wrapper.R" />
         <include path="NmrPreprocessing_script.R" />
         <include path="DrawFunctions.R" />
     </required_files>
 
-    <expand macro="stdio"/>
-
-    <command>
+    <command detect_errors="aggressive">
         ## Wrapper
         Rscript $__tool_directory__/NmrPreprocessing_wrapper.R
 
@@ -126,14 +127,12 @@
             #end for
         #end if
 
-
         ## sets negative intensities to zero
         NegativetoZero $NZ.NegativetoZero
 
         ## final spectra
         ## Graphical display
         FinalGraph $FinalGraph
-
 
         ## Outputs
         dataMatrix $dataMatrix
@@ -323,7 +322,7 @@
 
     <tests>
         <test>
-            <param name="dataMatrixFid" value="NMR_ReadFids_dataMatrix.tabular"/>
+            <param name="dataMatrixFid" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular"/>
             <param name="sampleMetadataFid" value="sampleMetadata.tabular"/>
             <section name="GDC">
                 <param name="FirstOPCGraph" value="NO"/>

@@ -3,8 +3,6 @@
 # Load required libraries
 library(ggplot2)
 library(optparse)
-library(tools)
-library(dplyr)
 library(dispersionIndicators)
 
 #### ---- Define command-line options ----
@@ -21,6 +19,11 @@ option_list <- list(
               type = "character",
               help = "variableMetadata containing the data",
               metavar = "FILE"),
+  make_option(c("-m", "--metabolites"),
+            type = "character",
+            default = "",
+            help = "variableMetadata containing the data",
+            metavar = "FILE"),
   make_option(c("-g", "--global"),
               type = "logical",
               default = FALSE,
@@ -31,7 +34,7 @@ option_list <- list(
               default = "batch",
               help = "Name of the column with batch information",
               metavar = "BOOL"),
-  make_option(c("-m", "--sample_order_col"),
+  make_option(c("-t", "--sample_order_col"),
               type = "character",
               default = "injectionOrder",
               help = "Name of the columns with sample order information (e.g. injectionOrder)",
@@ -70,12 +73,15 @@ variableMetadata <- read_data_file(opt$variableMetadata, "variableMetadata")
 
 #### ---- Verification for tests ----
 # Check the colname
-required_cols_sample <- c(opt$sample_order_col, opt$batch_col)
-missing_cols <- setdiff(required_cols_sample, names(sampleMetadata))
-if (length(missing_cols) > 0) {
-  stop(paste("Error : Missing columns in the sampleMetadata File :", paste(missing_cols, collapse = ", ")))
+if (as.integer(opt$sample_order_col) > length(names(sampleMetadata))) {
+  stop("Error : Specified column number for sample order in the sampleMetadata File is higher that the number of
+  columns ")
 }
-
+if (as.integer(opt$batch) > length(names(sampleMetadata))) {
+  stop("Error : Specified column number for the batch in the sampleMetadata File is higher that the number of columns ")
+}
+batch_col <- names(sampleMetadata)[as.integer(opt$batch)]
+order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col)]
 #### ---- Create data ----
 variableMetadata <- data.frame(variableMetadata, row.names = 1)
 dataMatrix_t <- as.data.frame(t(dataMatrix[-1]))
@@ -83,7 +89,7 @@ colnames(dataMatrix_t) <- dataMatrix[[1]]
 dataMatrix_t$sampleMetadata <- rownames(dataMatrix_t)
 dataMatrix_t <- dataMatrix_t[, c("sampleMetadata", setdiff(names(dataMatrix_t), "sampleMetadata"))]
 pool_s <- merge(sampleMetadata, dataMatrix_t, by = "sampleMetadata")
-pool_s <- pool_s[order(pool_s[[opt$sample_order_col]]), ]
+pool_s <- pool_s[order(pool_s[[order_col]]), ]
 
 # # Use global injection order or not
 mode <- "batchwise"
@@ -102,17 +108,29 @@ if (opt$global) {
 result <- convex_analysis_of_variables(
   pool_s,
   variable_columns=rownames(variableMetadata),
-  batch_col=opt$batch_col,
-  sample_order_col=opt$sample_order_col,
+  batch_col=batch_col,
+  sample_order_col=order_col,
   impute_if_needed="median",
   mode=mode
 )
-plot_all_convex_hulls(
-  target_file_path = file.path(getwd(), opt$output),
-  convex_analysis_res = result,
-  show_points = opt$points,
-  mode = mode
+tryCatch(
+  {
+    plot_all_convex_hulls(
+    target_file_path = opt$output,
+    convex_analysis_res = result,
+    show_points = opt$points,
+    mode = mode
+    )
+    cat("Plot saved as", opt$output, "\n")
+  },
+  warning = function (war) {
+    print("Caught warning:")
+    warning(war$message)
+  },
+  error = function (err) {
+    print("Caught exception:")
+    stop(err$message)
+  }
 )
-cat("Plot saved as", opt$output, "\n")
 
 

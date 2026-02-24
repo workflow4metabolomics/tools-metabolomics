@@ -23,14 +23,17 @@
 
     <command detect_errors="exit_code"><![CDATA[
         Rscript '$__tool_directory__/plot_convex_hull.R'
-        --dataMatrix '$dataMatrix'
-        --sampleMetadata '$sampleMetadata'
-        --variableMetadata '$variableMetadata'
-        --sample_order_col '$sample_order_col'
-        --batch_col '$batch_col'
-        --global '$global'
-        --points '$points'
-        --output '$output'
+            --dataMatrix '$dataMatrix'
+            --sampleMetadata '$sampleMetadata'
+            --variableMetadata '$variableMetadata'
+            --sample_order_col '$sample_order_col'
+            --batch_col '$batch_col'
+            #if $variables
+                --variables '$variables'
+            #end if
+            --global '$global'
+            --points '$points'
+            --output '$output'
     ]]></command>
 
     <inputs>
@@ -41,7 +44,8 @@
                data_ref="sampleMetadata" label='The sampleMetadata column with batch information'/>
         <param name='sample_order_col' type='data_column' data_ref="sampleMetadata"
                label='The sampleMetadata column with sample order information'/>
-        <param name='metabolite' type='select' label='An optional subset of metabolites to plot' optional="true">
+        <param name='variables' type='select' label='An optional subset of variables to plot' optional="true"
+               multiple="true">
             <options from_dataset="variableMetadata">
                 <column name="name" index="0"/>
                 <column name="value" index="0"/>
@@ -57,6 +61,7 @@
     </outputs>
 
     <tests>
+        <!-- Test of plot for all variables (no metabolite selected) -->
         <test>
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
@@ -65,7 +70,43 @@
             <param name="sample_order_col" value='3'/>
             <param name="global" value="TRUE"/>
             <param name="points" value="TRUE"/>
-            <output name="output" file="expected_plots.pdf" />
+            <output name="output" file="expected_plots_all.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+        </test>
+        <!-- Test of plot for 1 variable (Intensity1) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
+            <param name='variables' value="Intensity1"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output" file="expected_plot_int1.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+        </test>
+        <!-- Test of plot for 1 variable (Intensity2) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
+            <param name='variables' value="Intensity2"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output" file="expected_plot_int2.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+        </test>
+        <!-- Test of plot for multiple variables (Intensity1,Intensity2)-->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
+            <param name='variables' value="Intensity1,Intensity2"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output" file="expected_plots_all.pdf" compare="sim_size" delta="1" delta_frac="0.001"/>
         </test>
     </tests>
 

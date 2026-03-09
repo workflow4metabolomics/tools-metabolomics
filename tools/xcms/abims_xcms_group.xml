@@ -121,7 +121,7 @@
                 <has_text text="Peak Groups: 8372" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO.xset.group.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahKO.xset.group.expected_variable_metadata1.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group.dataMatrix.tsv" />
         </test>-->
         <!-- DISABLE FOR TRAVIS
@@ -177,7 +177,7 @@
                 <has_text text="Peak Groups: 8372" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO.xset.group.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahKO.xset.group.expected_variable_metadata1.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group.dataMatrix.tsv" />
         </test>
         -->

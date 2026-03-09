@@ -85,7 +85,7 @@
                 <has_text text="Peak Groups: 8209" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.expected_variable_metadata1.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group.retcor.group.fillPeaks.dataMatrix.tsv" />
         </test>
         <test>
@@ -106,7 +106,7 @@
                 <has_text text="Peak Groups: 8209" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahKO.xset.group.retcor.group.fillPeaks.expected_variable_metadata1.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group.retcor.group.fillPeaks.dataMatrix.tsv" />
         </test>-->
         <!--<test>
@@ -129,7 +129,7 @@
                 <has_text text="Peak Groups: 6332" />
                 <has_text text="Sample classes: KO, WT" />
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO.xset.group2.retcor2.group2.fillPeaks2.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahKO.xset.group2.retcor2.group2.fillPeaks2.expected_variable_metadata1.tsv" />
             <output name="dataMatrix" file="faahKO.xset.group2.retcor2.group2.fillPeaks2.dataMatrix.tsv" />
         </test>-->
         <test expect_num_outputs="3">

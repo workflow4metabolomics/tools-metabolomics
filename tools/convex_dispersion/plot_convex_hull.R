@@ -44,10 +44,15 @@ option_list <- list(
               default = TRUE,
               help = "Display points (TRUE/FALSE)",
               metavar = "BOOL"),
-  make_option(c("-o", "--output"),
+  make_option(c("--output_plot"),
               type = "character",
               default = "plot_convex_hull.pdf",
-              help = "Name of the output file",
+              help = "Name of the output pdf file plot",
+              metavar = "OUTPUT"),
+  make_option(c("--output_vm"),
+              type = "character",
+              default = "variableMetadata.tsv",
+              help = "Name of the output tabular file variableMetadata",
               metavar = "OUTPUT")
 )
 
@@ -92,7 +97,7 @@ if (length(variables) == 0) {
 } else {
   variable_columns <- variables
 }
-#### ---- Call plotting function ----
+#### ---- Call function for convex analysis ----
 result <- convex_analysis_of_variables(
   pool_s,
   variable_columns=variable_columns,
@@ -101,15 +106,31 @@ result <- convex_analysis_of_variables(
   impute_if_needed="median",
   mode=mode
 )
+#### ---- Adding dispersion indicators to variable metadata ----
+variableMetadata[c(
+  "IntraBatchConvexDispersion",
+  "InterBatchConvexDispersion",
+  "IntraInterBatchDispersonRatio"
+)] <- result$indicators[c("IntraB", "InterB", "Ratio")]
+variableMetadata <- data.frame(variableMetadata=rownames(variableMetadata), variableMetadata)
+#### ---- Creating new variable metadata file ----
+write.table(
+  variableMetadata[variable_columns, ],
+  file = opt$output_vm,
+  sep="\t",
+  row.names = FALSE
+)
+cat("VM saved as", opt$output_vm, "\n")
+#### ---- Call to ploting function ----
 tryCatch(
   {
     plot_all_convex_hulls(
-    target_file_path = opt$output,
+    target_file_path = opt$output_plot,
     convex_analysis_res = result,
     show_points = opt$points,
     mode = mode
     )
-    cat("Plot saved as", opt$output, "\n")
+    cat("Plot saved as", opt$output_plot, "\n")
   },
   warning = function (war) {
     print("Caught warning:")

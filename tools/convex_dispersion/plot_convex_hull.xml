@@ -1,7 +1,7 @@
-<tool id="plot_convex_hull" name="Plot Convex Hull" version="0.1.5+galaxy2" python_template_version="3.11"
+<tool id="batch_dispersion" name="Batch Dispersion" version="0.1.5+galaxy2" python_template_version="3.11"
       profile="23.0">
-    <description>This tool plots a convex polygon around intensities based on injection order to visualize batch
-        variability.</description>
+    <description>This tool plots a convex polygon around intensities values based on injection order to visualize batch
+        variability and computes associated indicators to assess intra and inter batch dispersion.</description>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>
       <edam_topic>topic_0092</edam_topic>
@@ -33,7 +33,8 @@
             #end if
             --global '$global'
             --points '$points'
-            --output '$output'
+            --output_plot '$output_plot'
+            --output_vm '$output_vm'
     ]]></command>
 
     <inputs>
@@ -57,7 +58,9 @@
 
 
     <outputs>
-      <data name="output" format="pdf" label="Convex Hull Plot(s)"/>
+      <data name="output_plot" format="pdf" label="Convex Hull Plot(s)"/>
+      <data name="output_vm" format="tabular"
+            label="tabular files with variables metadata appended with new columns filled with computed dispersion indicators"/>
     </outputs>
 
     <tests>
@@ -70,7 +73,8 @@
             <param name="sample_order_col" value='3'/>
             <param name="global" value="TRUE"/>
             <param name="points" value="TRUE"/>
-            <output name="output" file="expected_plots_all.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_vm" file="expected_variable_metadata_all.txt"/>
         </test>
         <!-- Test of plot for 1 variable (Intensity1) -->
         <test>
@@ -82,7 +86,8 @@
             <param name='variables' value="Intensity1"/>
             <param name="global" value="TRUE"/>
             <param name="points" value="TRUE"/>
-            <output name="output" file="expected_plot_int1.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_plot" file="expected_plot_int1.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_vm" file="expected_variable_metadata1.txt"/>
         </test>
         <!-- Test of plot for 1 variable (Intensity2) -->
         <test>
@@ -94,7 +99,8 @@
             <param name='variables' value="Intensity2"/>
             <param name="global" value="TRUE"/>
             <param name="points" value="TRUE"/>
-            <output name="output" file="expected_plot_int2.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_plot" file="expected_plot_int2.pdf" compare="sim_size" delta="3" delta_frac="0.001"/>
+            <output name="output_vm" file="expected_variable_metadata2.txt"/>
         </test>
         <!-- Test of plot for multiple variables (Intensity1,Intensity2)-->
         <test>
@@ -106,7 +112,8 @@
             <param name='variables' value="Intensity1,Intensity2"/>
             <param name="global" value="TRUE"/>
             <param name="points" value="TRUE"/>
-            <output name="output" file="expected_plots_all.pdf" compare="sim_size" delta="1" delta_frac="0.001"/>
+            <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta="1" delta_frac="0.001"/>
+            <output name="output_vm" file="expected_variable_metadata_all.txt"/>
         </test>
     </tests>
 
@@ -126,15 +133,22 @@
 
 ---------------------------------------------------
 
-******************
-Convex dispersion
-******************
+*****************************
+Batch Dispersion (Convex Hull Analysis)
+*****************************
 
 ===========
 DESCRIPTION
 ===========
 
-This tool generates a plot showing the convex hull of a metabolite’s intensity by injection order, grouped by batch. It also computes three indicators for dispersion based on these convex hulls.
+This tool analyzes metabolomic data to assess batch variability by plotting convex hulls around metabolite intensities
+ordered by injection order. It computes three dispersion indicators for each metabolite:
+
+- **Intra Batch Convex Dispersion**: Variability within each batch
+- **Inter Batch Convex Dispersion**: Variability between batches
+- **Intra/Inter Batch Dispersion Ratio**: Ratio of intra-batch to inter-batch dispersion
+
+These indicators help assess data quality and batch consistency, particularly for QC samples, pooled samples, or reference materials.
 
 ---------------------------------------------------
 
@@ -156,69 +170,77 @@ INPUT FILES
 | 3 : VariableMetadata file  | tabular |
 +----------------------------+---------+
 
-Data matrix file contains the intensity values of the variables.
-	| 
+**Data matrix file:**
+  | TSV file with metabolite abundance data. Rows represent metabolites, columns represent samples.
+  | First column should contain metabolite identifiers.
 
-SampleMetadata contains all the metadata about the samples corresponding to the Data matrix 
-	|
-	
-VariableMetadata contains all the metadata about the variables (ions) corresponding to the Data matrix 
-	| 
-	
+**Sample metadata file:**
+  | TSV file with sample information. Rows represent samples (must match Data matrix columns).
+  | Must contain columns for batch information and injection/sample order.
+
+**Variable metadata file:**
+  | TSV file with metabolite information. Rows represent metabolites (must match Data matrix rows).
+  | First column should contain metabolite identifiers.
+  | Output will include three new columns with computed dispersion indicators.
+
 .. class:: warningmark
 
-For more information about input files, refer to the corresponding "W4M HowTo" page:
+For more information about input file formats, refer to the "W4M HowTo" page:
  | `W4M table format for Galaxy <https://nextcloud.inrae.fr/s/qLkNZRf84QQ5YLY>`_
- |
 
 ------------
 OUTPUT FILES
 ------------
 
-The output is a pdf or png file and cannot be used as input to another tool.
-The output can be used to asses the dispersion of intensity values of metabolites on similar repeated samples within batches (QC, pool, reference materials...)
+**Convex Hull Plot (PDF):**
+  | PDF file containing visualizations of convex hulls for all selected metabolites.
+  | Each plot shows intensity values (y-axis) vs. injection order (x-axis), grouped by batch.
+  | Data points may be displayed as individual markers.
 
-----------------------------
+**Variable Metadata Output (TSV):**
+  | Updated variable metadata file with three new columns containing dispersion indicators for each metabolite:
+  |
+  | - IntraBatchConvexDispersion: Dispersion within each batch
+  | - InterBatchConvexDispersion: Dispersion between batches
+  | - IntraInterBatchDispersionRatio: Ratio of intra-batch to inter-batch dispersion
+
+---------------------------------------------------
+
+==========================
 EXAMPLE OF WORKFLOW POSITION
-----------------------------
+==========================
 
-- After a MS extraction workflow, before batch correction
-- After batch correction
+- **Before batch correction:** Assess batch variability in raw data
+- **After batch correction:** Verify that batch correction has improved consistency
+- **During QC analysis:** Monitor consistency of QC or pool samples across runs
 
 ---------------------------------------------------
 
 ===============
 TOOL PARAMETERS
 ===============
-global
-  | Boolean
-  | Whether to use the global injection order or the injection order within the batch.
-  
-multiple
-  | Boolean
-  | Whether to plot all the metabolites in different plots or on the same one.
-  
-points
-  | Boolean
-  | Whether to display individual points for each intensity value on the plot.
 
-metabolite
-  | ?? probably useless parameter
-  
-output_name
-  | Str
-  | Name of the output file.
+**batch_col:**
+  | Column name or index in Sample metadata containing batch identifiers.
+  | Used to group samples by batch for dispersion analysis.
 
+**sample_order_col:**
+  | Column name or index in Sample metadata containing injection/sample order information (e.g., injectionOrder).
+  | Used to define the order for plotting convex hulls.
 
----------------------------------------------------
+**variables (optional):**
+  | Select specific metabolites to analyze. If empty, all metabolites from the variable metadata are analyzed.
+  | Multiple metabolites can be selected.
 
-==================
-OUTPUT DESCRIPTION
-==================
+**global:**
+  | **TRUE (checked):** Uses global injection order across all batches for convex analysis.
+  | **FALSE (unchecked):** Performs batchwise analysis within each batch separately.
+  | Default: TRUE
 
-List of the different possible outputs generated by the Galaxy module, with a content description. 
-
-If information relevant to the users is displayed in the "standard output" when running the module, do not forget to mention it here. 
+**points:**
+  | **TRUE (checked):** Display individual intensity data points on the convex hull plots.
+  | **FALSE (unchecked):** Show only the convex hull polygon without data points.
+  | Default: TRUE
 
 ---------------------------------------------------
 
@@ -226,21 +248,32 @@ If information relevant to the users is displayed in the "standard output" when 
 EXAMPLE OF USE
 ==============
 
-Can be either the following:
+**Typical workflow:**
 
-- a working with accessible inputs, the list of parameters to use and the display of expected outputs
-- a step-by-step procedure to illustrate how to set the different parameters and what result should be expected
-- a reference to existing examples or use-cases, for example specific sections of existing GTN materials using the tool
+1. Run MS data extraction (e.g., XCMS, CAMERA)
+2. Select Data matrix, Sample metadata, and Variable metadata outputs
+3. Select the batch column (e.g., "batch")
+4. Select the injection order column (e.g., "injectionOrder")
+5. Optionally select specific metabolites to visualize
+6. Set "Global Mode" based on your analysis needs
+7. Run the tool
+8. Examine the PDF plots to visually assess batch consistency
+9. Use the output variable metadata with dispersion indicators for further analysis
 
-If not mentioned elsewhere, you can also add a subsection regarding known issues (when relevant). 
+**Interpreting Results:**
 
-Example:
+- Low IntraBatchConvexDispersion or InterBatchConvexDispersion reflect low intra or inter batch dispersion
+- Low IntraInterBatchDispersionRatio (between 0 and 1) suggests potential batch effects or drift
+- Compare dispersion indicators across different metabolites to identify problematic ions
+
+---------------------------------------------------
 
 ------------
 KNOWN ISSUES
 ------------
 
-A list of issues users may run into when using the Galaxy module (*e.g.* case-sensitivity issues)
+- Column selection requires exact column indices or names; verify that batch and injection order columns exist in your sample metadata
+- Missing or zero intensity values are imputed using median value before convex analysis
 
 ---------------------------------------------------
 

@@ -111,7 +111,7 @@ formatIonIdentifiers <- function(variableMetadata, numDigitsRT = 0, numDigitsMZ 
 }
 
 # The function annotateDiffreport without the corr function which bugs
-annotatediff <- function(xset = xset, args = args, variableMetadataOutput = "variableMetadata.tsv") {
+annotatediff <- function(xset = xset, args = args, variableMetadataOutput = "../convex_dispersion/test-data/expected_variable_metadata1.tsv") {
     # Resolve the bug with x11, with the function png
     options(bitmapType = "cairo")
 
@@ -245,7 +245,7 @@ annotatediff <- function(xset = xset, args = args, variableMetadataOutput = "var
 combinexsAnnos_function <- function(
     xaP, xaN, diffrepP = NULL, diffrepN = NULL,
     pos = TRUE, tol = 2, ruleset = NULL, keep_meta = TRUE, convertRTMinute = FALSE, numDigitsMZ = 0,
-    numDigitsRT = 0, variableMetadataOutput = "variableMetadata.tsv") {
+    numDigitsRT = 0, variableMetadataOutput = "../convex_dispersion/test-data/expected_variable_metadata1.tsv") {
     # Load the two Rdata to extract the xset objects from positive and negative mode
     cat("\tObject xset from positive mode\n")
     print(xaP)

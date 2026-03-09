@@ -59,7 +59,7 @@ cat("\n\n")
 # ----- PROCESSING INFO -----
 cat("\tMAIN PROCESSING INFO\n")
 
-results_list <- annotatediff(xset = xset, args = args, variableMetadataOutput = "variableMetadata.tsv")
+results_list <- annotatediff(xset = xset, args = args, variableMetadataOutput = "../convex_dispersion/test-data/expected_variable_metadata1.tsv")
 xa <- results_list$xa
 diffrep <- results_list$diffrep
 variableMetadata <- results_list$variableMetadata

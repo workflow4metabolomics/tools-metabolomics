@@ -1,4 +1,4 @@
-<tool id="batch_dispersion" name="Batch Dispersion" version="0.1.5+galaxy2" python_template_version="3.11"
+<tool id="batch_dispersion" name="Batch Dispersion" version="0.1.5+galaxy1" python_template_version="3.11"
       profile="23.0">
     <description>This tool plots a convex polygon around intensities values based on injection order to visualize batch
         variability and computes associated indicators to assess intra and inter batch dispersion.</description>
@@ -22,7 +22,7 @@
     </required_files>
 
     <command detect_errors="exit_code"><![CDATA[
-        Rscript '$__tool_directory__/plot_convex_hull.R'
+        Rscript '$__tool_directory__/convex_hull_analysis.R'
             --dataMatrix '$dataMatrix'
             --sampleMetadata '$sampleMetadata'
             --variableMetadata '$variableMetadata'
@@ -282,7 +282,7 @@ CHANGE LOG
 ==========
 
 -------------------------------
-Version 0.1+galaxy1
+Version 0.1.5+galaxy1
 -------------------------------
 
 Initial version

@@ -131,7 +131,7 @@ if (args$convertRTMinute && RTinMinute == FALSE) {
 }
 
 # Save the peak list to a TSV file
-output_file_tsv <- "../convex_dispersion/test-data/expected_variable_metadata1.tsv"
+output_file_tsv <- "variableMetadata.tsv"
 write.table(variableMetadata, file = output_file_tsv, sep = "\t", row.names = FALSE, quote = FALSE)
 
 # Save the xsAnnotate object

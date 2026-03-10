@@ -62,7 +62,7 @@ cAnnot <- combinexsAnnos_function(
     diffrepP = diffrepP, diffrepN = diffrepN,
     pos = args$pos, tol = args$tol, ruleset = args$ruleset, keep_meta = args$keep_meta,
     convertRTMinute = args$convertRTMinute, numDigitsMZ = args$numDigitsMZ, numDigitsRT = args$numDigitsRT,
-    variableMetadataOutput = "../convex_dispersion/test-data/expected_variable_metadata1.tsv"
+    variableMetadataOutput = "variableMetadata.tsv"
 )
 
 # ----- EXPORT -----

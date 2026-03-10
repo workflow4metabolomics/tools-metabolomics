@@ -83,7 +83,7 @@ cat("\t\tDRAW GRAPHICS\n")
 getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
 
 if (exists("intval")) {
-    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "../convex_dispersion/test-data/expected_variable_metadata1.tsv", "dataMatrix.tsv")
+    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
 }
 
 cat("\n\n")

@@ -133,9 +133,9 @@
 
 ---------------------------------------------------
 
-*****************************
+***************************************
 Batch Dispersion (Convex Hull Analysis)
-*****************************
+***************************************
 
 ===========
 DESCRIPTION
@@ -206,9 +206,9 @@ OUTPUT FILES
 
 ---------------------------------------------------
 
-==========================
+============================
 EXAMPLE OF WORKFLOW POSITION
-==========================
+============================
 
 - **Before batch correction:** Assess batch variability in raw data
 - **After batch correction:** Verify that batch correction has improved consistency

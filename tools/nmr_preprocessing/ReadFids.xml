@@ -46,8 +46,8 @@
           <param name="subdirectories" value="TRUE" />
           <param name="dirs_names" value="TRUE" />
 
-          <output name="dataMatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
-          <output name="sampleMetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
+          <output name="datamatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
+          <output name="samplemetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
           <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
           <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
         </test>

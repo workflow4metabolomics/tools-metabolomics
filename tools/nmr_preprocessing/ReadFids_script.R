@@ -50,7 +50,7 @@ read_fid <- function(path) {
   fid_file <- file.path(path, "fid")
   if (neo) {
     fid_on_disk <- readBin(fid_file, what = "double", n = TD,
-                           size = NA_integer, # nolint: object_usage_linter.
+                           # size = NA_integer, # nolint: object_usage_linter.
                            signed = TRUE, endian = .Platform$endian)
   } else {
     fid_on_disk <- readBin(fid_file, what = "int", n = TD, size = 4L,
@@ -150,7 +150,7 @@ end_treatment <- function(name, begin_info, signal_data) {
   cat("It lasted", round(delta["user.self"], 3), "s user time,",
       round(delta["sys.self"], 3), "s system time and",
       round(delta["elapsed"], 3), "s elapsed time.\n")
-  if (begin_info[["force.real"]]) {
+  if (begin_info[["force_real"]]) {
     # The imaginary part is left untouched
     i <- complex(real = 0, imaginary = 1)
     signal_data <- signal_data + i * Im(begin_info[["original_data"]])
@@ -386,7 +386,7 @@ read_fids <- function(path, l = 1, subdirs = FALSE, dirs_names = FALSE) {
                           l = l, subdirs = subdirs, USE.NAMES = FALSE)
     }
 
-    for (i in seq_len(fid_names)) {
+    for (i in seq_along(fid_names)) {
       fid_list <- read_fid(fid_dirs[i])
       fid <- fid_list[["fid"]]
       info <- fid_list[["params"]]

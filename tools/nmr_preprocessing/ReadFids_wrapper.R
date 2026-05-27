@@ -60,9 +60,9 @@ cat("\nStart of 'ReadFids' Galaxy module call: ",
     as.character(Sys.time()), "\n\n", sep = "")
 
 outputs <- read_fids(path = path, l = l, subdirs = subdirs,
-                    dirs.names = dirs_names)
-data_matrix <- outputs[["Fid_data"]] # Data matrix
-data_sample <- outputs[["Fid_info"]] # Sample metadata
+                     dirs_names = dirs_names)
+data_matrix <- outputs[["fid_data"]] # Data matrix
+data_sample <- outputs[["fid_info"]] # Sample metadata
 
 pdf(nom_graphe, onefile = TRUE, width = 13, height = 13)
 DrawSignal(data_matrix, subtype = "stacked",
@@ -71,6 +71,11 @@ DrawSignal(data_matrix, subtype = "stacked",
   createWindow = FALSE
 )
 invisible(dev.off())
+
+cat("Data matrix dimensions: ")
+print(dim(data_matrix))
+cat("Sample metadata dimensions: ")
+print(dim(data_sample))
 
 ## ======================================================
 ## Saving

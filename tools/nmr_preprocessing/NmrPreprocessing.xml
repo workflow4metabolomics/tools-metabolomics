@@ -24,115 +24,114 @@
         Rscript $__tool_directory__/NmrPreprocessing_wrapper.R
 
         ## Data matrix of FID spectra
-        dataMatrixFid $dataMatrixFid
+        data_matrix_fid $data_matrix_fid
         ## Sample metadata matrix
-        sampleMetadataFid $sampleMetadataFid
+        sample_metadata_fid $sample_metadata_fid
 
         ## First order phase correction
         ## Graphical display
-        FirstOPCGraph $GDC.FirstOPCGraph
+        first_opc_graph $GDC.first_opc_graph
 
         ## Water and / or solvents suppression
             ## Smoothing parameter
         lambda $SS.lambda
 
         ## Graphical display
-        SSGraph $SS.SSGraph
-
+        ss_graph $SS.ss_graph
 
         ## Apodization
         ## Graphical display
-        ApodGraph $Apod.ApodGraph
+        apod_graph $Apod.apod_graph
 
-        apodizationMethod $Apod.apodizationMethod.method
-        #if $Apod.apodizationMethod.method == "exp":
+        apodization_method $Apod.apodization_method.method
+        #if $Apod.apodization_method.method == "exp":
             ## Line broadening for the exponential window
-            expLB $Apod.apodizationMethod.expLB
+            exp_lb $Apod.apodization_method.exp_lb
         #end if
-        #if $Apod.apodizationMethod.method == "cos2":
+        #if $Apod.apodization_method.method == "cos2":
             ## Phase
-            phase $Apod.apodizationMethod.phase
+            phase $Apod.apodization_method.phase
         #end if
-        #if $Apod.apodizationMethod.method == "hanning":
+        #if $Apod.apodization_method.method == "hanning":
             ## Phase
-            phase $Apod.apodizationMethod.phase
+            phase $Apod.apodization_method.phase
         #end if
-        #if $Apod.apodizationMethod.method == "hamming":
+        #if $Apod.apodization_method.method == "hamming":
             ## Phase
-            phase $Apod.apodizationMethod.phase
+            phase $Apod.apodization_method.phase
         #end if
-        #if $Apod.apodizationMethod.method == "blockexp":
+        #if $Apod.apodization_method.method == "blockexp":
             ## Proportion of signal in the window
-            rectRatio $Apod.apodizationMethod.rectRatio
-            expLB $Apod.apodizationMethod.expLB
+            rect_ratio $Apod.apodization_method.rect_ratio
+            exp_lb $Apod.apodization_method.exp_lb
         #end if
-        #if $Apod.apodizationMethod.method == "blockcos2":
+        #if $Apod.apodization_method.method == "blockcos2":
             ## Proportion of signal in the window
-            rectRatio $Apod.apodizationMethod.rectRatio
+            rect_ratio $Apod.apodization_method.rect_ratio
         #end if
-        #if $Apod.apodizationMethod.method == "gauss":
+        #if $Apod.apodization_method.method == "gauss":
             ## Line broadening for the gaussian window
-            gaussLB $Apod.apodizationMethod.gaussLB
+            gauss_lb $Apod.apodization_method.gauss_lb
         #end if
 
         ## Fourier transform
         ## Graphical display
-        FTGraph $FT.FTGraph
+        ft_graph $FT.ft_graph
 
         ## Zero order phase correction
         ## Graphical display
-        ZeroOPCGraph $ZOPC.ZeroOPCGraph
+        zero_opc_graph $ZOPC.zero_opc_graph
 
-        zeroOrderPhaseMethod $ZOPC.zeroOrderPhaseMethod
+        zero_order_phase_method $ZOPC.zero_order_phase_method
 
-        excludeZoneZeroPhase.choice ${ZOPC.excludeZoneZeroPhase.choice}
-        #if str($ZOPC.excludeZoneZeroPhase.choice) == "YES":
-            #for $i in $ZOPC.excludeZoneZeroPhase.conditions:
-                excludeZoneZeroPhase_left ${i.excludeZoneZeroPhase_left}
-                excludeZoneZeroPhase_right ${i.excludeZoneZeroPhase_right}
+        exclude_zone_zerophase.choice ${ZOPC.exclude_zone_zerophase.choice}
+        #if str($ZOPC.exclude_zone_zerophase.choice) == "YES":
+            #for $i in $ZOPC.exclude_zone_zerophase.conditions:
+                exclude_zone_zerophase_left ${i.exclude_zone_zerophase_left}
+                exclude_zone_zerophase_right ${i.exclude_zone_zerophase_right}
             #end for
         #end if
 
         ## Shift referencing
         ## Graphical display
-        SRGraph $SR.SRGraph
+        sr_graph $SR.sr_graph
 
         ## Definition of the search zone
-        shiftReferencingRange $SR.shiftReferencingRange.method
-        #if $SR.shiftReferencingRange.method == "nearvalue":
-          pctNearValue $SR.shiftReferencingRange.pctNearValue
+        shift_referencing_range $SR.shift_referencing_range.method
+        #if $SR.shift_referencing_range.method == "nearvalue":
+          pctNearValue $SR.shift_referencing_range.pctNearValue
         #end if
-        #if $SR.shiftReferencingRange.method == "window":
-          #for $i in $SR.shiftReferencingRange.conditions:
-                  shiftReferencingRangeLeft ${i.shiftReferencingRangeLeft}
-                  shiftReferencingRangeRight ${i.shiftReferencingRangeRight}
+        #if $SR.shift_referencing_range.method == "window":
+          #for $i in $SR.shift_referencing_range.conditions:
+                  shift_referencing_range_left ${i.shift_referencing_range_left}
+                  shift_referencing_range_right ${i.shift_referencing_range_right}
               #end for
         #end if
-        shiftHandling $SR.shiftHandling
+        shift_handling $SR.shift_handling
         ppmvalue $SR.ppmvalue
 
         ## Baseline correction
         ## Graphical display
-        BCGraph $BC.BCGraph
+        bc_graph $BC.bc_graph
 
-        lambdaBc $BC.lambdaBc
-        pBc $BC.pBc
+        lambda_bc $BC.lambda_bc
+        p_bc $BC.p_bc
         epsilon $BC.epsilon
 
-        excludeZoneBC.choice ${BC.excludeZoneBC.choice}
-        #if str($BC.excludeZoneBC.choice) == "YES":
-            #for $i in $BC.excludeZoneBC.conditions:
-                excludeZoneBC_left ${i.excludeZoneBC_left}
-                excludeZoneBC_right ${i.excludeZoneBC_right}
+        exclude_zone_bc.choice ${BC.exclude_zone_bc.choice}
+        #if str($BC.exclude_zone_bc.choice) == "YES":
+            #for $i in $BC.exclude_zone_bc.conditions:
+                exclude_zone_bc_left ${i.exclude_zone_bc_left}
+                exclude_zone_bc_right ${i.exclude_zone_bc_right}
             #end for
         #end if
 
         ## sets negative intensities to zero
-        NegativetoZero $NZ.NegativetoZero
+        negative_to_zero $NZ.negative_to_zero
 
         ## final spectra
         ## Graphical display
-        FinalGraph $FinalGraph
+        final_graph $final_graph
 
         ## Outputs
         dataMatrix $dataMatrix
@@ -143,11 +142,11 @@
     </command>
 
     <inputs>
-        <param name="dataMatrixFid" type="data" label="Data matrix of FIDs" help="" format="tabular" />
-        <param name="sampleMetadataFid" type="data" label="Sample metadata matrix" help="" format="tabular" />
+        <param name="data_matrix_fid" type="data" label="Data matrix of FIDs" help="" format="tabular" />
+        <param name="sample_metadata_fid" type="data" label="Sample metadata matrix" help="" format="tabular" />
 
         <section name="GDC" title="Group Delay Correction" expanded="true">
-            <param name="FirstOPCGraph" label="Display the FIDs after 1st order phase correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="first_opc_graph" label="Display the FIDs after 1st order phase correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                     <option value="NO"> NO </option>
                     <option value="YES"> YES </option>
             </param>
@@ -156,7 +155,7 @@
         <section name="SS" title="Solvent Suppression" expanded="true">
             <param name="lambda" label="Solvent Suppression: Smoothing parameter" type="float" value="1000000" help="Default value is 1e6"/>
 
-            <param name="SSGraph" label="Display the FIDs after solvent suppression?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="ss_graph" label="Display the FIDs after solvent suppression?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
@@ -164,7 +163,7 @@
 
 
         <section name="Apod" title="Apodization" expanded="true">
-            <conditional name="apodizationMethod" >
+            <conditional name="apodization_method" >
                 <param name="method" label="Apodization: method" type="select" help="Default method is Decreasing Exponential signal. See details below" >
                     <option value="exp">exp</option>
                     <option value="cos2">cos2</option>
@@ -175,7 +174,7 @@
                     <option value="gauss">gauss</option>
                 </param>
                 <when value="exp">
-                    <param name="expLB" type="float" label="Line broadening" value="1" help="Default value is 1" />
+                    <param name="exp_lb" type="float" label="Line broadening" value="1" help="Default value is 1" />
                 </when>
                 <when value="cos2">
                     <param name="phase" type="float" label="Phase" value="0" help="Default value is 0" />
@@ -187,58 +186,58 @@
                     <param name="phase" type="float" label="Phase" value="0" help="Default value is 0" />
                 </when>
                 <when value="blockexp">
-                    <param name="rectRatio" type="float" label="Proportion of signal in the window" value="0.5" help="Default value is 0.5" />
-                    <param name="expLB" type="float" label="Line broadening" value="1" help="Default value is 1" />
+                    <param name="rect_ratio" type="float" label="Proportion of signal in the window" value="0.5" help="Default value is 0.5" />
+                    <param name="exp_lb" type="float" label="Line broadening" value="1" help="Default value is 1" />
                 </when>
                 <when value="blockcos2">
-                    <param name="rectRatio" type="float" label="Proportion of signal in the window" value="0.5" help="Default value is 0.5" />
+                    <param name="rect_ratio" type="float" label="Proportion of signal in the window" value="0.5" help="Default value is 0.5" />
                 </when>
                 <when value="gauss">
-                    <param name="gaussLB" type="float" label="Line broadening" value="0.3" help="Default value is 0.3" />
+                    <param name="gauss_lb" type="float" label="Line broadening" value="0.3" help="Default value is 0.3" />
                 </when>
             </conditional>
 
-            <param name="ApodGraph" label="Display the FIDs after Apodization?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="apod_graph" label="Display the FIDs after Apodization?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
         </section>
 
         <section name="FT" title="Fourier Transform" expanded="true">
-            <param name="FTGraph" label="Display the Fourier transformed spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="ft_graph" label="Display the Fourier transformed spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
         </section>
 
         <section name="ZOPC" title="Zero Order Phase Correction" expanded="true">
-            <param name="zeroOrderPhaseMethod" type="select" label="Zero Order Phase Correction: method" help="Method used to select the angles to rotate the spectra" >
+            <param name="zero_order_phase_method" type="select" label="Zero Order Phase Correction: method" help="Method used to select the angles to rotate the spectra" >
                 <option value="rms" selected="yes"> rms </option>
                 <option value="max" > max </option>
             </param>
-            <conditional name="excludeZoneZeroPhase">
+            <conditional name="exclude_zone_zerophase">
                 <param name="choice" type="select" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
                     <option value="YES" selected="true" > YES </option>
                     <option value="NO" > NO </option>
                 </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
-                        <param name="excludeZoneZeroPhase_left" label="Excusion zone: left border" type="float" value="5.1" />
-                        <param name="excludeZoneZeroPhase_right" label="Excusion zone: right border" type="float" value="4.5" />
+                        <param name="exclude_zone_zerophase_left" label="Excusion zone: left border" type="float" value="5.1" />
+                        <param name="exclude_zone_zerophase_right" label="Excusion zone: right border" type="float" value="4.5" />
                     </repeat>
                 </when>
                 <when value="NO">
                 </when>
             </conditional>
 
-            <param name="ZeroOPCGraph" label="Display the spectra after the Zero Order Phase Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="zero_opc_graph" label="Display the spectra after the Zero Order Phase Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
         </section>
 
         <section name="SR" title="Shift Referencing" expanded="true">
-            <conditional name="shiftReferencingRange" >
+            <conditional name="shift_referencing_range" >
                 <param name="method" label="Shift Referencing: definition of the search zone" type="select" help="Definition of the search zone" >
                     <option value="nearvalue">nearvalue</option>
                     <option value="all">all</option>
@@ -251,13 +250,13 @@
                 </when>
                 <when value="window">
                     <repeat name="conditions" title="Search_zone">
-                        <param name="shiftReferencingRangeLeft" label="Search zone: left border" type="float" value="1" />
-                        <param name="shiftReferencingRangeRight" label="Search zone: right border" type="float" value="-1" />
+                        <param name="shift_referencing_range_left" label="Search zone: left border" type="float" value="1" />
+                        <param name="shift_referencing_range_right" label="Search zone: right border" type="float" value="-1" />
                     </repeat>
                 </when>
             </conditional>
 
-            <param name="shiftHandling" type="select" label="Shift Referencing: shiftHandling" help="How to deal with shifts between spectra on their left and right sides" >
+            <param name="shift_handling" type="select" label="Shift Referencing: shiftHandling" help="How to deal with shifts between spectra on their left and right sides" >
                 <option value="zerofilling" selected="yes"> zerofilling </option>
                 <option value="cut" > cut </option>
                 <option value="circular" > circular </option>
@@ -265,7 +264,7 @@
 
             <param name="ppmvalue" type="float" label="Shift Referencing: the value of the reference peak in ppm" value="0" help="Default value is 0" />
 
-            <param name="SRGraph" label="Display the spectra after Shift Referencing?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="sr_graph" label="Display the spectra after Shift Referencing?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
@@ -273,39 +272,39 @@
 
 
         <section name="BC" title="Baseline Correction" expanded="true">
-            <param name="lambdaBc" type="float" label="Baseline Correction: smoothing parameter" value="100000.0" help="Smoothing parameter, generally 1e5 – 1e8. Default value is 100000" />
-            <param name="pBc" type="float" label="Baseline Correction: asymmetry parameter" value="0.05" help="Asymmetry parameter. Default value is 0.05" />
+            <param name="lambda_bc" type="float" label="Baseline Correction: smoothing parameter" value="100000.0" help="Smoothing parameter, generally 1e5 – 1e8. Default value is 100000" />
+            <param name="p_bc" type="float" label="Baseline Correction: asymmetry parameter" value="0.05" help="Asymmetry parameter. Default value is 0.05" />
             <param name="epsilon" type="float" label="Baseline Correction: numerical precision for convergence when estimating the baseline" value="0.00000001" help="Numerical precision for convergence when estimating the     baseline. Default value is 1e-8" />
 
-            <conditional name="excludeZoneBC">
+            <conditional name="exclude_zone_bc">
                 <param name="choice" type="select" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
                     <option value="YES" > YES </option>
                     <option value="NO" selected="true" > NO </option>
                 </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
-                        <param name="excludeZoneBC_left" label="Excusion zone: left border" type="float" value="5.1" />
-                        <param name="excludeZoneBC_right" label="Excusion zone: right border" type="float" value="4.5" />
+                        <param name="exclude_zone_bc_left" label="Excusion zone: left border" type="float" value="5.1" />
+                        <param name="exclude_zone_bc_right" label="Excusion zone: right border" type="float" value="4.5" />
                     </repeat>
                 </when>
                 <when value="NO">
                 </when>
             </conditional>
 
-            <param name="BCGraph" label="Display the spectra after Baseline Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+            <param name="bc_graph" label="Display the spectra after Baseline Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
                 <option value="NO"> NO </option>
                 <option value="YES"> YES </option>
             </param>
         </section>
 
         <section name="NZ" title="Negative intensities to Zero" expanded="true">
-            <param name="NegativetoZero" label="Set negative intensities to zero?" type="select" help="If YES, sets negative intensities to zero">
+            <param name="negative_to_zero" label="Set negative intensities to zero?" type="select" help="If YES, sets negative intensities to zero">
                 <option value="NO"> NO </option>
                 <option value="YES" selected="yes"> YES </option>
             </param>
         </section>
 
-        <param name="FinalGraph" label="Display the final spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
+        <param name="final_graph" label="Display the final spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
             <option value="YES"> YES </option>
             <option value="NO"> NO </option>
         </param>
@@ -322,53 +321,53 @@
 
     <tests>
         <test>
-            <param name="dataMatrixFid" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular"/>
-            <param name="sampleMetadataFid" value="sampleMetadata.tabular"/>
+            <param name="data_matrix_fid" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular"/>
+            <param name="sample_metadata_fid" value="sampleMetadata.tabular"/>
             <section name="GDC">
-                <param name="FirstOPCGraph" value="NO"/>
+                <param name="first_opc_graph" value="NO"/>
             </section>
             <section name="SS">
                 <param name="lambda" value="1000000" />
-                <param name="SSGraph" value="NO"/>
+                <param name="ss_graph" value="NO"/>
             </section>
             <section name="Apod">
-                <conditional name="apodizationMethod">
+                <conditional name="apodization_method">
                     <param name="method" value="exp" />
-                    <param name="expLB" value="1"  />
+                    <param name="exp_lb" value="1"  />
                 </conditional>
-                <param name="ApodGraph" value="NO"/>
+                <param name="apod_graph" value="NO"/>
             </section>
             <section name="FT">
-                <param name="FTGraph" value="NO"/>
+                <param name="ft_graph" value="NO"/>
             </section>
             <section name="ZOPC">
-                <param name="zeroOrderPhaseMethod" value="rms" />
-                <conditional name="excludeZoneZeroPhase" >
+                <param name="zero_order_phase_method" value="rms" />
+                <conditional name="exclude_zone_zerophase" >
                     <param name="choice" value="YES" />
-                    <param name="conditions_0|excludeZoneZeroPhase_left" value="5.1" />
-                    <param name="conditions_0|excludeZoneZeroPhase_right" value="4.5" />
+                    <param name="conditions_0|exclude_zone_zerophase_left" value="5.1" />
+                    <param name="conditions_0|exclude_zone_zerophase_right" value="4.5" />
                 </conditional>
-                <param name="ZeroOPCGraph" value="NO"/>
+                <param name="zero_opc_graph" value="NO"/>
             </section>
             <section name="SR">
-                <conditional name="shiftReferencingRange">
+                <conditional name="shift_referencing_range">
                     <param name="method" value="nearvalue"/>
                     <param name="pctNearValue" value="0.02"/>
                 </conditional>
-                <param name="shiftHandling" value= "zerofilling"/>
+                <param name="shift_handling" value= "zerofilling"/>
                 <param name="ppmvalue" value="0" />
-                <param name="SRGraph" value="NO"/>
+                <param name="sr_graph" value="NO"/>
             </section>
             <section name="BC">
-                <param name="lambdaBc" value="100000.0" />
-                <param name="pBc" value="0.05" />
+                <param name="lambda_bc" value="100000.0" />
+                <param name="p_bc" value="0.05" />
                 <param name="epsilon" value="0.00000001"/>
-                <param name="BCGraph" value="NO"/>
+                <param name="bc_graph" value="NO"/>
             </section>
             <section name="NZ">
-                <param name="NegativetoZero" value="YES" />
+                <param name="negative_to_zero" value="YES" />
             </section>
-            <param name="FinalGraph" value="YES" />
+            <param name="final_graph" value="YES" />
             <output name="dataMatrix">
                 <assert_contents>
                     <has_n_lines n="32776"/>
@@ -518,7 +517,7 @@ The **searching window** can be adapted:
 * window: the search is operated in the windows defined by the Search_zone bounds.
 
 
-**shiftHandling**: spectra can be shifted differently, we can handle misalignment of the left and right of the spectrum by different ways:
+**shift_handling**: spectra can be shifted differently, we can handle misalignment of the left and right of the spectrum by different ways:
 
 * zerofilling: The extremities at which a spectrum is not defined are replaced by 0. It makes sense since in practice the spectrum is close to zero at the extremities.
 

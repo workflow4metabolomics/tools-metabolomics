@@ -405,7 +405,7 @@ solvent_suppression <- function(fid_data, lambda_ss = 1e+06, ptw_ss = TRUE,
 ## ==========================
 # Apodization
 # =============================
-Apodization <- function(fid_data, fid_info = NULL, dt = NULL,
+apodization <- function(fid_data, fid_info = NULL, dt = NULL,
                         type_apod = c("exp", "cos2", "blockexp",
                                       "blockcos2", "gauss", "hanning",
                                       "hamming"),
@@ -612,9 +612,9 @@ internal_referencing <- function(spectrum_data, fid_info,
   # and is computed as: c*(cumulated_mean/cumulated_sd)
   find_tmsp_peak <- function(ft, c = 2, direction = "left") {
     ft <- Re(ft) # extraction de la partie réelle
-    N <- length(ft)
+    n <- length(ft)
     if (direction == "left") {
-      newindex <- rev(1:N)
+      newindex <- rev(1:n)
       ft <- rev(ft)
     }
     thres <- 99999
@@ -640,10 +640,10 @@ internal_referencing <- function(spectrum_data, fid_info,
     } else {
       # recherche dans les 1% de points suivants du max trouve
       # pour etre au sommet du pic
-      d <- which.max(ft[v:(v + N * 0.01)])
+      d <- which.max(ft[v:(v + n * 0.01)])
       new_peak <- v + d - 1 # nouveau pic du TMSP si d > 0
-      if (names(which.max(ft[v:(v + N * 0.01)])) !=
-            names(which.max(ft[v:(v + N * 0.03)]))) {
+      if (names(which.max(ft[v:(v + n * 0.01)])) !=
+            names(which.max(ft[v:(v + n * 0.03)]))) {
         # recherche dans les 3% de points suivants du max trouve
         # pour eviter un fauxpositif
         warning("the TMSP peak might be located further away,
@@ -663,7 +663,7 @@ internal_referencing <- function(spectrum_data, fid_info,
 
   # range: How the search zone is defined ("all", "nearvalue" or "window")
   if (range == "all") {
-    Data <- spectrum_data
+    data <- spectrum_data
   } else {
     # range = "nearvalue" or "window"
     # Need to define colindex (column indexes) to apply indexInterval on it
@@ -683,40 +683,40 @@ internal_referencing <- function(spectrum_data, fid_info,
 
     # index intervals taking into account the different elements
     # in the list fromto_rc
-    Int <- vector("list", length(fromto_rc))
+    interval <- vector("list", length(fromto_rc))
     for (i in seq_along(fromto_rc)) {
-      Int[[i]] <- index_interval(colindex,
-                                 from = fromto_rc[[i]][1],
-                                 to = fromto_rc[[i]][2],
-                                 inclusive = TRUE)
+      interval[[i]] <- index_interval(colindex,
+                                      from = fromto_rc[[i]][1],
+                                      to = fromto_rc[[i]][2],
+                                      inclusive = TRUE)
     }
 
     # define Data as the cropped spectrum including the index intervals
     # outside the research zone, the intensities are set to the minimal
     # intensity of the research zone
     if (n > 1) {
-      Data <- apply(Re(spectrum_data[, unlist(Int)]), 1,
+      data <- apply(Re(spectrum_data[, unlist(interval)]), 1,
                     function(x) rep(min(x), m))
-      Data <- t(Data)
-      Data[, unlist(Int)] <- Re(spectrum_data[, unlist(Int)])
+      data <- t(data)
+      data[, unlist(interval)] <- Re(spectrum_data[, unlist(interval)])
     } else {
-      Data <- rep(min(Re(spectrum_data)), m)
-      Data[unlist(Int)] <- Re(spectrum_data[unlist(Int)])
+      data <- rep(min(Re(spectrum_data)), m)
+      data[unlist(interval)] <- Re(spectrum_data[unlist(interval)])
     }
   }
 
   # Apply the peak location search method ('thres' or 'max') on spectra
   if (method == "thres") {
-    TMSPpeaks <- apply(Data, 1, find_tmsp_peak, c = c, direction = direction)
+    tmsp_peaks <- apply(data, 1, find_tmsp_peak, c = c, direction = direction)
   } else { # method == "max
-    TMSPpeaks <- apply(Re(Data), 1, which.max)
+    tmsp_peaks <- apply(Re(data), 1, which.max)
   }
 
   # Shift spectra according to the TMSPpeaks found
   # Depends on the shift_handling
   # TMSPpeaks is a column index
-  maxpeak <- max(TMSPpeaks) # max accross spectra
-  minpeak <- min(TMSPpeaks) # min accross spectra
+  maxpeak <- max(tmsp_peaks) # max accross spectra
+  minpeak <- min(tmsp_peaks) # min accross spectra
 
   if (shift_handling %in% c("zerofilling", "NAfilling", "cut")) {
     fill <- NA
@@ -751,7 +751,7 @@ internal_referencing <- function(spectrum_data, fid_info,
 
     # fills in spectrum_data_calib with shifted spectra
     for (i in 1:n) {
-      shift <- (1 - TMSPpeaks[i]) + start
+      shift <- (1 - tmsp_peaks[i]) + start
       spectrum_data_calib[i, (1 + shift):(m + shift)] <- spectrum_data[i, ]
     }
 
@@ -788,7 +788,7 @@ internal_referencing <- function(spectrum_data, fid_info,
 
     # fills in spectrum_data_calib with shifted spectra
     for (i in 1:n) {
-      shift <- (maxpeak - TMSPpeaks[i])
+      shift <- (maxpeak - tmsp_peaks[i])
       spectrum_data_calib[i, (1 + shift):m] <- spectrum_data[i, 1:(m - shift)]
       if (shift > 0) {
         spectrum_data_calib[i, 1:shift] <- spectrum_data[i, (m - shift + 1):m]
@@ -797,7 +797,7 @@ internal_referencing <- function(spectrum_data, fid_info,
   }
 
   # Plot of the spectra (depending on rowindex_graph)
-  ppm <- xstart <- value <- xend <- Legend <- NULL # only for R CMD check
+  ppm <- xstart <- value <- xend <- legend <- NULL # only for R CMD check
 
   # with the search zone for TMSP and the location of the peaks just found
   if (!is.null(rowindex_graph)) {
@@ -816,30 +816,30 @@ internal_referencing <- function(spectrum_data, fid_info,
     }
 
     # TMSPloc in ppm
-    TMSPloc <- as.numeric(colnames(spectrum_data))[TMSPpeaks[rowindex_graph]]
+    tmsp_loc <- as.numeric(colnames(spectrum_data))[tmsp_peaks[rowindex_graph]]
 
     # num plot per window
-    num.stacked <- 6
+    num_stacked <- 6
 
     # rectanglar bands of color for the search zone
     rects <- data.frame(
       xstart = sapply(fromto, function(x) x[[1]]),
       xend = sapply(fromto, function(x) x[[2]]),
-      Legend = "Peak search zone and location"
+      legend = "Peak search zone and location"
     )
 
     # vlines for TMSP peak
     addlines <- data.frame(
                            rowname = rownames(spectrum_data)[rowindex_graph],
-                           TMSPloc)
+                           tmsp_loc)
 
     nn <- length(rowindex_graph)
     i <- 1
     j <- 1
-    plots <- vector(mode = "list", length = ceiling(nn / num.stacked))
+    plots <- vector(mode = "list", length = ceiling(nn / num_stacked))
 
     while (i <= nn) {
-      last <- min(i + num.stacked - 1, nn)
+      last <- min(i + num_stacked - 1, nn)
       melted <- reshape2::melt(Re(spectrum_data[i:last, ]),
         varnames = c("rowname", "ppm")
       )
@@ -849,12 +849,12 @@ internal_referencing <- function(spectrum_data, fid_info,
         ggplot2::geom_line(data = melted, ggplot2::aes(x = ppm, y = value)) +
         ggplot2::geom_rect(data = rects, ggplot2::aes(
           xmin = xstart, xmax = xend,
-          ymin = -Inf, ymax = Inf, fill = Legend
+          ymin = -Inf, ymax = Inf, fill = legend
         ), alpha = 0.4) +
         ggplot2::facet_grid(rowname ~ ., scales = "free_y") +
         ggplot2::theme(legend.position = "none") +
         ggplot2::geom_vline(
-          data = addlines, ggplot2::aes(xintercept = TMSPloc),
+          data = addlines, ggplot2::aes(xintercept = tmsp_loc),
           color = "red", show.legend = TRUE
         ) +
         ggplot2::ggtitle("Peak search zone and location") +
@@ -886,13 +886,13 @@ internal_referencing <- function(spectrum_data, fid_info,
 # ZeroOrderPhaseCorrection
 ## ====================================================
 
-ZeroOrderPhaseCorrection <- function(spectrum_data,
-                                     type_zopc = c("rms", "manual", "max"),
-                                     plot_rms = NULL, return_angle = FALSE,
-                                     createWindow = TRUE,
-                                     angle = NULL, plot_spectra = FALSE,
-                                     ppm.zopc = TRUE,
-                                     exclude.zopc = list(c(5.1, 4.5))) {
+zero_order_phase_correction <- function(spectrum_data,
+                                        type_zopc = c("rms", "manual", "max"),
+                                        plot_rms = NULL, return_angle = FALSE,
+                                        create_window = TRUE,
+                                        angle = NULL, plot_spectra = FALSE,
+                                        ppm_zopc = TRUE,
+                                        exclude_zopc = list(c(5.1, 4.5))) {
 
   # Data initialisation and checks
   # Entry arguments definition:
@@ -909,8 +909,8 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
 
   # Check input arguments
   type_zopc <- match.arg(type_zopc)
-  check_arg(ppm.zopc, c("bool"))
-  check_arg(unlist(exclude.zopc), c("num"), can_be_null = TRUE)
+  check_arg(ppm_zopc, c("bool"))
+  check_arg(unlist(exclude_zopc), c("num"), can_be_null = TRUE)
 
   # type_zopc in c("max", "rms") -----------------------------------------
   if (type_zopc %in% c("max", "rms")) {
@@ -918,64 +918,64 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
     # rms function to be optimised
     rms <- function(ang, y, meth = c("max", "rms")) {
       roty <- y * exp(complex(real = 0, imaginary = ang)) # spectrum rotation
-      Rey <- Re(roty)
+      rey <- Re(roty)
 
       if (meth == "rms") {
-        ReyPos <- Rey[Rey >= 0] # select positive intensities
-        POSss <- sum((ReyPos)^2, na.rm = TRUE) # SS for positive intensities
-        ss <- sum((Rey)^2, na.rm = TRUE) #  SS for all intensities
+        rey_pos <- rey[rey >= 0] # select positive intensities
+        pos_ss <- sum((rey_pos)^2, na.rm = TRUE) # SS for positive intensities
+        ss <- sum((rey)^2, na.rm = TRUE) #  SS for all intensities
         # criterion : SS for positive values / SS for all intensities
-        return(POSss / ss)
+        return(pos_ss / ss)
       } else {
-        maxi <- max(Rey, na.rm = TRUE)
+        maxi <- max(rey, na.rm = TRUE)
         return(maxi)
       }
     }
 
-    # Define the interval where to search for (by defining Data)
-    if (is.null(exclude.zopc)) {
-      Data <- spectrum_data
+    # Define the interval where to search for (by defining data)
+    if (is.null(exclude_zopc)) {
+      data <- spectrum_data
     } else {
-      # if ppm.zopc == TRUE, then exclude.zopc is in the colnames values,
+      # if ppm_zopc == TRUE, then exclude_zopc is in the colnames values,
       # else, in the column index
-      if (ppm.zopc == TRUE) {
+      if (ppm_zopc == TRUE) {
         colindex <- as.numeric(colnames(spectrum_data))
       } else {
         colindex <- 1:m
       }
 
-      # Second check for the argument exclude.zopc
-      diff <- diff(unlist(exclude.zopc))[seq_along(diff(unlist(exclude.zopc)))
+      # Second check for the argument exclude_zopc
+      diff <- diff(unlist(exclude_zopc))[seq_along(diff(unlist(exclude_zopc)))
                                          %% 2 != 0]
       for (i in seq_along(diff)) {
-        if (ppm.zopc == TRUE && diff[i] >= 0) {
-          stop(paste("Invalid region removal because from <= to in ppm.zopc"))
-        } else if (ppm.zopc == FALSE && diff[i] <= 0) {
+        if (ppm_zopc == TRUE && diff[i] >= 0) {
+          stop(paste("Invalid region removal because from <= to in ppm_zopc"))
+        } else if (ppm_zopc == FALSE && diff[i] <= 0) {
           stop(paste("Invalid region removal because from
                      >= to in column index"))
         }
       }
 
-      Int <- vector("list", length(exclude.zopc))
-      for (i in seq_along(exclude.zopc)) {
-        Int[[i]] <- index_interval(colindex,
-          from = exclude.zopc[[i]][1],
-          to = exclude.zopc[[i]][2], inclusive = TRUE
+      interval <- vector("list", length(exclude_zopc))
+      for (i in seq_along(exclude_zopc)) {
+        interval[[i]] <- index_interval(colindex,
+          from = exclude_zopc[[i]][1],
+          to = exclude_zopc[[i]][2], inclusive = TRUE
         )
       }
 
       vector <- rep(1, m)
-      vector[unlist(Int)] <- 0
+      vector[unlist(interval)] <- 0
       if (n > 1) {
         # Cropped_spectrum
-        Data <- sweep(spectrum_data, MARGIN = 2, FUN = "*", vector)
+        data <- sweep(spectrum_data, MARGIN = 2, FUN = "*", vector)
       } else {
-        Data <- spectrum_data * vector
+        data <- spectrum_data * vector
       } # Cropped_spectrum
     }
 
     # angles computation
-    Angle <- c()
+    angles <- c()
     for (k in 1:n) {
       # The function is rms is periodic (period 2pi) and it seems that
       # there is a phase x such that rms is unimodal (i.e. decreasing)
@@ -991,8 +991,8 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
       # convinced by that I agree) and we can check which one it is simply
       # by the following trick
 
-      f0 <- rms(0, Data[k, ], meth = type_zopc)
-      fpi <- rms(pi, Data[k, ], meth = type_zopc)
+      f0 <- rms(0, data[k, ], meth = type_zopc)
+      fpi <- rms(pi, data[k, ], meth = type_zopc)
       if (f0 < fpi) {
         interval <- c(-pi, pi)
       } else {
@@ -1006,15 +1006,15 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
         x <- seq(min(interval), max(interval), length.out = 100)
         y <- rep(1, 100)
         for (K in (1:100)) {
-          y[K] <- rms(x[K], Data[k, ], meth = type_zopc)
+          y[K] <- rms(x[K], data[k, ], meth = type_zopc)
         }
-        if (createWindow == TRUE) {
+        if (create_window == TRUE) {
           grDevices::dev.new(noRStudioGD = FALSE)
         }
         graphics::plot(x, y,
           main = paste(
             "Criterion maximization \n",
-            rownames(Data)[k]
+            rownames(data)[k]
           ), ylim = c(0, 1.1),
           ylab = "positiveness criterion", xlab = "angle "
         )
@@ -1024,7 +1024,7 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
       # Best angle
       best <- stats::optimize(rms,
         interval = interval, maximum = TRUE,
-        y = Data[k, ], meth = type_zopc
+        y = data[k, ], meth = type_zopc
       )
       ang <- best[["maximum"]]
 
@@ -1037,12 +1037,12 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
       # spectrum rotation
       spectrum_data[k, ] <- spectrum_data[k, ] * exp(complex(real = 0,
                                                              imaginary = ang))
-      Angle <- c(Angle, ang)
+      angles <- c(angles, ang)
     }
   } else {
     # type_zopc is "manual"
-    # if Angle is already specified and no optimisation is needed
-    Angle <- angle
+    # if angles is already specified and no optimisation is needed
+    angles <- angle
 
     if (!is.vector(angle)) {
       stop("angle is not a vector")
@@ -1067,7 +1067,7 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
     nn <- ceiling(n / 4)
     i <- 1
     for (k in 1:nn) {
-      if (createWindow == TRUE) {
+      if (create_window == TRUE) {
         grDevices::dev.new(noRStudioGD = FALSE)
       }
       graphics::par(mfrow = c(4, 2))
@@ -1093,7 +1093,7 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
   spectrum_data <- end_treatment("ZeroOrderPhaseCorrection",
                                  begin_info, spectrum_data)
   if (return_angle) {
-    return(list(spectrum_data = spectrum_data, Angle = Angle))
+    return(list(spectrum_data = spectrum_data, angles = angles))
   } else {
     return(spectrum_data)
   }
@@ -1103,56 +1103,56 @@ ZeroOrderPhaseCorrection <- function(spectrum_data,
 ## ====================================================
 # Baseline Correction
 ## ====================================================
-BaselineCorrection <- function(spectrum_data, ptw.bc = TRUE, maxIter = 42,
-                               lambda.bc = 1e+07, p.bc = 0.05, eps = 1e-08,
-                               ppm.bc = TRUE, exclude.bc = list(c(5.1, 4.5)),
-                               returnBaseline = FALSE) {
+baseline_correction <- function(spectrum_data, ptw_bc = TRUE, max_iter = 42,
+                                lambda_bc = 1e+07, p_bc = 0.05, eps = 1e-08,
+                                ppm_bc = TRUE, exclude_bc = list(c(5.1, 4.5)),
+                                return_baseline = FALSE) {
 
   # Data initialisation ----------------------------------------------
   begin_info <- begin_treatment("BaselineCorrection",
                                 spectrum_data, force_real = TRUE)
   spectrum_data <- begin_info[["signal_data"]]
-  p <- p.bc
-  lambda <- lambda.bc
+  p <- p_bc
+  lambda <- lambda_bc
   n <- dim(spectrum_data)[1]
   m <- dim(spectrum_data)[2]
 
   # Data check
-  check_arg(ptw.bc, c("bool"))
-  check_arg(maxIter, c("int", "pos"))
+  check_arg(ptw_bc, c("bool"))
+  check_arg(max_iter, c("int", "pos"))
   check_arg(lambda, c("num", "pos0"))
-  check_arg(p.bc, c("num", "pos0"))
+  check_arg(p_bc, c("num", "pos0"))
   check_arg(eps, c("num", "pos0"))
-  check_arg(returnBaseline, c("bool"))
-  check_arg(ppm.bc, c("bool"))
-  check_arg(unlist(exclude.bc), c("num"), can_be_null = TRUE)
+  check_arg(return_baseline, c("bool"))
+  check_arg(ppm_bc, c("bool"))
+  check_arg(unlist(exclude_bc), c("num"), can_be_null = TRUE)
 
   # Define the interval where to search for (by defining Data)
-  if (is.null(exclude.bc)) {
+  if (is.null(exclude_bc)) {
     exclude_index <- NULL
   } else {
-    # if ppm.bc == TRUE, then exclude.bc is in the colnames values, else,
+    # if ppm_bc == TRUE, then exclude_bc is in the colnames values, else,
     # in the column index
-    if (ppm.bc == TRUE) {
+    if (ppm_bc == TRUE) {
       colindex <- as.numeric(colnames(spectrum_data))
     } else {
       colindex <- 1:m
     }
 
-    Int <- vector("list", length(exclude.bc))
-    for (i in seq_len(exclude.bc)) {
-      Int[[i]] <- index_interval(colindex,
-        from = exclude.bc[[i]][1],
-        to = exclude.bc[[i]][2], inclusive = TRUE
+    interval <- vector("list", length(exclude_bc))
+    for (i in seq_len(exclude_bc)) {
+      interval[[i]] <- index_interval(colindex,
+        from = exclude_bc[[i]][1],
+        to = exclude_bc[[i]][2], inclusive = TRUE
       )
     }
-    exclude_index <- unlist(Int)
+    exclude_index <- unlist(interval)
   }
 
   # Baseline Correction implementation definition
   # 2 Ways: either use the function asysm from the ptw package or by
   # built-in functions
-  if (ptw.bc) {
+  if (ptw_bc) {
     asysm <- ptw::asysm
   } else {
     difsmw <- function(y, lambda, w, d) {
@@ -1163,11 +1163,11 @@ BaselineCorrection <- function(spectrum_data, ptw.bc = TRUE, maxIter = 42,
       # w: weights (use0 zeros for missing values)
       # d: order of differences in penalty (generally 2)
       m <- length(y)
-      W <- Matrix::Diagonal(x = w)
+      w_diag <- Matrix::Diagonal(x = w)
       e <- Matrix::Diagonal(m)
-      D <- Matrix::diff(e, differences = d)
-      C <- Matrix::chol(W + lambda * t(D) %*% D)
-      x <- Matrix::solve(C, Matrix::solve(t(C), w * y))
+      d_diff <- Matrix::diff(e, differences = d)
+      c_chol <- Matrix::chol(w_diag + lambda * t(d_diff) %*% d_diff)
+      x <- Matrix::solve(c_chol, Matrix::solve(t(c_chol), w * y))
       as.numeric(x)
     }
     asysm <- function(y, lambda, p, eps, exclude_index) {
@@ -1195,7 +1195,7 @@ BaselineCorrection <- function(spectrum_data, ptw.bc = TRUE, maxIter = 42,
           break
         }
         i <- i + 1
-        if (i > maxIter) {
+        if (i > max_iter) {
           warning("cannot find Baseline estimation in asysm")
           break
         }
@@ -1207,7 +1207,7 @@ BaselineCorrection <- function(spectrum_data, ptw.bc = TRUE, maxIter = 42,
   # Baseline estimation
   baseline <- matrix(NA, nrow = nrow(spectrum_data), ncol = ncol(spectrum_data))
 
-  if (ptw.bc) {
+  if (ptw_bc) {
     baseline <- apply(spectrum_data, 1, asysm,
                       lambda = lambda, p = p,
                       eps = eps)
@@ -1223,7 +1223,7 @@ BaselineCorrection <- function(spectrum_data, ptw.bc = TRUE, maxIter = 42,
   spectrum_data <- end_treatment("BaselineCorrection", begin_info,
                                  spectrum_data)
 
-  if (returnBaseline) {
+  if (return_baseline) {
     return(list(spectrum_data = spectrum_data, baseline = baseline))
   } else {
     return(spectrum_data)

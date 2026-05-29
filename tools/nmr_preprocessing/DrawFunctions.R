@@ -152,7 +152,7 @@ DrawSignal <- function(Signal_data, subtype = c(
 
 
     # SEPARATE or STACKED ===============
-    if (subtype == "separate" | subtype == "stacked") {
+    if (subtype == "separate" || subtype == "stacked") {
         i <- 1
         while (i <= n) {
             if (createWindow) {
@@ -246,7 +246,7 @@ DrawSignal <- function(Signal_data, subtype = c(
                 element <- sweep(element, MARGIN = 2, matrixStats::colMedians(element), `-`)
             } else if (subtype == "diffwith") {
                 element <- sweep(element, MARGIN = 2, element[row, ], `-`)
-                if (row == 1 & n > 1) {
+                if (row == 1 && n > 1) {
                     # Since we use plot on the first row and lines on the following, the y
                     # scale is calculated at the first row so if the first row is all 0, it
                     # causes problems

@@ -83,28 +83,27 @@ samplemetadata_fid <- as.matrix(samplemetadata_fid)
 # Inputs
 lambda <- as.numeric(arg_ls[["lambda"]])
 
-# apodization -----------------------------------------
-# Inputs
+# Apodization arguments -----------------------------------------
 phase <- 0
 rect_ratio <- 1 / 2
 gauss_lb <- 1
 exp_lb <- 1
-apodization <- arg_ls[["apodization_method"]]
+apodization_arg <- arg_ls[["apodization_method"]]
 
-if (apodization == "exp") {
+if (apodization_arg == "exp") {
   exp_lb <- as.numeric(arg_ls[["exp_lb"]])
-} else if (apodization == "cos2") {
+} else if (apodization_arg == "cos2") {
   phase <- as.numeric(arg_ls[["phase"]])
-} else if (apodization == "hanning") {
+} else if (apodization_arg == "hanning") {
   phase <- as.numeric(arg_ls[["phase"]])
-} else if (apodization == "hamming") {
+} else if (apodization_arg == "hamming") {
   phase <- as.numeric(arg_ls[["phase"]])
-} else if (apodization == "blockexp") {
+} else if (apodization_arg == "blockexp") {
   rect_ratio <- as.numeric(arg_ls[["rect_ratio"]])
   exp_lb <- as.numeric(arg_ls[["exp_lb"]])
-} else if (apodization == "blockcos2") {
+} else if (apodization_arg == "blockcos2") {
   rect_ratio <- as.numeric(arg_ls[["rect_ratio"]])
-} else if (apodization == "gauss") {
+} else if (apodization_arg == "gauss") {
   rect_ratio <- as.numeric(arg_ls[["rect_ratio"]])
   gauss_lb <- as.numeric(arg_ls[["gauss_lb"]])
 }
@@ -207,7 +206,6 @@ if (length(error_stock) > 1) {
 pdf(nom_graphe, onefile = TRUE, width = 13, height = 13)
 
 # FirstOrderPhaseCorrection ---------------------------------
-print("group_delay_correction")
 fid_data <- group_delay_correction(fid_data0, fid_info = samplemetadata_fid,
                                    group_delay = NULL)
 
@@ -221,7 +219,6 @@ if (first_opc_graph == "YES") {
 }
 
 # SolventSuppression ---------------------------------
-print("solvent_suppression")
 fid_data <- solvent_suppression(fid_data, lambda_ss = lambda,
                                 ptw_ss = TRUE, plot_solvent = FALSE,
                                 return_solvent = FALSE)
@@ -237,9 +234,8 @@ if (ss_graph == "YES") {
 
 print(rect_ratio)
 # Apodization ---------------------------------
-print("apodization")
-fid_data <- Apodization(fid_data, fid_info = samplemetadata_fid, dt = NULL,
-  type_apod = apodization, phase = phase, rect_ratio = rect_ratio,
+fid_data <- apodization(fid_data, fid_info = samplemetadata_fid, dt = NULL,
+  type_apod = apodization_arg, phase = phase, rect_ratio = rect_ratio,
   gauss_lb = gauss_lb, exp_lb = exp_lb, plot_window = FALSE,
   return_factor = FALSE
 )
@@ -254,7 +250,6 @@ if (apod_graph == "YES") {
 }
 
 # FourierTransform ---------------------------------
-print("fourier_transform")
 spectrum_data <- fourier_transform(fid_data, fid_info = samplemetadata_fid,
                                    reverse_axis = TRUE)
 
@@ -267,13 +262,11 @@ if (ft_graph == "YES") {
 }
 
 # ZeroOrderPhaseCorrection ---------------------------------
-print("zero_order_phase_correction")
-spectrum_data <- ZeroOrderPhaseCorrection(spectrum_data,
+spectrum_data <- zero_order_phase_correction(spectrum_data,
   type_zopc = zero_order_phase_method, plot_rms = NULL, return_angle = FALSE,
-  createWindow = TRUE, angle = angle, plot_spectra = FALSE,
-  ppm.zopc = TRUE, exclude.zopc = exclude_zopc
+  create_window = TRUE, angle = angle, plot_spectra = FALSE,
+  ppm_zopc = TRUE, exclude_zopc = exclude_zopc
 )
-
 
 # InternalReferencing ---------------------------------
 # if (shiftReferencing=="YES") {
@@ -301,10 +294,9 @@ if (zero_opc_graph == "YES") {
 
 
 # BaselineCorrection ---------------------------------
-print("baseline_correction")
-spectrum_data <- BaselineCorrection(spectrum_data, ptw.bc = TRUE,
-  lambda.bc = lambda_bc, p.bc = p_bc, eps = epsilon, ppm.bc = TRUE,
-  exclude.bc = exclude_bc, returnBaseline = FALSE
+spectrum_data <- baseline_correction(spectrum_data, ptw_bc = TRUE,
+  lambda_bc = lambda_bc, p_bc = p_bc, eps = epsilon, ppm_bc = TRUE,
+  exclude_bc = exclude_bc, return_baseline = FALSE
 )
 
 if (bc_graph == "YES") {
@@ -317,7 +309,6 @@ if (bc_graph == "YES") {
 
 
 # negative_values_zeroing ---------------------------------
-print("negative_values_zeroing")
 if (negative_to_zero == "YES") {
   spectrum_data <- negative_values_zeroing(spectrum_data)
 }

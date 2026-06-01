@@ -197,7 +197,8 @@ draw_signal <- function(signal_data,
 
 
           plots[[name]] <- ggplot2::ggplot(data = melted,
-                                           ggplot2::aes(x = variable, y = value)) +
+                                           ggplot2::aes(x = variable,
+                                                        y = value)) +
             ggplot2::geom_line(size = 0.3) +
             ggplot2::facet_grid(rowname ~ ., scales = "free_y") +
             ggplot2::theme(legend.position = "none") +
@@ -205,7 +206,8 @@ draw_signal <- function(signal_data,
             ggplot2::ggtitle(label = main) +
             ggplot2::theme_bw()
 
-          if ((melted[1, "variable"] - melted[(dim(melted)[1]), "variable"]) > 0) {
+          if ((melted[1, "variable"] -
+                 melted[(dim(melted)[1]), "variable"]) > 0) {
             plots[[name]] <- plots[[name]] + ggplot2::scale_x_reverse()
           }
         }

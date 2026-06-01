@@ -491,10 +491,9 @@ fftshift_1d_2d <- function(x) {
     x <- vec2mat(x)
     vec <- TRUE
   }
-  m <- dim(x)[2]
-  p <- ceiling(m / 2)
-  new_index <- c((p + 1):m, 1:p)
-  y <- x[, new_index, drop = vec]
+  y <- x[, c((ceiling(dim(x)[2] / 2) + 1):dim(x)[2], 1:ceiling(dim(x)[2] / 2)),
+         drop = vec]
+  y
 }
 
 # FourierTransform
@@ -806,7 +805,6 @@ internal_referencing <- function(spectrum_data, fid_info,
         fromto <- fromto_rc
       } else {
         fromto <- list()
-        idcol <- as.numeric(colnames(spectrum_data))
         for (i in seq_along(fromto_rc)) {
           fromto[[i]] <- as.numeric(colnames(spectrum_data))[fromto_rc[[i]]]
         }
@@ -1114,7 +1112,6 @@ baseline_correction <- function(spectrum_data, ptw_bc = TRUE, max_iter = 42,
   spectrum_data <- begin_info[["signal_data"]]
   p <- p_bc
   lambda <- lambda_bc
-  n <- dim(spectrum_data)[1]
   m <- dim(spectrum_data)[2]
 
   # Data check

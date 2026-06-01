@@ -3,6 +3,6 @@ homepage_url: http://workflow4metabolomics.org
 long_description: 'Part of the W4M project: http://workflow4metabolomics.org'
 name: nmr_preprocessing
 owner: marie-tremblay-metatoul
-remote_repository_url: https://github.com/workflow4metabolomics/
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
 categories:
 - Metabolomics

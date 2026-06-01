@@ -24,9 +24,9 @@
         Rscript $__tool_directory__/NmrPreprocessing_wrapper.R
 
         ## Data matrix of FID spectra
-        data_matrix_fid $data_matrix_fid
+        data_matrix_fid '$data_matrix_fid'
         ## Sample metadata matrix
-        sample_metadata_fid $sample_metadata_fid
+        sample_metadata_fid '$sample_metadata_fid'
 
         ## First order phase correction
         ## Graphical display

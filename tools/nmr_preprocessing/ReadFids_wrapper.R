@@ -65,10 +65,10 @@ data_matrix <- outputs[["fid_data"]] # Data matrix
 data_sample <- outputs[["fid_info"]] # Sample metadata
 
 pdf(nom_graphe, onefile = TRUE, width = 13, height = 13)
-DrawSignal(data_matrix, subtype = "stacked",
-  ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-  xlab = "Frequency", num.stacked = 4, main = "Raw FID data",
-  createWindow = FALSE
+draw_signal(data_matrix, subtype = "stacked",
+  re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+  xlab = "Frequency", num_stacked = 4, main = "Raw FID data",
+  create_window_drawsignal = FALSE
 )
 invisible(dev.off())
 

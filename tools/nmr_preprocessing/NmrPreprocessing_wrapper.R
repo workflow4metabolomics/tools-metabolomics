@@ -211,10 +211,10 @@ fid_data <- group_delay_correction(fid_data0, fid_info = samplemetadata_fid,
 
 if (first_opc_graph == "YES") {
   title <- "FIDs after Group Delay Correction"
-  DrawSignal(fid_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4, main = title,
-    createWindow = FALSE
+  draw_signal(fid_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4, main = title,
+    create_window_drawsignal = FALSE
   )
 }
 
@@ -225,10 +225,10 @@ fid_data <- solvent_suppression(fid_data, lambda_ss = lambda,
 
 if (ss_graph == "YES") {
   title <- "FIDs after Solvent Suppression "
-  DrawSignal(fid_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4,
-    main = title, createWindow = FALSE
+  draw_signal(fid_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4,
+    main = title, create_window_drawsignal = FALSE
   )
 }
 
@@ -242,10 +242,10 @@ fid_data <- apodization(fid_data, fid_info = samplemetadata_fid, dt = NULL,
 
 if (apod_graph == "YES") {
   title <- "FIDs after Apodization"
-  DrawSignal(fid_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4,
-    main = title, createWindow = FALSE
+  draw_signal(fid_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4,
+    main = title, create_window_drawsignal = FALSE
   )
 }
 
@@ -255,9 +255,10 @@ spectrum_data <- fourier_transform(fid_data, fid_info = samplemetadata_fid,
 
 if (ft_graph == "YES") {
   title <- "Fourier transformed spectra"
-  DrawSignal(spectrum_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  draw_signal(spectrum_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4, main = title,
+    create_window_drawsignal = FALSE
   )
 }
 
@@ -278,17 +279,19 @@ spectrum_data <- internal_referencing(spectrum_data, samplemetadata_fid,
 
 if (sr_graph == "YES") {
   title <- "Spectra after Shift Referencing"
-  DrawSignal(spectrum_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  draw_signal(spectrum_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4, main = title,
+    create_window_drawsignal = FALSE
   )
 }
 
 if (zero_opc_graph == "YES") {
   title <- "Spectra after Zero Order Phase Correction"
-  DrawSignal(spectrum_data, subtype = "stacked",
-    ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-    xlab = "Frequency", num.stacked = 4, main = title, createWindow = FALSE
+  draw_signal(spectrum_data, subtype = "stacked",
+    re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+    xlab = "Frequency", num_stacked = 4, main = title,
+    create_window_drawsignal = FALSE
   )
 }
 
@@ -301,10 +304,10 @@ spectrum_data <- baseline_correction(spectrum_data, ptw_bc = TRUE,
 
 if (bc_graph == "YES") {
   title <- "Spectra after Baseline Correction"
-  DrawSignal(spectrum_data, subtype = "stacked",
-             ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-             xlab = "Frequency", num.stacked = 4, main = title,
-             createWindow = FALSE)
+  draw_signal(spectrum_data, subtype = "stacked",
+              re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+              xlab = "Frequency", num_stacked = 4, main = title,
+              create_window_drawsignal = FALSE)
 }
 
 
@@ -315,10 +318,10 @@ if (negative_to_zero == "YES") {
 print(spectrum_data[1:5, 1:5])
 if (final_graph == "YES") {
   title <- "Final preprocessed spectra"
-  DrawSignal(spectrum_data, subtype = "stacked",
-             ReImModArg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
-             xlab = "Frequency", num.stacked = 4, main = title,
-             createWindow = FALSE)
+  draw_signal(spectrum_data, subtype = "stacked",
+              re_im_mod_arg = c(TRUE, FALSE, FALSE, FALSE), vertical = TRUE,
+              xlab = "Frequency", num_stacked = 4, main = title,
+              create_window_drawsignal = FALSE)
 }
 invisible(dev.off())
 

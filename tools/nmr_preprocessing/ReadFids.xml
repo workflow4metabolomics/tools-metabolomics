@@ -1,4 +1,4 @@
-<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy1">
+<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy2">
     <description> Read Bruker NMR raw files</description>
 
     <macros>

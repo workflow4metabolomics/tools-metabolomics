@@ -2,6 +2,7 @@ library(ggplot2) # nice plots
 library(gridExtra) # nice plots
 library(reshape2) # data manipulation
 
+## LOCAL FUNCTION
 # vec2mat
 vec2mat <- function(vec) {
   matrix(vec, nrow = 1, dimnames = list(c(1), names(vec)))

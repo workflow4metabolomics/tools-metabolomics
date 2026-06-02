@@ -1,6 +1,10 @@
 ## ==========================
 # Internal functions
 ## ==========================
+# vec2mat
+vec2mat <- function(vec) {
+  matrix(vec, nrow = 1, dimnames = list(c(1), names(vec)))
+}
 
 # beginTreatment
 begin_treatment <- function(name, signal_data = NULL, signal_info = NULL,
@@ -191,11 +195,6 @@ interpol <- function(t, y) {
   g <- y[ti + 1] - y[ti]
   f <- y[ti] + tr * g
   list(f = f, s = s, g = g)
-}
-
-# vec2mat
-vec2mat <- function(vec) {
-  matrix(vec, nrow = 1, dimnames = list(c(1), names(vec)))
 }
 
 # binary_search

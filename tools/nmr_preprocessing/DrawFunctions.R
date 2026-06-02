@@ -2,6 +2,11 @@ library(ggplot2) # nice plots
 library(gridExtra) # nice plots
 library(reshape2) # data manipulation
 
+# vec2mat
+vec2mat <- function(vec) {
+  matrix(vec, nrow = 1, dimnames = list(c(1), names(vec)))
+}
+
 draw <- function(signal_data, type_draw = c("signal", "pca"),
                  output = c("default", "window", "png", "pdf"),
                  dirpath = ".", filename = "%003d", height = 480,
@@ -38,7 +43,7 @@ draw <- function(signal_data, type_draw = c("signal", "pca"),
   )
 
   # Drawing type (signal/spectrum or PCA)
-  funs <- list(signal = draw_signal, pca = DrawPCA)
+  funs <- list(signal = draw_signal)
   if (type_draw %in% names(funs)) {
     fun <- funs[[type_draw]]
   } else {
@@ -222,8 +227,6 @@ draw_signal <- function(signal_data,
     }
   } else if (subtype %in% c("together", "diffmean", "diffmedian", "diffwith")) {
     # TOGHETER or DIFFMEAN or DIFFMEDIAN or DIFFWITH ===============
-
-    rainbow_colors <- grDevices::rainbow(n)
 
     if (create_window_drawsignal) {
       grDevices::dev.new(noRStudioGD = TRUE)

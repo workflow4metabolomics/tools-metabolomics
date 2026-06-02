@@ -11,7 +11,6 @@ begin_treatment <- function(name, signal_data = NULL, signal_info = NULL,
                             force_real = FALSE) {
   cat("Begin", name, "\n")
 
-
   # Formatting the signal_data and signal_info -----------------------
   vec <- is.vector(signal_data)
   if (vec) {
@@ -32,7 +31,6 @@ begin_treatment <- function(name, signal_data = NULL, signal_info = NULL,
     stop("signal_info is not a matrix.")
   }
 
-
   original_data <- signal_data
 
   # Extract the real part of the spectrum ---------------------------
@@ -48,7 +46,6 @@ begin_treatment <- function(name, signal_data = NULL, signal_info = NULL,
   }
 
   # Return the formatted data and metadata entries --------------------
-
   return(list(start = proc.time(), vec = vec, force_real = force_real,
     original_data = original_data, signal_data = signal_data,
     signal_info = signal_info

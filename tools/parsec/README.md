@@ -110,4 +110,6 @@ _here we will write about the_ `LICENSE`
 - **Elfried Salanon**  
 📅 **Date:** 2025  
 - **Marie Lefebvre**  
-📅 **Date:** 2025  
+📅 **Date:** 2025
+- **Etienne Jules**
+📅 **Date:** 2025

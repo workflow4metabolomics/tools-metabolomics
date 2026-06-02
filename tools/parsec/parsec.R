@@ -1,3 +1,5 @@
+# R script to deploy Parsec as described in Salanon et al. (2025) ; script version : 0.1
+
 options(warn = -1)
 # --- IMPORT PACKAGES ---
 suppressPackageStartupMessages({

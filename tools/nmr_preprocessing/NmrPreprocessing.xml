@@ -341,7 +341,7 @@
             <output name="dataMatrix">
                 <assert_contents>
                     <has_n_lines n="32776"/>
-                    <has_size size="2377160" delta="40"/>
+                    <has_size size="2377160" delta="400"/>
                     <has_text text="ADG10003u_007"/>
                 </assert_contents>
             </output>

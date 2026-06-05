@@ -146,21 +146,14 @@
         <param name="sample_metadata_fid" type="data" label="Sample metadata matrix" help="" format="tabular" />
 
         <section name="GDC" title="Group Delay Correction" expanded="true">
-            <param name="first_opc_graph" label="Display the FIDs after 1st order phase correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                    <option value="NO"> NO </option>
-                    <option value="YES"> YES </option>
-            </param>
+            <param name="first_opc_graph" label="Display the FIDs after 1st order phase correction?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="SS" title="Solvent Suppression" expanded="true">
             <param name="lambda" label="Solvent Suppression: Smoothing parameter" type="float" value="1000000" help="Default value is 1e6"/>
 
-            <param name="ss_graph" label="Display the FIDs after solvent suppression?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="ss_graph" label="Display the FIDs after solvent suppression?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
-
 
         <section name="Apod" title="Apodization" expanded="true">
             <conditional name="apodization_method" >
@@ -197,17 +190,11 @@
                 </when>
             </conditional>
 
-            <param name="apod_graph" label="Display the FIDs after Apodization?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="apod_graph" label="Display the FIDs after Apodization?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="FT" title="Fourier Transform" expanded="true">
-            <param name="ft_graph" label="Display the Fourier transformed spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="ft_graph" label="Display the Fourier transformed spectra?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="ZOPC" title="Zero Order Phase Correction" expanded="true">
@@ -216,9 +203,9 @@
                 <option value="max" > max </option>
             </param>
             <conditional name="exclude_zone_zerophase">
-                <param name="choice" type="select" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
-                    <option value="YES" selected="true" > YES </option>
-                    <option value="NO" > NO </option>
+                <param name="choice" type="boolean" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
+                    <option truevalue="YES" selected="true" > YES </option>
+                    <option falsevalue="NO" > NO </option>
                 </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
@@ -230,10 +217,7 @@
                 </when>
             </conditional>
 
-            <param name="zero_opc_graph" label="Display the spectra after the Zero Order Phase Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="zero_opc_graph" label="Display the spectra after the Zero Order Phase Correction?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="SR" title="Shift Referencing" expanded="true">
@@ -264,10 +248,7 @@
 
             <param name="ppmvalue" type="float" label="Shift Referencing: the value of the reference peak in ppm" value="0" help="Default value is 0" />
 
-            <param name="sr_graph" label="Display the spectra after Shift Referencing?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="sr_graph" label="Display the spectra after Shift Referencing?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
 
@@ -277,9 +258,9 @@
             <param name="epsilon" type="float" label="Baseline Correction: numerical precision for convergence when estimating the baseline" value="0.00000001" help="Numerical precision for convergence when estimating the     baseline. Default value is 1e-8" />
 
             <conditional name="exclude_zone_bc">
-                <param name="choice" type="select" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
-                    <option value="YES" > YES </option>
-                    <option value="NO" selected="true" > NO </option>
+                <param name="choice" type="boolean" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
+                    <option falsevalue="NO" selected="true"> NO </option>
+                    <option truevalue="YES"> YES </option>
                 </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
@@ -291,24 +272,14 @@
                 </when>
             </conditional>
 
-            <param name="bc_graph" label="Display the spectra after Baseline Correction?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-                <option value="NO"> NO </option>
-                <option value="YES"> YES </option>
-            </param>
+            <param name="bc_graph" label="Display the spectra after Baseline Correction?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="NZ" title="Negative intensities to Zero" expanded="true">
-            <param name="negative_to_zero" label="Set negative intensities to zero?" type="select" help="If YES, sets negative intensities to zero">
-                <option value="NO"> NO </option>
-                <option value="YES" selected="yes"> YES </option>
-            </param>
+            <param name="negative_to_zero" label="Set negative intensities to zero?" type="boolean" falsevalue="NO" truevalue="YES" help="If YES, sets negative intensities to zero"/>
         </section>
 
-        <param name="final_graph" label="Display the final spectra?" type="select" help="Select 'YES' to display the spectra or 'NO' to not display them ">
-            <option value="YES"> YES </option>
-            <option value="NO"> NO </option>
-        </param>
-
+        <param name="final_graph" label="Display the final spectra?" type="boolean" truevalue="YES" falsevalue="NO" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
     </inputs>
 
     <outputs>
@@ -317,7 +288,6 @@
         <data format="txt" name="logOut" label="${tool.name}_log" />
         <data format="pdf" name="graphOut" label="${tool.name}_graph" />
     </outputs>
-
 
     <tests>
         <test>

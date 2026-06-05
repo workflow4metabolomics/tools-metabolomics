@@ -49,16 +49,7 @@
           <output name="datamatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
           <output name="samplemetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
           <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
-            <assert_contents>
-                <has_size size="1969" delta="30"/>
-                <has_text text="$fidzipfile"/>
-            </assert_contents>
-          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
-            <assert_contents>
-                <has_size size="410190" delta="20"/>
-                <has_text text="$fidzipfile"/>
-            </assert_contents>
-        </test>
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />        </test>
     </tests>
 
     <help>

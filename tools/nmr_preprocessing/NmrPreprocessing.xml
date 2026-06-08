@@ -146,7 +146,7 @@
         <param name="sample_metadata_fid" type="data" label="Sample metadata matrix" help="" format="tabular" />
 
         <section name="GDC" title="Group Delay Correction" expanded="true">
-            <param name="first_opc_graph" label="Display the FIDs after 1st order phase correction?" type="boolean" falsevalue="NO" truevalue="YES" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
+            <param name="first_opc_graph" label="Display the FIDs after 1st order phase correction?" type="boolean" truevalue="YES" falsevalue="NO" help="Select 'YES' to display the spectra or 'NO' to not display them "/>
         </section>
 
         <section name="SS" title="Solvent Suppression" expanded="true">
@@ -203,10 +203,7 @@
                 <option value="max" > max </option>
             </param>
             <conditional name="exclude_zone_zerophase">
-                <param name="choice" type="boolean" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
-                    <option truevalue="YES" selected="true" > YES </option>
-                    <option falsevalue="NO" > NO </option>
-                </param>
+                <param name="choice" type="boolean" truevalue="YES" falsevalue="NO" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" />
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
                         <param name="exclude_zone_zerophase_left" label="Excusion zone: left border" type="float" value="5.1" />
@@ -258,10 +255,7 @@
             <param name="epsilon" type="float" label="Baseline Correction: numerical precision for convergence when estimating the baseline" value="0.00000001" help="Numerical precision for convergence when estimating the     baseline. Default value is 1e-8" />
 
             <conditional name="exclude_zone_bc">
-                <param name="choice" type="boolean" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
-                    <option falsevalue="NO" selected="true"> NO </option>
-                    <option truevalue="YES"> YES </option>
-                </param>
+                <param name="choice" type="boolean" falsevalue="NO" truevalue="YES" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" />
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
                         <param name="exclude_zone_bc_left" label="Excusion zone: left border" type="float" value="5.1" />

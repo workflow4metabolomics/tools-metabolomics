@@ -203,7 +203,10 @@
                 <option value="max" > max </option>
             </param>
             <conditional name="exclude_zone_zerophase">
-                <param name="choice" type="boolean" truevalue="YES" falsevalue="NO" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" />
+                <param name="choice" type="select" label="Zero Order Phase Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
+                    <option value="YES" selected="true" > YES </option>
+                    <option value="NO" > NO </option>
+                </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
                         <param name="exclude_zone_zerophase_left" label="Excusion zone: left border" type="float" value="5.1" />
@@ -255,7 +258,10 @@
             <param name="epsilon" type="float" label="Baseline Correction: numerical precision for convergence when estimating the baseline" value="0.00000001" help="Numerical precision for convergence when estimating the     baseline. Default value is 1e-8" />
 
             <conditional name="exclude_zone_bc">
-                <param name="choice" type="boolean" falsevalue="NO" truevalue="YES" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" />
+                <param name="choice" type="select" label="Baseline Correction: exclusion area(s)" help="Choose if you want to exclude particular zone(s)" >
+                    <option value="YES" > YES </option>
+                    <option value="NO" selected="true" > NO </option>
+                </param>
                 <when value="YES">
                     <repeat name="conditions" title="Exclusion_zone" min="1">
                         <param name="exclude_zone_bc_left" label="Excusion zone: left border" type="float" value="5.1" />

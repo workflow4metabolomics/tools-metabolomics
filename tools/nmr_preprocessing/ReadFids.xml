@@ -18,7 +18,7 @@
             -e "source('${__tool_directory__}/DrawFunctions.R')"
             -e "source('${__tool_directory__}/ReadFids_script.R')"
             -e "source('${__tool_directory__}/ReadFids_wrapper.R')"
-                --fidzipfile "$fidzipfile"
+                --fidzipfile '$fidzipfile'
                 --title_line $title_line
                 $subdirectories
                 $dirs_names
@@ -49,7 +49,8 @@
           <output name="datamatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
           <output name="samplemetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
           <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
-          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />        </test>
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
+        </test>
     </tests>
 
     <help>

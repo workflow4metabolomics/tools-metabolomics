@@ -171,25 +171,12 @@ end_treatment <- function(name, begin_info, signal_data) {
 
 # Function to check arguments
 check_arg <- function(arg, checks, can_be_null = FALSE) {
-  check_list <- list(
-        bool = c(is.logical, "a boolean"), int = c(function(x) { # nolint
-      x %% 1 == 0
-    }, "an integer"), num = c(is.numeric, "a numeric"),
-    str = c(is.character, "a string"), pos = c(function(x) {
-      x > 0
-    }, "positive"), pos0 = c(function(x) {
-      x >= 0
-    }, "positive or zero"), l1 = c(function(x) {
-      length(x) == 1
-    }, "of length 1")
-  )
   if (is.null(arg)) {
     if (!can_be_null) {
       stop(deparse(substitute(arg)), " is null.")
     }
   }
 }
-
 
 # Function to get arguments
 get_arg <- function(arg, info, argname, can_be_absent = FALSE) {

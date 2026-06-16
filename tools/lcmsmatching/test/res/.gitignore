@@ -1,0 +1,6 @@
+!*.tsv
+!*.html
+.swp
+.*.swp
+.DS_Store
+!*.txt

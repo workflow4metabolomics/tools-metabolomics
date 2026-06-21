@@ -1,6 +1,6 @@
 <tool id="influx_data_manager" name="Influx Data Connector: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy0" profile="23.0">
     <macros>
-        <token name='@TOOL_VERSION@'>1.0.2</token>
+        <token name='@TOOL_VERSION@'>1.1.0</token>
     </macros>
     <requirements>
         <requirement type='package' version='@TOOL_VERSION@'>influx-si-data-manager</requirement>
@@ -9,6 +9,7 @@
     influx_data_manager
     --physiofit '$physiofit' 
     --isocor '$isocor'
+    --mapping '$mapping'
     --linp '$linp'
     --netw '$netw'
     --mmet '$mmet'
@@ -16,6 +17,14 @@
     --tvar '$tvar'
     --opt '$opt'
     --log '$stdout'
+    #if $norm:
+        #if $norm_type == 'text':
+            --normalization '$normalization.norm_text'
+        #end if
+        #if $norm_type == 'float':
+            --normalization '$normalization.norm_float'
+        #end if
+    #end if
     $verbose
     2> '$stderr' && cat '$stdout'
     ]]></command>
@@ -28,12 +37,37 @@
         <param type='data' format='tabular,txt' argument='--mmet' label='File containing specie concentrations for experiments (.mmet file)' optional='true'/>
         <param type='data' format='tabular,txt' argument='--cnstr' label='File containing constraints onf fluxes and specie concentrations for experiments (.constr file)' optional='true'/>
         <param type='data' format='tabular,txt' argument='--opt' label='File containing options for influx_si (.opt  file)' optional='true'/>
+        <param type='data' format='tabular,txt' argument='--mapping' label='Mapping of names and corresponding new names for input files' optional='true'/>
+        <conditional name='normalization'>
+            <param type='select' name='norm' label='Normalization of extracellular fluxes' help='Select "Yes" to normalize extracellular fluxes by specific value (glc uptake for example)'>
+                <option value='true'>Yes</option>
+                <option value='false'>No</option>
+            </param>
+            <when value='true'>
+                <conditional name='norm_type'>
+                    <param type='select' name='norm_type' label='Normalization type' help='Select the type of normalization to apply to fluxes'>
+                        <option value='text'>Parameter Name</option>
+                        <option value='float'>Custom Value</option>
+                    </param>
+                    <when value='text'>
+                        <param type='text' name='norm_text' label='Parameter name' help='Name of the parameter to normalize fluxes by (e.g. glc_uptake)'/>
+                    </when>
+                    <when value='float'>
+                        <param type='float' name='norm_float' value='1.0' label='Custom value' help='Value to normalize fluxes by (e.g. 10.0)'/>
+                    </when>
+                </conditional>
+            </when>
+            <when value='false'>
+                <param type='hidden' name='norm_text' value=''/>
+                <param type='hidden' name='norm_float' value='1.0'/>
+            </when>
+        </conditional>
         <param name='verbose' type='boolean' truevalue='--verbose' falsevalue='' label='Debug mode' help='Select "Yes" to have debug logs be printed out'/>
     </inputs>
     <outputs>
         <data format='txt' name='stdout' label='Run log'/>
         <collection type='list' label='Influx_si input files' name='list_output'>
-            <discover_datasets pattern='__name_and_ext__' format='zip'/>
+            <discover_datasets pattern='(?P&lt;name&gt;.+\.[^.]+)$' format='zip'/>
         </collection>
         <data format='txt' name='stderr' label='Influx DM error log'/>
     </outputs>
@@ -49,24 +83,24 @@
             <param name='opt' value='galaxy_test.opt'/>
             <param name='verbose' value='true'/>
             <output_collection name='list_output' type='list'>
-                <element name='Sample_1'>
+                <element name='galaxy_t'>
                     <assert_contents>
-                        <has_archive_member path='Sample_1.miso'>
+                        <has_archive_member path='galaxy_test.miso'>
                             <has_text_matching expression='sample\tId\tComment\tSpecie\tFragment\tDataset\tIsospecies\tSD\tTime'/>
                             <has_n_lines n='30'/>
                         </has_archive_member>
-                        <has_archive_member path='Sample_1.mflux'>
+                        <has_archive_member path='galaxy_test.mflux'>
                             <has_text_matching expression='Id\tComment\tFlux\tValue\tSD'/>
                             <has_text_matching expression='Glc_q'/>
                             <has_n_lines n='4'/>
                         </has_archive_member>
-                        <has_archive_member path='Sample_1.netw'>
+                        <has_archive_member path='galaxy_test.netw'>
                             <has_n_lines n='86'/>
                         </has_archive_member>
-                        <has_archive_member path='Sample_1.tvar'/>
-                        <has_archive_member path='Sample_1.linp'/>
-                        <has_archive_member path='Sample_1.cnstr'/>
-                        <has_archive_member path='Sample_1.opt'/>
+                        <has_archive_member path='galaxy_test.tvar'/>
+                        <has_archive_member path='galaxy_test.linp'/>
+                        <has_archive_member path='galaxy_test.cnstr'/>
+                        <has_archive_member path='galaxy_test.opt'/>
                     </assert_contents>
                 </element>
             </output_collection>

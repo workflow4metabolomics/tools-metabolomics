@@ -1,0 +1,367 @@
+<tool id="profia" name="proFIA" version="3.1.0">
+  <description>Preprocessing of FIA-HRMS data</description>
+  
+  <requirements>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.4.0">bioconductor-proFIA</requirement>
+  </requirements>
+  
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+  
+  <command>
+  Rscript $__tool_directory__/profia_wrapper.R
+
+  #if $inputs.input == "lib":
+  library $__app__.config.user_library_import_dir/$__user_email__/$inputs.library
+  #elif $inputs.input == "zip_file":
+  zipfile $inputs.zip_file
+  #end if
+  
+  ppmN "$ppmN"
+  dmzN "$dmzN"
+  ppmGroupN "$ppmGroupN"
+  dmzGroupN "$dmzGroupN"
+  fracGroupN "$fracGroupN"
+  imputeC "$imputeC"
+
+  #if $advCpt.opcC == "full"
+  bandCoverageN "$advCpt.bandCoverageN"
+  sizeMinN "$advCpt.sizeMinN"
+  scanMinI "$advCpt.scanMinI"        
+  scanMaxI "$advCpt.scanMaxI"
+  #end if  
+
+  dataMatrix_out "$dataMatrix_out"
+  sampleMetadata_out "$sampleMetadata_out"
+  variableMetadata_out "$variableMetadata_out"
+  figure "$figure"
+  information "$information"
+  </command>
+  
+  <inputs>
+    <conditional name="inputs">
+      <param name="input" type="select" label="Choose your input method" >
+        <option value="zip_file" selected="true">Zip file from your history containing your raw files</option>
+        <option value="lib" >Library directory name</option>
+      </param>
+      <when value="zip_file">
+        <param name="zip_file" type="data" format="no_unzip.zip,zip" label="Zip file (see the details for file upload in the help section below)" />
+      </when>
+      <when value="lib">
+        <param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data" >
+          <validator type="empty_field"/>
+        </param>
+      </when>     
+    </conditional>
+    
+    <param name="ppmN" label="Maximum deviation between centroids during band detection (in ppm)" type="text" value = "7" help="[ppm]" />
+    <param name="dmzN" label="Minimal maximum deviation between centroids during band detection (in Da)" type="text" value = "0.001" help="[dmz] shloud be at most 0.002 for high resolution" />	    
+    <param name="ppmGroupN" label="Accuracy of the mass spectrometer to be used during feature alignment (in ppm)" type="text" value = "3" help="[ppmGroup] Should be inferior to the ppm parameter above." />
+    <param name="dmzGroupN" label="Minimal accuracy of the mass spectrometer to be used during feature alignment (in Da)" type="text" value = "0.0005" help="[dmzGroup] shloud be at most 0.002 for high resolution" />
+    <param name="fracGroupN" label=" Minimum fraction of samples in which a peak should be detected in at least one class to be kept during feature alignment" type="text" value = "0.5" help="[fracGroup]" />
+    <param name="imputeC" label="Imputation method" type="select" help="[imputation]">
+      <option value="None">None</option>
+      <option value="randomForest" selected="true">randomForest</option>
+    </param>
+
+
+
+    <conditional name="advCpt">
+      <param name="opcC" type="select" label="Advanced parameters" >
+	<option value="default" selected="true">Use default</option>
+	<option value="full">Full parameter list</option>
+      </param>
+      <when value="default"/>
+      <when value="full">
+        <param name="bandCoverageN" type="float" value="0.3" label="Minimum fraction of centroids in the estimated injection window for a band to be built" help="[bandCoverage] Must be between 0 and 1"/>
+	<param name="sizeMinN" type="text" value="none" label="Minimum number of consecutive centroids for a band to be built" help="[sizeMin] If set to 'none', the half of the estimated injection window will be used"/>
+	<param name="scanMinI" type="integer" value="1" label="First scan to be preprocessed" help="[scanMin]"/>
+	<param name="scanMaxI" type="text" value="none" label="Last scan to be preprocessed" help="[scanMax] Set to 'none' to preprocess up to the last acquired scan"/>		
+      </when>
+      </conditional>
+
+
+    
+  </inputs>
+  
+  <outputs>
+    <data name="dataMatrix_out" label="${tool.name}_dataMatrix.tsv" format="tabular" ></data>
+    <data name="sampleMetadata_out" label="${tool.name}_sampleMetadata.tsv" format="tabular" ></data>
+    <data name="variableMetadata_out" label="${tool.name}_variableMetadata.tsv" format="tabular" ></data>
+    <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
+    <data name="information" label="${tool.name}_information.txt" format="txt"/>
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name="inputs|input" value="zip_file" />
+      <param name="inputs|zip_file" value="input-plasFIA.zip" ftype="zip" />
+      <param name="ppmN" value="2"/>
+      <param name="dmzN" value="0.0005"/>
+      <param name="ppmGroupN" value="1"/>
+      <param name="dmzGroupN" value="0.0005"/>
+      <param name="fracGroupN" value="0.1"/>
+      <param name="imputeC" value="randomForest"/>
+      <output name="dataMatrix_out" file="output-dataMatrix.tsv" />
+      <output name="information">
+        <assert_contents>
+          <has_text text="707  groups have been done" />
+	  <has_text text="3 samples x 707 variables" />
+          <has_text text="2089  peaks detected" />
+        </assert_contents>
+      </output>
+    </test>
+  </tests>
+  
+  <help>
+
+.. class:: infomark
+
+**Author**	Alexis Delabriere and Etienne Thevenot (CEA, LIST, MetaboHUB Paris, etienne.thevenot@cea.fr)
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Please cite**
+
+Delabriere A., Hohenester U., Colsch B., Junot C., Fenaille F. and Thevenot E.A. (2017). *proFIA*: A data preprocessing workflow for Flow Injection Analysis coupled to High-Resolution Mass Spectrometry. *Bioinformatics*, **33**:3767-3775. `https://doi.org/10.1093/bioinformatics/btx458 &lt;https://doi.org/10.1093/bioinformatics/btx458&gt;`_
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**R package**
+
+The **proFIA** package is available from the bioconductor repository `http://bioconductor.org/packages/proFIA &lt;http://bioconductor.org/packages/proFIA&gt;`_
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+  
+---------------------------------------------------
+
+==========================================================
+*proFIA*: A preprocessing workflow for FIA-HRMS data
+==========================================================
+
+-----------
+Description
+-----------
+
+**Flow Injection Analysis coupled to High-Resolution Mass Spectrometry (FIA-HRMS)** is a promising approach for **high-throughput metabolomics** (Madalinski *et al.*, 2008; Fuhrer *et al.*, 2011; Draper *et al.*, 2013). FIA- HRMS data, however, cannot be preprocessed with current software tools which rely on liquid chromatography separation, or handle low resolution data only.
+
+The **proFIA module is a workflow** allowing to preprocess FIA-HRMS raw data in **centroid** mode and open format (netCDF, mzData, mzXML, and mzML), and generates the table of peak intensities (**peak table**). The workflow consists in **peak detection and quantification** within individual sample files, followed by **alignment** between files in the m/z dimension, and **imputation** of the missing values in the final peak table (Delabriere *et al.*, submitted). For each ion, the graph representing the intensity as a function of time is called a **flowgram**. A flowgram can be modeled as I = kP + ME(P) + B + e, where k is the response factor (corresponding to the ionization properties of the analyte), P is the **sample peak** (normalized profile which is common for all analytes from a sample and depends on the flow injection conditions only), ME is the **matrix effect**, B is the **solvent baseline**, and e is the heteroscedastic noise.
+
+The generated peak table is available in the '3 table' W4M tabular format (**dataMatrix**, **sampleMetadata**, and **variableMetadata**) for downstream statistical analysis and annotation with W4M modules.
+
+A figure provides **diagnostics** and visualization of the preprocessed data set.
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**References**
+
+| Delabriere A., Hohenester U., Junot C. and Thevenot E.A. (2017). proFIA: A data preprocessing workflow for Flow Injection Analysis coupled to High-Resolution Mass Spectrometry. *Bioinformatics*, **33**:3767-3775. (https://doi.org/10.1093/bioinformatics/btx458)
+| Draper J., Lloyd A., Goodacre R. and Beckmann M. (2013). Flow infusion electrospray ionisation mass spectrometry for high throughput, non-targeted metabolite fingerprinting: a review. *Metabolomics* 9, 4-29. (https://doi.org/10.1007/s11306-012-0449-x)
+| Fuhrer T., Dominik H., Boris B. and Zamboni N. (2011). High-throughput, accurate mass metabolome profiling of cellular extracts by flow injection-time-of-flight mass spectrometry. *Analytical Chemistry* 83, 7074-7080. (https://doi.org/10.1021/ac201267k)
+| Madalinski G., Godat E., Alves S., Lesage D., Genin E., Levi P., Labarre J., Tabet J., Ezan E. and Junot, C. (2008). Direct introduction of biological samples into a LTQ-orbitrap hybrid mass spectrometer as a tool for fast metabolome analysis. *Analytical Chemistry* 80, 3291-3303. (https://doi.org/10.1021/ac7024915)
+
+---------------------------------------------------
+
+-----------------
+Workflow position
+-----------------
+
+.. image:: profia_workflowPositionImage.png
+        :width: 600
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| Parameter : num + label   |   Format   |
++===========================+============+
+| 1 : Choose your inputs    |   zip      |
++---------------------------+------------+
+
+---------------------------------------------------
+
+.. class:: warningmark
+
+VERY IMPORTANT: Your data must be in **centroid** mode (centroidization of raw files and conversion to an open format can be achieved with the proteowizard software: http://proteowizard.sourceforge.net/).
+
+
+You have two methods for your inputs:
+    | Zip file (recommended): You can put a zip file containing your inputs: myinputs.zip (containing all your conditions as sub-directories; see below).
+    | library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories.
+
+**Steps for creating the zip file**
+
+**Step1: Creating your directory and hierarchize the subdirectories**
+
+.. class:: warningmark
+
+VERY IMPORTANT: If you zip your files under Windows, you must use the **7Zip** software (http://www.7-zip.org/), otherwise your zip will not be well unzipped on the platform W4M (zip corrupted bug).
+
+1a) Prepare a parent folder with the name of your data set (e.g., 'arabidopsis') containing your files:
+   | 'arabidopsis/w1.raw'
+   | 'arabidopsis/w2.raw'
+   | ...
+   | 'arabidopsis/m1.raw'
+   | 'arabidopsis/m2.raw'
+   | ...
+   |
+   
+1b) If you have several experimental conditions resulting in distinct profiles of your samples (e.g. 'wild-type' and 'mutant' genotypes), create subfolders for your files (e.g., 'wild' and 'mutant') into your parent folder:
+   | 'arabidopsis/wild/w1.raw'
+   | 'arabidopsis/wild/w2.raw'
+   | ...
+   | 'arabidopsis/mutant/m1.raw'
+   | 'arabidopsis/mutant/m2.raw'
+   | ...
+   |
+   
+**Step2: Creating a zip file**
+   | Zip your **parent** folder (here the 'arabidopsis' folder) containing all the subfolders and files with **7Zip**.
+   |
+
+**Step 3 : Uploading it to our Galaxy server**
+   | If your zip file is less than 2Gb, you get use the **Upload File** tool and the **no_unzip.zip** type to upload it.
+   | Otherwise if your zip file is larger than 2Gb, please refer to the HOWTO on workflow4metabolomics.org (http://application.sb-roscoff.fr/download/w4m/howto/galaxy_upload_up_2Go.pdf).
+   | For more informations, don't hesitate to send us an email at supportATworkflow4metabolomics.org).
+   |
+
+----------
+Parameters
+----------
+   
+Maximum deviation between centroids during band detection; in ppm (default = 7)
+	| m/z tolerance of centroids corresponding to the same ion from one scan to the other.
+	| 
+
+Minimal maximum deviation between centroids during band detection; in Da (default = 0.001); to avoid bias at low mass values, the deviation is the maximum between this quantity and the deviation in ppm 
+	| minimum m/z tolerance of centroids corresponding to the same ion from one scan to the other.
+	| 
+
+Accuracy of the mass spectrometer to be used during feature alignment; in ppm (default = 3); should be less than the ppm parameter used for detection
+	| Should be inferior or equal to the ppm deviation parameter above.
+	| 
+    
+Minimal accuracy of the mass spectrometer to be used during feature alignment; in Da (default = 0.0005); to avoid bias at low mass values; the deviation is the maximum between this quantity and the deviation in ppm
+	| 
+
+Minimum fraction of samples in which a peak should be detected in at least one class to be kept during feature alignment (default = 0.5)
+	| Identical to the corresponding parameter in XCMS. 
+	|     
+
+Imputation method for missing values (default = 'randomForest')
+	|
+
+Minimum fraction of centroids in the estimated injection window for a band to be built (advanced; default = 0.3)
+        |
+
+Minimum number of consecutive centroids for a band to be built (advanced; default = half of the size of the estimated injection window)
+	|     		
+
+First scan to be preprocessed (advanced; default = 1)
+	|     		
+
+Last scan to be preprocessed (advanced; default = last acquisition scan)
+	|     		
+
+------------
+Output files
+------------
+
+dataMatrix.tabular
+	| **dataMatrix** tabular separated file with the variables as rows and samples as columns. Missing values are indicated as 'NA' (i.e. when the signal was not significantly different from noise).
+	|
+	
+sampleMetadata.tabular
+	| **sampleMetadata** tabular separated file containing the sample metadata as columns.
+	| 
+	
+variableMetadata.tabular
+	| **variableMetadata** tabular separated file containing the variable metadata as columns. The **timeShifted** flag is set to 1 when the flowgram is time shifted compared to the sample peak (probably due to liquid retention in the FI tube). The **corSampPeakMean** metric is the correlation between the feature flowgram and the sample peak (values are in [-1, 1]). A value below 0.2 suggests that the feature signal is affected by a strong matrix effect. The **meanSolvent** is the mean baseline signal in the feature flowgrams. The **signalOverSolventPvalueMean** is the mean p-value of the tests discriminating between signal and baseline solvent.
+	| 
+
+figure.pdf
+	| Visualization and diagnostics about the preprocessed data set; **Feature quality**: Number of detected features per sample for each of the three categories: 'Well-behaved' features have a peak shape close to the sample peak (optimal FIA acquisition is achieved when the majority of the features fall into this category); 'Shifted' indicates a time shift compared to the sample peak, and probably results from retention in the FI tube; 'Significant Matrix Effect' corresponds to a correlation between the feature and the samples peaks of less than 0.2, which is usually caused by a strong matrix effect; **Sample peaks**: Visualization of the peak model for each sample; should have close shapes in case of similar FIA conditions; **m/z density**: may allow to detect a missing m/z value, and in turn, suggest that the *ppm* parameter should be modified; **PCA score plot** of the log10 intensities to detect sample outliers.
+	| 
+			
+information.txt
+	| Text file with all messages and warnings generated during the computation.
+	|
+
+---------------------------------------------------
+
+---------------
+Working example
+---------------
+
+Figure output
+=============
+
+.. image:: profia_workingExampleImage.png
+        :width: 600
+        
+---------------------------------------------------
+
+----
+NEWS
+----
+
+CHANGES IN VERSION 3.1.0
+========================
+
+NEW FEATURE
+
+randomForest method implemented for imputation of missing values
+
+CHANGES IN VERSION 3.0.6
+========================
+
+NEW FEATURE
+
+dmz (and dmzGroup) parameters added for the peak detection and grouping steps; bandCoverage, sizeMin, scanMin, and scanMax added as advanced parameters for peak detection
+
+
+CHANGES IN VERSION 3.0.4
+========================
+
+MINOR MODIFICATION
+
+Details added in the documentation
+
+CHANGES IN VERSION 3.0.2
+========================
+
+NEW FEATURE
+
+Parallel processing
+
+
+CHANGES IN VERSION 3.0.0
+========================
+
+NEW FEATURE
+
+Creation of the tool
+
+</help>
+
+<citations>
+  <citation type="doi">10.1093/bioinformatics/btx458</citation>
+  <citation type="doi">10.1093/bioinformatics/btu813</citation>
+</citations>
+
+</tool>

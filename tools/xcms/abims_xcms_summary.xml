@@ -9,7 +9,7 @@
 
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
-        <requirement type="package" version="1.46.0">bioconductor-camera</requirement>
+        <requirement type="package" version="1.66.0">bioconductor-camera</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
     </requirements>
     <required_files>

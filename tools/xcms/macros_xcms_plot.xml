@@ -1,5 +1,5 @@
 <macros>
-    <token name="@TOOL_VERSION@">4.4.0</token>
+    <token name="@TOOL_VERSION@">4.8.0</token>
     <xml name="creator">
         <creator>
             <person

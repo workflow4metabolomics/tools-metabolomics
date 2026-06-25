@@ -7,51 +7,42 @@
     <edam_operation>operation_3436</edam_operation>
   </edam_operations>
   <creator>
-    <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics" />
+    <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics"/>
   </creator>
   <requirements>
-	    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
+    <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
   </requirements>
-
   <required_files>
-    <include path="tablemerge_script.R" />
+    <include path="tablemerge_script.R"/>
   </required_files>
-
   <command detect_errors="exit_code"><![CDATA[
 	  Rscript -e 'source("$__tool_directory__/tablemerge_script.R")' -e 'tab.merge("$dataMatrix_in", "$Metadata_in", "$metatype", "$combined_out")'
   ]]></command>
-
   <inputs>
-    <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular" />
-    <param name="Metadata_in" type="data" label="Metadata file" help="Sample metadata or variable metadata" format="tabular" />
-	
+    <param name="dataMatrix_in" type="data" label="Data matrix file" help="" format="tabular"/>
+    <param name="Metadata_in" type="data" label="Metadata file" help="Sample metadata or variable metadata" format="tabular"/>
     <param name="metatype" label="Type of metadata" type="select" display="radio" help="">
       <option value="sample">Sample metadata</option>
       <option value="variable">Variable metadata</option>
     </param>
-
   </inputs>
-  
   <outputs>
-    <data name="combined_out" label="Combined_${Metadata_in.name}" format="tabular" ></data>
+    <data name="combined_out" label="Combined_${Metadata_in.name}" format="tabular"/>
   </outputs>
-  
   <tests>
-	  <test>
+    <test>
       <param name="dataMatrix_in" value="input_TM12_dataMatrix.txt"/>
       <param name="Metadata_in" value="input_TM1_variableMetadata.txt"/>
       <param name="metatype" value="variable"/>
       <output name="combined_out" file="output_TM1_expected.tabular"/>
-	  </test>
-	  <test>
+    </test>
+    <test>
       <param name="dataMatrix_in" value="input_TM12_dataMatrix.txt"/>
       <param name="Metadata_in" value="input_TM2_sampleMetadata.txt"/>
       <param name="metatype" value="sample"/>
       <output name="combined_out" file="output_TM2_expected.tabular"/>
-	  </test>
+    </test>
   </tests>
-  
-  
   <help><![CDATA[
 
 .. class:: infomark
@@ -152,7 +143,7 @@ MINORFIX: removal batch package
 
 
 	]]></help>
-	<citations>
+  <citations>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
 </tool>

@@ -23,8 +23,6 @@ if (FALSE) {
     output <- "Combined_${Metadata_in.name}"
 }
 
-
-
 tab.merge <- function(DM.name, meta.name, metype, output) {
     # This function allows to merge the dataMatrix with one metadata table.
     #

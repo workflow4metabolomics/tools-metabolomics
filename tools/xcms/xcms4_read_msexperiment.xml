@@ -8,14 +8,14 @@
 
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms4.read_msexperiment.R" />
-        <include path="xcms4.lib.R" />
+        <include path="xcms4_read_msexperiment.r" />
+        <include path="xcms4_lib_r" />
     </required_files>
     <expand macro="stdio"/>
     <expand macro="creators"/>
 
     <command><![CDATA[
-        @COMMAND_RSCRIPT@xcms4.read_msexperiment.R
+        @COMMAND_RSCRIPT@xcms4_read_msexperiment.r
 
         #if $input.is_of_type("mzxml") or $input.is_of_type("mzml") or $input.is_of_type("netcdf"):
             #if $os.path.islink(str($input))
@@ -40,7 +40,13 @@
     <tests>
         <test expect_num_outputs="1">
             <param name="input" value="ko15.CDF"  ftype="netcdf" />
-            <output name="msexp_obj" file="ko15.msexp.RData"/>
+            <!-- <output name="msexp_obj" file="ko15.msexp.RData"/> -->
+            <assert_stdout>
+                <has_text text="Object of class MsExperiment" />
+                <has_text text="Spectra: MS1 (1278)" />
+                <has_text text="Experiment data: 1 sample(s)" />
+                <has_text text="ko15.CDF        ko15            .      ko15.CDF" />
+            </assert_stdout>
         </test>
     </tests>
 <!-- 

@@ -111,7 +111,7 @@ repositories:
     owner: lecorguille
     include:
       [*default-includes, msnbase_readmsdata.xml, msnbase_readmsdata.r, macros_msnbase.xml]
-  xcms4_readMsExperiment:
+  xcms4_read_msexperiment:
     description: '[Metabolomics][W4M][LC-MS] MsExperiment R Package - Preprocessing - Imports Mass-Spectrometry Data Files'
     long_description: |
       Reads XML-based mass-spectrometry data files.  Can be chained only with XCMS v4 Tool suite.
@@ -119,7 +119,7 @@ repositories:
       XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
     owner: trottier
     include:
-      [*default-includes, xcms4_readMsExperiment, xcms4.read_msexperiment.R, macros_xcms4.xml, xcms4.lib.R]
+      [*default-includes, xcms4_read_msexperiment.xml, xcms4_read_msexperiment.r, macros_xcms4.xml, xcms4_lib.r]
   xcms_plot_raw:
     description: Plot raw mzml file content with xcms
     long_description: |

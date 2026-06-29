@@ -19,7 +19,7 @@ source_local <- function(fname) {
     base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
     source(paste(base_dir, fname, sep = "/"))
 }
-source_local("xcms4.lib.R")
+source_local("xcms4_lib.r")
 
 pkgs <- c("MsExperiment", "xcms")
 loadAndDisplayPackages(pkgs)
@@ -44,7 +44,7 @@ cat("\tINFILE PROCESSING INFO\n")
 
 # Handle infiles
 if (!exists("singlefile")) singlefile <- NULL
-if (!exists("zipfile")) zipfile <- NULL #no zipfile allowed in 1st dev version
+if (!exists("zipfile")) zipfile <- NULL # no zipfile allowed in 1st dev version
 rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
 zipfile <- rawFilePath$zipfile
 singlefile <- rawFilePath$singlefile

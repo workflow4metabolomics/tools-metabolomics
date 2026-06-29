@@ -1,6 +1,6 @@
 # ==============================================================================
 # Project: Workflow4Metabolomics / Workflow4Exposomic PARC project
-# File: xcms4.lib.r
+# File: xcms4_lib.r
 #
 # Description:
 # Utility functions used by Galaxy XCMS tools
@@ -19,10 +19,7 @@
 #   - Misharl Monsoor
 #   - Camille Trottier
 #
-# License:
-#   GPL-3.0-or-later
-#
-# ============================================================================== 
+# ==============================================================================
 
 #' Parse command-line arguments and convert boolean strings
 #' Solve an issue with batch if arguments are logical TRUE/FALSE
@@ -256,9 +253,9 @@ mergeXData <- function(args) {
         } else {
             if (is(xdata, "MsExperiment")) {
                 xdata_merged <- c(xdata_merged, xdata)
-                
-            # } else if (is(xdata, "OnDiskMSnExp")) {
-            #     # xdata_merged <- xcms:::.concatenate_OnDiskMSnExp(xdata_merged, xdata)
+
+                # } else if (is(xdata, "OnDiskMSnExp")) {
+                #     # xdata_merged <- xcms:::.concatenate_OnDiskMSnExp(xdata_merged, xdata)
             } else {
                 stop("\n\nERROR: The RData wrong format. Please use MsExperiment RData")
             }
@@ -274,14 +271,15 @@ mergeXData <- function(args) {
         }
     }
     rm(image)
-    #Rebuild a merge MsExperiment object
+    # Rebuild a merge MsExperiment object
     all_spectra <- do.call(c, lapply(xdata_merged, spectra))
     all_sampleData <- do.call(rbind, lapply(xdata_merged, sampleData))
     xdata <- MsExperiment(spectra = all_spectra, sampleData = all_sampleData)
-    #Don't forget to link spectra and sample datasets  
+    # Don't forget to link spectra and sample datasets
     xdata <- linkSampleData(
         xdata,
-        with = "sampleData.spectraOrigin = spectra.dataOrigin")
+        with = "sampleData.spectraOrigin = spectra.dataOrigin"
+    )
     rm(xdata_merged)
     singlefile <- singlefile_merged
     rm(singlefile_merged)
@@ -363,18 +361,22 @@ getPlotChromHTML <- function(chrom, xdata, htmlFile = "Chromatogram.html", aggre
             intensity = intensity(chr_i),
             sample = xdata@sampleData$sample_name[i],
             group = xdata@sampleData$sample_group[i]
-            )
+        )
     })
 
     df_all <- do.call(rbind, plots)
-    p_sample <- plot_ly(df_all, x = ~rt, y = ~intensity, color = ~sample, 
-                        type = "scatter",  mode = "lines", line = list(width = 0.6), 
-                        legendgroup = "group", legendgrouptitle = list(text = "Samples")) 
+    p_sample <- plot_ly(df_all,
+        x = ~rt, y = ~intensity, color = ~sample,
+        type = "scatter", mode = "lines", line = list(width = 0.6),
+        legendgroup = "group", legendgrouptitle = list(text = "Samples")
+    )
 
     # Color by group
-    p_group <- plot_ly(df_all, x = ~rt, y = ~intensity, color = ~group, 
-                        type = "scatter",  mode = "lines", line = list(width = 0.6), 
-                        legendgroup = "sample", legendgrouptitle = list(text = "Groups")) 
+    p_group <- plot_ly(df_all,
+        x = ~rt, y = ~intensity, color = ~group,
+        type = "scatter", mode = "lines", line = list(width = 0.6),
+        legendgroup = "sample", legendgrouptitle = list(text = "Groups")
+    )
 
     # Combine plots
     combined_plot <- subplot(
@@ -384,9 +386,9 @@ getPlotChromHTML <- function(chrom, xdata, htmlFile = "Chromatogram.html", aggre
         shareX = TRUE,
         titleY = TRUE
     ) %>%
-    layout(legend = list(x = 1.02, y = 1))
-    
-    saveWidget(combined_plot, htmlFile, selfcontained = TRUE) 
+        layout(legend = list(x = 1.02, y = 1))
+
+    saveWidget(combined_plot, htmlFile, selfcontained = TRUE)
 }
 
 #------------------------------------------------------------------------
@@ -430,7 +432,7 @@ getSampleMetadata <- function(xdata = NULL, sampleMetadataOutput = "sampleMetada
     }
 
     sampleMetadata$sample_name <- sampleNamesMakeNames
-    #Initialisation 
+    # Initialisation
     sp <- spectra(xdata)
     files <- xdata@sampleData$spectraOrigin
 
@@ -453,7 +455,7 @@ getSampleMetadata <- function(xdata = NULL, sampleMetadataOutput = "sampleMetada
                 } else {
                     pol <- as.character(uniq_list)
                 }
-                # Set the polarity attribute
+            # Set the polarity attribute
             sampleMetadata$polarity[fileIdx] <- pol
         }
     }

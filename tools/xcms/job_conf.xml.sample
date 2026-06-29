@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- A sample job config that explicitly configures job running the way it is configured by default (if there is no explicit config). -->
+<job_conf>
+    <plugins>
+        <plugin id="sge" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner" type="runner"/>
+        <plugin id="dynamic" type="runner" >
+            <param id="rules_module">galaxy.jobs.rules</param>
+        </plugin>
+    </plugins>
+    <handlers>
+        <handler id="main"/>
+    </handlers>
+    <destinations default="sge_default">
+        <destination id="sge_default" runner="sge">
+             <param id="nativeSpecification">-V -w n -q galaxy.q</param>
+        </destination>
+
+        <destination id="thread1-men_free8" runner="sge">
+             <param id="nativeSpecification">-V -w n -q galaxy.q -pe thread 1 -R y -l mem_free=8G </param>
+        </destination>
+        <destination id="thread8-men_free12" runner="sge">
+            <param id="nativeSpecification">-V -w n -q galaxy.q -pe thread 8 -R y -l mem_free=16G </param>
+        </destination>
+
+        <destination id="python_destination_input_type" runner="dynamic">
+            <param id="type">python</param>
+            <param id="function">input_type</param>
+        </destination>
+    </destinations>
+    <tools>
+        <tool destination="python_destination_input_type" id="abims_xcms_xcmsSet" />
+    </tools>
+</job_conf>

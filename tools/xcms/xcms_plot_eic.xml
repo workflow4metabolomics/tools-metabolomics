@@ -1,0 +1,51 @@
+<tool id="xcms_plot_eic" name="xcms plot eic" version="@TOOL_VERSION@+galaxy0" profile="21.09">
+    <description>Plot the extracted ion chromatogram (EIC) from mzML file</description>
+    <macros>
+        <import>macros_xcms_plot.xml</import>
+    </macros>
+    <expand macro="bio.tools"/>
+    <expand macro="creator"/>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript -e 'source("${plot_eic}")'
+    ]]></command>
+    <configfiles>
+        <configfile name="plot_eic">
+library(xcms)
+library(MsExperiment)
+library(Spectra)
+
+sessionInfo()
+
+mse = readMsExperiment(file.path('${input}'))
+offset = ${tolerance_ppm} * 1e-6 * ${mz_value}
+chr = chromatogram(mse, mz = ${mz_value} + c(-offset, offset), msLevel = ${mslevel})
+png(filename = '${output_filename}')
+plot(chr)
+dev.off()
+        </configfile>
+    </configfiles>
+    <inputs>
+        <expand macro="base_params"/>
+    </inputs>
+    <outputs>
+        <data name="output_filename" format="png" label="EIC plot at m/z=$mz_value of $input.element_identifier"  />
+    </outputs>
+    <tests>
+        <test>
+            <param name="input" value="xcms_plot_eic_testdata.mzML"/>
+            <param name="mz_value" value="153.06614"/>
+            <param name="tolerance_ppm" value="10"/>
+            <param name="mslevel" value="1"/>
+            <output name="output_filename" file="eic_plot.png" compare="sim_size"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+        This tool plots the extracted ion chromatogram (EIC) from an mzML file, using a provided m/z value. 
+        It uses a default tolerance of 10 ppm and operates at mslevel 1 by default.    
+        More information and detailed instructions can be found in the tutorial at: https://jorainer.github.io/xcmsTutorials/articles/xcms-preprocessing.html#data-visualization
+    ]]></help>
+    <expand macro="citations"/>
+</tool>

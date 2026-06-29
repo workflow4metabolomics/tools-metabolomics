@@ -1,0 +1,267 @@
+<tool id="abims_xcms_refine" name="xcms refineChromPeaks (refine)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+
+    <description>Remove or merge chromatographic peaks based on specific criteria.</description>
+
+    <macros>
+        <import>macros.xml</import>
+        <import>macros_xcms.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms_refine.r" />
+        <include path="lib.r" />
+    </required_files>
+    <expand macro="stdio"/>
+
+    <command><![CDATA[
+        @COMMAND_RSCRIPT@xcms_refine.r
+        image '$image'
+
+        method $methods.method
+        #if $methods.method == "CleanPeaks":
+            maxPeakwidth $methods.maxPeakwidth
+        #elif $methods.method == "FilterIntensity":
+            threshold $methods.threshold
+            nValues $methods.nValues
+            value $methods.value
+        #else:
+            expandRt $methods.expandRt
+            expandMz $methods.expandMz
+            ppm $methods.ppm
+            minProp $methods.minProp
+        #end if
+
+        msLevel $msLevel
+
+        @COMMAND_FILE_LOAD@
+
+        @COMMAND_LOG_EXIT@
+   ]]></command>
+
+    <inputs>
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks" />
+        <conditional name="methods">
+            <param name="method" type="select" label="Method for peak refinement" help="See the help section below">
+                <option value="CleanPeaks" selected="true">CleanPeaks - remove peaks that are too wide</option>
+                <option value="FilterIntensity">FilterIntensity - remove peaks with too low intensity</option>
+                <option value="MergeNeighboringPeaks">MergeNeighboringPeaks - combine peaks that are too close together</option>
+            </param>
+            <when value="CleanPeaks">
+                <param argument="maxPeakwidth" type="float" value="10" label="MaxPeakWidth" help="maximum peak width in seconds.  See CleanPeaks manual (linked in help below)." />
+            </when>
+            <when value="FilterIntensity">
+                <param argument="threshold" type="float" value="0" label="minimal required intensity" help="minimal required intensity for a peak to be retained.  Defaults to 0.0." />
+                <param argument="nValues" type="integer" value="1" label="minimum number of data points per peak" help="number of data points (per chromatographic peak) that have to be >= threshold. Defaults to 1." />
+                <param name="value" type="select" label="Definition of peak intensity" help="See the FilterIntensity manual (linked in help below). 'intb' requires centWave processed data">
+                    <option value="maxo" selected="true">maxo - use maximum peak intensities</option>
+                    <option value="into">into - use integrated peak intensities</option>
+                    <option value="intb">intb - use baseline-corrected integrated peak intensities</option>
+                </param>
+            </when>
+            <when value="MergeNeighboringPeaks">
+                <param argument="expandRt" type="float" value="2" label="rt expansion (seconds)" help="seconds of expansion of retention time window (on both sides) to check for overlapping peaks. Defaults to 2." />
+                <param argument="expandMz" type="float" value="0" label="m/z expansion (m/z units)" help="'m/z units' of expansion of m/z window (on both sides) to check for overlapping peaks. Defaults to 0." />
+                <param argument="ppm" type="float" value="10" label="ppm expansion (ppm units)" help="'relative 'm/z units' (in parts per million) of expansion of m/z window (on both sides) to check for overlapping peaks. Defaults to 10." />
+                <param argument="minProp" type="float" value="0.75" label="minimum proportion at midpoint" help="See MergeNeighboringPeaks manual (linked in help below).  Minimum proportion midway between peaks relative to the smaller peak's 'maxo' (maximal intensity at peak apex).  Defaults to 0.75." />
+            </when>
+        </conditional>
+        <param argument="msLevel" type="integer" value="1" label="msLevel for refinement" help="the MS level on which refinement should be performed. Defaults to 1." />
+
+        <expand macro="input_file_load"/>
+    </inputs>
+
+    <outputs>
+        <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="${image.name.rsplit('.',1)[0]}.refine.RData" from_work_dir="xcmsSet.RData" />
+    </outputs>
+
+    <tests>
+        <!--
+            test 1 - MergeNeighboringPeaks method
+        -->
+        <test>
+            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="MergeNeighboringPeaks"/>
+                <param name="expandRt" value="2" />
+                <param name="expandMz" value="0" />
+                <param name="ppm" value="10" />
+                <param name="minProp" value="0.75" />
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <assert_stderr>
+                <has_text text="Evaluating 547 peaks in file wt15.CDF for merging ... OK" />
+                <has_text text="Evaluating 547 peaks in file wt16.CDF for merging ... OK" />
+                <has_text text="Evaluating 558 peaks in file ko15.CDF for merging ... OK"/>
+                <has_text text="Evaluating 589 peaks in file ko16.CDF for merging ... OK" />
+                <has_text text="Merging reduced 9251 chromPeaks to 9093" />
+            </assert_stderr>
+            <assert_stdout>
+                <has_text text="object with 4 samples" />
+                <has_text text="Time range: 2506.1-4477.9 seconds (41.8-74.6 minutes)" />
+                <has_text text="Mass range: 200.1-600 m/z" />
+                <has_text text="Peaks: 9093 (about 2273 per sample)" />
+            </assert_stdout>
+        </test>
+        <!--
+            test 2 - FilterIntensity method
+        -->
+        <test>
+            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="FilterIntensity"/>
+                <param name="threshold" value="1e5" />
+                <param name="nValues" value="3" />
+                <param name="value" value="into" />
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <assert_stderr>
+                <has_text text="Removed 9018 chromatographic peaks" />
+            </assert_stderr>
+            <assert_stdout>
+                <has_text text="object with 4 samples" />
+                <has_text text="Time range: 2657.9-4124.2 seconds (44.3-68.7 minutes)" />
+                <has_text text="Mass range: 256.1-599.4 m/z" />
+                <has_text text="Peaks: 233 (about 58 per sample)" />
+            </assert_stdout>
+        </test>
+        <!--
+            test 3 - CleanPeaks method
+        -->
+        <test>
+            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="CleanPeaks"/>
+                <param name="maxPeakwidth" value="8" />
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <assert_stderr>
+                <has_text text="Removed 6037 of 9251 chromatographic peaks" />
+            </assert_stderr>
+            <assert_stdout>
+                <has_text text="object with 4 samples" />
+                <has_text text="Time range: 2524.9-4473.2 seconds (42.1-74.6 minutes)" />
+                <has_text text="Mass range: 200.2-600 m/z" />
+                <has_text text="Peaks: 3214 (about 804 per sample)" />
+            </assert_stdout>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+
+.. class:: infomark
+
+**Authors**  Johannes Rainer Johannes.Rainer@eurac.edu and Mar Garcia-Aloy mar.garcia@fmach.it
+
+@HELP_AUTHORS_WRAPPERS@
+
+---------------------------------------------------
+
+
+=====================
+xcms refineChromPeaks
+=====================
+
+-----------
+Description
+-----------
+
+After peak identification with xcms findChromPeaks (xcmsSet), this tool refines those peaks.
+It either removes peaks that are too wide or removes peaks with too low intensity or combines peaks that are too close together.
+
+Note well that refineChromPeaks methods will always remove feature definitions,
+because a call to this method can change or remove identified chromatographic peaks, which may be part of features.
+Therefore it must only be run immediately after findChromPeaks (xcmsSet).
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+==================================== ======================== ==============================
+Name                                 Output file              Format
+==================================== ======================== ==============================
+xcms.findChromPeaks Merger (single)  xset.merged.RData        rdata.xcms.findchrompeaks
+------------------------------------ ------------------------ ------------------------------
+xcms.findChromPeaks (zip)            ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
+==================================== ======================== ==============================
+
+
+**Downstream tools**
+
+==================================== ======================== =========================
+Name                                 Output file              Format
+==================================== ======================== =========================
+xcms.findChromPeaks Merger (single)  ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
+------------------------------------ ------------------------ -------------------------
+xcms.groupChromPeaks (zip)           ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
+==================================== ======================== =========================
+
+**General schema of the metabolomic workflow**
+
+This tool would appear between findChromPeaks and group, but only when the choice of peaks needs to be refined, e.g., to accommodate HILIC data.
+
+---------------------------------------------------
+
+----------
+Parameters
+----------
+
+Method to use for refinement
+----------------------------
+
+**CleanPeaks**
+
+    | Remove chromatographic peaks with too large rt width.
+    | See the CleanPeaks_manual_
+
+**FilterIntensity**
+
+    | Remove chromatographic peaks based on intensity.
+    | See the FilterIntensity_manual_
+
+**MergeNeighboringPeaks**
+
+    | Merge neighboring and overlapping chromatographic peaks.
+    | See the MergeNeighboringPeaks_manual_
+
+.. _CleanPeaks_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-clean.html
+.. _FilterIntensity_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-filter-intensity.html
+.. _MergeNeighboringPeaks_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-merge.html
+
+@HELP_XCMS_MANUAL@
+
+------------
+Output files
+------------
+
+xset.RData: rdata.xcms.findchrompeaks format
+
+    | (single) RData files that are necessary in the second step of the workflow "xcms.groupChromPeaks" - must be merged first using "xcms.findChromPeaks Merger"
+    | (zip) RData file that is necessary in the second step of the workflow "xcms.groupChromPeaks".
+
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+.. _news: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+
+
+**Version 3.6.1.0 - 08/02/2021**
+
+- NEW: first version of tool wrapper
+
+
+    ]]></help>
+
+    <citations>
+      <citation type="doi">10.5281/zenodo.3909299</citation>
+      <expand macro="citation_w4m"/>
+      <citation type="doi">10.1021/ac051437y</citation>
+    </citations>
+
+
+</tool>

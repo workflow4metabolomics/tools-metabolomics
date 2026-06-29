@@ -1,0 +1,387 @@
+<tool id="abims_xcms_retcor" name="xcms adjustRtime (retcor)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+
+    <description>Retention Time Correction</description>
+
+    <macros>
+        <import>macros.xml</import>
+        <import>macros_xcms.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms_retcor.r" />
+        <include path="lib.r" />
+    </required_files>
+    <expand macro="stdio"/>
+
+    <command><![CDATA[
+        @COMMAND_RSCRIPT@xcms_retcor.r
+        image '$image'
+
+        method $methods.method
+        #if $methods.method == "PeakGroups":
+            minFraction $methods.minFraction
+            extraPeaks $methods.extraPeaks
+            smooth $methods.smooth_cond.smooth
+            ## PeakGroupsSmoothLoess Advanced
+            span $methods.smooth_cond.PeakGroupsSmoothLoessAdv.span
+            family $methods.smooth_cond.PeakGroupsSmoothLoessAdv.family
+        #else
+            binSize $methods.binSize
+            ## Advanced
+            #if $methods.ObiwarpAdv.centerSample != "":
+                centerSample $methods.ObiwarpAdv.centerSample
+            #end if
+            response $methods.ObiwarpAdv.response
+            distFun $methods.ObiwarpAdv.distFunCond.distFun
+            gapInit $methods.ObiwarpAdv.distFunCond.gapInit
+            gapExtend $methods.ObiwarpAdv.distFunCond.gapExtend
+            factorDiag $methods.ObiwarpAdv.factorDiag
+            factorGap $methods.ObiwarpAdv.factorGap
+            localAlignment $methods.ObiwarpAdv.localAlignmentCond.localAlignment
+            initPenalty $methods.ObiwarpAdv.localAlignmentCond.initPenalty
+        #end if
+
+        @COMMAND_FILE_LOAD@
+
+        @COMMAND_LOG_EXIT@
+    ]]></command>
+
+    <inputs>
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata.xcms.group,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks, groupChromPeaks" />
+        <conditional name="methods">
+            <param name="method" type="select" label="Method to use for retention time correction" help="See the help section below" >
+                <option value="PeakGroups" selected="true">PeakGroups - retention time correction based on aligment of features (peak groups) present in most/all samples.</option>
+                <option value="Obiwarp">Obiwarp - alignment based on the complete mz-rt data.</option>
+            </param>
+            <when value="PeakGroups">
+                <param argument="minFraction" type="float" value="0.9" min="0" max="1" label="Minimum required fraction of samples in which peaks for the peak group were identified" help="(previously missing)"/>
+                <param argument="extraPeaks" type="integer" value="1" label="Maximal number of additional peaks for all samples to be assigned to a peak group for retention time correction"  help="For a data set with 6 samples, ‘extraPeaks = 1’ uses all peak groups with a total peak count lower or equal to ‘6 + 1’. The total peak count is the total number of peaks being assigned to a peak group and considers also multiple peaks within a sample being assigned to the group. (previously extra)" />
+                <conditional name="smooth_cond">
+                    <param argument="smooth" type="select" label="Smooth method" >
+                        <option value="loess" selected="true">loess - non-linear alignment</option>
+                        <option value="linear">linear - linear alignment</option>
+                    </param>
+                    <when value="loess">
+                        <section name="PeakGroupsSmoothLoessAdv" title="Advanced Options" expanded="False">
+                            <param argument="span" type="float" value="0.2" label="Degree of smoothing for the loess fitting" />
+                            <param argument="family" type="select" label="Family" help="if gaussian fitting is by least-squares with no outlier removal, and if symmetric a re descending M estimator is used with Tukey's biweight function, allowing outlier removal">
+                                <option value="gaussian" selected="true">gaussian</option>
+                                <option value="symmetric">symmetric</option>
+                            </param>
+                        </section>
+                    </when>
+                    <when value="linear" />
+                </conditional>
+            </when>
+            <when value="Obiwarp">
+                <param argument="binSize" type="float" value="1" label="Bin size (in mz dimension) to be used for the profile matrix generation" help="See ‘step’ parameter in ‘profile-matrix’ documentation for more details. (previously profStep)" />
+                <section name="ObiwarpAdv" title="Advanced Options" expanded="False">
+                    <param argument="centerSample" type="integer" value="" optional="true" label="Index of the center sample in the experiment" help="It defaults to ‘floor(median(1:length(fileNames(object))))’" />
+                    <param argument="response" type="integer" value="1" label="Defining the responsiveness of warping" help="with ‘response = 0’ giving linear warping on start and end points and ‘response = 100’ warping using all bijective anchors." />
+                    <conditional name="distFunCond">
+                        <param argument="distFun" type="select" label="Distance function to be used">
+                            <option value="cor_opt" selected="true">cor_opt - calculate only 10% diagonal band of distance matrix; better runtime</option>
+                            <option value="cor">cor - Pearson's correlation</option>
+                            <option value="cov">cov - covariance</option>
+                            <option value="prd">prd - product</option>
+                            <option value="euc">euc - Euclidian distance</option>
+                        </param>
+                        <when value="cor_opt">
+                            <param argument="gapInit" type="float" value="0.3" label="Penalty for gap opening" />
+                            <param argument="gapExtend" type="float" value="2.4" label="Penalty for gap enlargement" />
+                        </when>
+                        <when value="cor">
+                            <param argument="gapInit" type="float" value="0.3" label="Penalty for gap opening" />
+                            <param argument="gapExtend" type="float" value="2.4" label="Penalty for gap enlargement" />
+                        </when>
+                        <when value="cov">
+                            <param argument="gapInit" type="float" value="0.0" label="Penalty for gap opening" />
+                            <param argument="gapExtend" type="float" value="11.7" label="Penalty for gap enlargement" />
+                        </when>
+                        <when value="prd">
+                            <param argument="gapInit" type="float" value="0.0" label="Penalty for gap opening" />
+                            <param argument="gapExtend" type="float" value="7.8" label="Penalty for gap enlargement" />
+                        </when>
+                        <when value="euc">
+                            <param argument="gapInit" type="float" value="0.9" label="Penalty for gap opening" />
+                            <param argument="gapExtend" type="float" value="1.8" label="Penalty for gap enlargement" />
+                        </when>
+                    </conditional>
+                    <param argument="factorDiag" type="float" value="2" label="Local weight applied to diagonal moves in the alignment" />
+                    <param argument="factorGap" type="float" value="1" label="local weight for gap moves in the alignment" />
+                    <conditional name="localAlignmentCond">
+                        <param argument="localAlignment" type="select" label="Whether a local alignment should be performed instead of the default global alignment">
+                            <option value="FALSE" selected="true">FALSE</option>
+                            <option value="TRUE">TRUE</option>
+                        </param>
+                        <when value="FALSE">
+                            <param argument="initPenalty" type="hidden" value="0" label="Penalty for initiating an alignment" />
+                        </when>
+                        <when value="TRUE">
+                            <param argument="initPenalty" type="float" value="0"  label="Penalty for initiating an alignment" />
+                        </when>
+                    </conditional>
+                </section>
+            </when>
+        </conditional>
+
+        <expand macro="input_file_load"/>
+
+    </inputs>
+
+    <outputs>
+        <data name="xsetRData" format="rdata.xcms.retcor" label="${image.name[:-6]}.adjustRtime.RData" from_work_dir="retcor.RData" />
+        <data name="rawVSadjustedPdf" format="pdf"  label="${image.name[:-6]}_rawVSadjusted.adjustRtime.Rplots.pdf" from_work_dir="raw_vs_adjusted_rt.pdf" />
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="PeakGroups"/>
+                <param name="extraPeaks" value="1"/>
+                <param name="minFraction" value="1"/>
+                <conditional name="smooth_cond">
+                    <param name="smooth" value="loess"/>
+                    <section name="PeakGroupsSmoothLoessAdv">
+                        <param name="span" value="0.2"/>
+                        <param name="family" value="gaussian"/>
+                    </section>
+                </conditional>
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <assert_stdout>
+                <has_text text="extraPeaks: 1" />
+                <has_text text="minFraction: 1" />
+                <has_text text="span: 0.2" />
+                <has_text text="object with 4 samples" />
+                <has_text text="Time range: 2509.2-4480.3 seconds (41.8-74.7 minutes)" />
+                <has_text text="Mass range: 200.1-600 m/z" />
+                <has_text text="Peaks: 9251 (about 2313 per sample)" />
+                <has_text text="Peak Groups: 0" />
+                <has_text text="Sample classes: KO, WT" />
+            </assert_stdout>
+        </test>
+        <!-- DISABLE FOR TRAVIS : Zip
+        <test>
+            <param name="image" value="faahKO.xset.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="PeakGroups"/>
+                <param name="extraPeaks" value="1"/>
+                <param name="minFraction" value="1"/>
+                <conditional name="smooth_cond">
+                    <param name="smooth" value="loess"/>
+                    <section name="PeakGroupsSmoothLoessAdv">
+                        <param name="span" value="0.2"/>
+                        <param name="family" value="gaussian"/>
+                    </section>
+                </conditional>
+            </conditional>
+            <expand macro="test_file_load_zip"/>
+            <assert_stdout>
+                <has_text text="object with 4 samples" />
+                <has_text text="Time range: 2509.2-4480.3 seconds (41.8-74.7 minutes)" />
+                <has_text text="Mass range: 200.1-600 m/z" />
+                <has_text text="Peaks: 9251 (about 2313 per sample)" />
+                <has_text text="Peak Groups: 0" />
+                <has_text text="Sample classes: KO, WT" />
+            </assert_stdout>
+        </test>
+        -->
+        <!-- DISABLE FOR TRAVIS
+        Test to test the different methods parameters
+        <test>
+            <param name="image" value="faahKO-single-class.xset.group.RData" ftype="rdata"/>
+            <conditional name="methods">
+                <param name="method" value="Obiwarp"/>
+                <section name="ObiwarpAdv">
+                    <param name="centerSample" value="1"/>
+                    <param name="response" value="0"/>
+                    <conditional name="distFunCond">
+                        <param name="distFun" value="cov"/>
+                        <param name="gapInit" value="0.1" />
+                    </conditional>
+                </section>
+            </conditional>
+            <expand macro="test_file_load_single"/>
+            <assert_stdout>
+                <has_text text="centerSample: 1" />
+                <has_text text="response: 0" />
+                <has_text text="distFun: cov" />
+                <has_text text="gapInit: 0.1" />
+                <has_text text="gapExtend: 11.7" />
+            </assert_stdout>
+        </test>
+        -->
+    </tests>
+
+    <help><![CDATA[
+
+@HELP_AUTHORS@
+
+================
+xcms adjustRtime
+================
+
+-----------
+Description
+-----------
+
+After matching peaks into groups, xcms can use those groups to identify and correct
+correlated drifts in retention time from run to run. The aligned peaks can then be
+used for a second pass of peak grouping which will be more accurate than the first.
+The whole process can be repeated in an iterative fashion. Not all peak groups will be helpful
+for identifying retention time drifts. Some groups may be missing peaks from a large
+fraction of samples and thus provide an incomplete picture of the drift at that time point.
+Still others may contain multiple peaks from the same sample, which is a sign of impropper grouping.
+
+.. class:: warningmark
+
+**After an adjustRtime step, it is mandatory to do a groupChromPeaks step, otherwise the rest of the workflow will not work with the RData file. (the initial peak grouping becomes invalid and is
+discarded)**
+
+
+
+-----------------
+Workflow position
+-----------------
+
+
+**Upstream tools**
+
+========================= ============================ ==============================
+Name                      Output file                  Format
+========================= ============================ ==============================
+xcms.findChromPeaks       raw.xset.RData               rdata.xcms.findchrompeaks
+------------------------- ---------------------------- ------------------------------
+xcms.groupChromPeaks      ``*``.groupChromPeaks.RData  rdata.xcms.group
+========================= ============================ ==============================
+
+
+**Downstream tools**
+
+=========================== ============================ ================
+Name                        Output file                  Format
+=========================== ============================ ================
+xcms.groupChromPeaks        ``*``.groupChromPeaks.RData  rdata.xcms.group
+=========================== ============================ ================
+
+
+**General schema of the metabolomic workflow**
+
+.. image:: xcms_retcor_workflow.png
+
+---------------------------------------------------
+
+----------
+Parameters
+----------
+
+Method
+------
+
+**PeakGroups**
+
+    | This method performs retention time adjustment based on the alignment of chromatographic peak groups present in all/most samples (hence corresponding to house keeping compounds). First the retention time deviation of these peak groups is described by fitting either a polynomial (‘smooth = "loess"’) or a linear ( ‘smooth = "linear"’) model to the data points. These models are subsequently used to adjust the retention time of each spectrum in each sample.
+    | See the PeakGroups_manual_
+
+**Obiwarp**
+
+    | This method performs retention time adjustment using the Obiwarp method [Prince 2006]. It is based on the code at http://obi-warp.sourceforge.net but supports alignment of multiple samples by aligning each against a _center_ sample. The alignment is performed directly on the ‘profile-matrix’ and can hence be performed independently of the peak detection or peak grouping.
+    | See the Obiwarp_manual_
+
+.. _PeakGroups_manual: https://rdrr.io/bioc/xcms/man/adjustRtime-peakGroups.html#heading-2
+.. _Obiwarp_manual: https://rdrr.io/bioc/xcms/man/adjustRtime-obiwarp.html
+
+WARNING: if a retention time ajustment have already been applied to your data.
+The function applyAdjustedRtime will replace raw retention times with adjusted retention times and so alloww to cumulate the ajustments.
+
+@HELP_XCMS_MANUAL@
+
+------------
+Output files
+------------
+
+xset.groupChromPeaks.adjustRtime.RData: rdata.xcms.retcor format
+
+    | Rdata file that will be necessary in the **xcms.groupChromPeaks** step of the workflow.
+
+
+---------------------------------------------------
+
+Changelog/News
+--------------
+
+@HELP_XCMS_NEWVERSION_31200@
+
+**Version 3.6.1+galaxy1 - 13/02/2020**
+
+- NEW: if a retention time ajustment have already been applied to your data. The function applyAdjustedRtime will replace raw retention times with adjusted retention times and so alloww to cumulate the ajustments.
+
+@HELP_XCMS_NEWVERSION_3610@
+
+**Version 3.4.4.1 - 30/04/2019**
+
+- BUGFIX: remove the pre-compute of the chromatograms which was memory consuming. Now, only xcms plot chromatogram will generate the Chromatograms.
+
+@HELP_XCMS_NEWVERSION_3440@
+
+**Version 3.0.0.0 - 08/03/2018**
+
+- UPGRADE: upgrade the xcms version from 1.46.0 to 3.0.0. So refactoring of a lot of underlying codes and methods. Some parameters may have been renamed.
+
+- NEW: a bunch of new options: Obiwarp.(centerSample, response, distFun, gapInit, gapExtend, factorDiag, factorGap, localAlignment, initPenalty)
+
+- IMPROVEMENT: the advanced options are now in sections. It will allow you to access to all the parameters and to know their default values.
+
+- CHANGE: removing of the TIC and BPC plots. You can now use the dedicated tool "xcms plot chromatogram"
+
+
+**Version 2.1.1 - 29/11/2017**
+
+- BUGFIX: To avoid issues with accented letter in the parentFile tag of the mzXML files, we changed a hidden mechanim to LC_ALL=C
+
+
+**Version 2.1.0 - 03/02/2017**
+
+- IMPROVEMENT: xcms.retcor can deal with merged individual data
+
+
+**Version 2.0.8 - 22/12/2016**
+
+- BUGFIX: when having only one group (i.e. one folder of raw data) the BPC and TIC pdf files do not contain any graph
+
+
+@HELP_XCMS_NEWVERSION_2090@
+
+
+**Version 2.0.6 - 04/04/2016**
+
+- TEST: refactoring to pass planemo test using conda dependencies
+
+
+**Version 2.0.5 - 10/02/2016**
+
+- BUGFIX: better management of errors. Datasets remained green although the process failed
+
+- BUGFIX: some pdf remained empty even when the process succeed
+
+- UPDATE: refactoring of internal management of inputs/outputs
+
+- UPDATE: refactoring to feed the new report tool
+
+
+**Version 2.0.2 - 02/06/2015**
+
+- IMPROVEMENT: new datatype/dataset formats (rdata.xcms.raw, rdata.xcms.group, rdata.xcms.retcor ...) will facilitate the sequence of tools and so avoid incompatibility errors.
+
+- IMPROVEMENT: parameter labels have changed to facilitate their reading.
+
+
+    ]]></help>
+
+
+    <expand macro="citation" />
+
+</tool>

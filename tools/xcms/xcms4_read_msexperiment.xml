@@ -9,7 +9,7 @@
     <expand macro="requirements"/>
     <required_files>
         <include path="xcms4_read_msexperiment.r" />
-        <include path="xcms4_lib_r" />
+        <include path="xcms4_lib.r" />
     </required_files>
     <expand macro="stdio"/>
     <expand macro="creators"/>

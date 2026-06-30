@@ -57,9 +57,14 @@ if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. O
 # Handle infiles
 if (!exists("singlefile")) singlefile <- NULL
 if (!exists("zipfile")) zipfile <- NULL
-rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
+
+# Handle infiles
+rawFilePath <- retrieveRawfileInTheWorkingDir(NULL, NULL, args)
+# zipfile <- rawFilePath$zipfile
+# singlefile <- rawFilePath$singlefile
+
+force(singlefile)
+force(zipfile)
 
 
 cat("\n\n")

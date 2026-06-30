@@ -1,91 +1,85 @@
-<tool id="biosigner" name="Biosigner" version="2.2.8">
+<tool id="biosigner" name="Biosigner" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="25.1">
   <description>Molecular signature discovery from omics data</description>
-  
+  <macros>
+    <token name="@TOOL_VERSION@">1.38.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+  </macros>
   <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
-    <requirement type="package" version="1.6.0">bioconductor-biosigner</requirement>
+    <requirement type="package" version="1.1_5">r-batch</requirement>
+    <requirement type="package" version="@TOOL_VERSION@">bioconductor-biosigner</requirement>
   </requirements>
-  
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
-  
-  <command><![CDATA[
+
+  <command detect_errors="exit_code"><![CDATA[
   Rscript $__tool_directory__/biosigner_wrapper.R
-  
-  dataMatrix_in "$dataMatrix_in"
-  sampleMetadata_in "$sampleMetadata_in"
-  variableMetadata_in "$variableMetadata_in"
-  
-  respC "$respC"
-  
-  #if $advCpt.opcC == "full"
-  methodC "$advCpt.methodC"
-  bootI "$advCpt.bootI"
-  tierC "$advCpt.tierC"        
-  pvalN "$advCpt.pvalN"
-  seedI "$advCpt.seedI"
+
+  data_matrix "$data_matrix"
+  sample_metadata "$sample_metadata"
+  variable_metadata "$variable_metadata"
+
+  response_column "$response_column"
+
+  #if $computational_params.computational_mode == "full"
+  classification_method "$computational_params.classification_method"
+  num_bootstraps "$computational_params.num_bootstraps"
+  selection_tier "$computational_params.selection_tier"
+  pvalue_threshold "$computational_params.pvalue_threshold"
+  random_seed "$computational_params.random_seed"
   #end if
-  
-  variableMetadata_out "$variableMetadata_out"
-  figure_tier "$figure_tier"
-  figure_boxplot "$figure_boxplot"
-  information "$information"
+
+  variable_metadata_out "$variable_metadata_out"
+  tier_figure "$tier_figure"
+  boxplot_figure "$boxplot_figure"
+  log_information "$log_information"
   ]]></command>
-  
   <inputs>
-    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular" />
-    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
-    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular" />
-    <param name="respC" label="Sample classes" type="text" value = "" help="Column of sampleMetadata containing 2 types of strings (e.g., 'case' and 'control')" />	
-    
-    <conditional name="advCpt">
-      <param name="opcC" type="select" label="Advanced computational parameters" >
-	<option value="default" selected="true">Use default</option>
-	<option value="full">Full parameter list</option>
+    <param name="data_matrix" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, sep: tabular"/>
+    <param name="sample_metadata" label="Sample metadata file" type="data" format="tabular" help="sample x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"/>
+    <param name="variable_metadata" label="Variable metadata file" type="data" format="tabular" help="variable x metadata, decimal: '.', missing: NA, mode: character and numerical, sep: tabular"/>
+    <param name="response_column" label="Sample classes" type="text" value="" help="Column of sampleMetadata containing 2 types of strings (e.g., 'case' and 'control')"/>
+    <conditional name="computational_params">
+      <param name="computational_mode" type="select" label="Advanced computational parameters">
+        <option value="default" selected="true">Use default</option>
+        <option value="full">Full parameter list</option>
       </param>
       <when value="default"/>
       <when value="full">
-        <param name="methodC" label="Classification method(s)" type="select" help="">
+        <param name="classification_method" label="Classification method(s)" type="select" help="">
           <option value="all" selected="true">all</option>
           <option value="plsda">PLS-DA</option>
           <option value="randomforest">Random Forest</option>
           <option value="svm">SVM</option>
         </param>
-	<param name="bootI" type="integer" value="50" label="Number of bootstraps" help=""/>
-        <param name="tierC" label="Selection tier(s)" type="select" help="">
+        <param name="num_bootstraps" type="integer" value="50" label="Number of bootstraps" help=""/>
+        <param name="selection_tier" label="Selection tier(s)" type="select" help="">
           <option value="S" selected="true">S</option>
           <option value="A">S+A</option>
         </param>
-        <param name="pvalN" type="float" value="0.05" label="p-value threshold" help="Must be between 0 and 1"/>
-        <param name="seedI" type="integer" value="0" label="Seed" help="Select an integer (e.g., 123) if you want to obtain exactly the same signatures when re-running the algorithm; 0 means that no seed is selected"/>
+        <param name="pvalue_threshold" type="float" value="0.05" label="p-value threshold" help="Must be between 0 and 1"/>
+        <param name="random_seed" type="integer" value="0" label="Seed" help="Select an integer (e.g., 123) if you want to obtain exactly the same signatures when re-running the algorithm; 0 means that no seed is selected"/>
       </when>
-    </conditional>   
+    </conditional>
   </inputs>
-  
   <outputs>
-    <data name="variableMetadata_out" label="${tool.name}_${variableMetadata_in.name}" format="tabular" ></data>
-    <data name="figure_tier" label="${tool.name}__figure-tier.pdf" format="pdf"/>
-    <data name="figure_boxplot" label="${tool.name}__figure-boxplot.pdf" format="pdf"/>
-    <data name="information" label="${tool.name}__information.txt" format="txt"/>
+    <data name="variable_metadata_out" label="${tool.name}_${variable_metadata.name}" format="tabular"/>
+    <data name="tier_figure" label="${tool.name}__figure-tier.pdf" format="pdf"/>
+    <data name="boxplot_figure" label="${tool.name}__figure-boxplot.pdf" format="pdf"/>
+    <data name="log_information" label="${tool.name}__information.txt" format="txt"/>
   </outputs>
-  
   <tests>
     <test>
-      <param name="dataMatrix_in" value="dataMatrix.tsv"/>
-      <param name="sampleMetadata_in" value="sampleMetadata.tsv"/>
-      <param name="variableMetadata_in" value="variableMetadata.tsv"/>
-      <param name="respC" value="gender"/>
-      <param name="opcC" value="full"/>
-      <param name="methodC" value="all"/>
-      <param name="bootI" value="5"/>
-      <param name="tierC" value="S"/>
-      <param name="pvalN" value="0.05"/>
-      <param name="seedI" value="123"/>
-      <output name="variableMetadata_out" file="variableMetadata.out"/>
+      <param name="data_matrix" value="dataMatrix.tsv"/>
+      <param name="sample_metadata" value="sampleMetadata.tsv"/>
+      <param name="variable_metadata" value="variableMetadata.tsv"/>
+      <param name="response_column" value="gender"/>
+      <param name="computational_params|computational_mode" value="full"/>
+      <param name="computational_params|classification_method" value="all"/>
+      <param name="computational_params|num_bootstraps" value="5"/>
+      <param name="computational_params|selection_tier" value="S"/>
+      <param name="computational_params|pvalue_threshold" value="0.05"/>
+      <param name="computational_params|random_seed" value="123"/>
+      <output name="variable_metadata_out" file="variableMetadata.out"/>
     </test>
   </tests>
-  
   <help>	
 
 .. class:: infomark
@@ -261,6 +255,33 @@ Figure output
 NEWS
 ----
 
+CHANGES IN VERSION 3.0.0
+========================
+
+BREAKING CHANGES
+
+- Updated Galaxy profile to 25.1 for modern Galaxy compatibility
+- Renamed all parameters to follow Galaxy best practices (lowercase with underscores):
+  - `opcC` -&gt; `computational_mode`
+  - `methodC` -&gt; `classification_method`
+  - `bootI` -&gt; `num_bootstraps`
+  - `tierC` -&gt; `selection_tier`
+  - `pvalN` -&gt; `pvalue_threshold`
+  - `seedI` -&gt; `random_seed`
+  - `respC` -&gt; `response_column`
+  - `dataMatrix_in` -&gt; `data_matrix`
+  - `sampleMetadata_in` -&gt; `sample_metadata`
+  - `variableMetadata_in` -&gt; `variable_metadata`
+  - `variableMetadata_out` -&gt; `variable_metadata_out`
+  - `figure_tier` -&gt; `tier_figure`
+  - `figure_boxplot` -&gt; `boxplot_figure`
+  - `information` -&gt; `log_information`
+- Added `detect_errors="exit_code"` to command element for better error handling
+
+INTERNAL MODIFICATIONS
+
+- Tool now targets Galaxy profile 25.1
+
 CHANGES IN VERSION 2.2.6
 ========================
 
@@ -290,9 +311,8 @@ NEW FEATURE
 Creation of the tool
 
 </help>
-
-<citations>
-  <citation type="bibtex">@Article{Rinaudo2016,
+  <citations>
+    <citation type="bibtex">@Article{Rinaudo2016,
   Title                    = {biosigner: a new method for the discovery of significant molecular signatures from omics data},
   Author                   = {Rinaudo, Philippe and Boudah, Samia and Junot, Christophe and Thevenot, Etienne A},
   Journal                  = {Frontiers in Molecular Biosciences},
@@ -301,7 +321,6 @@ Creation of the tool
   Volume                   = {3},
   Doi                      = {10.3389/fmolb.2016.00026}
   }</citation>
-  <citation type="doi">10.1093/bioinformatics/btu813</citation>
-</citations>
-
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
 </tool>

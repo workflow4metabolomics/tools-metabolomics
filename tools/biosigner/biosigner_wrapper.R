@@ -11,19 +11,19 @@ prog.name <- basename(script.path)
 # Print help
 if (length(grep('-h', argv)) >0) {
 	cat("Usage:", prog.name,
-	    "dataMatrix_in myDataMatrix.tsv",
-	    "sampleMetadata_in mySampleData.tsv",
-	    "variableMetadata_in myVariableMetadata.tsv",
-		"respC ...",
-  		"methodC ...",
-  		"bootI ...",
-  		"tierC ...",
-  		"pvalN ...",
-  		"seedI ...",
-	    "variableMetadata_out myVariableMetadata_out.tsv",
-	    "figure_tier figure_tier.pdf",
-	    "figure_boxplot figure_boxplot.pdf",
-	    "information information.txt",
+	    "data_matrix myDataMatrix.tsv",
+	    "sample_metadata mySampleData.tsv",
+	    "variable_metadata myVariableMetadata.tsv",
+		"response_column ...",
+  		"classification_method ...",
+  		"num_bootstraps ...",
+  		"selection_tier ...",
+  		"pvalue_threshold ...",
+  		"random_seed ...",
+	    "variable_metadata_out myVariableMetadata_out.tsv",
+	    "tier_figure tier_figure.pdf",
+	    "boxplot_figure boxplot_figure.pdf",
+	    "log_information log_information.txt",
 		"\n")
 	quit(status = 0)
 }
@@ -86,7 +86,7 @@ flgF <- function(tesC,
 ## log file
 ##---------
 
-sink(argVc["information"])
+sink(argVc["log_information"])
 
 cat("\nStart of the '", modNamC, "' Galaxy module call: ",
     format(Sys.time(), "%a %d %b %Y %X"), "\n", sep="")
@@ -95,14 +95,14 @@ cat("\nStart of the '", modNamC, "' Galaxy module call: ",
 ## arguments
 ##----------
 
-xMN <- t(as.matrix(read.table(argVc["dataMatrix_in"],
+xMN <- t(as.matrix(read.table(argVc["data_matrix"],
                               check.names = FALSE,
                               comment.char = '',
                               header = TRUE,
                               row.names = 1,
                               sep = "\t")))
 
-samDF <- read.table(argVc["sampleMetadata_in"],
+samDF <- read.table(argVc["sample_metadata"],
                     check.names = FALSE,
                     comment.char = '',
                     header = TRUE,
@@ -110,7 +110,7 @@ samDF <- read.table(argVc["sampleMetadata_in"],
                     sep = "\t")
 flgF("identical(rownames(xMN), rownames(samDF))", txtC = "Sample names (or number) in the data matrix (first row) and sample metadata (first column) are not identical; use the 'Check Format' module in the 'Quality Control' section")
 
-varDF <- read.table(argVc["variableMetadata_in"],
+varDF <- read.table(argVc["variable_metadata"],
                     check.names = FALSE,
                     comment.char = '',
                     header = TRUE,
@@ -118,16 +118,16 @@ varDF <- read.table(argVc["variableMetadata_in"],
                     sep = "\t")
 flgF("identical(colnames(xMN), rownames(varDF))", txtC = "Variable names (or number) in the data matrix (first column) and sample metadata (first column) are not identical; use the 'Check Format' module in the 'Quality Control' section")
 
-flgF("argVc['respC'] %in% colnames(samDF)",
-     txtC = paste0("Class argument (", argVc['respC'], ") must be either none or one of the column names (first row) of your sample metadata"))
-respVc <- samDF[, argVc["respC"]]
+flgF("argVc['response_column'] %in% colnames(samDF)",
+     txtC = paste0("Class argument (", argVc['response_column'], ") must be either none or one of the column names (first row) of your sample metadata"))
+respVc <- samDF[, argVc["response_column"]]
 flgF("mode(respVc) == 'character'",
-     txtC = paste0("'", argVc['respC'], "' column of sampleMetadata does not contain only characters"))
+     txtC = paste0("'", argVc['response_column'], "' column of sampleMetadata does not contain only characters"))
 respFc <- factor(respVc)
 flgF("length(levels(respFc)) == 2",
-     txtC = paste0("'", argVc['respC'], "' column of sampleMetadata does not contain only 2 types of characters (e.g., 'case' and 'control')"))
-tierMaxC <- ifelse("tierC" %in% names(argVc), argVc["tierC"], "S")
-pvalN <- ifelse("pvalN" %in% names(argVc), as.numeric(argVc["pvalN"]), 0.05)
+     txtC = paste0("'", argVc['response_column'], "' column of sampleMetadata does not contain only 2 types of characters (e.g., 'case' and 'control')"))
+tierMaxC <- ifelse("selection_tier" %in% names(argVc), argVc["selection_tier"], "S")
+pvalN <- ifelse("pvalue_threshold" %in% names(argVc), as.numeric(argVc["pvalue_threshold"]), 0.05)
 
 
 ##------------------------------
@@ -140,19 +140,19 @@ sink()
 optWrnN <- options()$warn
 options(warn = -1)
 
-if("seedI" %in% names(argVc) && argVc["seedI"] != "0")
-    set.seed(as.integer(argVc["seedI"]))
+if("random_seed" %in% names(argVc) && argVc["random_seed"] != "0")
+    set.seed(as.integer(argVc["random_seed"]))
 
 bsnLs <- biosign(x = xMN,
                  y = respFc,
-                 methodVc = ifelse("methodC" %in% names(argVc), argVc["methodC"], "all"),
-                 bootI = ifelse("bootI" %in% names(argVc), as.numeric(argVc["bootI"]), 50),
+                 methodVc = ifelse("classification_method" %in% names(argVc), argVc["classification_method"], "all"),
+                 bootI = ifelse("num_bootstraps" %in% names(argVc), as.numeric(argVc["num_bootstraps"]), 50),
                  pvalN = pvalN,
                  printL = FALSE,
                  plotL = FALSE,
-                 .sinkC = argVc["information"])
+                 .sinkC = argVc["log_information"])
 
-if("seedI" %in% names(argVc) && argVc["seedI"] != "0")
+if("random_seed" %in% names(argVc) && argVc["random_seed"] != "0")
     set.seed(NULL)
 
 tierMC <- bsnLs@tierMC
@@ -161,22 +161,22 @@ if(!is.null(tierMC)) {
     plot(bsnLs,
          tierMaxC = tierMaxC,
          file.pdfC = "figure_tier.pdf",
-         .sinkC = argVc["information"])
-    file.rename("figure_tier.pdf", argVc["figure_tier"])
+         .sinkC = argVc["log_information"])
+    file.rename("figure_tier.pdf", argVc["tier_figure"])
     plot(bsnLs,
          tierMaxC = tierMaxC,
          typeC = "boxplot",
          file.pdfC = "figure_boxplot.pdf",
-         .sinkC = argVc["information"])
-    file.rename("figure_boxplot.pdf", argVc["figure_boxplot"])
+         .sinkC = argVc["log_information"])
+    file.rename("figure_boxplot.pdf", argVc["boxplot_figure"])
 } else {
-    pdf(argVc["figure_tier"])
+    pdf(argVc["tier_figure"])
     plot(1, bty = "n", type = "n",
          xaxt = "n", yaxt = "n", xlab = "", ylab = "")
     text(mean(par("usr")[1:2]), mean(par("usr")[3:4]),
          labels = "No significant variable to display")
     dev.off()
-    pdf(argVc["figure_boxplot"])
+    pdf(argVc["boxplot_figure"])
     plot(1, bty = "n", type = "n",
          xaxt = "n", yaxt = "n", xlab = "", ylab = "")
     text(mean(par("usr")[1:2]), mean(par("usr")[3:4]),
@@ -192,7 +192,7 @@ options(warn = optWrnN)
 ## Print
 ##------------------------------
 
-sink(argVc["information"], append = TRUE)
+sink(argVc["log_information"], append = TRUE)
 
 tierFullVc <- c("S", LETTERS[1:5])
 tierVc <- tierFullVc[1:which(tierFullVc == tierMaxC)]
@@ -222,7 +222,7 @@ if(!is.null(tierMC)) {
                                  paste(varTirVc, collapse = "|")
                              }),
                          stringsAsFactors = FALSE)
-    colnames(tierDF) <- paste(argVc["respC"],
+    colnames(tierDF) <- paste(argVc["response_column"],
                               colnames(tierDF),
                               paste(tierVc, collapse = ""),
                               sep = "_")
@@ -234,7 +234,7 @@ if(!is.null(tierMC)) {
 varDF <- cbind.data.frame(variableMetadata = rownames(varDF),
                           varDF)
 write.table(varDF,
-            file = argVc["variableMetadata_out"],
+            file = argVc["variable_metadata_out"],
             quote = FALSE,
             row.names = FALSE,
             sep = "\t")

@@ -143,14 +143,11 @@ options(warn = -1)
 if("random_seed" %in% names(argVc) && argVc["random_seed"] != "0")
     set.seed(as.integer(argVc["random_seed"]))
 
-bsnLs <- biosign(x = xMN,
-                 y = respFc,
+bsnLs <- biosign(xMN,
+                 respFc,
                  methodVc = ifelse("classification_method" %in% names(argVc), argVc["classification_method"], "all"),
                  bootI = ifelse("num_bootstraps" %in% names(argVc), as.numeric(argVc["num_bootstraps"]), 50),
-                 pvalN = pvalN,
-                 printL = FALSE,
-                 plotL = FALSE,
-                 .sinkC = argVc["log_information"])
+                 pvalN = pvalN)
 
 if("random_seed" %in% names(argVc) && argVc["random_seed"] != "0")
     set.seed(NULL)
@@ -158,17 +155,12 @@ if("random_seed" %in% names(argVc) && argVc["random_seed"] != "0")
 tierMC <- bsnLs@tierMC
 
 if(!is.null(tierMC)) {
-    plot(bsnLs,
-         tierMaxC = tierMaxC,
-         file.pdfC = "figure_tier.pdf",
-         .sinkC = argVc["log_information"])
-    file.rename("figure_tier.pdf", argVc["tier_figure"])
-    plot(bsnLs,
-         tierMaxC = tierMaxC,
-         typeC = "boxplot",
-         file.pdfC = "figure_boxplot.pdf",
-         .sinkC = argVc["log_information"])
-    file.rename("figure_boxplot.pdf", argVc["boxplot_figure"])
+    pdf(argVc["tier_figure"])
+    plot(bsnLs, typeC = "tier")
+    dev.off()
+    pdf(argVc["boxplot_figure"])
+    plot(bsnLs, typeC = "boxplot")
+    dev.off()
 } else {
     pdf(argVc["tier_figure"])
     plot(1, bty = "n", type = "n",

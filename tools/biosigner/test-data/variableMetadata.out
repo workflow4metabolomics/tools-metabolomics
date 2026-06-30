@@ -8,7 +8,7 @@ variableMetadata	msiLevel	hmdb	chemicalClass	gender_tier_S
 2-acetamido-4-methylphenyl acetate	2		AroHoM	
 2-Aminoadipic acid	1	HMDB00510	AA-pep	
 2-Hydroxybenzyl alcohol	1	HMDB59709	AroHoM	
-2-Isopropylmalic acid	1	HMDB00402	Organi	
+2-Isopropylmalic acid	1	HMDB00402	Organi	svm
 2-Methylhippuric acid	1	HMDB11723	AA-pep:AcyGly	
 2,2-Dimethylglutaric acid	1		Lipids	
 3-Hydroxybenzyl alcohol	1	HMDB59712	AroHoM	
@@ -21,7 +21,7 @@ variableMetadata	msiLevel	hmdb	chemicalClass	gender_tier_S
 3,5-dihydroxybenzoic acid/3,4-dihydroxybenzoic acid	2		AroHoM	
 3,7-Dimethyluric acid	1	HMDB01982	AroHeP	svm
 4-Acetamidobutanoic acid isomer 2	2		Lipids	
-4-Acetamidobutanoic acid isomer 3	2		Lipids	
+4-Acetamidobutanoic acid isomer 3	2		Lipids	svm
 4-Hydroxybenzoic acid	1	HMDB00500	AroHoM	
 4-Methylhippuric acid/3-Methylhippuric acid	1		AA-pep:AcyGly	
 5-Hydroxyindoleacetic acid	1	HMDB00763	AroHeP	
@@ -29,9 +29,9 @@ variableMetadata	msiLevel	hmdb	chemicalClass	gender_tier_S
 6-(2-hydroxyethoxy)-6-oxohexanoic acid	2		Organi	
 6-(carboxymethoxy)-hexanoic acid	2		Organi	
 9-Methylxanthine	2	HMDB59716	AroHeP	
-Acetaminophen glucuronide	1	HMDB10316	Carboh	svm
-Acetylphenylalanine	1	HMDB00512	AA-pep	plsda|svm
-alpha-N-Phenylacetyl-glutamine	1	HMDB06344	AA-pep	plsda
+Acetaminophen glucuronide	1	HMDB10316	Carboh	
+Acetylphenylalanine	1	HMDB00512	AA-pep	
+alpha-N-Phenylacetyl-glutamine	1	HMDB06344	AA-pep	
 Aminosalicyluric acid	2		AA-pep:AcyGly	
 Asp-Leu/Ile isomer 1	2		AA-pep	
 Asp-Leu/Ile isomer 2	2		AA-pep	
@@ -40,7 +40,7 @@ Azelaic acid	1	HMDB00784	Organi
 Benzoic acid isomer	2		AroHoM	
 Chenodeoxycholic acid isomer	2		Lipids:Steroi	
 Cinnamoylglycine	1	HMDB11621	AA-pep:AcyGly	
-Citric acid	1	HMDB00094	Organi	plsda
+Citric acid	1	HMDB00094	Organi	
 Dehydroepiandrosterone 3-glucuronide	1	HMDB10348	Lipids:Steroi	
 Dehydroepiandrosterone sulfate	1	HMDB01032	Lipids:Steroi	
 Deoxyhexose	1	HMDB00849	Carboh	
@@ -49,14 +49,14 @@ FMNH2	2	HMDB01142	AroHeP
 Fumaric acid	1	HMDB00134	Lipids	
 Gentisic acid	1	HMDB00152	AroHoM	
 Glu-Val	2	HMDB59717	AA-pep	
-Gluconic acid and/or isomers	2		Carboh	plsda
-Glucuronic acid and/or isomers	2		Carboh	plsda
+Gluconic acid and/or isomers	2		Carboh	
+Glucuronic acid and/or isomers	2		Carboh	svm
 Glyceric acid	1	HMDB00139	Carboh	
 Glycocholic acid isomer 2	2		Lipids:Steroi	
 Glycocholic acid isomer 3	2		Lipids:Steroi	
 Heptylmalonic acid	2	HMDB59719	Lipids	
 Hexanoylglycine	1	HMDB00701	AA-pep:AcyGly	
-Hippuric acid	1	HMDB00714	AA-pep:AcyGly	plsda
+Hippuric acid	1	HMDB00714	AA-pep:AcyGly	
 Hydroxybenzyl alcohol isomer	2		AroHeM	
 Hydroxyphenyllactic acid	1	HMDB00755	AroHoM	
 Hydroxysuberic acid isomer 1	2		Organi	
@@ -72,21 +72,21 @@ Mevalonic acid isomer 1	2		Organi
 Monoethyl phthalate	2	HMDB02120	AroHoM:Xenobi	
 N-Acetyl-aspartic acid	1	HMDB00812	AA-pep	
 N-Acetylisoleucine	1		AA-pep	
-N-Acetylleucine	1	HMDB11756	AA-pep	
+N-Acetylleucine	1	HMDB11756	AA-pep	svm
 N-Acetyltryptophan	1	HMDB13713	AA-pep	
 N-Acetyltryptophan isomer 3	2		AA-pep	
 N2-Acetylaminoadipic acid	2		AA-pep	svm
 N4-Acetylcytidine	1	HMDB05923	Nucleo	svm
 Nicotinuric acid isomer	2		AA-pep	
 Ortho-Hydroxyphenylacetic acid	1	HMDB00669	AroHoM	
-Oxoglutaric acid	2	HMDB00208	Organi	plsda|randomforest|svm
-p-Anisic acid	1	HMDB01101	AroHoM	plsda|randomforest|svm
+Oxoglutaric acid	2	HMDB00208	Organi	randomforest|svm
+p-Anisic acid	1	HMDB01101	AroHoM	plsda|svm
 p-Hydroxyhippuric acid	2	HMDB13678	AA-pep:AcyGly	
 p-Hydroxymandelic acid	1	HMDB00822	AroHoM	
 p-Hydroxyphenylacetic acid	1	HMDB00020	AroHoM	
 Pantothenic acid	1	HMDB00210	AliAcy	plsda|svm
 Pentose	2		Carboh	
-Phe-Tyr-Asp (and isomers)	2		AA-pep	plsda
+Phe-Tyr-Asp (and isomers)	2		AA-pep	
 Porphobilinogen	1	HMDB00245	Organi	
 Pyridoxic acid isomer 1	2		AroHeM	
 Pyridylacetylglycine	2	HMDB59723	AA-pep:AcyGly:Xenobi	
@@ -99,12 +99,12 @@ Salicylic acid	1	HMDB01895	AroHoM:Xenobi
 Sebacic acid	1	HMDB00792	Organi	
 Suberic acid	1	HMDB00893	Organi	
 Sulfosalicylic acid isomer	2		AroHoM	
-Taurine	1	HMDB00251	Organi	
+Taurine	1	HMDB00251	Organi	svm
 Testosterone glucuronide	2	HMDB03193	Lipids:Steroi	plsda|randomforest|svm
 Tetrahydrohippuric acid	2		AA-pep:AcyGly	
 Threo-3-Phenylserine	1	HMDB02184	AA-pep	
-Threonic acid/Erythronic acid	2		Carboh	plsda
+Threonic acid/Erythronic acid	2		Carboh	
 Tryptophan	1	HMDB00929	AA-pep	
 Valerylglycine isomer 1	2		AA-pep:AcyGly	
 Valerylglycine isomer 2	2		AA-pep:AcyGly	
-Xanthosine	1	HMDB00299	Nucleo	
+Xanthosine	1	HMDB00299	Nucleo	svm

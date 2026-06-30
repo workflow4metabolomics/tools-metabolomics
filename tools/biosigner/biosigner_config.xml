@@ -1,12 +1,11 @@
-<tool id="biosigner" name="Biosigner" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="25.1">
+<tool id="biosigner" name="Biosigner" version="3.0.0+galaxy@VERSION_SUFFIX@" profile="25.1">
   <description>Molecular signature discovery from omics data</description>
   <macros>
-    <token name="@TOOL_VERSION@">1.38.0</token>
     <token name="@VERSION_SUFFIX@">0</token>
   </macros>
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
-    <requirement type="package" version="@TOOL_VERSION@">bioconductor-biosigner</requirement>
+    <requirement type="package" version="1.38.0">bioconductor-biosigner</requirement>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
@@ -77,7 +76,7 @@
       <param name="computational_params|selection_tier" value="S"/>
       <param name="computational_params|pvalue_threshold" value="0.05"/>
       <param name="computational_params|random_seed" value="123"/>
-      <output name="variable_metadata_out" file="variableMetadata.out"/>
+      <output name="variable_metadata_out" file="variableMetadata.out" compare="diff" lines_diff="10"/>
     </test>
   </tests>
   <help>	

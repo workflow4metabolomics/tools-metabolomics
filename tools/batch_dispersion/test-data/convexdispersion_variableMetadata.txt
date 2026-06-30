@@ -1,0 +1,4 @@
+dataMatrix	compoundname	compoundform
+Intensity1	Mannitol	[M+H-C2H10O5]
+Intensity2	Valine	[M+H-CH2O2]
+

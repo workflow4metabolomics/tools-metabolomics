@@ -3,7 +3,6 @@
 ## etienne.thevenot@cea.fr
 
 
-
 ## Reads the dataMatrix, sampleMetadata, and variableMetadata .tsv files
 ## and checks the formats
 readAndCheckF <- function(datFilC = "dataMatrix.tsv",

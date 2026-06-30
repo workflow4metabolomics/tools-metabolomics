@@ -173,7 +173,7 @@ Zip file: Steps for creating the zip file
 
 VERY IMPORTANT: If you zip your files under Windows, you must use the 7Zip_ software, otherwise your zip will not be well unzipped on the W4M platform (corrupted zip bug).
 
-.. _7Zip: http://www.7-zip.org/
+.. _7Zip: https://www.7-zip.org/
 
 Your zip should contain all your conditions as sub-directories. For example, two conditions (mutant and wild):
 arabidopsis/wild/01.raw

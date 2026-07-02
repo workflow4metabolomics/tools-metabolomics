@@ -34,10 +34,10 @@
   information "$information"
   ]]></command>
   <inputs>
-    <param name="data_matrix_in" type="data" label="Data matrix file" help="" format="tabular"/>
-    <param name="sample_metadata_in" type="data" label="Sample metadata file" help="" format="tabular"/>
-    <param name="variable_metadata_in" type="data" label="Variable metadata file" help="" format="tabular"/>
-    <param name="dis_c" label="Dissimilarity to be used for clustering" type="select" help="If correlation is selected, the pearson method will be used by default unless a specific method is selected in the advanced parameters below">
+    <param name="data_matrix_in" type="data" label="Data matrix file" help="Tabular feature-by-sample intensity matrix to cluster and visualize as a heatmap." format="tabular"/>
+    <param name="sample_metadata_in" type="data" label="Sample metadata file" help="Tabular sample annotation table matching the sample names in the data matrix." format="tabular"/>
+    <param name="variable_metadata_in" type="data" label="Variable metadata file" help="Tabular feature annotation table matching the variable names in the data matrix." format="tabular"/>
+    <param name="dis_c" label="Dissimilarity to be used for clustering" type="select" help="Choose the distance or correlation-based dissimilarity used to build the sample and feature dendrograms.">
       <option value="euclidean">euclidean</option>
       <option value="maximum">maximum</option>
       <option value="manhattan">manhattan</option>
@@ -47,7 +47,7 @@
       <option value="1-cor" selected="true">1-correlation</option>
       <option value="1-abs(cor)">1-abs(correlation)</option>
     </param>
-    <param name="cut_sam_n" label="Number of sample clusters to identify" type="select" help="">
+    <param name="cut_sam_n" label="Number of sample clusters to identify" type="select" help="Set how many sample groups to report on the row dendrogram; choose 1 to disable sample cluster labels.">
       <option value="1" selected="true">1</option>
       <option value="2">2</option>
       <option value="3">3</option>
@@ -64,7 +64,7 @@
       <option value="14">14</option>
       <option value="15">15</option>
     </param>
-    <param name="cut_var_n" label="Number of variable clusters to identify" type="select" help="">
+    <param name="cut_var_n" label="Number of variable clusters to identify" type="select" help="Set how many variable groups to report on the column dendrogram; choose 1 to disable variable cluster labels.">
       <option value="1" selected="true">1</option>
       <option value="2">2</option>
       <option value="3">3</option>
@@ -82,24 +82,24 @@
       <option value="15">15</option>
     </param>
     <conditional name="adv_par">
-      <param name="opp_c" type="select" label="Advanced parameters">
+      <param name="opp_c" type="select" label="Advanced parameters" help="Switch between the default minimal settings and the full list of plotting options.">
         <option value="default" selected="true">Use default</option>
         <option value="full">Full list</option>
       </param>
       <when value="default">
-        <param name="cor_met_c" type="hidden" value="pearson"/>
-        <param name="agg_met_c" type="hidden" value="ward"/>
-        <param name="col_c" type="hidden" value="blueOrangeRed"/>
-        <param name="sca_l" type="hidden" value="TRUE"/>
-        <param name="cex_n" type="hidden" value="0.8"/>
+        <param name="cor_met_c" type="hidden" value="pearson" help="Default correlation method used when the advanced parameter list is collapsed."/>
+        <param name="agg_met_c" type="hidden" value="ward" help="Default agglomeration method used when the advanced parameter list is collapsed."/>
+        <param name="col_c" type="hidden" value="blueOrangeRed" help="Default color scale used when the advanced parameter list is collapsed."/>
+        <param name="sca_l" type="hidden" value="TRUE" help="Default display-time standardization used when the advanced parameter list is collapsed."/>
+        <param name="cex_n" type="hidden" value="0.8" help="Default label size used when the advanced parameter list is collapsed."/>
       </when>
       <when value="full">
-        <param name="cor_met_c" label="Method of correlation to be used" type="select" help="">
+        <param name="cor_met_c" label="Method of correlation to be used" type="select" help="Select the correlation method used when a correlation-based dissimilarity is chosen.">
           <option value="pearson" selected="true">pearson</option>
           <option value="spearman">spearman</option>
           <option value="kendall">kendall</option>
         </param>
-        <param name="agg_met_c" label="Method of agglomeration to be used" type="select" help="">
+        <param name="agg_met_c" label="Method of agglomeration to be used" type="select" help="Choose the hierarchical clustering linkage method used to merge clusters.">
           <option value="ward" selected="true">ward</option>
           <option value="single">single</option>
           <option value="complete">complete</option>
@@ -108,15 +108,15 @@
           <option value="median">median</option>
           <option value="centroid">centroid</option>
         </param>
-        <param name="col_c" label="Color scale" type="select" help="">
+        <param name="col_c" label="Color scale" type="select" help="Choose the heatmap color palette used to render the matrix values.">
           <option value="blueOrangeRed" selected="true">blue-orange-red</option>
           <option value="redBlackGreen">red-black-green</option>
         </param>
-        <param name="sca_l" label="Variable standardization (for plotting only)" type="select" help="Standardization is performed after the clustering for display only (may enhance contrast) and does not modify cluster computation nor intensities in the output files">
+        <param name="sca_l" label="Variable standardization (for plotting only)" type="select" help="Choose whether to standardize values for display only before plotting the heatmap.">
           <option value="TRUE" selected="true">yes</option>
           <option value="FALSE">no</option>
         </param>
-        <param name="cex_n" label="Size of labels" type="select" help="">
+        <param name="cex_n" label="Size of labels" type="select" help="Set the text size used for the sample and feature labels in the heatmap figure.">
           <option value="0.5">0.5</option>
           <option value="0.6">0.6</option>
           <option value="0.7">0.7</option>

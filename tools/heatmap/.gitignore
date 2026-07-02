@@ -1,8 +1,0 @@
-runit/output/
-tool_test_output.*
-.#*
-\#*#
-*~
-.swp
-.*.swp
-.Rproj.user

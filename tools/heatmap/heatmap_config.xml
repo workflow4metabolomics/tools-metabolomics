@@ -11,27 +11,27 @@
   <command detect_errors="exit_code"><![CDATA[
   Rscript $__tool_directory__/heatmap_wrapper.R
   
-  data_matrix_in "$data_matrix_in"
-  sample_metadata_in "$sample_metadata_in"
-  variable_metadata_in "$variable_metadata_in"
+  data_matrix_in '$data_matrix_in'
+  sample_metadata_in '$sample_metadata_in'
+  variable_metadata_in '$variable_metadata_in'
   
-  dis_c "$dis_c"
-  cut_sam_n "$cut_sam_n"
-  cut_var_n "$cut_var_n"
+  dis_c '$dis_c'
+  cut_sam_n '$cut_sam_n'
+  cut_var_n '$cut_var_n'
   
   #if $adv_par.opp_c == "full"
-  cor_met_c "$adv_par.cor_met_c"
-  agg_met_c "$adv_par.agg_met_c"
-  col_c "$adv_par.col_c"
-  sca_l "$adv_par.sca_l"
-  cex_n "$adv_par.cex_n"
+  cor_met_c '$adv_par.cor_met_c'
+  agg_met_c '$adv_par.agg_met_c'
+  col_c '$adv_par.col_c'
+  sca_l '$adv_par.sca_l'
+  cex_n '$adv_par.cex_n'
   #end if
   
-  data_matrix_out "$data_matrix_out"
-  sample_metadata_out "$sample_metadata_out"
-  variable_metadata_out "$variable_metadata_out"
-  figure "$figure"
-  information "$information"
+  data_matrix_out '$data_matrix_out'
+  sample_metadata_out '$sample_metadata_out'
+  variable_metadata_out '$variable_metadata_out'
+  figure '$figure'
+  information '$information'
   ]]></command>
   <inputs>
     <param name="data_matrix_in" type="data" label="Data matrix file" help="Tabular feature-by-sample intensity matrix to cluster and visualize as a heatmap." format="tabular"/>

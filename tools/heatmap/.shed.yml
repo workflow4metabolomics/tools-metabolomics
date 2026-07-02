@@ -6,7 +6,9 @@ long_description: 'The heatmap is produced by using the "hclust" hierarchical cl
 remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tools/heatmap
 type: unrestricted
 categories:
-- Metabolomics
-- Transcriptomics
-- Proteomics
-- Statistics
+  - Metabolomics
+  - Transcriptomics
+  - Proteomics
+  - Statistics
+exclude:
+  - runit

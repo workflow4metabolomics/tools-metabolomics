@@ -36,7 +36,7 @@ The code in the wrapper can be tested by running the `runit/heatmap_runtests.R` 
 
 ### Working example  
 
-See the **W4M00001a_sacurine-subset-statistics** shared history in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)  
+See the **W4M00001a_sacurine-subset-statistics** shared history in the **Shared Data/Published Histories** menu (https://workflow4metabolomics.usegalaxy.fr/histories/list_published)  
 
 ### News
 

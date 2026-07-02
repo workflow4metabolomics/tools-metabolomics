@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from isatools.convert import isatab2w4m
 import warnings
+
+from isatools.convert import isatab2w4m
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")

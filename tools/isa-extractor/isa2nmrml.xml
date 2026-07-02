@@ -1,0 +1,77 @@
+<!-- vi: se fdm=marker : -->
+<tool id="isa2nmrml" name="ISA to nmrML" version="1.3.0">
+
+	<description>Extract nmrML files from an ISA dataset and output a collection of nmrML dataset.</description>
+
+	<!-- Command {{{1 -->
+
+	<command><![CDATA[
+		## @@@BEGIN_CHEETAH@@@
+
+		$__tool_directory__/extract-from-isa
+		-i "$isa.extra_files_path"
+		-e nmrML
+		-o nmrML
+
+		## @@@END_CHEETAH@@@
+	]]></command>
+
+	<!-- Inputs {{{1 -->
+
+	<inputs>
+		<param name="isa" label="ISA" type="data" format="isa-tab"/>
+	</inputs>
+
+	<!-- Outputs {{{1 -->
+
+    <outputs>
+		<collection name="nmrML" type="list" label="nmrML files">
+			<discover_datasets pattern="(?P&lt;designation&gt;.+)\.[nN][mM][rR][mM][lL]$" directory="nmrML" format="nmrml"/>
+		</collection>
+	</outputs>
+
+	<!-- Tests {{{1 -->
+	<tests>
+		<test>
+			<param name="isa" value="nmrml_study.zip" ftype="isa-tab"/>
+			<output_collection name="nmrML" type="list" count="1">
+				<element name="empty" file="nmrml_study_output/empty.nmrML" ftype="nmrml"/>
+			</output_collection>
+		</test>
+	</tests>
+
+	<!-- Help {{{1 -->
+    <help>
+<!-- @@@BEGIN_RST@@@ -->
+
+====================
+ISA to nmrML
+====================
+
+Extract nmrML files contained inside an ISA archive.
+
+-----
+Input
+-----
+
+ISA dataset
+===========
+
+The ISA-Tab dataset from which to extract the files.
+
+------
+Output
+------
+
+The output is a collection of nmrML files.
+
+<!-- @@@END_RST@@@ -->
+    </help>
+
+	<!-- Citations {{{1 -->
+    <citations>
+        <citation type="doi">10.1038/ng.1054</citation> <!-- ISA -->
+        <citation type="doi">10.1093/bioinformatics/btu813</citation> <!-- W4M -->
+    </citations>
+
+</tool>

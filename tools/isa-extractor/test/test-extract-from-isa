@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Constants {{{1
+################################################################
+
+PROG_NAME=$(basename $0)
+PROG_PATH=$(dirname $0)
+RES_PATH=$PROG_PATH/res
+
+# Error {{{1
+################################################################
+
+function error {
+
+	local msg=$1
+
+	echo "ERROR: $msg" >&2
+
+	exit 1
+}
+
+# Test study {{{1
+################################################################
+
+function test_study {
+	local study_name=$1
+	local ext=$2
+	local n_expected_files=$3
+	local input_path="$PROG_PATH/res/${study_name}"
+	local output_path="$PROG_PATH/${study_name}_extract"
+
+	# Remove existing output
+	rm -rf "$output_path"
+
+	# Call program
+	"$PROG_PATH/../extract-from-isa" -i "$input_path" -o "$output_path" -e $ext || exit 1
+
+	# Check output
+	local n_files=$(ls "$output_path/" | wc -l)
+	local n_right_ext_files=$(find "$output_path" -iname "*.$ext" | wc -l)
+	[[ $n_files -eq $n_expected_files ]] || error "Error while extracting $ext files from $study_name. Extracted $n_files instead of $n_expected_files."
+	[[ $n_files -eq $n_right_ext_files ]] || error "Error while extracting $ext files from $study_name. $n_right_ext_files extracted files have the right extension. Was expecting $n_expected_files."
+}
+
+# Test symbolic links {{{1
+################################################################
+
+test_symlinks() {
+
+	local study_name=fake_mzml_study
+	local ext=mzML
+	local n_expected_files=1
+	local input_path="$PROG_PATH/res/${study_name}"
+	local output_path="$PROG_PATH/${study_name}_extract_symlinks"
+
+	# Remove existing output
+	rm -rf "$output_path"
+
+	# Call program
+	"$PROG_PATH/../extract-from-isa" -i "$input_path" -o "$output_path" -e $ext -s || exit 1
+
+	# Check output
+	local n_files=$(ls "$output_path/" | wc -l)
+	[[ $n_files -eq $n_expected_files ]] || error "Error while extracting $ext files from $study_name. Extracted $n_files instead of $n_expected_files."
+	extracted_file=$(ls "$output_path/")
+	[[ -L $output_path/$extracted_file ]] || error "Extracted file $output_path/$extracted_file is not a symbolic link."
+}
+
+# MAIN {{{1
+################################################################
+
+# Test on different studies
+test_study empty_study mzML 0
+test_study fake_mzml_study mzML 1
+test_study fake_mzdata_study mzData 1
+test_study fake_mzxml_study mzXML 1
+test_study fake_nmrml_study nmrML 1
+test_study fake_netcdf_study CDF 1
+test_study fake_case_insensitive_mzml_study mzML 3
+test_symlinks

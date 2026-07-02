@@ -1,14 +1,14 @@
 test_input_cut4 <- function() {
     testDirC <- "input"
     argLs <- list(
-        disC = "1-cor",
-        cutSamN = "4",
-        cutVarN = "3",
-        corMetC = "spearman",
-        aggMetC = "ward",
-        colC = "blueOrangeRed",
-        scaL = "TRUE",
-        cexN = "0.8"
+        dis_c = "1-cor",
+        cut_sam_n = "4",
+        cut_var_n = "3",
+        cor_met_c = "spearman",
+        agg_met_c = "ward",
+        col_c = "blueOrangeRed",
+        sca_l = "TRUE",
+        cex_n = "0.8"
     )
 
     argLs <- c(defaultArgF(testDirC), argLs)
@@ -20,14 +20,14 @@ test_input_cut4 <- function() {
 test_exa1_cut3 <- function() {
     testDirC <- "exa1"
     argLs <- list(
-        disC = "1-cor",
-        cutSamN = "3",
-        cutVarN = "4",
-        corMetC = "spearman",
-        aggMetC = "ward",
-        colC = "blueOrangeRed",
-        scaL = "TRUE",
-        cexN = "1"
+        dis_c = "1-cor",
+        cut_sam_n = "3",
+        cut_var_n = "4",
+        cor_met_c = "spearman",
+        agg_met_c = "ward",
+        col_c = "blueOrangeRed",
+        sca_l = "TRUE",
+        cex_n = "1"
     )
 
     argLs <- c(defaultArgF(testDirC), argLs)
@@ -39,14 +39,14 @@ test_exa1_cut3 <- function() {
 test_exa2_cut4 <- function() {
     testDirC <- "exa2"
     argLs <- list(
-        disC = "1-cor",
-        cutSamN = "1",
-        cutVarN = "1",
-        corMetC = "spearman",
-        aggMetC = "ward",
-        colC = "blueOrangeRed",
-        scaL = "TRUE",
-        cexN = "1"
+        dis_c = "1-cor",
+        cut_sam_n = "1",
+        cut_var_n = "1",
+        cor_met_c = "spearman",
+        agg_met_c = "ward",
+        col_c = "blueOrangeRed",
+        sca_l = "TRUE",
+        cex_n = "1"
     )
 
     argLs <- c(defaultArgF(testDirC), argLs)

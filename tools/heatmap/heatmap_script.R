@@ -8,21 +8,21 @@
 heatmapF <- function(proMN,
                      obsDF,
                      feaDF,
-                     disC, ## dissimilarity
-                     cutSamN, ## number of sample clusters
-                     cutVarN, ## number of variable clusters
+                     dis_c, ## dissimilarity
+                     cut_sam_n, ## number of sample clusters
+                     cut_var_n, ## number of variable clusters
                      fig.pdfC,
-                     corMetC, ## correlation method
-                     aggMetC, ## agglomeration method
-                     colC, ## color scale
-                     scaL,
-                     cexN) {
+                     cor_met_c, ## correlation method
+                     agg_met_c, ## agglomeration method
+                     col_c, ## color scale
+                     sca_l,
+                     cex_n) {
     ncaN <- 14 ## Sample and variable name truncature for display
 
-    if (aggMetC == "ward") {
+    if (agg_met_c == "ward") {
         rvsLs <- R.Version()
-        aggMetC <- paste0(
-            aggMetC,
+        agg_met_c <- paste0(
+            agg_met_c,
             ifelse(as.numeric(rvsLs[["major"]]) > 3 ||
                 as.numeric(rvsLs[["major"]]) == 3 && as.numeric(rvsLs[["minor"]]) > 0.3,
             ".D",
@@ -31,57 +31,57 @@ heatmapF <- function(proMN,
         )
     }
 
-    if (disC %in% c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) {
-        obsHcl <- hclust(dist(proMN, method = disC),
-            method = aggMetC
+    if (dis_c %in% c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) {
+        obsHcl <- hclust(dist(proMN, method = dis_c),
+            method = agg_met_c
         )
 
-        feaHcl <- hclust(dist(t(proMN), method = disC),
-            method = aggMetC
+        feaHcl <- hclust(dist(t(proMN), method = dis_c),
+            method = agg_met_c
         )
-    } else if (disC == "1-cor") {
+    } else if (dis_c == "1-cor") {
         obsHcl <- hclust(
             as.dist(1 - cor(t(proMN),
-                method = corMetC,
+                method = cor_met_c,
                 use = "pairwise.complete.obs"
             )),
-            method = aggMetC
+            method = agg_met_c
         )
 
         feaHcl <- hclust(
             as.dist(1 - cor(proMN,
-                method = corMetC,
+                method = cor_met_c,
                 use = "pairwise.complete.obs"
             )),
-            method = aggMetC
+            method = agg_met_c
         )
-    } else if (disC == "1-abs(cor)") {
+    } else if (dis_c == "1-abs(cor)") {
         obsHcl <- hclust(
             as.dist(1 - abs(cor(t(proMN),
-                method = corMetC,
+                method = cor_met_c,
                 use = "pairwise.complete.obs"
             ))),
-            method = aggMetC
+            method = agg_met_c
         )
 
         feaHcl <- hclust(
             as.dist(1 - abs(cor(proMN,
-                method = corMetC,
+                method = cor_met_c,
                 use = "pairwise.complete.obs"
             ))),
-            method = aggMetC
+            method = agg_met_c
         )
     }
 
     heaMN <- proMN <- proMN[obsHcl[["order"]], feaHcl[["order"]]]
 
-    if (scaL) {
+    if (sca_l) {
         heaMN <- scale(heaMN)
     }
 
     heaMN <- heaMN[, rev(1:ncol(heaMN)), drop = FALSE]
 
-    switch(colC,
+    switch(col_c,
         blueOrangeRed = {
             imaPalVn <- colorRampPalette(c("blue", "orange", "red"),
                 space = "rgb"
@@ -186,8 +186,8 @@ heatmapF <- function(proMN,
         labels = feaHcl[["labels"]]
     )
 
-    if (cutVarN > 1) {
-        cluFeaVn <- cutree(revFeaHcl, k = cutVarN)[revFeaHcl[["order"]]]
+    if (cut_var_n > 1) {
+        cluFeaVn <- cutree(revFeaHcl, k = cut_var_n)[revFeaHcl[["order"]]]
         cutFeaVn <- which(abs(diff(cluFeaVn)) > 0)
         cutFeaTxtVn <- c(cutFeaVn[1] / 2, cutFeaVn + diff(c(cutFeaVn, length(cluFeaVn))) / 2) + 0.5
         cutFeaLinVn <- cutFeaVn + 0.5
@@ -213,8 +213,8 @@ heatmapF <- function(proMN,
         yaxt = "n", xlab = "", ylab = ""
     )
 
-    if (cutSamN > 1) {
-        cluObsVn <- cutree(obsHcl, k = cutSamN)[obsHcl[["order"]]]
+    if (cut_sam_n > 1) {
+        cluObsVn <- cutree(obsHcl, k = cut_sam_n)[obsHcl[["order"]]]
         cutObsVn <- which(abs(diff(cluObsVn)) > 0)
         cutObsTxtVn <- c(cutObsVn[1] / 2, cutObsVn + diff(c(cutObsVn, length(cluObsVn))) / 2) + 0.5
         cutObsLinVn <- cutObsVn + 0.5
@@ -250,7 +250,7 @@ heatmapF <- function(proMN,
 
     mtext(obsOrdVc,
         at = 1:nrow(heaMN),
-        cex = cexN,
+        cex = cex_n,
         las = 2,
         side = 1
     )
@@ -262,15 +262,15 @@ heatmapF <- function(proMN,
 
     mtext(feaOrdVc,
         at = ncol(heaMN):1,
-        cex = cexN,
+        cex = cex_n,
         las = 2,
         side = 4
     )
 
-    if (cutVarN > 1) {
+    if (cut_var_n > 1) {
         abline(h = cutFeaLinVn)
     }
-    if (cutSamN > 1) {
+    if (cut_sam_n > 1) {
         abline(v = cutObsLinVn)
     }
 
@@ -281,13 +281,13 @@ heatmapF <- function(proMN,
     ## Returning
     ## ----------
 
-    if (cutSamN > 1) {
-        obsDF[, "heat_clust"] <- cutree(obsHcl, k = cutSamN)
+    if (cut_sam_n > 1) {
+        obsDF[, "heat_clust"] <- cutree(obsHcl, k = cut_sam_n)
     }
     obsDF <- obsDF[obsHcl[["order"]], , drop = FALSE]
 
-    if (cutVarN > 1) {
-        feaDF[, "heat_clust"] <- cutree(feaHcl, k = cutVarN)
+    if (cut_var_n > 1) {
+        feaDF[, "heat_clust"] <- cutree(feaHcl, k = cut_var_n)
     }
     feaDF <- feaDF[feaHcl[["order"]], , drop = FALSE]
 

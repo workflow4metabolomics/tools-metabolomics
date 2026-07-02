@@ -41,21 +41,21 @@ cat("\nStart of the '", modNamC, "' module: ",
 ## loading
 ## --------
 
-proMN <- t(as.matrix(read.table(argVc["dataMatrix_in"],
+proMN <- t(as.matrix(read.table(argVc["data_matrix_in"],
     check.names = FALSE,
     header = TRUE,
     row.names = 1,
     sep = "\t"
 )))
 
-obsDF <- read.table(argVc["sampleMetadata_in"],
+obsDF <- read.table(argVc["sample_metadata_in"],
     check.names = FALSE,
     header = TRUE,
     row.names = 1,
     sep = "\t"
 )
 
-feaDF <- read.table(argVc["variableMetadata_in"],
+feaDF <- read.table(argVc["variable_metadata_in"],
     check.names = FALSE,
     header = TRUE,
     row.names = 1,
@@ -66,29 +66,29 @@ feaDF <- read.table(argVc["variableMetadata_in"],
 ## --------------------------------
 
 
-if (!("corMetC" %in% names(argVc))) {
-    argVc["corMetC"] <- "pearson"
+if (!("cor_met_c" %in% names(argVc))) {
+    argVc["cor_met_c"] <- "pearson"
 }
-if (!("aggMetC" %in% names(argVc))) {
-    argVc["aggMetC"] <- "ward"
+if (!("agg_met_c" %in% names(argVc))) {
+    argVc["agg_met_c"] <- "ward"
 }
-if (!("colC" %in% names(argVc))) {
-    argVc["colC"] <- "blueOrangeRed"
+if (!("col_c" %in% names(argVc))) {
+    argVc["col_c"] <- "blueOrangeRed"
 }
-if (!("scaL" %in% names(argVc))) {
-    argVc["scaL"] <- "TRUE"
+if (!("sca_l" %in% names(argVc))) {
+    argVc["sca_l"] <- "TRUE"
 }
-if (!("cexN" %in% names(argVc))) {
-    argVc["cexN"] <- "0.8"
+if (!("cex_n" %in% names(argVc))) {
+    argVc["cex_n"] <- "0.8"
 }
 
 ## checking
 ## ---------
 
-if (as.numeric(argVc["cutSamN"]) > nrow(proMN)) {
+if (as.numeric(argVc["cut_sam_n"]) > nrow(proMN)) {
     stop("Number of sample clusters must be inferior to the number of samples")
 }
-if (as.numeric(argVc["cutVarN"]) > ncol(proMN)) {
+if (as.numeric(argVc["cut_var_n"]) > ncol(proMN)) {
     stop("Number of variable clusters must be inferior to the number of variables")
 }
 
@@ -114,15 +114,15 @@ heaLs <- heatmapF(
     proMN = proMN,
     obsDF = obsDF,
     feaDF = feaDF,
-    disC = argVc["disC"],
-    cutSamN = as.numeric(argVc["cutSamN"]),
-    cutVarN = as.numeric(argVc["cutVarN"]),
+    dis_c = argVc["dis_c"],
+    cut_sam_n = as.numeric(argVc["cut_sam_n"]),
+    cut_var_n = as.numeric(argVc["cut_var_n"]),
     fig.pdfC = argVc["figure"],
-    corMetC = argVc["corMetC"],
-    aggMetC = argVc["aggMetC"],
-    colC = argVc["colC"],
-    scaL = as.logical(argVc["scaL"]),
-    cexN = as.numeric(argVc["cexN"])
+    cor_met_c = argVc["cor_met_c"],
+    agg_met_c = argVc["agg_met_c"],
+    col_c = argVc["col_c"],
+    sca_l = as.logical(argVc["sca_l"]),
+    cex_n = as.numeric(argVc["cex_n"])
 )
 
 
@@ -139,7 +139,7 @@ proDF <- cbind.data.frame(
     as.data.frame(t(heaLs[["proMN"]]))
 )
 write.table(proDF,
-    file = argVc["dataMatrix_out"],
+    file = argVc["data_matrix_out"],
     quote = FALSE,
     row.names = FALSE,
     sep = "\t"
@@ -150,7 +150,7 @@ obsDF <- cbind.data.frame(
     heaLs[["obsDF"]]
 )
 write.table(obsDF,
-    file = argVc["sampleMetadata_out"],
+    file = argVc["sample_metadata_out"],
     quote = FALSE,
     row.names = FALSE,
     sep = "\t"
@@ -161,7 +161,7 @@ feaDF <- cbind.data.frame(
     heaLs[["feaDF"]]
 )
 write.table(feaDF,
-    file = argVc["variableMetadata_out"],
+    file = argVc["variable_metadata_out"],
     quote = FALSE,
     row.names = FALSE,
     sep = "\t"

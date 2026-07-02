@@ -64,14 +64,14 @@ wrapperCallF <- function(paramLs) {
 
     ## Get output
     outLs <- list()
-    if ("dataMatrix_out" %in% names(paramLs)) {
-        outLs[["datMN"]] <- readTableF(paramLs[["dataMatrix_out"]], "matrix")
+    if ("data_matrix_out" %in% names(paramLs)) {
+        outLs[["datMN"]] <- readTableF(paramLs[["data_matrix_out"]], "matrix")
     }
-    if ("sampleMetadata_out" %in% names(paramLs)) {
-        outLs[["samDF"]] <- readTableF(paramLs[["sampleMetadata_out"]], "dataframe")
+    if ("sample_metadata_out" %in% names(paramLs)) {
+        outLs[["samDF"]] <- readTableF(paramLs[["sample_metadata_out"]], "dataframe")
     }
-    if ("variableMetadata_out" %in% names(paramLs)) {
-        outLs[["varDF"]] <- readTableF(paramLs[["variableMetadata_out"]], "dataframe")
+    if ("variable_metadata_out" %in% names(paramLs)) {
+        outLs[["varDF"]] <- readTableF(paramLs[["variable_metadata_out"]], "dataframe")
     }
     if ("information" %in% names(paramLs)) {
         outLs[["infVc"]] <- readLines(paramLs[["information"]])
@@ -84,18 +84,18 @@ wrapperCallF <- function(paramLs) {
 defaultArgF <- function(testInDirC) {
     defaultArgLs <- list()
     if (file.exists(file.path(dirname(scriptPathC), testInDirC, "dataMatrix.tsv"))) {
-        defaultArgLs[["dataMatrix_in"]] <- file.path(dirname(scriptPathC), testInDirC, "dataMatrix.tsv")
+        defaultArgLs[["data_matrix_in"]] <- file.path(dirname(scriptPathC), testInDirC, "dataMatrix.tsv")
     }
     if (file.exists(file.path(dirname(scriptPathC), testInDirC, "sampleMetadata.tsv"))) {
-        defaultArgLs[["sampleMetadata_in"]] <- file.path(dirname(scriptPathC), testInDirC, "sampleMetadata.tsv")
+        defaultArgLs[["sample_metadata_in"]] <- file.path(dirname(scriptPathC), testInDirC, "sampleMetadata.tsv")
     }
     if (file.exists(file.path(dirname(scriptPathC), testInDirC, "variableMetadata.tsv"))) {
-        defaultArgLs[["variableMetadata_in"]] <- file.path(dirname(scriptPathC), testInDirC, "variableMetadata.tsv")
+        defaultArgLs[["variable_metadata_in"]] <- file.path(dirname(scriptPathC), testInDirC, "variableMetadata.tsv")
     }
 
-    defaultArgLs[["dataMatrix_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "dataMatrix.tsv")
-    defaultArgLs[["sampleMetadata_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "sampleMetadata.tsv")
-    defaultArgLs[["variableMetadata_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "variableMetadata.tsv")
+    defaultArgLs[["data_matrix_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "dataMatrix.tsv")
+    defaultArgLs[["sample_metadata_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "sampleMetadata.tsv")
+    defaultArgLs[["variable_metadata_out"]] <- file.path(dirname(scriptPathC), testOutDirC, "variableMetadata.tsv")
     defaultArgLs[["figure"]] <- file.path(dirname(scriptPathC), testOutDirC, "figure.pdf")
     defaultArgLs[["information"]] <- file.path(dirname(scriptPathC), testOutDirC, "information.txt")
 

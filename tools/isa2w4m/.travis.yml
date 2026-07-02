@@ -1,0 +1,11 @@
+dist: bionic
+
+notifications:
+ email:
+  recipients:
+   - pierrick.roger@cea.fr
+
+script:
+    - make test
+    - make plint
+    - make ptest

@@ -64,7 +64,7 @@ def get_info(file, format1):
         return format1, version1, taillek1, taillem1, tailleg1, mslevel1, \
             spectrum1, source1, date1, softwaresList1, ProcessList1, \
             modele1, nbscans1, nbpoints1, encodage1
-    
+
     # mzXml files #
     if (format1.casefold() == 'mzxml'):
         # Saving all info of first file until first scan
@@ -114,7 +114,7 @@ def get_info(file, format1):
             mslevel1, spectrum1, source1, date1, softwaresList1, \
             ProcessList1, \
             modele1, nbscans1, nbpoints1, encodage1
-    
+
     # Other types of files
     ######################################################
     if ((format1.casefold() != 'mzml') & (format1.casefold() != 'mzxml')):
@@ -448,7 +448,8 @@ def get_ms_level(text1):
         if ('cvRef="MS" accession="MS:1000579" name="' in text1):
             return text1.split('cvRef="MS" accession="MS:1000579" name="')[1].split('"')[0]
         if (' <cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-            return text1.split(' <cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]
+            return text1.split(' <cvParam cvRef="MS" \
+                    accession="MS:1000580" name="')[1].split('"')[0]
         return "Not found"
     except Exception:
         mslevel1 = 'Error'

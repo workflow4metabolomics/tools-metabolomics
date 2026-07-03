@@ -1,8 +1,14 @@
-<tool id="biosigner" name="Biosigner" version="2.2.6+galaxy@VERSION_SUFFIX@" profile="25.1">
+<tool id="biosigner" name="Biosigner" version="2.2.7+galaxy@VERSION_SUFFIX@" profile="25.1">
   <description>Molecular signature discovery from omics data</description>
   <macros>
     <token name="@VERSION_SUFFIX@">1</token>
   </macros>
+  <creator>
+    <person givenName="Philippe" familyName="Rinaudo" />
+    <person givenName="Etienne" familyName="Thevenot"  email="etienne.thevenot@cea.fr" />
+    <organization name="CEA, LIST, MetaboHUB Paris" />
+    <organization name="Workflow4Metabolomics" url="https://workflow4metabolomics.org/" />
+  </creator>  
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
     <requirement type="package" version="1.38.0">bioconductor-biosigner</requirement>
@@ -79,13 +85,7 @@
       <output name="variable_metadata_out" file="variableMetadata.out" compare="diff" lines_diff="10"/>
     </test>
   </tests>
-  <help>	
-
-.. class:: infomark
-
-**Author**	Philippe Rinaudo and Etienne Thevenot (CEA, LIST, MetaboHUB Paris, etienne.thevenot@cea.fr)
-
----------------------------------------------------
+  <help>
 
 .. class:: infomark
 
@@ -230,6 +230,12 @@ Figure output
 ----
 NEWS
 ----
+
+CHANGES IN VERSION 2.2.7
+========================
+
+INTERNAL MODIFICATIONS
+
 
 CHANGES IN VERSION 2.2.6
 ========================

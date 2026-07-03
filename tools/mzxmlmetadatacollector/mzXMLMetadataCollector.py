@@ -176,7 +176,7 @@ def get_mzxml_software_list(text1):
             if i != 0:
                 softwaresList1 = softwaresList1 + ' + '
             softwaresList1 = softwaresList1 + \
-                  text1.split("<software")[i+1].split('type="')[1]\
+              text1.split("<software")[i+1].split('type="')[1]\
                     .split('"')[0] + ': ' +\
                     text1.split("<software")[i+1].split('name="')[1]\
                     .split('"')[0] + ' ' +\
@@ -316,12 +316,12 @@ def get_softwares_list(text1):
     try:
         softwaresList1 = ''
         subtext1 = text1.split('softwareList count')[1] \
-              .split('</softwareList>')[0]
+                   .split('</softwareList>')[0]
         for i in range(subtext1.count("<software")):
             if i != 0:
                 softwaresList1 = softwaresList1 + ' + '
             softwaresversions1 = subtext1.split("<software")[i+1]\
-                  .split('version="')[1].split('"')[0]
+                                 .split('version="')[1].split('"')[0]
             if ('cvRef="MS" name="' in subtext1):
                 softwares1 = subtext1.split('cvRef="MS" name="')[i+1]\
                         .split('"')[0]
@@ -329,7 +329,7 @@ def get_softwares_list(text1):
                 softwares1 = subtext1.split('<software id="')[i+1]\
                         .split('"')[0]
             softwaresList1 = softwaresList1 + \
-                    softwares1 + ' ' + softwaresversions1
+                             softwares1 + ' ' + softwaresversions1
     except Exception:
         softwaresList1 = "Not found"
     return softwaresList1
@@ -338,14 +338,14 @@ def get_processing_list(text1):
     try:
         ProcessList1 = ''
         subtext1 = text1.split('<dataProcessingList count')[1] \
-              .split('</dataProcessingList>')[0]
+                   .split('</dataProcessingList>')[0]
         for i in range(subtext1.count("<processingMethod ")):
             if i != 0:
                 ProcessList1 = ProcessList1 + ' + '
             methods1 = subtext1.split("<processingMethod ")[i+1] \
-                    .split('name="')[1].split('"')[0]
+                       .split('name="')[1].split('"')[0]
             softwares1 = subtext1.split('softwareRef="')[1] \
-                    .split('"')[0]
+                         .split('"')[0]
             ProcessList1 = ProcessList1 + softwares1 + ' ' + methods1
     except Exception:
         ProcessList1 = "Not found"
@@ -441,7 +441,8 @@ def get_ms_level(text1):
             return text1.split('<cvParam cvRef="MS" \
                     accession="MS:1000580" name="')[1].split('"')[0]
 
-        if ('<cvParam cvRef="MS" accession="MS:1000580" value="" name="' in text1):
+        if ('<cvParam cvRef="MS" accession="MS:1000580" \
+              value="" name="' in text1):
             return text1.split('<cvParam cvRef="MS" accession="MS:1000580" \
                     value="" name="')[1].split('"')[0]
 

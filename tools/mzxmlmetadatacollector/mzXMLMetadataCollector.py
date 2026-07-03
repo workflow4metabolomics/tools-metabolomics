@@ -120,12 +120,14 @@ def get_info(file, format1):
     if ((format1.casefold() != 'mzml') & (format1.casefold() != 'mzxml')):
         return ['' for i in range(0, 15)]
 
+
 def get_encoding_mzxml(text1):
     try:
         encodage1 = text1.split('precision="')[1].split('"')[0] + "-bit"
     except Exception:
         encodage1 = 'Not available'
     return encodage1
+
 
 def count_points_mzxml(file):
     try:
@@ -141,12 +143,14 @@ def count_points_mzxml(file):
         nbpoints1 = "Calculation failed"
     return nbpoints1
 
+
 def count_scans_mzxml(text1):
     try:
         nbscans1 = text1.split('msRun scanCount="')[1].split('"')[0]
     except Exception:
         nbscans1 = "Not found"
     return nbscans1
+
 
 def get_mzxml_spectrum_type(text1):
     try:
@@ -162,12 +166,14 @@ def get_mzxml_spectrum_type(text1):
         spectrum1 = "Not found"
     return spectrum1
 
+
 def get_source_mzxml(text1):
     try:
         source1 = text1.split('parentFile fileName="')[1].split('"')[0]
     except Exception:
         source1 = "Not found"
     return source1
+
 
 def get_mzxml_software_list(text1):
     try:
@@ -186,6 +192,7 @@ def get_mzxml_software_list(text1):
     except Exception:
         softwaresList1 = "Not found"
     return softwaresList1
+
 
 def get_mzxml_instrument_model(text1):
     try:
@@ -211,6 +218,7 @@ def get_mzxml_instrument_model(text1):
         modele1 = "Not found"
     return modele1
 
+
 def get_mzxml_version(text1):
     try:
         version1 = text1.split('<mzXML')[1].split('mzXML_')[1]\
@@ -218,6 +226,7 @@ def get_mzxml_version(text1):
     except Exception:
         version1 = "Not found"
     return version1
+
 
 def read_mzxml_file(file):
     f = open(file, 'r+', encoding="utf-8")
@@ -228,12 +237,14 @@ def read_mzxml_file(file):
     f.close()
     return text1
 
+
 def read_mzml_file(file):
     with open(file, 'r+', encoding="utf-8") as f:
         text1 = ''
         while ('<binary>' not in text1):
             text1 = text1 + f.readline()
     return text1
+
 
 def get_gb_size(file):
     try:
@@ -242,12 +253,14 @@ def get_gb_size(file):
         tailleg1 = "Calculation failed"
     return tailleg1
 
+
 def get_mb_size(file):
     try:
         taillem1 = np.round(os.stat(file).st_size/1024**2, 2)
     except Exception:
         taillem1 = "Calculation failed"
     return taillem1
+
 
 def get_kb_size(file):
     try:
@@ -256,6 +269,7 @@ def get_kb_size(file):
         taillek1 = "Calculation failed"
     return taillek1
 
+
 def get_version(text1):
     try:
         version1 = text1.split('<mzML')[1] \
@@ -263,6 +277,7 @@ def get_version(text1):
     except Exception:
         version1 = "Not found"
     return version1
+
 
 def get_spectrum_type(text1):
     try:
@@ -288,6 +303,7 @@ def get_spectrum_type(text1):
         spectrum1 = "Not found"
     return spectrum1
 
+
 def get_source_file(text1):
     try:
         source1 = text1.split('<sourceFile ')[1].split('">')[0]\
@@ -303,6 +319,7 @@ def get_source_file(text1):
                 source1 = "Not found"
     return source1
 
+
 def get_acquisition_date(text1):
     try:
         date1 = text1.split('startTimeStamp="')[1].split('"')[0]\
@@ -311,6 +328,7 @@ def get_acquisition_date(text1):
     except Exception:
         date1 = "Not found"
     return date1
+
 
 def get_softwares_list(text1):
     try:
@@ -334,6 +352,7 @@ def get_softwares_list(text1):
         softwaresList1 = "Not found"
     return softwaresList1
 
+
 def get_processing_list(text1):
     try:
         ProcessList1 = ''
@@ -351,10 +370,12 @@ def get_processing_list(text1):
         ProcessList1 = "Not found"
     return ProcessList1
 
+
 def get_encoding(text1):
     encodage1 = re.search('name="(.*)-bit float"', text1).group(0).\
                 replace('name="', "").replace('"', '')
     return encodage1
+
 
 def count_points(file):
     try:
@@ -372,12 +393,14 @@ def count_points(file):
         nbpoints1 = "Calculation failed"
     return nbpoints1
 
+
 def count_scans(text1):
     try:
         nbscans1 = text1.split('<spectrumList count="')[1].split('"')[0]
     except Exception:
         nbscans1 = "Not found"
     return nbscans1
+
 
 def get_instrument_model(text1):
     try:
@@ -434,6 +457,7 @@ def get_instrument_model(text1):
     except Exception:
         modele1 = "Not found"
     return modele1
+
 
 def get_ms_level(text1):
     try:

@@ -437,16 +437,20 @@ def get_instrument_model(text1):
 def get_ms_level(text1):
     try:
         if ('<cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
-            return text1.split('<cvParam cvRef="MS" accession="MS:1000580" name="')[1].split('"')[0]
+            return text1.split('<cvParam cvRef="MS" \
+                    accession="MS:1000580" name="')[1].split('"')[0]
         
         if ('<cvParam cvRef="MS" accession="MS:1000580" value="" name="' in text1):
-            return text1.split('<cvParam cvRef="MS" accession="MS:1000580" value="" name="')[1].split('"')[0]
+            return text1.split('<cvParam cvRef="MS" accession="MS:1000580" \
+                    value="" name="')[1].split('"')[0]
 
         if ('accession="MS:1000579" cvRef="MS" name="' in text1):
-            return text1.split('accession="MS:1000579" cvRef="MS" name="')[1].split('"')[0]
+            return text1.split('accession="MS:1000579" cvRef="MS" \
+                    name="')[1].split('"')[0]
 
         if ('cvRef="MS" accession="MS:1000579" name="' in text1):
-            return text1.split('cvRef="MS" accession="MS:1000579" name="')[1].split('"')[0]
+            return text1.split('cvRef="MS" accession="MS:1000579" \
+                    name="')[1].split('"')[0]
         if (' <cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
             return text1.split(' <cvParam cvRef="MS" \
                     accession="MS:1000580" name="')[1].split('"')[0]

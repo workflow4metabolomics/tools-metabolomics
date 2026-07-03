@@ -143,3 +143,8 @@ DOI: [10.1093/bioinformatics/btu813](https://doi.org/10.1093/bioinformatics/btu8
 ## 🆘 Support
 
 France Bioinformatique community: https://community.france-bioinformatique.fr/c/galaxy/10
+
+## License
+
+LGPL-3.0-or-later
+

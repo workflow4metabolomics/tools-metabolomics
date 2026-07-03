@@ -1,0 +1,324 @@
+<tool id="msoutputcomparison" name="MSOutputComparison" version="1.5.0+galaxy0" profile="22.01">
+
+  <description>compares two MS pipeline outputs (ions, masses, retention times, intensities)</description>
+   
+  <edam_topics>
+    <edam_topic>topic_3172</edam_topic>
+  </edam_topics>
+  
+  <edam_operations>
+    <edam_operation>operation_0004</edam_operation>
+  </edam_operations>
+
+  <requirements>
+    <requirement type="package" version="2.1.0">numpy</requirement>
+    <requirement type="package" version="2.2.3">pandas</requirement>
+    <requirement type="package" version="3.9.3">matplotlib</requirement>
+    <requirement type="package" version="0.13.2">seaborn</requirement>
+    <requirement type="package" version="62.3">weasyprint</requirement>
+  </requirements>
+
+  <required_files>
+    <include path="MSOutputComparison.py"/>
+  </required_files>
+
+  <command detect_errors="aggressive"><![CDATA[
+    python '$__tool_directory__/MSOutputComparison.py'
+      '$inputFiles1.variablemetadata1'
+      '$inputFiles2.variablemetadata2'
+      '$inputFiles1.datamatrix1'
+      '$inputFiles2.datamatrix2'
+      '$parameters.mz'
+      '$parameters.rt'
+      '$parameters.wf1_name'
+      '$parameters.wf2_name'
+      '$column_names.mz_col'
+      '$column_names.rt_col'
+      '$parameters.corr_split'
+  ]]></command>
+
+  <inputs>
+
+    <section name="inputFiles1" title="📁 Files from the first MS pipeline" expanded="True">
+      <param name="variablemetadata1" type="data" format="tabular"
+             label="VariableMetadata — Pipeline 1"
+             help="The variableMetadata file produced by your first MS pipeline (typically from groupChromPeaks or fillChromPeaks)."/>
+      <param name="datamatrix1" type="data" format="tabular"
+             label="DataMatrix — Pipeline 1"
+             help="The dataMatrix file corresponding to the same MS pipeline."/>
+    </section>
+
+    <section name="inputFiles2" title="📁 Files from the second MS pipeline" expanded="True">
+      <param name="variablemetadata2" type="data" format="tabular"
+             label="VariableMetadata — Pipeline 2"
+             help="The variableMetadata file produced by your second MS pipeline."/>
+      <param name="datamatrix2" type="data" format="tabular"
+             label="DataMatrix — Pipeline 2"
+             help="The dataMatrix file corresponding to the same second MS pipeline."/>
+    </section>
+
+    <section name="parameters" title="⚙️ Comparison parameters" expanded="True">
+
+      <param name="wf1_name" type="text" value="Pipeline 1"
+             label="Name of the first pipeline (used in the report)"
+             help="Choose a short, descriptive name. This name will appear in the PDF report charts.">
+        <sanitizer>
+          <valid initial="string.printable"><remove value="'"/><remove value='"'/></valid>
+        </sanitizer>
+      </param>
+
+      <param name="wf2_name" type="text" value="Pipeline 2"
+             label="Name of the second pipeline (used in the report)"
+             help="Choose a short, descriptive name for the second pipeline.">
+        <sanitizer>
+          <valid initial="string.printable"><remove value="'"/><remove value='"'/></valid>
+        </sanitizer>
+      </param>
+
+      <param name="mz" type="float" value="0.02"
+             label="Maximum m/z tolerance (in Dalton)"
+             help="Maximum mass (m/z) distance for an ion from Pipeline 1 to be matched with an ion from Pipeline 2. Typical values: 0.01-0.05 Da for high-resolution instruments. Increase this value if too few ions are paired. This value is also used for the heatmap axis scale."/>
+
+      <param name="rt" type="float" value="0.25"
+             label="Retention time (RT) tolerance"
+             help="Maximum retention time difference for matching two ions. The unit depends on your MS pipeline: if RT data are in minutes, enter a value in minutes (e.g. 0.25 min). If in seconds, enter a value in seconds (e.g. 15 s). Check the unit in your variableMetadata file. This value is also used for the heatmap axis scale."/>
+
+      <param name="corr_split" type="float" value="0.5" min="-1.0" max="1.0"
+             label="Correlation split threshold for zoom histograms (r)"
+             help="Pearson r threshold used to split the two analytical zoom histograms (charts ② and ③ in Section 5 of the report). The lower-half zoom displays ions with r from the minimum up to this threshold; the upper-half zoom displays ions from this threshold up to the maximum. Adjust to focus on a different range of correlations — for example, use 0.7 to inspect the boundary between moderate and strong correlations."/>
+
+    </section>
+
+    <section name="column_names" title="🏷️ Column names (m/z and RT)" expanded="False">
+
+      <param name="mz_col" type="text" value="mz"
+             label="Name of the m/z column in the variableMetadata"
+             help="Exact name of the column containing the masses (m/z) in your variableMetadata files. Only change this if your file uses a different column name.">
+        <sanitizer>
+          <valid initial="string.letters"><add value="_"/><add value="."/><add value="-"/></valid>
+        </sanitizer>
+      </param>
+
+      <param name="rt_col" type="text" value="rt"
+             label="Name of the RT column in the variableMetadata"
+             help="Exact name of the column containing the retention times in your variableMetadata files. Only change this if your file uses a different column name.">
+        <sanitizer>
+          <valid initial="string.letters"><add value="_"/><add value="."/><add value="-"/></valid>
+        </sanitizer>
+      </param>
+
+    </section>
+  </inputs>
+
+  <outputs>
+    <data format="tabular" label="Associations ${parameters.wf1_name} vs ${parameters.wf2_name}" name="outputTabular" from_work_dir="Associations.tabular"/>
+    <data format="pdf"     label="Quality report ${parameters.wf1_name} vs ${parameters.wf2_name}" name="outputPdf" from_work_dir="associations_quality.pdf"/>
+  </outputs>
+
+  <tests>
+    <test>
+      <section name="inputFiles1">
+        <param name="variablemetadata1" value="Dataset1_variableMetadata.txt"/>
+        <param name="datamatrix1"       value="Dataset1_dataMatrix.txt"/>
+      </section>
+      <section name="inputFiles2">
+        <param name="variablemetadata2" value="Dataset2_variableMetadata.txt"/>
+        <param name="datamatrix2"       value="Dataset2_dataMatrix.txt"/>
+      </section>
+      <section name="parameters">
+        <param name="mz"       value="0.02"/>
+        <param name="rt"       value="0.1"/>
+        <param name="corr_split" value="0.5"/>
+        <param name="wf1_name" value="Pipeline1"/>
+        <param name="wf2_name" value="Pipeline2"/>
+      </section>
+      <section name="column_names">
+        <param name="mz_col"   value="mz"/>
+        <param name="rt_col"   value="rt"/>
+      </section>
+      <output name="outputTabular" file="Associations_default.tabular" ftype="tabular"/>
+      <output name="outputPdf" ftype="pdf">
+        <assert_contents>
+          <has_size min="1000"/>
+        </assert_contents>
+      </output>
+    </test>
+  </tests>
+
+  <help><![CDATA[
+
+.. class:: infomark
+
+**Credits**
+  | **Original code:** Quentin Ruin — INRAE - MetaboHUB
+  | **First production version of Galaxy tool:** Abdou KA — INRAE
+  | **Maintainer:** Mélanie Pétéra — INRAE - MetaboHUB
+
+.. class:: infomark
+
+**Support: https://community.france-bioinformatique.fr/c/galaxy/10**
+
+----
+
+**********************
+MS Output Comparison
+**********************
+===========
+DESCRIPTION
+===========
+
+MSOutputComparison is a tool designed to compare the outputs (variable metadata and data matrices) of two different MS workflows by uniquely-coupling ions of one output to those of the other output, based on a retention time (RT) and m/z tolerance given by the user.
+
+The algorithm identifies these ions as follows:
+
+1. A tolerance of m/z and RT are specified by the user in the interface,
+2. For each ion in the first dataset, a list of “candidates” is created, i.e. ions in the second dataset that are “in the neighborhood” defined by the tolerances,
+3. For each ion in the first dataset, the m/z differences with each of its candidates are calculated. A table is then created, each line of which is of the form [ion (dataset 1) / one of its candidate ions (dataset 2) / mass difference],
+4. This table is sorted in ascending order of mass difference,
+5. Two empty blacklists are initialized, one for dataset 1 ions and one for dataset 2 ions, as well as an empty association table,
+6. Starting with the smallest difference:
+    - If neither of the two ions is found in its respective blacklist, then they are added to its blacklists and entered with their characteristics in the association table.
+    - Otherwise, if they are not at the terminal end, we move on to the next difference. 
+7. Ions that have not been matched as a result of this procedure are added to the association table as “no match”.
+
+This algorithm guarantees that each ion in a dataset is associated with the ion in the other dataset that is closest to it (in this case, by mass)
+
+
+========================
+WHAT DOES THIS TOOL DO?
+========================
+
+This tool compares the outputs of **two different MS pipelines**, potentially obtained from the same samples.
+It addresses questions such as the following:
+
+- *"Do variations in the pre-processing parameters influence the detected ions?"*
+- *"Do my two sets of MS parameters yield equivalent results?"*
+- *"What proportion of ions is shared between the two pipelines?"*
+
+----
+
+======================
+INPUT FILES
+======================
+
+For each MS pipeline, you need **two files** produced by the last step of your workflow:
+
+1. **variableMetadata** (tabular file): contains the list of detected ions with their mass (m/z) and retention time (RT)
+2. **dataMatrix** (tabular file): contains the intensities of each ion per sample
+
+These tables should match the W4M's 3-tables format (see here for more information).
+
+.. class:: warningmark
+
+To benefit from intensity comparisons, both pipelines must have been applied to at least a few shared samples (i.e. same identifiers in the data matrices).
+Otherwise the tool will only produce the matching results, without the intensity diagnosis.
+
+----
+
+======================
+KEY PARAMETERS
+======================
+
+**m/z Tolerance**
+  Two ions are considered being candidates to be matched as "the same ion" only if their mass difference is below this threshold.
+  Examples of potential relevant values by instrument type:
+
+  - Orbitrap / QTOF (high resolution): 0.005 to 0.02 Da
+  - Triple quadrupole (standard resolution): 0.05 to 0.5 Da
+
+**RT Tolerance**
+  Two ions are considered being candidates to be matched as "the same ion" only if their retention time difference is below this threshold.
+  Check the unit in your variableMetadata file: minutes or seconds.
+
+  - In minutes: typical values from 0.1 to 0.5
+  - In seconds: typical values from 5 to 30
+
+**m/z and RT column names** *(column names' section)*
+  By default, the tool looks for the ``mz`` and ``rt`` columns in your variableMetadata files.
+  If your files use different column names (e.g. ``mass``, ``retention_time``), specify them here.
+
+**Correlation split threshold (r)**
+  Controls the boundary between the two analytical zoom histograms displayed in Section 5 of the report.
+  Ions with r below this threshold appear in the lower-half zoom; ions with r at or above it appear in the upper-half zoom.
+  Adjust this value to focus on a specific range. Examples:
+
+  - ``0.5`` (default): separates weak from moderate/strong correlations
+  - ``0.8``: focuses the upper zoom on near-perfect correlations
+  - ``0.0``: separates negative from positive correlations
+
+----
+
+======================
+OUTPUT FILES
+======================
+
+**Associations.tabular**
+  Table listing all ions from both pipelines:
+
+  - Ions shared by both pipelines (with their mass and RT differences)
+  - Ions present only in Pipeline 1 (idWF2 column = "no match")
+  - Ions present only in Pipeline 2 (idWF1 column = "no match")
+
+
+**Quality report (PDF)**
+  Visual report containing:
+
+  - Matching summary (how many ions paired, how many unmatched)
+  - Heatmaps of mass and RT differences among matched ions
+  - Intensity comparison charts (when pipelines have shared samples)
+  - Three correlation histograms: global (20 bins, min→max), lower-half zoom (20 bins, min→split threshold), upper-half zoom (20 bins, split threshold→max).
+
+----
+
+======================
+USAGE TIPS
+======================
+
+If **too few ions are paired**:
+  → Gradually increase the m/z and RT tolerances to spot potentially threshold effects
+
+If **almost all ions are paired** with small differences:
+  → The two pipelines are very similar ✅
+
+If **intensities differ significantly** despite good pairing:
+  → The data pre-processing may differ between the two pipelines
+
+---------------------------------------------------
+
+==========
+CHANGE LOG
+==========
+
+------------------------------------
+Galaxy version number 1.5.0+galaxy0
+------------------------------------
+
+NEW FEATURES
+
+- configurable column names
+- full English translation
+- simplified interface
+- enriched report
+
+INTERNAL MODIFICATION
+
+- robustness
+- automatic ID column detection
+- reinforced validation
+- dynamic correlation histograms
+
+]]>
+  </help>
+
+  <citations>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+<creator>
+  <organization name="PFEM" url="https://eng-pfem.isc.inrae.fr/"></organization>
+  <organization name="MetaboHUB" url="https://www.metabohub.fr/home.html"></organization>
+
+  <person givenName="Abdou lahat" familyName="KA" jobTitle="Intern"></person>
+  <person givenName="Quentin" familyName="Ruin" jobTitle="Research engineer"></person>
+  <person givenName="Mélanie" familyName="Petera" jobTitle="Supervisor"></person>
+</creator>
+</tool>

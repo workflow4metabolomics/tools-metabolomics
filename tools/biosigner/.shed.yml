@@ -1,5 +1,5 @@
 name: biosigner
-owner: workflow4metabolomics
+owner: ethevenot
 description: '[W4M][Metabolomics][LC-MS][GC-MS][NMR] Discovery of significant signatures from omics data.'
 homepage_url: http://workflow4metabolomics.org
 long_description: |

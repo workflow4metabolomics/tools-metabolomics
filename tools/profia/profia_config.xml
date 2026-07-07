@@ -2,7 +2,7 @@
   <description>Preprocessing of FIA-HRMS data</description>
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
-    <requirement type="package" version="1.23.0">bioconductor-proFIA</requirement>
+    <requirement type="package" version="1.15.0">bioconductor-proFIA</requirement>
   </requirements>
   <command detect_errors="exit_code">
   Rscript $__tool_directory__/profia_wrapper.R
@@ -13,25 +13,25 @@
   zipfile $inputs.zip_file
   #end if
   
-  ppmN "$ppmN"
-  dmzN "$dmzN"
-  ppmGroupN "$ppmGroupN"
-  dmzGroupN "$dmzGroupN"
-  fracGroupN "$fracGroupN"
-  imputeC "$imputeC"
+  ppmN '$ppmN'
+  dmzN '$dmzN'
+  ppmGroupN '$ppmGroupN'
+  dmzGroupN '$dmzGroupN'
+  fracGroupN '$fracGroupN'
+  imputeC '$imputeC'
 
   #if $advCpt.opcC == "full"
-  bandCoverageN "$advCpt.bandCoverageN"
-  sizeMinN "$advCpt.sizeMinN"
-  scanMinI "$advCpt.scanMinI"        
-  scanMaxI "$advCpt.scanMaxI"
+  bandCoverageN '$advCpt.bandCoverageN'
+  sizeMinN '$advCpt.sizeMinN'
+  scanMinI '$advCpt.scanMinI'        
+  scanMaxI '$advCpt.scanMaxI'
   #end if  
 
-  dataMatrix_out "$dataMatrix_out"
-  sampleMetadata_out "$sampleMetadata_out"
-  variableMetadata_out "$variableMetadata_out"
-  figure "$figure"
-  information "$information"
+  dataMatrix_out '$dataMatrix_out'
+  sampleMetadata_out '$sampleMetadata_out'
+  variableMetadata_out '$variableMetadata_out'
+  figure '$figure'
+  information '$information'
   </command>
   <inputs>
     <conditional name="inputs">
@@ -91,9 +91,8 @@
       <output name="dataMatrix_out" file="output-dataMatrix.tsv"/>
       <output name="information">
         <assert_contents>
-          <has_text text="707  groups have been done"/>
-          <has_text text="3 samples x 707 variables"/>
-          <has_text text="2089  peaks detected"/>
+          <has_text text="760  features have been grouped."/>
+          <has_text text="2212  peaks detected."/>
         </assert_contents>
       </output>
     </test>

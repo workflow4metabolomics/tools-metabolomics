@@ -10,14 +10,14 @@
   <command detect_errors="aggressive"><![CDATA[
   Rscript '$__tool_directory__/univariate_wrapper.R'
 
-  dataMatrix_in "$dataMatrix_in"
-  sampleMetadata_in "$sampleMetadata_in"
-  variableMetadata_in "$variableMetadata_in"
+  dataMatrix_in '$dataMatrix_in'
+  sampleMetadata_in '$sampleMetadata_in'
+  variableMetadata_in '$variableMetadata_in'
 
-  facC "$facC"
-  tesC "$tesC"
-  adjC "$adjC"
-  thrN "$thrN"
+  facC '$facC'
+  tesC '$tesC'
+  adjC '$adjC'
+  thrN '$thrN'
 
   variableMetadata_out '$variableMetadata_out'
   figure '$figure'

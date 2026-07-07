@@ -1,12 +1,11 @@
-<tool id="Univariate" name="Univariate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09" license="CeCILL">
+<tool id="Univariate" name="Univariate" version="2.3.0+galaxy@VERSION_SUFFIX@" profile="21.09" license="CeCILL">
   <description>Univariate statistics</description>
   <macros>
-    <token name="@TOOL_VERSION@">1.9.12</token>
     <token name="@VERSION_SUFFIX@">0</token>
   </macros>
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
-    <requirement type="package" version="@TOOL_VERSION@">r-pmcmrplus</requirement>
+    <requirement type="package" version="1.9.12">r-pmcmrplus</requirement>
   </requirements>
   <command detect_errors="aggressive"><![CDATA[
   Rscript '$__tool_directory__/univariate_wrapper.R'

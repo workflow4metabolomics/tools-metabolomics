@@ -1,12 +1,12 @@
 <tool id="Univariate" name="Univariate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09" license="CeCILL">
   <description>Univariate statistics</description>
   <macros>
-    <token name="@TOOL_VERSION@">4.1</token>
+    <token name="@TOOL_VERSION@">1.9.12</token>
     <token name="@VERSION_SUFFIX@">0</token>
   </macros>
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
-    <requirement type="package" version="@TOOL_VERSION@">r-PMCMR</requirement>
+    <requirement type="package" version="@TOOL_VERSION@">r-pmcmrplus</requirement>
   </requirements>
   <command detect_errors="aggressive"><![CDATA[
   Rscript '$__tool_directory__/univariate_wrapper.R'
@@ -63,7 +63,27 @@
       <param name="tesC" value="kruskal"/>
       <param name="adjC" value="fdr"/>
       <param name="thrN" value="0.05"/>
-      <output name="variableMetadata_out" file="output-variableMetadata.tsv"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-kruskal.tsv"/>
+    </test>
+    <test>
+      <param name="dataMatrix_in" value="dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="variableMetadata.tsv"/>
+      <param name="facC" value="qual"/>
+      <param name="tesC" value="anova"/>
+      <param name="adjC" value="hochberg"/>
+      <param name="thrN" value="0.05"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-anova.tsv"/>
+    </test>
+    <test>
+      <param name="dataMatrix_in" value="dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="sampleMetadata-wilcoxon.tsv"/>
+      <param name="variableMetadata_in" value="variableMetadata.tsv"/>
+      <param name="facC" value="qual"/>
+      <param name="tesC" value="wilcoxon"/>
+      <param name="adjC" value="bonferroni"/>
+      <param name="thrN" value="0.05"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-wilcoxon.tsv"/>
     </test>
   </tests>
   <help>

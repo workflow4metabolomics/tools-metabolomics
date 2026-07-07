@@ -1,0 +1,58 @@
+$fidzipfile
+[1] "/tmp/tmp_9j7pmbs/files/1/8/5/dataset_185c6be0-5e1f-4ab0-ba45-f60609b57db2.dat"
+
+$title_line
+[1] "1"
+
+$subdirectories
+[1] TRUE
+
+$dirs_names
+[1] TRUE
+
+$help
+[1] FALSE
+
+[1] "/tmp/tmp_9j7pmbs/job_working_directory/000/2/working/MTBLS1"
+
+Start of 'ReadFids' Galaxy module call: 2025-07-10 16:00:34.306403
+
+Begin ReadFids 
+[1] "i= 1 Fid_data= 32768 fid= 32768"
+[1] "i= 2 Fid_data= 32768 fid= 32768"
+[1] "i= 3 Fid_data= 32768 fid= 32768"
+[1] "i= 4 Fid_data= 32768 fid= 32768"
+[1] "i= 5 Fid_data= 32768 fid= 32768"
+dim Fid_data:  5 32768 
+IDs:  ADG10003u_007 ADG10003u_009 ADG10003u_015 ADG10003u_017 ADG10003u_021 
+non-unique IDs? 0 
+End ReadFids 
+It lasted 0.105 s user time, 0.011 s system time and 0.125 s elapsed time.
+                 0 3.56999999999999e-05 7.13999999999998e-05 0.0001071
+ADG10003u_007 0+0i                 0+0i                 0+0i      0+0i
+ADG10003u_009 0+0i                 0+0i                 0+0i      0+0i
+ADG10003u_015 0+0i                 0+0i                 0+0i      0+0i
+ADG10003u_017 0+0i                 0+0i                 0+0i      0+0i
+ADG10003u_021 0+0i                 0+0i                 0+0i      0+0i
+              0.0001428
+ADG10003u_007      0+0i
+ADG10003u_009      0+0i
+ADG10003u_015      0+0i
+ADG10003u_017      0+0i
+ADG10003u_021      0+0i
+                 TD BYTORDA DIGMOD DECIM DSPFVS    SW_h       SW     O1
+ADG10003u_007 65536       1      1    12     12 14005.6 20.01163 3290.5
+ADG10003u_009 65536       1      1    12     12 14005.6 20.01163 3290.5
+ADG10003u_015 65536       1      1    12     12 14005.6 20.01163 3290.5
+ADG10003u_017 65536       1      1    12     12 14005.6 20.01163 3290.5
+ADG10003u_021 65536       1      1    12     12 14005.6 20.01163 3290.5
+                    DT
+ADG10003u_007 3.57e-05
+ADG10003u_009 3.57e-05
+ADG10003u_015 3.57e-05
+ADG10003u_017 3.57e-05
+ADG10003u_021 3.57e-05
+
+ INPUT and OUTPUT ARGUMENTS :
+
+End of 'ReadFids' Galaxy module call: 2025-07-10 16:00:34.799716

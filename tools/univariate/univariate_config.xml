@@ -62,7 +62,7 @@
       <param name="tesC" value="kruskal"/>
       <param name="adjC" value="fdr"/>
       <param name="thrN" value="0.05"/>
-      <output name="variableMetadata_out" file="output-variableMetadata-kruskal.tsv"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-kruskal.tsv" lines_diff="3"/>
     </test>
     <test>
       <param name="dataMatrix_in" value="dataMatrix.tsv"/>
@@ -72,7 +72,7 @@
       <param name="tesC" value="anova"/>
       <param name="adjC" value="hochberg"/>
       <param name="thrN" value="0.05"/>
-      <output name="variableMetadata_out" file="output-variableMetadata-anova.tsv"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-anova.tsv" lines_diff="3"/>
     </test>
     <test>
       <param name="dataMatrix_in" value="dataMatrix.tsv"/>
@@ -82,7 +82,7 @@
       <param name="tesC" value="wilcoxon"/>
       <param name="adjC" value="bonferroni"/>
       <param name="thrN" value="0.05"/>
-      <output name="variableMetadata_out" file="output-variableMetadata-wilcoxon.tsv"/>
+      <output name="variableMetadata_out" file="output-variableMetadata-wilcoxon.tsv" lines_diff="3"/>
     </test>
   </tests>
   <help>

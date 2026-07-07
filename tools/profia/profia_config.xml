@@ -1,16 +1,10 @@
-<tool id="profia" name="proFIA" version="3.1.0">
+<tool id="profia" name="proFIA" version="3.2.0+galaxy0" profile="21.09" license="CeCILL">
   <description>Preprocessing of FIA-HRMS data</description>
-  
   <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
-    <requirement type="package" version="1.4.0">bioconductor-proFIA</requirement>
+    <requirement type="package" version="1.1_5">r-batch</requirement>
+    <requirement type="package" version="1.23.0">bioconductor-proFIA</requirement>
   </requirements>
-  
-  <stdio>
-    <exit_code range="1:" level="fatal" />
-  </stdio>
-  
-  <command>
+  <command detect_errors="exit_code">
   Rscript $__tool_directory__/profia_wrapper.R
 
   #if $inputs.input == "lib":
@@ -39,82 +33,71 @@
   figure "$figure"
   information "$information"
   </command>
-  
   <inputs>
     <conditional name="inputs">
-      <param name="input" type="select" label="Choose your input method" >
+      <param name="input" type="select" label="Choose your input method">
         <option value="zip_file" selected="true">Zip file from your history containing your raw files</option>
-        <option value="lib" >Library directory name</option>
+        <option value="lib">Library directory name</option>
       </param>
       <when value="zip_file">
-        <param name="zip_file" type="data" format="no_unzip.zip,zip" label="Zip file (see the details for file upload in the help section below)" />
+        <param name="zip_file" type="data" format="zip" label="Zip file (see the details for file upload in the help section below)"/>
       </when>
       <when value="lib">
-        <param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data" >
+        <param name="library" type="text" size="40" label="Library directory name" help="The name of your directory containing all your data">
           <validator type="empty_field"/>
         </param>
-      </when>     
+      </when>
     </conditional>
-    
-    <param name="ppmN" label="Maximum deviation between centroids during band detection (in ppm)" type="text" value = "7" help="[ppm]" />
-    <param name="dmzN" label="Minimal maximum deviation between centroids during band detection (in Da)" type="text" value = "0.001" help="[dmz] shloud be at most 0.002 for high resolution" />	    
-    <param name="ppmGroupN" label="Accuracy of the mass spectrometer to be used during feature alignment (in ppm)" type="text" value = "3" help="[ppmGroup] Should be inferior to the ppm parameter above." />
-    <param name="dmzGroupN" label="Minimal accuracy of the mass spectrometer to be used during feature alignment (in Da)" type="text" value = "0.0005" help="[dmzGroup] shloud be at most 0.002 for high resolution" />
-    <param name="fracGroupN" label=" Minimum fraction of samples in which a peak should be detected in at least one class to be kept during feature alignment" type="text" value = "0.5" help="[fracGroup]" />
+    <param name="ppmN" label="Maximum deviation between centroids during band detection (in ppm)" type="text" value="7" help="[ppm]"/>
+    <param name="dmzN" label="Minimal maximum deviation between centroids during band detection (in Da)" type="text" value="0.001" help="[dmz] shloud be at most 0.002 for high resolution"/>
+    <param name="ppmGroupN" label="Accuracy of the mass spectrometer to be used during feature alignment (in ppm)" type="text" value="3" help="[ppmGroup] Should be inferior to the ppm parameter above."/>
+    <param name="dmzGroupN" label="Minimal accuracy of the mass spectrometer to be used during feature alignment (in Da)" type="text" value="0.0005" help="[dmzGroup] shloud be at most 0.002 for high resolution"/>
+    <param name="fracGroupN" label=" Minimum fraction of samples in which a peak should be detected in at least one class to be kept during feature alignment" type="text" value="0.5" help="[fracGroup]"/>
     <param name="imputeC" label="Imputation method" type="select" help="[imputation]">
       <option value="None">None</option>
       <option value="randomForest" selected="true">randomForest</option>
     </param>
-
-
-
     <conditional name="advCpt">
-      <param name="opcC" type="select" label="Advanced parameters" >
-	<option value="default" selected="true">Use default</option>
-	<option value="full">Full parameter list</option>
+      <param name="opcC" type="select" label="Advanced parameters">
+        <option value="default" selected="true">Use default</option>
+        <option value="full">Full parameter list</option>
       </param>
       <when value="default"/>
       <when value="full">
         <param name="bandCoverageN" type="float" value="0.3" label="Minimum fraction of centroids in the estimated injection window for a band to be built" help="[bandCoverage] Must be between 0 and 1"/>
-	<param name="sizeMinN" type="text" value="none" label="Minimum number of consecutive centroids for a band to be built" help="[sizeMin] If set to 'none', the half of the estimated injection window will be used"/>
-	<param name="scanMinI" type="integer" value="1" label="First scan to be preprocessed" help="[scanMin]"/>
-	<param name="scanMaxI" type="text" value="none" label="Last scan to be preprocessed" help="[scanMax] Set to 'none' to preprocess up to the last acquired scan"/>		
+        <param name="sizeMinN" type="text" value="none" label="Minimum number of consecutive centroids for a band to be built" help="[sizeMin] If set to 'none', the half of the estimated injection window will be used"/>
+        <param name="scanMinI" type="integer" value="1" label="First scan to be preprocessed" help="[scanMin]"/>
+        <param name="scanMaxI" type="text" value="none" label="Last scan to be preprocessed" help="[scanMax] Set to 'none' to preprocess up to the last acquired scan"/>
       </when>
-      </conditional>
-
-
-    
+    </conditional>
   </inputs>
-  
   <outputs>
-    <data name="dataMatrix_out" label="${tool.name}_dataMatrix.tsv" format="tabular" ></data>
-    <data name="sampleMetadata_out" label="${tool.name}_sampleMetadata.tsv" format="tabular" ></data>
-    <data name="variableMetadata_out" label="${tool.name}_variableMetadata.tsv" format="tabular" ></data>
+    <data name="dataMatrix_out" label="${tool.name}_dataMatrix.tsv" format="tabular"/>
+    <data name="sampleMetadata_out" label="${tool.name}_sampleMetadata.tsv" format="tabular"/>
+    <data name="variableMetadata_out" label="${tool.name}_variableMetadata.tsv" format="tabular"/>
     <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/>
     <data name="information" label="${tool.name}_information.txt" format="txt"/>
   </outputs>
-  
   <tests>
     <test>
-      <param name="inputs|input" value="zip_file" />
-      <param name="inputs|zip_file" value="input-plasFIA.zip" ftype="zip" />
+      <param name="inputs|input" value="zip_file"/>
+      <param name="inputs|zip_file" value="input-plasFIA.zip" ftype="zip"/>
       <param name="ppmN" value="2"/>
       <param name="dmzN" value="0.0005"/>
       <param name="ppmGroupN" value="1"/>
       <param name="dmzGroupN" value="0.0005"/>
       <param name="fracGroupN" value="0.1"/>
       <param name="imputeC" value="randomForest"/>
-      <output name="dataMatrix_out" file="output-dataMatrix.tsv" />
+      <output name="dataMatrix_out" file="output-dataMatrix.tsv"/>
       <output name="information">
         <assert_contents>
-          <has_text text="707  groups have been done" />
-	  <has_text text="3 samples x 707 variables" />
-          <has_text text="2089  peaks detected" />
+          <has_text text="707  groups have been done"/>
+          <has_text text="3 samples x 707 variables"/>
+          <has_text text="2089  peaks detected"/>
         </assert_contents>
       </output>
     </test>
   </tests>
-  
   <help>
 
 .. class:: infomark
@@ -358,10 +341,8 @@ NEW FEATURE
 Creation of the tool
 
 </help>
-
-<citations>
-  <citation type="doi">10.1093/bioinformatics/btx458</citation>
-  <citation type="doi">10.1093/bioinformatics/btu813</citation>
-</citations>
-
+  <citations>
+    <citation type="doi">10.1093/bioinformatics/btx458</citation>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
 </tool>

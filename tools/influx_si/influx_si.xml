@@ -1,7 +1,11 @@
-<tool id="influx_si" name="influx_si" version="@TOOL_VERSION@+galaxy1" profile="21.09">
+<tool id="influx_si" name="influx_si" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.09">
     <description>
         Estimate metabolic fluxes and concentrations by fitting simulated labeling in metabolites to NMR/MS measurements
     </description>
+    <macros>
+        <token name="@TOOL_VERSION@">7.4.3</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
     <creator>
         <person givenName="Serguei" familyName="Sokol" email="sokol@insa-toulouse.fr" url="https://www.toulouse-biotechnology-institute.fr/en/plateformes-plateaux/cellule-mathematiques/" />
         <organization name="INRAE" url="https://www.inrae.fr/" />
@@ -10,9 +14,6 @@
         <organization name="MetaToul-FluxoMet" url="https://www.toulouse-biotechnology-institute.fr/en/plateformes-plateaux/metatoul/" />
         <organization name="MetaboHub2" url="https://www.metabohub.fr/" />
     </creator>
-    <macros>
-        <import>macros.xml</import>
-    </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">influx_si</requirement>
     </requirements>
@@ -175,7 +176,7 @@
                 <element name="e_coli" count="7">
                     <element name="e_coli.log">
                         <assert_contents>
-                            <has_n_lines n="38"/>
+                            <has_n_lines n="95"/>
                             <has_line_matching expression="^end.*"/>
                         </assert_contents>
                     </element>

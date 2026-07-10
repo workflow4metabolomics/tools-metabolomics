@@ -1,0 +1,546 @@
+<tool id="imputemsmv" name="ImputeMSmv" version="1.0.0+galaxy0" profile="22.01">
+  <description>
+    imputes missing values in mass-spectrometry-based data matrices
+  </description>
+  
+  <edam_topics>
+    <edam_topic>topic_3172</edam_topic>
+    <edam_topic>topic_2269</edam_topic>
+  </edam_topics>
+  
+  <edam_operations>
+    <edam_operation>operation_3557</edam_operation>
+  </edam_operations>
+  
+  <creator>
+    <person givenName='Anthony' familyName='Sleiman' jobTitle='Internship student' />
+    <organization name='INRAE' url='https://pfem.isc.inrae.fr' />
+    <organization name='W4M' url='https://dipot.ulb.ac.be/dspace/bitstream/2013/388693/3/Current_Protocols.pdf' />
+  </creator>
+  
+  <requirements>
+    <requirement type="package" version="4.5.2">r-base</requirement>
+    <requirement type="package" version="1.2.1">r-w4mrutils</requirement>
+  </requirements>
+  
+  <required_files>
+    <include path="ImputeMSmv_function.R" />
+    <include path="ImputeMSmv_wrapper.R" />
+  </required_files>
+  
+  <stdio>
+    <exit_code range="1" level="fatal" />
+  </stdio>
+  
+  <command>
+    <![CDATA[
+      Rscript '$__tool_directory__/ImputeMSmv_wrapper.R'
+
+      --tool_dir '$__tool_directory__'
+
+
+      --DM_in '$DM_input'
+      --SM_in '$SM_input'
+      --VM_in '$VM_input'
+
+
+      --col '$col_name'
+      
+      --advanced '$Advanced.risky.advanced'
+      #if str($Advanced.risky.advanced) == 'TRUE' :
+      --LimNan '$LimNan2'
+      #elif str($Advanced.risky.advanced) == 'FALSE' :
+      --LimNan '$LimNan1'
+      #end if
+      
+      --setSeed '$reproducibility.repro.enable'
+      #if str($reproducibility.repro.enable) == 'TRUE' :
+      --seed '$reproducibility.repro.seed'
+      #end if
+      
+      
+      --mnar_methods '$mnar.MNAR_method.mnar_method'
+      #if str($mnar.MNAR_method.mnar_method) == 'lod' :
+      --percLOD '$mnar.MNAR_method.percLOD'
+      --mnar_computation '$mnar.MNAR_method.lod_computation'
+      #elif str($mnar.MNAR_method.mnar_method) == 'min' :
+      --pmin '$mnar.MNAR_method.percMIN'
+      #end if
+      
+      --SDLOD '$mnar.sd_mnar'
+      
+      
+      --mar_methods '$mar.mar_method'
+      --SDmean '$mar.sd_mar'
+
+
+      --plots '${plottings.plots}'
+      
+
+      --DM_out '$DM_out'
+      --VM_out '$VM_out'
+      --SM_out '$SM_out'
+      --plot_out '$plot_out'
+    ]]>
+  </command>
+  
+  <inputs>
+    <param name='DM_input' type='data' label='Data matrix file' format='tabular,tsv' help='Main data matrix (W4M-like format, see Help section)' />
+    <param name='SM_input' type='data' label='Sample metadata file' format='tabular,tsv' help='Sample metadata table (W4M-like format, see Help section)' />
+    <param name='VM_input' type='data' label='Variable metadata file' format='tabular,tsv' help='Variable metadata table (W4M-like format, see Help section)' />
+    <param name='col_name' type='text' label='Column defining replicate groups' optional='false' help='Column name (from the sample metadata) that contains the replicate group identifiers. If the design has no replicates, the column should contain distinct values for all samples.' />
+    <param name='LimNan1' type='float' value='0.25' min='0' max='0.5' label='Missing value rate threshold for missing value labeling' help='Threshold of missing value (MV) rates, checked per replicate group per feature, to label MV as MAR or MNAR. If a MV rate is BELOW OR EQUAL to the user-defined threshold, the corresponding MV are categorized as MAR, otherwise as MNAR. The maximal value here is 0.5 since it is not recommanded to go upper; check the advanced parameters for higher thresholds if necessary.' />
+    
+    <section name='reproducibility' title='Reproducibility' expanded='false'>
+      <conditional name='repro'>
+        <param name='enable' type='select' display='radio' label='Use of a user-defined seed' help='Enables reproductible results by manually fixing a seed number. When enabled, the tool will produce identical results for the same input and parameters across job runs. If disabled, a random seed will be used, and results will vary slightly due to randomness in the algorithm; the seed used will be outputed in the log and thus can be used for reproducibility.'>
+          <option value='TRUE'>Yes</option>
+          <option value='FALSE' selected='true'>No</option>
+        </param>
+        <when value='TRUE'>
+          <param name='seed' type='integer' value='31' label='Seed value' optional='FALSE' help='The seed is defined as an integer. In case you have run a previous job without user-defined seed, you can reproduce the exact results by filling the seed number outputed in the job log.' />
+        </when>
+        <when value='FALSE'></when>
+      </conditional>
+    </section>
+
+    <section name='mar' title='MAR imputation parameters' expanded='true'>
+      <param name='mar_method' type='select' display='radio' label='MAR imputation method' help='Position value to be added to the noise component. It is calculated per replicate group per feature.'>
+        <option value='mean'>Mean of the replicate group values</option>
+        <option value='median'>Median of the replicate group values</option>
+      </param>
+
+      <param name='sd_mar' type='float' value='0.1' min='0' max='1' label='Intensity of the noise component' help='Controls the level of random noise added to the position values. It can be set to an estimation of the relative standard deviation expected in replicates. Higher values increase variability in imputed values. Lower values produce closest imputed values.' />
+    </section>
+    
+    <section name='mnar' title='MNAR imputation parameters' expanded='true'>
+      <conditional name='MNAR_method'>
+        <param name='mnar_method' type='select' label='MNAR imputation method' help='Method to be used to set a reference value for imputation. Random noise is then added to avoid artificial ties in the data. See Help section for more information.'>
+          <option value='lod' selected='true'>Use of a global LOD as reference: user-defined quantile</option>
+          <option value='min'>Use of a per-feature reference: fraction of the lowest detected intensity</option>
+        </param>
+        <when value='lod'>
+          <param name='percLOD' type='float' value='0.03' min='0' max='1' label='Quantile value used to estimate the LOD' help='The global LOD is computed as the corresponding quantile value among the detected intensities in the whole data matrix. As all the samples and features are considered at once, this parameter should be aligned with the design of the experiment, e.g., depending on the proportion of blank samples.' />
+          <param name='lod_computation' type='select' display='radio' label='LOD computation method' help='Position value to be added to the noise component.'>
+            <option value='quantile'>User-defined quantile</option>
+            <option value='mean'>Mean of values below the used-defined quantile</option>
+            <option value='median'>Median of values below the user-defined quantile</option>
+          </param>
+        </when>
+        <when value='min'>
+          <param name='percMIN' type='float' value='0.80' min='0' max='1' label='Fraction of the lowest detected intensity to consider as reference' help='The position value used for imputation is determined, for each feature separately, as the corresponding percentage of the lowest detected intensity. Typically, a setting to 1 implies using the lowest value of each feature as reference.' />
+        </when>
+      </conditional>
+      <param name='sd_mnar' type='float' value='0.2' min='0' max='1' label='Intensity of the noise component' help='Controls the level of random noise added to the position values. Higher values increase variability in imputed values. Lower values produce closest imputed values.' />
+    </section>
+
+    <section name='plottings' title='Visual representations' expanded='true'>
+      <param name='plots' type='select' display='checkboxes' multiple='true' label='Plots to generate' optional='true' help='Optional. Select which visualizations to generate. Multiple plots can be selected.'>
+        <option value='DP'>Density plot (before vs after imputation)</option>
+        <option value='HM'>Map of missing values</option>
+        <option value='BP1'>Bar plot of MNAR/MAR/No_MV counts per replicate group - recommended only for limited numbers of groups</option>
+        <option value='BP2'>Bar plot of groups per value type - recommended only for limited numbers of groups</option>
+        <option value='PC'>Pie chart of MNAR/MAR/No_MV proportions</option>
+      </param>
+    </section>
+    
+    <section name='Advanced' title='Advanced parameters (use with great caution)' expanded='false'>
+      <conditional name='risky'>
+        <param name='advanced' type='select' display='radio' label='Enable extended conditions for missing value labeling (NOT RECOMMENDED)' help='Allows the use of higher threshold values, beyond the standard range of [0-0.5]. This option is not recommended for standard use. With a small number of replicates (e.g., 2) the propotion of missing values is discretized (e.g., 0 or 0.5). In such cases, setting a threshold above 0.5 may lead to all features being classified as MAR, which can be misleading. Enable this option only if you fully understand the implications and intentionally want to relax the threshold constraints.'>
+          <option value='TRUE'>Yes</option>
+          <option value='FALSE' selected='true'>No</option>
+        </param>
+        <when value='TRUE'>
+          <param name='LimNan2' type='float' value='' min='0.50' max='1' label='Extended missing value rate threshold' help='WARNING: using high threshold values may lead to unintuitive or misleading classification results; only use this parameter if you have a specific reason to do so. The use of the advanced option overrides the default "Missing value rate threshold for missing value labeling" parameter.' />
+        </when>
+        <when value='FALSE'></when>
+      </conditional>
+    </section>
+  </inputs>
+  
+  <outputs>
+    <data name="DM_out" label="IMSmv_${DM_input.name}" format="tabular" />
+    <data name="SM_out" label="IMSmv_${SM_input.name}" format="tabular" />
+    <data name="VM_out" label="IMSmv_${VM_input.name}" format="tabular" />
+    <data name="plot_out" label="ImputedMSmv_Plots.pdf" format="pdf" />
+  </outputs>
+  
+  <tests>
+    <test>
+      <param name='DM_input' value='inDmShT1.tabular' />
+      <param name='SM_input' value='inSmShT1.tabular' />
+      <param name='VM_input' value='inVmShT1.tabular' />
+      <param name='col_name' value='class' />
+      <param name='LimNan1' value='0.5' />
+      <param name='reproducibility|repro|enable' value='TRUE' />
+      <param name='reproducibility|repro|seed' value='123' />
+      <param name='mar|mar_method' value='mean' />
+      <param name='mar|sd_mar' value="0.1" />
+      <param name='mnar|MNAR_method|mnar_method' value='lod' />
+      <param name='mnar|MNAR_method|percLOD' value='0.001' />
+      <param name='mnar|MNAR_method|lod_computation' value='mean' />
+      <param name='mnar|sd_mnar' value='0.2' />
+      <param name='Advanced|risky|advanced' value='FALSE' />
+      <output name='DM_out' file='outDmShT1.tabular' />
+      <output name='SM_out' file='outSmShT1.tabular' />
+      <output name='VM_out' file='outVmShT1.tabular' />
+    </test>
+
+    <test expect_failure='true'>
+      <param name='DM_input' value='inDmShT1.tabular' />
+      <param name='SM_input' value='inSmShT1.tabular' />
+      <param name='VM_input' value='inVmShT1.tabular' />
+      <param name='col_name' value='CLASS' />
+      <param name='LimNan1' value='0.5' />
+      <param name='reproducibility|repro|enable' value='TRUE' />
+      <param name='reproducibility|repro|seed' value='123' />
+      <param name='mar|mar_method' value='mean' />
+      <param name='mar|sd_mar' value="0.1" />
+      <param name='mnar|MNAR_method|mnar_method' value='lod' />
+      <param name='mnar|MNAR_method|percLOD' value='0.001' />
+      <param name='mnar|MNAR_method|lod_computation' value='mean' />
+      <param name='mnar|sd_mnar' value='0.2' />
+      <param name='Advanced|risky|advanced' value='FALSE' />
+    </test>
+  </tests>
+  
+  <help>
+    <![CDATA[
+    
+.. class:: infomark
+
+**Credits**
+  | **Original tool code:** Mathieu CLADIERE - (Université Paris Saclay, INRAE, AgroParisTech, UMR Sayfood, Campus Agro Paris Saclay - Palaiseau, France) 
+  | **Original tool wrapping:** Anthony SLEIMAN - (Internship student - PFEM - INRAE - MetaboHub) 
+  | **Wrapper maintainer:** Mélanie PETERA - (PFEM - INRAE - MetaboHub)
+
+.. class:: infomark
+
+**Contact:** Mathieu Cladière, Mélanie Pétéra, the Workflow4Metabolomics team
+
+---------------------------------------------------
+
+******************
+ImputeMSmv
+******************
+
+===========
+DESCRIPTION
+===========
+
+This tool performs missing value classification and imputation in mass spectrometry–based data matrices.
+
+Based on the work presented by Delaporte et al. (2019), the method labels values in the data matrix following three categories:
+
++---------------------------------+---------------------------------------------------------------------------------------+
+| Category                        | Description                                                                           |
++=================================+=======================================================================================+
+| No_MV                           | Not a missing value                                                                   |
++---------------------------------+---------------------------------------------------------------------------------------+
+| MAR (Missing At Random)         | Unexpected missing value, assumed not related to low detection capacity               |
++---------------------------------+---------------------------------------------------------------------------------------+
+| MNAR (Missing Not At Random)    | Missingness is assumed to be due to the limit of detection (LOD)                      |
++---------------------------------+---------------------------------------------------------------------------------------+
+
+Missing values are then imputed using a strategy adapted to its category.
+Original R tool by Cladière et al. is available on `Software Heritage <https://archive.softwareheritage.org/browse/directory/71a05f10c0987eed9c8326259e8e508a652bc3dd/?origin_url=https://hal.archives-ouvertes.fr/hal-05512267&release=1&snapshot=7ccb4886b023149a8a11a4691fca471363cb0517>`_ - 
+see Delaporte et al. (2019) for advanced arguments. 
+
+----------------------------
+MISSING VALUE CLASSIFICATION
+----------------------------
+
+Missing values are classified indenpendently for each feature within each user-defined replicate group.
+
+For a given feature and replicate group, the proportion of missing values (pNA) is computed and compared to a user-defined threshold (LimNan).
+
+- If pNA = 0 → the group is classified as **No_MV** for this feature.
+- If pNA ≤ LimNan → the group is classified as containing **MAR** for this feature.
+- If pNA > LimNan → the group is classified as containing **MNAR** for this feature.
+
+**Special case:**
+unless the advanced option is used (not remcommended), when the number of replicates in a group is less than three, the classification becomes binary:
+
+- pNA = 0 → No_MV
+- pNA ≠ 0 → MNAR
+
+This classification step determine which imputation strategy will be applied. Therefore threshold must be well chosen.
+
+--------------------------
+IMPUTATION METHODS
+--------------------------
+
+++++++++++++++++++++
+MAR Imputation
+++++++++++++++++++++
+
+MAR values are assumed to arise from a technical issue rather than low detection ability of the feature/ion.
+
+For each group independently, missing values are imputed using non-missing values from the same group.
+A position value is computed (the mean or median depending on the user's choice),
+this estimated value being then combined to a random noise component to avoid artificial ties within groups
+(noise is drawn from a uniform distribution and applied independently to each imputation).
+
+++++++++++++++++++++
+MNAR Imputation
+++++++++++++++++++++
+
+MNAR values are assumed to correspond to signals below the limit of detection (LOD).
+
+As for MAR, a position value is computed and then combined to a random noise component (again drawn from a uniform distribution).
+Three imputation strategies are available to determine the position value:
+
+- **Use of a global LOD as reference: user-defined quantile (defaut)**:
+  The position value is an estimated limit of detection (LOD), computed once for the whole dataset as 
+  the user-defined quantile of the global intensity distribution.
+  The quantile parameter is a float number between 0 and 1, expected low. 
+  For example, a value of 0.01 corresponds to the first centile. 
+- **Use of a global LOD as reference: average of the lowest values**:
+  The position value is an estimated limit of detection (LOD), computed once for the whole dataset as 
+  the average (mean of median) of the lowest values, the threshold to consider values as low being 
+  the user-defined quantile of the global intensity distribution.
+  The quantile parameter is a float number between 0 and 1, expected low. 
+  For example, a value of 0.01 corresponds to the first centile. 
+- **Use of a per-feature reference: fraction of the lowest detected intensity**:
+  One position value is calculated per feature.
+  For each feature, the minimum of non-missing values is computed, and then multiplied by the user-defined fraction value.
+  The fraction parameter is a float number between 0 and 1, with "1" implying the minimum will be used position value.
+
+.. image:: imputationMethod.png
+  :alt: ImputeMSmv imputes missing values using a strutured MAR/MNAR classification instead of replacing them with zeros.
+
+---------------------------------------------------
+
+==========================
+ALIGNMENT WITH OTHER TOOLS
+==========================
+
+This tool is designed to be compatible with the **Workflow4Metabolomics (W4M) 3-tables format**.
+
+It accepts and produces standard W4M datasets, enabling seamless integration into metabolomic workflows.
+It preserves structure and identifiers, enabling seamless integration into downstream workflows.
+
+-----------
+INPUT FILES
+-----------
+
++-------------------------------+--------------+
+| Parameter                     |   Format     |
++===============================+==============+
+| 1 : Data matrix file          |   tabular    |
++-------------------------------+--------------+
+| 2 : Sample metadata file      |   tabular    |
++-------------------------------+--------------+
+| 3 : Variable metadata file    |   tabular    |
++-------------------------------+--------------+
+
+Files are expected to follow the W4M 3-tables format.
+
+Data matrix file: Rows are variables (features), columns are samples. 
+The first column must contain variable identifiers, and the first row must contain sample identifiers. 
+Missing values in the table must be coded as NA.
+
+Sample metadata file: Rows are samples, columns provide sample information (e.g., class, batch, groupID). 
+The first column must contain sample identifiers matching the data matrix columns. 
+A unique column (e.g., groupID) must contain the replication group of each sample; 
+in case the design does not cover replicates, the column will contains as many groups as samples in the table (one per sample).
+
+Variable metadata file: Rows are variables (features), columns provide variable information (e.g., m/z, retention time). 
+The first column must contain variable identifiers matching the data matrix rows.
+
+------------
+OUTPUT FILES
+------------
+
++----------------------------+------------+
+| Parameter                  |   Format   |
++============================+============+
+| 1 : Data matrix file       |   tabular  |
++----------------------------+------------+
+| 2 : Sample metadata file   |   tabular  |
++----------------------------+------------+
+| 3 : Variable metadata file |   tabular  |
++----------------------------+------------+
+| 4 : Plots file             |   pdf      |
++----------------------------+------------+
+
+----------------------------
+WORKFLOW POSITION
+----------------------------
+
+ImputeMSmv is positionned in a standard W4M pre-processing workflow after **XCMS fillChromPeaks (fillPeaks)** to handle remaining missing values.
+
+It replaces the common practice of setting missing values to zero, with a structured MAR/MNAR-based imputation strategy.
+
+Ensure that the option **If NA values remain, replace them by 0 in the dataMatrix** is disabled in the previous XCMS step.
+
+.. image:: workflowPosition.png
+  :alt: ImputeMSmv is applied after XCMS fill peaks in W4M metabolomic workflows to impute remaining missing values using a strutured MAR/MNAR classification instead of replacing them with zeros.
+
+---------------------------------------------------
+
+===============
+TOOL PARAMETERS
+===============
+
+**Data matrix file**:
+Tabular numeric matrix of intensities (features x samples). Missing values must be encoded as NA.
+
+**Sample metadata file**:
+Tabular file containing sample information.
+A column identifier **must** be present to indicate which replicate group each sample belong to (e.g., groupID in the following example).
+
+Example:
+
++---------+------------+
+| sample  |   groupID  |
++=========+============+
+| S1      | Blank      |
++---------+------------+
+| S2      | Blank      |
++---------+------------+
+| S3      | Biosample  |
++---------+------------+
+
+**Variable metadata file**:
+Tabular file containing feature information.
+
+**Column defining replicate groups**:
+Column in sample metadata defining replicate groups (name must be entered exactly as written in sample metadata).
+Each unique value corresponds to a different experimental class or condition.
+Many samples can have the same group identifier.
+Samples with no replicate will have individual groups (one each). 
+It is recommended not to use special characters to define the groups (e.g., - + * / é); points and underscores are accepted.
+
+**Missing value rate threshold for missing value labeling** (LimNan):
+Numeric value between 0 and 0.5 (included) used as threshold to separate MAR and MNAR.
+Lower values → more MNAR features.
+Higher values → more MAR features.
+If higher threshold is needed **(not recommended)**, user may use advanced method at their own risk (see below).
+
+**Reproducibility/Use of a user-defined seed/Seed value**:
+Fixes randomness for reproducible results. 
+When enabled, the tool will produce identical results for the same input and parameters across runs. 
+If disabled, results may vary slightly due to randomness in the algorithm.
+
+--------------------------
+MAR parameters
+--------------------------
+
+**MAR imputation method**:
+To be chosen between mean and median. 
+
+**Intensity of the noise component**:
+Controls the intensity of random noise added to position values (mean or median), used to avoid identical values.
+The noise component is computed through random deviates of a uniform distribution between 1-(user-defined intensity value) and 1+(user-defined intensity value). 
+Higher values increase variability in imputed data.
+Lower values produce closest imputed values.
+Default is set to 0.1
+
+--------------------------
+MNAR parameters
+--------------------------
+
+**MNAR imputation method**:
+To be chosen among the following
+
+- Use of a global LOD as reference: user-defined quantile (defaut)
+- Use of a global LOD as reference: average of the lowest values
+- Use of a per-feature reference: fraction of the lowest detected intensity
+
+Depending on the method chosen, additional parameters are to be set:
+
+- **Quantile value used to estimate the LOD**: 
+  this proportion [0-1] sets the quantile to be used in the LOD estimation. 
+  A lower propotion uses the smaller amount of low values (smaller LOD) and a higher proportion includes more intensity values (higher LOD). 
+- **Fraction of the lowest detected intensity to consider as reference**: 
+  the reference value is computed as: 'chosen_fraction' * minimum_detected_value_per_feature. 
+  Lower proportions produce smaller imputed values. Higher proportions produce values closer to observed minimum intensities.
+
+**Intensity of the noise component**:
+Controls the amount of random noise added to position values, used to avoid identical values.
+The noise component is computed through random deviates of a uniform distribution between 1-(user-defined intensity value) and 1+(user-defined intensity value). 
+Higher values increase variability in imputed data.
+Lower values produce more uniform imputed values.
+Default is set to 0.2
+
+--------------------------
+Plots
+--------------------------
+
+Optional visualizations:
+
+- Density plot (before vs after imputation)
+- Missing values' presence/absence map
+- Group wise barplot
+- Type-wise barplot
+- Pie chart of MNAR/MAR/No_MV proportions
+- Missingness distribution by minimum intensity values of corresponding features (only when MNAR's minimum method is used)
+
+
+--------------------------
+Advanced parameters
+--------------------------
+
+Allows LimNan > 0.5 (not recommended).
+This option may lead to biased classification when replicate number is low.
+
+---------------------------------------------------
+
+==================
+OUTPUT DESCRIPTION
+==================
+
+**Data matrix**:
+- Fully imputed (no missing values)
+- Original structure preserved
+
+**Sample metadata**:
+- Includes missing value statistics per sample
+
+**Variable metadata**:
+- Includes missing value classification per group
+
+**Plots (optional, PDF)**:
+
+- Density comparison
+- Missing value heatmap
+- Group/type distributions
+- Missing value composition
+- Intensity-based NA distribution (min method only)
+
+---------------------------------------------------
+
+==============
+KNOWN ISSUES
+==============
+
+- Input files must strictly follow W4M format
+- Column names are case sensitive
+- Missing value encodings other then the required *NA* format (e.g., 0, NaN, na) may cause failures
+
+
+    ]]>
+  </help>
+  
+  <citations>
+    <citation type='doi'>10.1016/j.chemolab.2019.03.005</citation>
+    <citation type='bibtex'>
+      @article{delporte_workflow4metabolomics_2025,
+        title = {{Workflow4Metabolomics} ({W4M}): {A} {User}-{Friendly} {Metabolomics} {Platform} for {Analysis} of {Mass} {Spectrometry} and {Nuclear} {Magnetic} {Resonance} {Data}},
+        volume = {5},
+        shorttitle = {{Workflow4Metabolomics} ({W4M})},
+        url = {https://hal.science/hal-04985097},
+        doi = {10.1002/cpz1.70095},
+        number = {2},
+        urldate = {2026-04-23},
+        journal = {Current Protocols},
+        publisher = {Wiley},
+        author = {Delporte, Cédric and Tremblay-Franco, Marie and Guitton, Yann and Canlet, Cécile and Weber, Ralf J. M. and Hecht, Helge and Price, Elliott James and Klánová, Jana and Joly, Charlotte and Dalle, Céline and St-Vanne, Julien and Thevenot, Etienne and Schmitz-Afonso, Isabelle and Chéreau, Sylvain and Dechaumet, Sylvain and Diémé, Binta and Giacomoni, Franck and Le Corguillé, Gildas and Pétéra, Mélanie and Souard, Florence},
+        year = {2025},
+        keywords = {annotation, chemometrics, GC-MS, LC-MS, NMR, statistics, untargeted metabolomics},
+        pages = {e70095},
+      }
+    </citation>
+  </citations>
+</tool>

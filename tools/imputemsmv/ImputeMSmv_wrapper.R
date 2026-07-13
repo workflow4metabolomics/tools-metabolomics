@@ -79,11 +79,45 @@ v <- fix_head(v)
 
 
 # ====================== Quality control =================.
+# Check that all columns are numeric
+if (!all(vapply(d, is.numeric, logical(1)))) {
+  warning("Input data matrix contains non-numeric values")
+  stop("Please provide a numeric data matrix")
+}
+
+# Convert NaN to NA
+if (any(sapply(d, function(x) any(is.nan(x))))) {
+  cat("NaN values detected in the input data matrix. They have been converted to NA.\n")
+  for (i in seq_along(d)) {
+    d[[i]][is.nan(d[[i]])] <- NA
+  }
+}
+
+# Check presence of missing values
+# In global data matrix
+if (sum(is.na(d)) == 0) {
+  cat("\n\nNo missing values found in Datamatrix, nothing to impute. Aborting job... \n\n")
+  cat("+-----------------------------------------------------------------------+
+|                                                                       |
+|                NO MISSING DATA FOUND! ABORTING JOB!                   |
+|                                                                       |
++-----------------------------------------------------------------------+")
+  stop("JOB TERMINATED - CHECK RAW DATA MATRIX - NO MISSING DATA FOUND")
+} else {
+  cat("Missing values found. Job running with the following parameters:\n")
+}
+# Per feature (row)
+sm_new <- rbind(apply(d, 2, function(x) sum(is.na(x))))
+row_na <- rownames(sm_new)[apply(sm_new == 0, 1, all)]
+if (length(row_na) != 0) {
+  stop("One or more features contain 100% of missing values (missing values across all groups), please check your data.\nThe concerned variables are the following:\n", row_na)
+}
+
 # Check the number of decimal digits
 DIGITS <- read.table(para$DM_in, header = TRUE, row.names = 1, dec = ".", sep = "\t", colClasses = "character")
 stripped_nb <- sapply(strsplit(unlist(DIGITS), "\\."), "[", 2)
 char_nb <- nchar(stripped_nb)
-digits <- max(char_nb, na.rm = TRUE)
+digits <- suppressWarnings(max(char_nb, na.rm = TRUE))
 if (digits == -Inf) {
   digits <- 0
 } else {
@@ -91,7 +125,7 @@ if (digits == -Inf) {
 }
 cat("The maximal number of decimal digits found in the data matrix is:", digits, "\nTherefore, imputation will be rounded to", digits, "digits after the decimal separator.\n\n")
 
-# Check features' order in datamatrix and samlpe metadata
+# Check features' order in datamatrix and sample metadata
 if (identical(rownames(s), colnames(d))) {
   cat("Variables order check passed.\n")
 } else {
@@ -108,34 +142,12 @@ if (para$col %in% colnames(s)) {
   stop("Column name: '", para$col, "' is not found in the sample metadata file.
        Make sure that the entered name matches the column name in the sample metadata.\n")
 }
-
-# Check presence of missing values
-# In global data matrix
-if (sum(is.na(d)) == 0) {
-  cat("\n\nNo missing values found in Datamatrix, nothing to impute. Aborting job... \n\n")
-  cat("+-----------------------------------------------------------------------+
-|                                                                       |
-|                NO MISSING DATA FOUND! ABORTING JOB!                   |
-|                                                                       |
-+-----------------------------------------------------------------------+")
-  stop("JOB TERMINATED - CHECK RAW DATA MATRIX - NO MISSING DATA FOUND")
-} else {
-  cat("Missing values found. Job running with the following parameters:\n")
-}
-
-# Per feature (row)
-# sm_new <- t(rbind(apply(DataMatrix, 2, function(x) sum(is.na(x)))))
-sm_new <- rbind(apply(d, 2, function(x) sum(is.na(x))))
-row_na <- rownames(sm_new)[apply(sm_new == 0, 1, all)]
-if (length(row_na) != 0) {
-  stop("One or more features contain 100% of missing values (missing values across all groups), please check your data.\nThe concerned variables are the following:\n", row_na)
-}
 # ========================================================.
 
 
 # ====================== If Advanced =====================.
 if (para$advanced == TRUE) {
-  cat("Job running in ADVANCED mode (please remember this is NOT THE RECOMMENDED mode!with the following parameters:\n), ")
+  cat("Job running in ADVANCED mode (please remember this is NOT THE RECOMMENDED mode!) with the following parameters:\n")
 } else {
   cat("Job running in Recommended mode, with the following parameters:\n - Missing values' threshold is set to: ", para$LimNan, "\n")
 }

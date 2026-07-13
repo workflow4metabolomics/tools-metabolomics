@@ -43,6 +43,12 @@ Main files:
 - ImputeMSmv.xml: XML wrapper (interface for Galaxy)
 
 
+Test files:
+The repository includes a small dataset to be used as test files (test-data)
+- Source: test files are derived from publicly archived datasets available on SoftwareHeritage
+- Modifications: to keep the repository lightweight we removed the last five samples from the original data matrix and the corresponding entries in the sample metadata. This keeps the test dataset files under 1MB.
+
+
 Services provided
 -----------
 

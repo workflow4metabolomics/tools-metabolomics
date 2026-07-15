@@ -89,11 +89,11 @@ imputemsmv <- function(DataMatrix,
                        advanced,
                        digits) {
 
-    # Match user-selected mthods
+    # Match user-selected methods
     mnar_method <- match.arg(mnar_method)
     mar_method <- match.arg(mar_method)
     mnar_computation <- match.arg(mnar_computation)
-    
+
     # Optional reproductibility
     if (setSeed == TRUE) {
         set.seed(seed)
@@ -104,7 +104,7 @@ imputemsmv <- function(DataMatrix,
 
     cat(strrep("-", 60), "\nCounting features: \n")
 
-    #Create feature index to preserve original order after processing
+    # Create feature index to preserve original order after processing
     numero <- seq_len(nrow(DataMatrix))
     if (length(numero) == 0) {
         stop("No features found in Data matrix. Aborting job.")
@@ -173,19 +173,19 @@ imputemsmv <- function(DataMatrix,
         if (rep_num < repTH) {
             for (j in seq_along(numero)) {
                 if (pNbNaN[j] == 0) {
-                    MARMNAR[j] = "No_MV"
+                    MARMNAR[j] <- "No_MV"
                 } else {
-                    MARMNAR[j] = "MNAR"
+                    MARMNAR[j] <- "MNAR"
                 }
             }
         } else {
             for (j in seq_along(numero)) {
                 if (pNbNaN[j] == 0) {
-                    MARMNAR[j] = "No_MV"
+                    MARMNAR[j] <- "No_MV"
                 } else if (pNbNaN[j] <= LimNan) {
-                    MARMNAR[j] = "MAR"
+                    MARMNAR[j] <- "MAR"
                 } else {
-                    MARMNAR[j] = "MNAR"
+                    MARMNAR[j] <- "MNAR"
                 }
             }
         }
@@ -194,7 +194,7 @@ imputemsmv <- function(DataMatrix,
         No_MV_count[i] <- sum(MARMNAR == "No_MV")
         MAR_count[i] <- sum(MARMNAR == "MAR")
         MNAR_count[i] <- sum(MARMNAR == "MNAR")
-        
+
         nom_DataMatrix_gpMARMNAR[i] <- paste(nom_DataMatrix_gp[i], "_MARMNAR", sep = "")
         assign(nom_DataMatrix_gpMARMNAR[i], MARMNAR)
     }
@@ -291,7 +291,7 @@ imputemsmv <- function(DataMatrix,
             nom_DataMatrix_gp_noMNAR[i] <- paste(nom_DataMatrix_gp[i], "_noMNAR", sep = "")
             assign(nom_DataMatrix_gp_noMNAR[i], Mat_noMNAR_temp_2)
         }
-    # Minimum-based per feature MNAR imputation
+        # Minimum-based per feature MNAR imputation
     } else if (mnar_method == "min") {
         for (i in seq_along(nom_DataMatrix_gp)) {
             nom_DataMatrix_gp_MNAR[i] <- paste(nom_DataMatrix_gp[i], "_MNAR", sep = "")
@@ -412,13 +412,16 @@ plt_density <- function(df1, df2) {
 
     # Density after imputation
     lines(density(logDataVector2),
-        col = adjustcolor(color[2], alpha.f = 0.7), lwd = 2)
+        col = adjustcolor(color[2], alpha.f = 0.7), lwd = 2
+    )
 
-    legend(x = "topright",
+    legend(
+        x = "topright",
         legend = c("Before", "After"),
         lty = c(2, 1),
         col = color,
-        lwd = 2)
+        lwd = 2
+    )
 }
 # ========================================================.
 
@@ -450,24 +453,29 @@ plt_matrix <- function(df_original) {
     # Plot binary matrix
     image(as.matrix(df),
         col = color,
-        xaxt = "n", yaxt = "n")
+        xaxt = "n", yaxt = "n"
+    )
     axis(1, at = seq(from = 0, to = 1, length.out = length(row.names(df))), labels = FALSE)
-    text(x = seq(from = 0, to = 1, length.out = length(row.names(df))),
+    text(
+        x = seq(from = 0, to = 1, length.out = length(row.names(df))),
         y = par("usr")[3] - 0.01,
         labels = row.names(df),
         srt = 40,
         adj = 1,
         xpd = TRUE,
-        cex = 0.6)
+        cex = 0.6
+    )
     title(main = "Presence/absence map of data matrix intensities", col.main = "black")
     mtext("Samples", side = 3, line = 0)
     mtext("Features", side = 2, line = 0)
     par(xpd = FALSE)
-    legend(x = "topright", xpd = TRUE, inset = c(0, -0.07),
+    legend(
+        x = "topright", xpd = TRUE, inset = c(0, -0.07),
         legend = c("MV", "No_MV"), bty = "n",
         fill = color,
         border = "black",
-        cex = 0.6, horiz = TRUE)
+        cex = 0.6, horiz = TRUE
+    )
 }
 # ========================================================.
 
@@ -528,18 +536,22 @@ plt_group <- function(SM, VM, ID) {
     labels <- paste0(round(as.vector(info), 1), "%")
     # Keep only non-zero values
     keep <- as.vector(info) > 0
-    text(x = x_vals[keep],
+    text(
+        x = x_vals[keep],
         y = y_vals[keep],
         labels = labels[keep],
         cex = 0.6,
-        font = 2)
+        font = 2
+    )
     title(main = "Missing values attribution type per sample group")
     par(xpd = FALSE)
-    legend(x = "topright", xpd = TRUE, inset = c(0, -0.13),
+    legend(
+        x = "topright", xpd = TRUE, inset = c(0, -0.13),
         legend = c("No_MV", "MAR", "MNAR"),
         fill = color,
         border = "black",
-        cex = 0.6, horiz = FALSE)
+        cex = 0.6, horiz = FALSE
+    )
 }
 # ========================================================.
 
@@ -585,16 +597,20 @@ plt_type <- function(SM, VM, ID) {
 
     # Stacked bar plot
     bp <- barplot(info, col = color, yaxt = "n", log = "")
-    text(x = rep(bp, each = nrow(info)),
+    text(
+        x = rep(bp, each = nrow(info)),
         y = apply(info, 2, cumsum) - info / 2,
-        labels = paste0(round(info, 2), "%"), cex = 0.6, font = 2)
+        labels = paste0(round(info, 2), "%"), cex = 0.6, font = 2
+    )
     title(main = "Distribution of sample groups across NA type", col.main = "black")
     par(xpd = FALSE)
-    legend(x = "topright", xpd = TRUE, inset = c(-0.025, 0),
+    legend(
+        x = "topright", xpd = TRUE, inset = c(-0.025, 0),
         legend = group_name, title = "Groups",
         fill = hcl.colors(length(groups), palette = "Tropic"),
         border = "black",
-        cex = 0.6, horiz = FALSE)
+        cex = 0.6, horiz = FALSE
+    )
 }
 # ========================================================.
 
@@ -645,15 +661,19 @@ plt_pie <- function(SM, VM, ID) {
     label <- label[info > 0]
 
     # Plot pie chart
-    pie(info, labels = paste0(round(info, 2), "%"),
-        col = color)
-        title(main = "Pie chart of values category in datamatrix", col.main = "black")
+    pie(info,
+        labels = paste0(round(info, 2), "%"),
+        col = color
+    )
+    title(main = "Pie chart of values category in datamatrix", col.main = "black")
     par(xpd = FALSE)
-    legend(x = "topright",
+    legend(
+        x = "topright",
         legend = label,
         fill = color,
         border = "black",
-        cex = 0.6, horiz = FALSE)
+        cex = 0.6, horiz = FALSE
+    )
 }
 # ========================================================.
 
@@ -700,9 +720,11 @@ plt_distribution <- function(df_original, bins) {
         angle = 45,
         main = "Repartition of missing values according to the minimum of their corresponding ions",
         ylab = "Missing values count",
-        cex.names = 0.7, cex.lab = 0.7, cex.axis = 0.7)
+        cex.names = 0.7, cex.lab = 0.7, cex.axis = 0.7
+    )
     mtext(expression(log[10](minimum_intensity_values)),
-    side = 1,
-    line = 3, cex = 0.7)
+        side = 1,
+        line = 3, cex = 0.7
+    )
 }
 # ========================================================.

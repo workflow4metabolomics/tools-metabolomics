@@ -46,9 +46,11 @@ source(file.path(tool_dir, "ImputeMSmv_function.R"))
 # ====================== Get XML parameters ==============.
 para <- W4MRUtils::parse_args(args = commandArgs())
 
-cat("Job starting time:", format(Sys.time(), "%a %d %b %Y %X"), "\n", strrep("-", 60),
+cat(
+    "Job starting time:", format(Sys.time(), "%a %d %b %Y %X"), "\n", strrep("-", 60),
     "\nWelcome to MissMDA, a Galaxy tool dedicated to the handling of missing values from Mass Spectrometry data. \n\n",
-    "\nParameters used by this tool:\n")
+    "\nParameters used by this tool:\n"
+)
 cat("Paramters set: \n")
 print(para)
 cat("\n", strrep("-", 60), "\n")
@@ -57,9 +59,11 @@ cat("\n", strrep("-", 60), "\n")
 
 # ====================== Get tables ======================.
 # Retrieve parameters
-raw_data <- W4MRUtils::import3(pathDM = para$DM_in,
-                                pathSM = para$SM_in,
-                                pathVM = para$VM_in)
+raw_data <- W4MRUtils::import3(
+    pathDM = para$DM_in,
+    pathSM = para$SM_in,
+    pathVM = para$VM_in
+)
 # Find input data
 d <- raw_data$dataMatrix
 s <- raw_data$sampleMetadata
@@ -120,8 +124,6 @@ char_nb <- nchar(stripped_nb)
 digits <- suppressWarnings(max(char_nb, na.rm = TRUE))
 if (digits == -Inf) {
     digits <- 0
-} else {
-
 }
 cat("The maximal number of decimal digits found in the data matrix is:", digits, "\nTherefore, imputation will be rounded to", digits, "digits after the decimal separator.\n\n")
 
@@ -183,11 +185,13 @@ if (para$setSeed == TRUE) {
 
 
 # ====================== Run imputation ==================.
-result_tables <- imputemsmv(DataMatrix = d, sampleMetadata = s, variableMetadata = v,
-                            colClass = para$col, LimNan = para$LimNan, setSeed = para$setSeed, seed = para$seed,
-                            mnar_method = para$mnar_methods, percLOD = para$percLOD, SDLOD = para$SDLOD, pmin = para$pmin,
-                            mar_method = para$mar_methods, SDmean = para$SDmean, mnar_computation = para$mnar_computation,
-                            advanced = para$advanced, digits = digits)
+result_tables <- imputemsmv(
+    DataMatrix = d, sampleMetadata = s, variableMetadata = v,
+    colClass = para$col, LimNan = para$LimNan, setSeed = para$setSeed, seed = para$seed,
+    mnar_method = para$mnar_methods, percLOD = para$percLOD, SDLOD = para$SDLOD, pmin = para$pmin,
+    mar_method = para$mar_methods, SDmean = para$SDmean, mnar_computation = para$mnar_computation,
+    advanced = para$advanced, digits = digits
+)
 # ========================================================.
 
 
@@ -219,7 +223,6 @@ on.exit(dev.off(), add = TRUE)
 if ("None" %in% chosen_plots) {
     plot.new()
     text(0.5, 0.5, "NO PLOT SELECTED")
-
 } else {
     cat("\n", strrep("-", 60), "\n")
     cat("\nGraphical representations: plotting", length(chosen_plots), "chart(s):\n")

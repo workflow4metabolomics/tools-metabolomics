@@ -88,7 +88,6 @@ imputemsmv <- function(DataMatrix,
                        mnar_computation = c("quantile", "mean", "median"),
                        advanced,
                        digits) {
-
     # Match user-selected methods
     mnar_method <- match.arg(mnar_method)
     mar_method <- match.arg(mar_method)
@@ -408,7 +407,8 @@ plt_density <- function(df1, df2) {
         lty = 2,
         lwd = 2,
         main = "Density before vs after imputation",
-        xlab = expression(log[10](Intensity)))
+        xlab = expression(log[10](Intensity))
+    )
 
     # Density after imputation
     lines(density(logDataVector2),

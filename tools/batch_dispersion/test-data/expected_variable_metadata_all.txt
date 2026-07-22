@@ -1,0 +1,3 @@
+"variableMetadata"	"compoundname"	"compoundform"	"IntraBatchConvexDispersion"	"InterBatchConvexDispersion"	"IntraInterBatchDispersonRatio"
+"Intensity1"	"Mannitol"	"[M+H-C2H10O5]"	60.575385	99.002657	0.611856
+"Intensity2"	"Valine"	"[M+H-CH2O2]"	107.02375	99.843422	1.071916

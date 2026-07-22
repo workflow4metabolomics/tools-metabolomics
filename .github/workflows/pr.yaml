@@ -1,4 +1,10 @@
 name: Galaxy Tool Linting and Tests for push and PR
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 on:
   pull_request:
     paths-ignore:
@@ -440,11 +446,11 @@ jobs:
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v5
       with:
-        token: ${{ secrets.PAT }}
+        token: ${{ github.token }}
         issue-number: ${{ steps.getpr.outputs.number }}
         body: |
           Deployment status: **${{ needs.deploy.result }}**
-
+      
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   determine-success:

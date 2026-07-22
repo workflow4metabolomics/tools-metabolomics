@@ -1,0 +1,2 @@
+"variableMetadata"	"compoundname"	"compoundform"	"IntraBatchConvexDispersion"	"InterBatchConvexDispersion"	"IntraInterBatchDispersonRatio"
+"Intensity2"	"Valine"	"[M+H-CH2O2]"	107.02375	99.843422	1.071916

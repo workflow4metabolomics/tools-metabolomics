@@ -1,23 +1,18 @@
 <macros>
-    <token name="@TOOL_VERSION@">1.48.0</token>
-    <token name="@VERSION_SUFFIX@">3</token>
+    <token name="@W4M_VERSION@">2.2.7</token>
+    <token name="@TOOL_VERSION@">1.66.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
     <xml name="requirements">
         <requirements>
-            <requirement type="package" version="0.4_3">r-snow</requirement>
-            <requirement type="package" version="1.2.6">bioconductor-genomeinfodbdata</requirement>
             <requirement type="package" version="@TOOL_VERSION@">bioconductor-camera</requirement>
-            <requirement type="package" version="2.48.0">bioconductor-multtest</requirement>
+            <requirement type="package" version="0.4_3">r-snow</requirement>
+            <requirement type="package" version="1.2.15">bioconductor-genomeinfodbdata</requirement>
+            <requirement type="package" version="2.66.0">bioconductor-multtest</requirement>
             <requirement type="package" version="1.1_5">r-batch</requirement>
             <requirement type="package" version="1.3.26">graphicsmagick</requirement>
             <requirement type="package" version="3.0">zip</requirement>
         </requirements>
     </xml>
-    <xml name="stdio">
-        <stdio>
-            <exit_code range="1" level="fatal"/>
-        </stdio>
-    </xml>
-    <token name="@COMMAND_RSCRIPT@">LC_ALL=C Rscript $__tool_directory__/</token>
     <!-- raw file load for planemo test -->
     <token name="@COMMAND_FILE_LOAD@">
         #if $file_load_section.file_load_conditional.file_load_select == "yes":
@@ -99,13 +94,13 @@
     <!-- annotate_diffreport <test> commun part -->
     <xml name="test_annotate_diffreport">
         <section name="groupfwhm">
-            <param name="sigma" value="6"/>
-            <param name="perfwhm" value="0.6"/>
+            <param name="sigma" value="6" />
+            <param name="perfwhm" value="0.6" />
         </section>
         <section name="findisotopes">
-            <param name="maxcharge" value="3"/>
-            <param name="maxiso" value="4"/>
-            <param name="minfrac" value="0.5"/>
+            <param name="maxcharge" value="3" />
+            <param name="maxiso" value="4" />
+            <param name="minfrac" value="0.5" />
         </section>
         <section name="findgeneral">
             <param name="ppm" value="5"/>
@@ -128,22 +123,22 @@
                 <param name="png2" value="zip"/>
             </conditional>
         </section>
-        <expand macro="test_peaklist"/>
+        <expand macro="test_peaklist" />
     </xml>
     <xml name="test_annotate_quick_false">
-        <param name="quick" value="FALSE"/>
+        <param name="quick" value="FALSE" />
         <section name="groupcorr">
-            <param name="cor_eic_th" value="0.75"/>
-            <param name="graphMethod" value="hcs"/>
-            <param name="pval" value="0.05"/>
-            <param name="calcCiS" value="True"/>
-            <param name="calcIso" value="False"/>
-            <param name="calcCaS" value="False"/>
+            <param name="cor_eic_th" value="0.75" />
+            <param name="graphMethod" value="hcs" />
+            <param name="pval" value="0.05" />
+            <param name="calcCiS" value="True" />
+            <param name="calcIso" value="False" />
+            <param name="calcCaS" value="False" />
         </section>
     </xml>
     <xml name="test_annotate_quick_true">
         <conditional name="quick_block">
-            <param name="quick" value="TRUE"/>
+            <param name="quick" value="TRUE" />
         </conditional>
     </xml>
     <token name="@HELP_AUTHORS@">

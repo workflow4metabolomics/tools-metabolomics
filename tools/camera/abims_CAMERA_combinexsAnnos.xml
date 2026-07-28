@@ -1,18 +1,21 @@
 <tool id="abims_CAMERA_combinexsAnnos" name="CAMERA.combinexsAnnos" version="2.2.6+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@">
-
     <description>Wrapper function for the combinexsAnnos CAMERA function. Returns a dataframe with recalculated annotations.</description>
-
     <macros>
         <import>macros.xml</import>
     </macros>
-
+    <edam_operations>
+        <edam_operation>operation_0226</edam_operation>
+        <!-- Annotation -->
+        <edam_operation>operation_3436</edam_operation>
+        <!-- Aggregation -->
+    </edam_operations>
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="CAMERA_combinexsAnnos.r" />
-        <include path="lib.r" />
+        <include path="CAMERA_combinexsAnnos.r"/>
+        <include path="lib.r"/>
     </required_files>
     <expand macro="stdio"/>
-
     <command><![CDATA[
         @COMMAND_RSCRIPT@CAMERA_combinexsAnnos.r
         image_pos '$image_pos'
@@ -28,34 +31,28 @@
         numDigitsRT $export.numDigitsRT
 
     ]]></command>
-
     <inputs>
-        <param name="image_pos" type="data" label="Positive RData ion mode" format="rdata.camera.positive,rdata" help="output file from CAMERA.annotate using a positive polarity mode" />
-        <param name="image_neg" type="data" label="Negative RData ion mode" format="rdata.camera.negative,rdata" help="output file from CAMERA.annotate using a positive negative mode" />
-
+        <param name="image_pos" type="data" label="Positive RData ion mode" format="rdata.camera.positive,rdata" help="output file from CAMERA.annotate using a positive polarity mode"/>
+        <param name="image_neg" type="data" label="Negative RData ion mode" format="rdata.camera.negative,rdata" help="output file from CAMERA.annotate using a positive negative mode"/>
         <param name="pos" type="select" label="Returned peaklist polarity mode">
             <option value="TRUE" selected="true">positive</option>
-            <option value="FALSE" >negative</option>
+            <option value="FALSE">negative</option>
         </param>
-
-        <param name="tol" type="integer" value="2" label="Retention time window in seconds" help="[pos] As first step it searches for pseudospectra from the positive and the negative sample within a retention time window" />
-        <param name="ruleset" type="text" value="1,1" label="Matrix of matching rules" help="[ruleset] Matrix of matching rules. By default, the matrix (1,1) would create the M+H/M-H rule, since the first rule of xsa.pos@ruleset and xsa.neg@ruleset is M+H respectively M-H. Only rules with identical charge can be combined!" />
+        <param name="tol" type="integer" value="2" label="Retention time window in seconds" help="[pos] As first step it searches for pseudospectra from the positive and the negative sample within a retention time window"/>
+        <param name="ruleset" type="text" value="1,1" label="Matrix of matching rules" help="[ruleset] Matrix of matching rules. By default, the matrix (1,1) would create the M+H/M-H rule, since the first rule of xsa.pos@ruleset and xsa.neg@ruleset is M+H respectively M-H. Only rules with identical charge can be combined!"/>
         <param name="keep_meta" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Keep only the metabolites which match a difference "/>
-
         <section name="export" title="Export options">
             <param name="convertRTMinute" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Convert retention time (seconds) into minutes" help="Convert the columns rtmed, rtmin and rtmax into minutes"/>
-            <param name="numDigitsMZ" type="integer" value="4" label="Number of decimal places for mass values reported in ions' identifiers." help="A minimum of 4 decimal places is recommended. Useful to avoid duplicates within identifiers" />
-            <param name="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers" />
+            <param name="numDigitsMZ" type="integer" value="4" label="Number of decimal places for mass values reported in ions' identifiers." help="A minimum of 4 decimal places is recommended. Useful to avoid duplicates within identifiers"/>
+            <param name="numDigitsRT" type="integer" value="0" label="Number of decimal places for retention time values reported in ions' identifiers." help="Useful to avoid duplicates within identifiers"/>
         </section>
     </inputs>
-
     <outputs>
-        <data name="variableMetadata" format="tabular" label="${image_pos.name[:-6]}.combinexsAnnos.variableMetadata.tsv" from_work_dir="variableMetadata.tsv" />
+        <data name="variableMetadata" format="tabular" label="${image_pos.name[:-6]}.combinexsAnnos.variableMetadata.tsv" from_work_dir="variableMetadata.tsv"/>
         <!--
         <data name="rdata" format="rdata" label="${image_pos.name[:-6]}.combinexsAnnos.Rdata" from_work_dir="combinexsAnnos.RData" />
         -->
     </outputs>
-
     <tests>
         <test>
             <!-- TODO: generer des vrais dataset pos et neg-->
@@ -66,14 +63,12 @@
             <param name="ruleset" value="1,1"/>
             <section name="export">
                 <param name="convertRTMinute" value="True"/>
-                <param name="numDigitsMZ" value="4" />
-                <param name="numDigitsRT" value="1" />
+                <param name="numDigitsMZ" value="4"/>
+                <param name="numDigitsRT" value="1"/>
             </section>
-            <output name="variableMetadata" file="faahOK.xset.group.retcor.group.fillPeaks.annotate.positive.combinexsAnnos.variableMetadata.tsv" />
+            <output name="variableMetadata" file="faahOK.xset.group.retcor.group.fillPeaks.annotate.positive.combinexsAnnos.variableMetadata.tsv"/>
         </test>
     </tests>
-
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -270,8 +265,5 @@ Changelog/News
 
 
     ]]></help>
-
-    <expand macro="citation" />
-
-
+    <expand macro="citation"/>
 </tool>

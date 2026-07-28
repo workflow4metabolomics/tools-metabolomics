@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 
-
 # ----- ARGUMENTS BLACKLIST -----
 # xcms.r
 argBlacklist <- c("zipfile", "singlefile_galaxyPath", "singlefile_sampleName", "xfunction", "xsetRdataOutput", "sampleMetadataOutput", "ticspdf", "bicspdf", "rplotspdf")

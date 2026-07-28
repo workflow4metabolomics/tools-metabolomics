@@ -1,18 +1,16 @@
 <tool id="xcms_merge" name="xcms findChromPeaks Merger" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>Merge xcms findChromPeaks RData into a unique file to be used by group</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_merge.r" />
-        <include path="lib.r" />
+        <include path="xcms_merge.r"/>
+        <include path="lib.r"/>
     </required_files>
     <expand macro="stdio"/>
-
     <command><![CDATA[
         @COMMAND_RSCRIPT@xcms_merge.r
 
@@ -24,21 +22,17 @@
 
         @COMMAND_FILE_LOAD@
     ]]></command>
-
     <inputs>
-        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from multiple findChromPeaks" multiple="true" />
+        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from multiple findChromPeaks" multiple="true"/>
         <param name="sampleMetadata" label="Sample metadata file " format="tabular" type="data" optional="true" help="must contain at least one column with the sample id and one column with the sample class"/>
-
         <expand macro="input_file_load"/>
     </inputs>
-
     <outputs>
-        <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="xset.merged.RData" from_work_dir="merged.RData" />
+        <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="xset.merged.RData" from_work_dir="merged.RData"/>
         <data name="sampleMetadataOutput" format="tabular" label="xset.merged.sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv">
             <filter>not sampleMetadata</filter>
         </data>
     </outputs>
-
     <tests>
         <!-- DISABLE FOR TRAVIS
         <test>
@@ -58,18 +52,18 @@
         <test expect_num_outputs="1">
             <param name="images" value="ko15-xset.RData,ko16-xset.RData,wt15-xset.RData,wt16-xset.RData" ftype="rdata"/>
             <expand macro="test_file_load_single"/>
-            <param name="sampleMetadata" value="sampleMetadata.tab" />
+            <param name="sampleMetadata" value="sampleMetadata.tab"/>
             <assert_stdout>
-                <has_text_matching expression="ko15\s+KO" />
-                <has_text_matching expression="ko16\s+KO" />
-                <has_text_matching expression="wt15\s+WT" />
-                <has_text_matching expression="wt16\s+WT" />
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2506.1-4477.9 seconds (41.8-74.6 minutes)" />
-                <has_text text="Mass range: 200.1-600 m/z" />
-                <has_text text="Peaks: 9251 (about 2313 per sample)" />
-                <has_text text="Peak Groups: 0" />
-                <has_text text="Sample classes: KO, WT" />
+                <has_text_matching expression="ko15\s+KO"/>
+                <has_text_matching expression="ko16\s+KO"/>
+                <has_text_matching expression="wt15\s+WT"/>
+                <has_text_matching expression="wt16\s+WT"/>
+                <has_text text="object with 4 samples"/>
+                <has_text text="Time range: 2506.1-4477.9 seconds (41.8-74.6 minutes)"/>
+                <has_text text="Mass range: 200.1-600 m/z"/>
+                <has_text text="Peaks: 9251 (about 2313 per sample)"/>
+                <has_text text="Peak Groups: 0"/>
+                <has_text text="Sample classes: KO, WT"/>
             </assert_stdout>
         </test>
         <!--<test expect_failure="True">
@@ -81,7 +75,6 @@
             </assert_stderr>
         </test>-->
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -202,6 +195,5 @@ Changelog/News
 - NEW: a new tool to merge individual xcmsSet outputs to be used by xcms.group
 
     ]]></help>
-
-    <expand macro="citation" />
+    <expand macro="citation"/>
 </tool>

@@ -1,18 +1,16 @@
 <tool id="xcms_plot_chromatogram" name="xcms plot chromatogram" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>Plots base peak intensity chromatogram (BPI) and total ion current chromatogram (TIC) from MSnbase or xcms experiment(s)</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_plot_chromatogram.r" />
-        <include path="lib.r" />
+        <include path="xcms_plot_chromatogram.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_plot_chromatogram.r
 
         images 'c("${"\",\"".join(map(str, $images))}")'
@@ -23,26 +21,22 @@
 
         @COMMAND_FILE_LOAD@
     ]]></command>
-
     <inputs>
-        <param name="images" type="data" format="rdata.msnbase.raw,rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata.xcms.fillpeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks, groupChromPeaks or adjustRtime" multiple="true" />
+        <param name="images" type="data" format="rdata.msnbase.raw,rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata.xcms.fillpeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks, groupChromPeaks or adjustRtime" multiple="true"/>
         <param name="sampleMetadata" label="Sample metadata file " format="tabular" type="data" optional="true" help="Must contain at least one column with the sample id and one column with the sample class"/>
-
         <expand macro="input_file_load"/>
     </inputs>
-
     <outputs>
-        <data name="ticsPdf" format="pdf"  label="TICs.pdf" from_work_dir="TICs.pdf"/>
-        <data name="bpisPdf" format="pdf" label="BPIs.pdf" from_work_dir="BPIs.pdf" />
+        <data name="ticsPdf" format="pdf" label="TICs.pdf" from_work_dir="TICs.pdf"/>
+        <data name="bpisPdf" format="pdf" label="BPIs.pdf" from_work_dir="BPIs.pdf"/>
     </outputs>
-
     <tests>
         <test>
             <param name="images" value="faahKO-single-class.xset.merged.group.retcor.RData" ftype="rdata"/>
             <expand macro="test_file_load_single"/>
             <param name="sampleMetadata" value="sampleMetadata.tab" ftype="tabular"/>
-            <output name="ticsPdf" value="TICs.pdf" ftype="pdf" compare="sim_size" delta="5000" />
-            <output name="bpisPdf" value="BPIs.pdf" ftype="pdf" compare="sim_size" delta="5000" />
+            <output name="ticsPdf" value="TICs.pdf" ftype="pdf" compare="sim_size" delta="5000"/>
+            <output name="bpisPdf" value="BPIs.pdf" ftype="pdf" compare="sim_size" delta="5000"/>
         </test>
         <!-- DISABLE FOR TRAVIS
         <test>
@@ -53,7 +47,6 @@
         </test>
         -->
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -123,6 +116,5 @@ Changelog/News
 - NEW: This new tool will plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC) from xcms experience. It will replace those created by xcmsSet and retcor tools.
 
     ]]></help>
-
-    <expand macro="citation" />
+    <expand macro="citation"/>
 </tool>

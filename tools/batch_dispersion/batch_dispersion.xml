@@ -1,28 +1,28 @@
-<tool id="batch_dispersion" name="Batch Dispersion" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.11" profile="23.0">
-  <description>This tool plots a convex polygon around intensities values based on injection order to visualize batch
-        variability and computes associated indicators to assess intra and inter batch dispersion.</description>
-  <macros>
-        <token name="@TOOL_VERSION@">0.1.5</token>
-        <token name="@VERSION_SUFFIX@">0</token>
-  </macros>
-  <edam_topics>
-    <edam_topic>topic_3172</edam_topic>
-    <edam_topic>topic_0092</edam_topic>
-  </edam_topics>
-  <creator>
-    <person givenName="Brice" familyName="Mulot" email="brice.mulot@inrae.fr"/>
-    <person givenName="Etienne" familyName="Jules" email="etienne.jules@inrae.fr"/>
-  </creator>
-  <requirements>
-    <requirement type="package" version="4.5.2">r-base</requirement>
-    <requirement type="package" version="3.5.2">r-ggplot2</requirement>
-    <requirement type="package" version="1.7.5">r-optparse</requirement>
-    <requirement type="package" version="@TOOL_VERSION@">r-dispersionindicators</requirement>
-  </requirements>
-  <required_files>
-    <include path="convex_hull_analysis.R"/>
-  </required_files>
-  <command detect_errors="exit_code"><![CDATA[
+<tool id="batch_dispersion" name="Batch Dispersion" version="0.1.5+galaxy1" python_template_version="3.11"
+      profile="23.0">
+    <description>This tool plots a convex polygon around intensity values based on analysis order and batch to
+        visualize batch variability and computes associated indicators to assess intra and inter batch dispersion.
+    </description>
+    <edam_topics>
+      <edam_topic>topic_3172</edam_topic>
+      <edam_topic>topic_0092</edam_topic>
+    </edam_topics>
+    <creator>
+      <person givenName="Brice" familyName="Mulot" email="brice.mulot@inrae.fr" />
+      <person givenName="Etienne" familyName="Jules" email="etienne.jules@inrae.fr" />
+    </creator>
+    <requirements>
+        <requirement type="package" version="4.5.2">r-base</requirement>
+	    <requirement type="package" version="3.5.2">r-ggplot2</requirement>
+	    <requirement type="package" version="1.7.5">r-optparse</requirement>
+        <requirement type="package" version="0.1.5">r-dispersionindicators</requirement>
+    </requirements>
+    
+    <required_files>
+      <include path="plot_convex_hull.R" />
+    </required_files>
+
+    <command detect_errors="exit_code"><![CDATA[
         Rscript '$__tool_directory__/convex_hull_analysis.R'
             --dataMatrix '$dataMatrix'
             --sampleMetadata '$sampleMetadata'
@@ -37,79 +37,91 @@
             --output_plot '$output_plot'
             --output_vm '$output_vm'
     ]]></command>
-  <inputs>
-    <param name="dataMatrix" type="data" format="tabular" label="TSV File dataMatrix"/>
-    <param name="sampleMetadata" type="data" format="tabular" label="TSV File sampleMetadata"/>
-    <param name="variableMetadata" type="data" format="tabular" label="TSV File variableMetadata"/>
-    <param name="batch_col" type="data_column" data_ref="sampleMetadata" label="The sampleMetadata column with batch information"/>
-    <param name="sample_order_col" type="data_column" data_ref="sampleMetadata" label="The sampleMetadata column with sample order information"/>
-    <param name="variables" type="select" label="An optional subset of variables to plot" optional="true" multiple="true">
-      <options from_dataset="variableMetadata">
-        <column name="name" index="0"/>
-        <column name="value" index="0"/>
-      </options>
-    </param>
-    <param name="global" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="true" label="Use the global injection order not by batch"/>
-    <param name="points" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="true" label="Display points on the graph"/>
-  </inputs>
-  <outputs>
-    <data name="output_plot" format="pdf" label="Convex Hull Plot(s)"/>
-    <data name="output_vm" format="tabular" label="tabular files with variables metadata appended with new columns filled with computed dispersion indicators"/>
-  </outputs>
-  <tests>
-    <!-- Test of plot for all variables (no metabolite selected) -->
-    <test>
-      <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
-      <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
-      <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-      <param name="batch_col" value="2"/>
-      <param name="sample_order_col" value="3"/>
-      <param name="global" value="TRUE"/>
-      <param name="points" value="TRUE"/>
-      <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.2"/>
-      <output name="output_vm" file="expected_variable_metadata_all.txt"/>
-    </test>
-    <!-- Test of plot for 1 variable (Intensity1) -->
-    <test>
-      <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
-      <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
-      <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-      <param name="batch_col" value="2"/>
-      <param name="sample_order_col" value="3"/>
-      <param name="variables" value="Intensity1"/>
-      <param name="global" value="TRUE"/>
-      <param name="points" value="TRUE"/>
-      <output name="output_plot" file="expected_plot_int1.pdf" compare="sim_size" delta_frac="0.2"/>
-      <output name="output_vm" file="expected_variable_metadata1.txt"/>
-    </test>
-    <!-- Test of plot for 1 variable (Intensity2) -->
-    <test>
-      <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
-      <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
-      <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-      <param name="batch_col" value="2"/>
-      <param name="sample_order_col" value="3"/>
-      <param name="variables" value="Intensity2"/>
-      <param name="global" value="TRUE"/>
-      <param name="points" value="TRUE"/>
-      <output name="output_plot" file="expected_plot_int2.pdf" compare="sim_size" delta_frac="0.2"/>
-      <output name="output_vm" file="expected_variable_metadata2.txt"/>
-    </test>
-    <!-- Test of plot for multiple variables (Intensity1,Intensity2) -->
-    <test>
-      <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
-      <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
-      <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-      <param name="batch_col" value="2"/>
-      <param name="sample_order_col" value="3"/>
-      <param name="variables" value="Intensity1,Intensity2"/>
-      <param name="global" value="TRUE"/>
-      <param name="points" value="TRUE"/>
-      <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.2"/>
-      <output name="output_vm" file="expected_variable_metadata_all.txt"/>
-    </test>
-  </tests>
-  <help><![CDATA[
+
+    <inputs>
+        <param name="dataMatrix" type="data" format="tabular,tsv" label="Data matrix file" refresh_on_change="true"
+            help="Main data matrix. Rows are variables (features), columns are samples. The first column must contain variable identifiers, and the first row must contain sample identifiers." />
+        <param name="sampleMetadata" type="data" format="tabular,tsv" label="Sample metadata file" refresh_on_change="true"
+            help="Sample metadata table. Each row corresponds to a sample, and columns provide sample annotations (e.g., class, batch, group). The first column must contain sample identifiers matching the data matrix columns." />
+        <param name="variableMetadata" type="data" format="tabular,tsv" label="Variable metadata file" refresh_on_change="true"
+            help="Variable metadata table. Each row corresponds to a variable (feature), and columns provide variable annotations (e.g., m/z, retention time). The first column must contain variable identifiers matching the data matrix rows." />
+        <param name='batch_col' type='data_column'
+               data_ref="sampleMetadata" use_header_names="true"
+               label='The sampleMetadata column with batch information' refresh_on_change="true" />
+        <param name='sample_order_col' type='data_column' data_ref="sampleMetadata" use_header_names="true"
+               label='The sampleMetadata column with sample order information' refresh_on_change="true"/>
+        <param name='variables' type='select' label='An optional subset of variables to plot' optional="true"
+               multiple="true" refresh_on_change="true">
+            <options from_dataset="variableMetadata" filter="index > 0">
+                <column name="name" index="0"/>
+                <column name="value" index="0"/>
+            </options>
+        </param>
+    	<param name='global' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use the global injection order not by batch'/>
+    	<param name='points' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Display points on the graph'/>
+    </inputs>
+
+
+    <outputs>
+      <data name="output_plot" format="pdf" label="ConvexHullPlots.pdf"/>
+      <data name="output_vm" format="tabular" label="BatchDisp_${variableMetadata.name}" />
+    </outputs>
+
+    <tests>
+        <!-- Test of plot for all variables (no metabolite selected) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='1'/>
+            <param name="sample_order_col" value='2'/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.1"/>
+            <output name="output_vm" file="expected_variable_metadata_all.txt"/>
+        </test>
+        <!-- Test of plot for 1 variable (Intensity1) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='1'/>
+            <param name="sample_order_col" value='2'/>
+            <param name='variables' value="Intensity1"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output_plot" file="expected_plot_int1.pdf" compare="sim_size" delta_frac="0.1"/>
+            <output name="output_vm" file="expected_variable_metadata1.txt"/>
+        </test>
+        <!-- Test of plot for 1 variable (Intensity2) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='1'/>
+            <param name="sample_order_col" value='2'/>
+            <param name='variables' value="Intensity2"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output_plot" file="expected_plot_int2.pdf" compare="sim_size" delta_frac="0.1"/>
+            <output name="output_vm" file="expected_variable_metadata2.txt"/>
+        </test>
+        <!-- Test of plot for multiple variables (Intensity1,Intensity2) -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='1'/>
+            <param name="sample_order_col" value='2'/>
+            <param name='variables' value="Intensity1,Intensity2"/>
+            <param name="global" value="TRUE"/>
+            <param name="points" value="TRUE"/>
+            <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.1"/>
+            <output name="output_vm" file="expected_variable_metadata_all.txt"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
 
 .. class:: infomark
 
@@ -133,8 +145,10 @@ Batch Dispersion (Convex Hull Analysis)
 DESCRIPTION
 ===========
 
-This tool analyzes metabolomic data to assess batch variability by plotting convex hulls around metabolite intensities
-ordered by injection order. It computes three dispersion indicators for each metabolite:
+This tool assesses variability from data obtained by a sequence of analysis involving multiple batches and analyses order,
+e.g. as in metabolomics which is the context of design of this tool. More precisely batch variability is assessed by
+plotting convex hulls around variable values (e.g. metabolites intensities) ordered by analysis order (e.g. injection order).
+It computes three dispersion indicators for each variable:
 
 - **Intra Batch Convex Dispersion**: Variability within each batch
 - **Inter Batch Convex Dispersion**: Variability between batches
@@ -163,16 +177,16 @@ INPUT FILES
 +----------------------------+---------+
 
 **Data matrix file:**
-  | TSV file with metabolite abundance data. Rows represent metabolites, columns represent samples.
-  | First column should contain metabolite identifiers.
+  | Tabular file with variable abundance data. Rows represent variables, columns represent samples.
+  | First column should contain variable identifiers.
 
 **Sample metadata file:**
   | TSV file with sample information. Rows represent samples (must match Data matrix columns).
   | Must contain columns for batch information and injection/sample order.
 
 **Variable metadata file:**
-  | TSV file with metabolite information. Rows represent metabolites (must match Data matrix rows).
-  | First column should contain metabolite identifiers.
+  | TSV file with variable information. Rows represent variables (must match Data matrix rows).
+  | First column should contain variable identifiers.
   | Output will include three new columns with computed dispersion indicators.
 
 .. class:: warningmark
@@ -185,12 +199,12 @@ OUTPUT FILES
 ------------
 
 **Convex Hull Plot (PDF):**
-  | PDF file containing visualizations of convex hulls for all selected metabolites.
+  | PDF file containing visualizations of convex hulls for all selected variables.
   | Each plot shows intensity values (y-axis) vs. injection order (x-axis), grouped by batch.
   | Data points may be displayed as individual markers.
 
 **Variable Metadata Output (TSV):**
-  | Updated variable metadata file with three new columns containing dispersion indicators for each metabolite:
+  | Updated variable metadata file with three new columns containing dispersion indicators for each variable:
   |
   | - IntraBatchConvexDispersion: Dispersion within each batch
   | - InterBatchConvexDispersion: Dispersion between batches
@@ -217,15 +231,15 @@ TOOL PARAMETERS
   | Used to group samples by batch for dispersion analysis.
 
 **sample_order_col:**
-  | Column name or index in Sample metadata containing injection/sample order information (e.g., injectionOrder).
+  | Column name or index in Sample metadata containing analysis/sample order information (e.g., injectionOrder).
   | Used to define the order for plotting convex hulls.
 
 **variables (optional):**
-  | Select specific metabolites to analyze. If empty, all metabolites from the variable metadata are analyzed.
-  | Multiple metabolites can be selected.
+  | Select specific variables to analyze. If empty, all variables from the variable metadata are analyzed.
+  | Multiple variables can be selected.
 
 **global:**
-  | **TRUE (checked):** Uses global injection order across all batches for convex analysis.
+  | **TRUE (checked):** Uses global sample order across all batches for convex analysis.
   | **FALSE (unchecked):** Performs batchwise analysis within each batch separately.
   | Default: TRUE
 
@@ -240,7 +254,7 @@ TOOL PARAMETERS
 EXAMPLE OF USE
 ==============
 
-**Typical workflow:**
+**Typical workflow in metabolomics:**
 
 1. Run MS data extraction (e.g., XCMS, CAMERA)
 2. Select Data matrix, Sample metadata, and Variable metadata outputs
@@ -264,7 +278,6 @@ EXAMPLE OF USE
 KNOWN ISSUES
 ------------
 
-- Column selection requires exact column indices or names; verify that batch and injection order columns exist in your sample metadata
 - Missing or zero intensity values are imputed using median value before convex analysis
 
 ---------------------------------------------------
@@ -280,7 +293,11 @@ Version 0.1.5+galaxy1
 Initial version
 
 ]]> </help>
-  <citations>
-    <citation type="doi">10.1016/j.chemolab.2024.105148</citation>
-  </citations>
+
+
+    <citations>
+        <citation type="doi">10.1016/j.chemolab.2024.105148</citation>
+    </citations>
+    
 </tool>
+

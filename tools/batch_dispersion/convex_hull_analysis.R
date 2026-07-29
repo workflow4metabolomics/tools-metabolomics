@@ -76,7 +76,7 @@ read_data_file <- function(file, description) {
     }
     df <- tryCatch(
         {
-            read.table(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE, fill = TRUE)
+            read.csv(file, header = TRUE, sep = "\t", row.names = 1)
         },
         error = function(e) {
             stop(paste("Error reading", description, "file:", conditionMessage(e)))
@@ -90,20 +90,17 @@ dataMatrix <- read_data_file(opt$dataMatrix, "dataMatrix")
 sampleMetadata <- read_data_file(opt$sampleMetadata, "sampleMetadata")
 variableMetadata <- read_data_file(opt$variableMetadata, "variableMetadata")
 variables <- strsplit(opt$variables, ",")[[1]]
-batch_col <- names(sampleMetadata)[as.integer(opt$batch)]
-order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col)]
+# We remove 1 from the column number, because the first column actually turns into rownames
+batch_col <- names(sampleMetadata)[as.integer(opt$batch) - 1]
+order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col) - 1]
 mode <- "batchwise"
 if (opt$global) {
     mode <- "global"
 }
 
 #### ---- Create data ----
-variableMetadata <- data.frame(variableMetadata, row.names = 1)
-dataMatrix_t <- as.data.frame(t(dataMatrix[-1]))
-colnames(dataMatrix_t) <- dataMatrix[[1]]
-dataMatrix_t$sampleMetadata <- rownames(dataMatrix_t)
-dataMatrix_t <- dataMatrix_t[, c("sampleMetadata", setdiff(names(dataMatrix_t), "sampleMetadata"))]
-pool_s <- merge(sampleMetadata, dataMatrix_t, by = "sampleMetadata")
+dataMatrix_t <- t(dataMatrix)
+pool_s <- transform(merge(sampleMetadata, dataMatrix_t, by = 0), row.names=Row.names, Row.names=NULL)
 pool_s <- pool_s[order(pool_s[[order_col]]), ]
 if (length(variables) == 0) {
     variable_columns <- rownames(variableMetadata)
@@ -131,10 +128,11 @@ write.table(
     variableMetadata[variable_columns, ],
     file = opt$output_vm,
     sep = "\t",
+    quote = FALSE,
     row.names = FALSE
 )
 cat("VM saved as", opt$output_vm, "\n")
-#### ---- Call to ploting function ----
+#### ---- Call to plotting function ----
 tryCatch(
     {
         plot_all_convex_hulls(

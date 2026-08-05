@@ -15,7 +15,7 @@
         <requirement type="package" version="4.5.2">r-base</requirement>
 	    <requirement type="package" version="3.5.2">r-ggplot2</requirement>
 	    <requirement type="package" version="1.7.5">r-optparse</requirement>
-        <requirement type="package" version="0.1.5">r-dispersionindicators</requirement>
+        <requirement type="package" version="0.1.6">r-dispersionindicators</requirement>
     </requirements>
     
     <required_files>
@@ -32,7 +32,8 @@
             #if $variables
                 --variables '$variables'
             #end if
-            --global '$global'
+            --single_graph '$single_graph'
+            --mode '$mode'
             --points '$points'
             --output_plot '$output_plot'
             --output_vm '$output_vm'
@@ -50,21 +51,35 @@
                label='The sampleMetadata column with batch information' refresh_on_change="true" />
         <param name='sample_order_col' type='data_column' data_ref="sampleMetadata" use_header_names="true"
                label='The sampleMetadata column with sample order information' refresh_on_change="true"/>
-        <param name='variables' type='select' label='An optional subset of variables to plot' optional="true"
+        <param name='variables' type='select' label='An optional subset of variables to analyse' optional="true"
                multiple="true" refresh_on_change="true">
-            <options from_dataset="variableMetadata" filter="index > 0">
+            <options from_dataset="variableMetadata">
                 <column name="name" index="0"/>
                 <column name="value" index="0"/>
             </options>
         </param>
-    	<param name='global' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Use the global injection order not by batch'/>
+        <conditional name="graph_type">
+            <param name='mode' type='select'
+               label='Sample order mode'
+                   help="Use the global sample order or a batch-wise one (affect inter-batch dispersion and ratio computations)">
+                <option value="global">Global</option>
+                <option value="batchwise">Batch-wise</option>
+            </param>
+            <when value="global">
+                <param name='single_graph' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true'
+                       label='Display all variables on the same graph (in case of global sample order)'/>
+            </when>
+            <when value="batchwise">
+                <param name='single_graph' type='hidden' value='false'/>
+            </when>
+        </conditional>
     	<param name='points' type='boolean' truevalue='TRUE' falsevalue='FALSE' checked='true' label='Display points on the graph'/>
     </inputs>
 
-
     <outputs>
       <data name="output_plot" format="pdf" label="ConvexHullPlots.pdf"/>
-      <data name="output_vm" format="tabular" label="BatchDisp_${variableMetadata.name}" />
+      <data name="output_vm" format="tabular"
+            label="BatchDisp.${'Filtered.' if $variables else ''}${variableMetadata.name}" />
     </outputs>
 
     <tests>
@@ -73,9 +88,10 @@
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
             <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-            <param name="batch_col" value='1'/>
-            <param name="sample_order_col" value='2'/>
-            <param name="global" value="TRUE"/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
+            <param name="graph_type|single_graph" value="false"/>
+            <param name="graph_type|mode" value="global"/>
             <param name="points" value="TRUE"/>
             <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.1"/>
             <output name="output_vm" file="expected_variable_metadata_all.txt"/>
@@ -85,10 +101,11 @@
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
             <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-            <param name="batch_col" value='1'/>
-            <param name="sample_order_col" value='2'/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
             <param name='variables' value="Intensity1"/>
-            <param name="global" value="TRUE"/>
+            <param name="graph_type|single_graph" value="false"/>
+            <param name="graph_type|mode" value="global"/>
             <param name="points" value="TRUE"/>
             <output name="output_plot" file="expected_plot_int1.pdf" compare="sim_size" delta_frac="0.1"/>
             <output name="output_vm" file="expected_variable_metadata1.txt"/>
@@ -98,10 +115,11 @@
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
             <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-            <param name="batch_col" value='1'/>
-            <param name="sample_order_col" value='2'/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
             <param name='variables' value="Intensity2"/>
-            <param name="global" value="TRUE"/>
+            <param name="graph_type|single_graph" value="false"/>
+            <param name="graph_type|mode" value="global"/>
             <param name="points" value="TRUE"/>
             <output name="output_plot" file="expected_plot_int2.pdf" compare="sim_size" delta_frac="0.1"/>
             <output name="output_vm" file="expected_variable_metadata2.txt"/>
@@ -111,12 +129,26 @@
             <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
             <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
             <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
-            <param name="batch_col" value='1'/>
-            <param name="sample_order_col" value='2'/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
             <param name='variables' value="Intensity1,Intensity2"/>
-            <param name="global" value="TRUE"/>
+            <param name="graph_type|single_graph" value="false"/>
+            <param name="graph_type|mode" value="global"/>
             <param name="points" value="TRUE"/>
             <output name="output_plot" file="expected_plots_all.pdf" compare="sim_size" delta_frac="0.1"/>
+            <output name="output_vm" file="expected_variable_metadata_all.txt"/>
+        </test>
+        <!-- Test of plot for all variables on the same graph -->
+        <test>
+            <param name="dataMatrix" value="convexdispersion_dataMatrix.txt"/>
+            <param name="sampleMetadata" value="convexdispersion_sampleMetadata.txt"/>
+            <param name="variableMetadata" value="convexdispersion_variableMetadata.txt"/>
+            <param name="batch_col" value='2'/>
+            <param name="sample_order_col" value='3'/>
+            <param name="graph_type|single_graph" value="true"/>
+            <param name="graph_type|mode" value="global"/>
+            <param name="points" value="TRUE"/>
+            <output name="output_plot" file="expected_single_plot.pdf" compare="sim_size" delta_frac="0.1"/>
             <output name="output_vm" file="expected_variable_metadata_all.txt"/>
         </test>
     </tests>
@@ -238,10 +270,14 @@ TOOL PARAMETERS
   | Select specific variables to analyze. If empty, all variables from the variable metadata are analyzed.
   | Multiple variables can be selected.
 
-**global:**
-  | **TRUE (checked):** Uses global sample order across all batches for convex analysis.
-  | **FALSE (unchecked):** Performs batchwise analysis within each batch separately.
-  | Default: TRUE
+**mode:**
+  | **"batchwise":** Performs batchwise analysis within each batch separately.
+  | **"global" (default):** Uses global sample order across all batches for convex analysis.
+
+**single_graph:**
+  | **TRUE (checked):** Display all variables on the same graph (in case of global sample order).
+  | **FALSE (unchecked):** Display each variable on a separate graph.
+  | Default: FALSE
 
 **points:**
   | **TRUE (checked):** Display individual intensity data points on the convex hull plots.

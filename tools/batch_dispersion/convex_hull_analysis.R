@@ -28,11 +28,17 @@ option_list <- list(
         help = "variableMetadata containing the data",
         metavar = "NAME"
     ),
-    make_option(c("-g", "--global"),
+    make_option(c("--single_graph"),
         type = "logical",
         default = FALSE,
-        help = "Injection Order Global used",
+        help = "Display all variables on the same graph",
         metavar = "BOOL"
+    ),
+    make_option(c("--mode"),
+        type = "character",
+        default = "global",
+        help = "Injection Order Mode (batchwise/global)",
+        metavar = "MODE"
     ),
     make_option(c("-x", "--batch_col"),
         type = "character",
@@ -69,6 +75,14 @@ option_list <- list(
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
 
+if (!(opt$mode %in% c("batchwise", "global"))) {
+    stop("Invalid mode. Please specify either 'batchwise' or 'global'.")
+}
+
+if ((opt$single_graph) & (opt$mode == "batchwise")) {
+    stop("When displaying all variables on the same graph, the global injection order must be used.")
+}
+
 #### ---- Read data function ----
 read_data_file <- function(file, description) {
     if (!file.exists(file)) {
@@ -93,10 +107,7 @@ variables <- strsplit(opt$variables, ",")[[1]]
 # We remove 1 from the column number, because the first column actually turns into rownames
 batch_col <- names(sampleMetadata)[as.integer(opt$batch) - 1]
 order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col) - 1]
-mode <- "batchwise"
-if (opt$global) {
-    mode <- "global"
-}
+mode <- opt$mode
 
 #### ---- Create data ----
 dataMatrix_t <- t(dataMatrix)
@@ -107,6 +118,7 @@ if (length(variables) == 0) {
 } else {
     variable_columns <- variables
 }
+variableMetadata <- variableMetadata[variable_columns,]
 #### ---- Call function for convex analysis ----
 result <- convex_analysis_of_variables(
     pool_s,
@@ -135,12 +147,20 @@ cat("VM saved as", opt$output_vm, "\n")
 #### ---- Call to plotting function ----
 tryCatch(
     {
-        plot_all_convex_hulls(
-            target_file_path = opt$output_plot,
-            convex_analysis_res = result,
-            show_points = opt$points,
-            mode = mode
-        )
+        if (opt$single_graph){
+            shared_single_plot_convex_hulls(
+              target_file_path = opt$output_plot,
+              convex_analysis_res = result,
+              show_points = opt$points
+            )
+        } else {
+            plot_all_convex_hulls(
+                target_file_path = opt$output_plot,
+                convex_analysis_res = result,
+                show_points = opt$points,
+                mode = mode
+            )
+        }
         cat("Plot saved as", opt$output_plot, "\n")
     },
     warning = function(war) {

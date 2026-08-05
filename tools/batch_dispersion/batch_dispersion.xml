@@ -19,7 +19,7 @@
         <requirement type="package" version="4.5.2">r-base</requirement>
 	    <requirement type="package" version="3.5.2">r-ggplot2</requirement>
 	    <requirement type="package" version="1.7.5">r-optparse</requirement>
-        <requirement type="package" version="0.1.6">r-dispersionindicators</requirement>
+        <requirement type="package" version="@TOOL_VERSION@">r-dispersionindicators</requirement>
     </requirements>
     
     <required_files>

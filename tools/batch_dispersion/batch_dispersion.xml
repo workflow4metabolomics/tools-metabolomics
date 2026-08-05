@@ -1,8 +1,12 @@
-<tool id="batch_dispersion" name="Batch Dispersion" version="0.1.5+galaxy1" python_template_version="3.11"
+<tool id="batch_dispersion" name="Batch Dispersion" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.11"
       profile="23.0">
     <description>This tool plots a convex polygon around intensity values based on analysis order and batch to
         visualize batch variability and computes associated indicators to assess intra and inter batch dispersion.
     </description>
+    <macros>
+        <token name="@TOOL_VERSION@">0.1.6</token>
+        <token name="@VERSION_SUFFIX@">1</token>
+    </macros>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>
       <edam_topic>topic_0092</edam_topic>

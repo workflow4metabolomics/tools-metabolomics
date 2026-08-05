@@ -23,7 +23,7 @@
     </requirements>
     
     <required_files>
-      <include path="plot_convex_hull.R" />
+      <include path="convex_hull_analysis.R" />
     </required_files>
 
     <command detect_errors="exit_code"><![CDATA[

@@ -1,0 +1,10 @@
+runit/output/
+tool_test_output.*
+.#*
+\#*#
+*~
+.swp
+.*.swp
+NA
+planemo-venv
+.Rproj.user

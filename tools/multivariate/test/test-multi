@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Constants {{{1
+################################################################
+
+PROG_PATH=$(dirname $0)
+
+# MAIN {{{1
+################################################################
+
+$PROG_PATH/../multivariate_wrapper.R dataMatrix_in $PROG_PATH/../test-data/input-dataMatrix.tsv sampleMetadata_in $PROG_PATH/../test-data/input-sampleMetadata.tsv variableMetadata_in $PROG_PATH/../test-data/input-variableMetadata.tsv respC age predI 1 orthoI 1 testL FALSE sampleMetadata_out $PROG_PATH/outputSampleMetadata.tsv variableMetadata_out $PROG_PATH/outputVariableMetadata.tsv
+
+# Computed numbers are not always the same. We cannot use diff directly on files.
+
+# 0) Check they have the same number of lines
+nlines=$(wc -l <"$PROG_PATH/outputSampleMetadata.tsv")
+ref_nlines=$(wc -l <"$PROG_PATH/../test-data/output-sampleMetadata.tsv")
+if [ $nlines != $ref_nlines ] ; then
+	echo "Incorrect output sample metadata." >&2
+	exit 1
+fi
+
+# 1) We check the header line
+head -n 1 "$PROG_PATH/outputSampleMetadata.tsv" > "$PROG_PATH/header.tsv"
+head -n 1 "$PROG_PATH/../test-data/output-sampleMetadata.tsv" > "$PROG_PATH/ref_header.tsv"
+if ! diff "$PROG_PATH/header.tsv" "$PROG_PATH/ref_header.tsv" ; then
+	echo "Incorrect output sample metadata." >&2
+	exit 1
+fi
+
+# 2) We remove computed values and compare what's left
+awk 'BEGIN{FS=OFS="\t"} {$7=$8=$9="";sub("\t\t","\t")}1' "$PROG_PATH/outputSampleMetadata.tsv" > "$PROG_PATH/nocomput.tsv"
+awk 'BEGIN{FS=OFS="\t"} {$7=$8=$9="";sub("\t\t","\t")}1' "$PROG_PATH/../test-data/output-sampleMetadata.tsv" > "$PROG_PATH/ref_nocomput.tsv"
+if ! diff "$PROG_PATH/nocomput.tsv" "$PROG_PATH/ref_nocomput.tsv" ; then
+	echo "Incorrect output sample metadata." >&2
+	exit 1
+fi

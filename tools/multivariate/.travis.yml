@@ -1,0 +1,18 @@
+notifications:
+ email:
+  recipients:
+    - etienne.thevenot@cea.fr
+
+before_install:
+ - sudo sed -i -e '$adeb http://cran.univ-paris1.fr/bin/linux/ubuntu trusty/' /etc/apt/sources.list
+ - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+ - sudo apt-get update
+ - sudo apt-get install -y --no-install-recommends r-base
+ - sudo R -e "install.packages('batch', dependencies = TRUE, repos = 'https://cloud.r-project.org/')"
+    - sudo R -e "source('http://bioconductor.org/biocLite.R') ; biocLite('ropls')"
+ - sudo apt-get install -y python-virtualenv
+
+script:
+ - make test
+ - make planemolint
+ - make planemotest

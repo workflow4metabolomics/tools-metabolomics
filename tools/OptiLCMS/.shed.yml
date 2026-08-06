@@ -1,0 +1,12 @@
+categories: [Metabolomics]
+description: '[W4M][Utils] Auto-optimization of parameters'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / 
+  optimize the critical parameters of peak picking and alignment for the following 
+  data processing in an automatic way. It utilizes the extracted ROI data and the 
+  internal instrument-specific parameters. Parallel computing can be enabled. 
+  The number of cores user want to use could be specified. More RAM will be 
+  consumed if the parallel core is set high.'
+name: w4mconcatenate
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics

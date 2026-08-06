@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# Global variables & constants
+SCRIPT_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
+REF_DIR="$SCRIPT_DIR/../test-data"
+OUT_DIR="$SCRIPT_DIR/output"
+[[ -d $OUT_DIR ]] || mkdir -p "$OUT_DIR"
+
+function error {
+	echo "$*" >&2
+	exit 1
+}
+
+function check_file {
+	[[ -f "$1" ]] || error "Cannot find file \"$1\"."
+}
+
+function test_mtbls_file {
+
+	local study="$1"
+	local sample_metadata_file="$2"
+	local sample_variable_matrix_file="$3"
+	local variable_metadata_file="$4"
+	local zip_file=$REF_DIR/$study.zip
+	local extract_dir=$OUT_DIR/$study
+	local ref_samp_metadata_file="$REF_DIR/$study-w4m-sample-metadata.tsv"
+	local ref_samp_var_matrix_file="$REF_DIR/$study-w4m-sample-variable-matrix.tsv"
+	local ref_var_metadata_file="$REF_DIR/$study-w4m-variable-metadata.tsv"
+
+	# Unzip
+	check_file "$zip_file"
+	rm -rf $extract_dir
+	unzip -d $extract_dir $zip_file
+
+	# Extract
+	$SCRIPT_DIR/../isa2w4m.py -i $extract_dir -d $OUT_DIR || exit 1
+
+	# Check output files
+	check_file "$OUT_DIR/$sample_metadata_file"
+	check_file "$OUT_DIR/$sample_variable_matrix_file"
+	check_file "$OUT_DIR/$variable_metadata_file"
+
+	# Check ref files
+	check_file "$ref_samp_metadata_file"
+	check_file "$ref_samp_var_matrix_file"
+	check_file "$ref_var_metadata_file"
+
+	# Compare
+	diff "$OUT_DIR/$sample_metadata_file" "$ref_samp_metadata_file" || exit 2
+	diff "$OUT_DIR/$sample_variable_matrix_file" "$ref_samp_var_matrix_file" || exit 3
+	diff "$OUT_DIR/$variable_metadata_file" "$ref_var_metadata_file" || exit 4
+}
+
+# Test files
+test_mtbls_file MTBLS30 \
+	"MTBLS30-a_york_src_GC_mass_spectrometry.txt-sample-metadata.tsv"\
+	"MTBLS30-a_york_src_GC_mass_spectrometry.txt-sample-variable-matrix.tsv"\
+	"MTBLS30-a_york_src_GC_mass_spectrometry.txt-variable-metadata.tsv"
+test_mtbls_file MTBLS174 \
+	"MTBLS174-a_hna_fld_metabolite_profiling_NMR_spectroscopy.txt-sample-metadata.tsv" \
+	"MTBLS174-a_hna_fld_metabolite_profiling_NMR_spectroscopy.txt-sample-variable-matrix.tsv" \
+	"MTBLS174-a_hna_fld_metabolite_profiling_NMR_spectroscopy.txt-variable-metadata.tsv"
+#test_mtbls_file MTBLS719 \
+#	""\
+#	""\
+#	""

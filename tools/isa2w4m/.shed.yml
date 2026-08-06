@@ -1,0 +1,9 @@
+name: isa2w4m
+owner: prog
+description: '[Metabolomics][W4M] ISA to W4M converter.'
+homepage_url: https://github.com/workflow4metabolomics/tools-metabolomics
+author: Workflow4Metabolomics
+type: unrestricted
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/isa2w4m
+categories: [Metabolomics]
+long_description: 'Converts ISA-Tab datasets into the three W4M output files: data matrix, sample metadata, and variable metadata.'

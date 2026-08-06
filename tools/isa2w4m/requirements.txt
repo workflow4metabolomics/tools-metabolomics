@@ -1,0 +1,4 @@
+markupsafe==2.0.1
+toml>=0.9.4
+isatools==0.12.2
+planemo

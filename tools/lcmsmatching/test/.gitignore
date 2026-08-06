@@ -1,0 +1,15 @@
+cache
+.RData
+.Rhistory
+*-output.tsv
+*-output-peaks.tsv
+!*-input.tsv
+!filedb.tsv
+*.html
+!res/*
+res/.*.swp
+*-main.tsv
+*-peak.tsv
+*.txt
+*.log
+test_*.tsv

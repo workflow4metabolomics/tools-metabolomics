@@ -2,7 +2,7 @@ name: isoplot
 owner: workflow4metabolomics
 description: Isoplot is a software for the visualisation of MS data from C13 labelling experiments
 categories: [Metabolomics, Visualization]
-long_description: Isoplot is a software for the visualisation of MS data from C13 labelling experiments. It takes as input corrected MS data from IsoCor in csv or tsv format. Isoplot outputs static and interactive plots that are then used for quality assessment, biological interpretation, project reports, published papers and so forth.
-homepage_url: https://github.com/llegregam/Isoplot
-remote_repository_url: https://github.com/llegregam/Isoplot/tree/main
+long_description: Isoplot is a software for the visualisation of MS data from C13 labelling experiments. It takes as input corrected MS data from IsoCor in tsv format. Isoplot outputs static plots that are then used for quality assessment, biological interpretation, project reports, published papers and so forth. First version of Isoplot (https://github.com/llegregam/Isoplot) has been developed in 2021. This new version of Isoplot is now integrated in the R package GraphStatsR (https://forge.inrae.fr/etienne.rifa/graphstats). It has been re-written using the R Shiny framework to provide a more user-friendly interface and new functionalities.
+homepage_url: https://metatoul.pages.mia.inra.fr/graphstats
+remote_repository_url: https://forge.inrae.fr/etienne.rifa/graphstats
 type: unrestricted

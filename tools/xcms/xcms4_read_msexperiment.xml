@@ -1,0 +1,134 @@
+<tool id="xcms4.readmsexperiment" name="XCMS 4: Build MsExperiment Data" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
+    <description>Imports mass-spectrometry and sample data files</description>
+
+    <macros>
+        <import>macros.xml</import>
+        <import>macros_xcms4.xml</import>
+    </macros>
+
+    <expand macro="requirements"/>
+    <required_files>
+        <include path="xcms4_read_msexperiment.r" />
+        <include path="xcms4_lib.r" />
+    </required_files>
+    <expand macro="stdio"/>
+    <expand macro="creators"/>
+
+    <command><![CDATA[
+        @COMMAND_RSCRIPT@xcms4_read_msexperiment.r
+
+        #if $input.is_of_type("mzxml") or $input.is_of_type("mzml") or $input.is_of_type("netcdf"):
+            #if $os.path.islink(str($input))
+                #set $source = $os.readlink(str($input))
+                singlefile_galaxyPath '$source' singlefile_sampleName '$os.path.basename($source)'
+            #else
+                singlefile_galaxyPath '$input' singlefile_sampleName '$input.element_identifier'
+            #end if
+        #end if
+
+        @COMMAND_LOG_EXIT@
+    ]]></command>
+
+    <inputs>
+        <param name="input" type="data" format="mzxml,mzml,mzdata,netcdf" label="File(s) from your history containing your chromatograms" help="Single file mode for the following formats: mzxml, mzml, mzdata and netcdf. See the help section below." />
+    </inputs>
+
+    <outputs>
+        <data name="msexp_obj" format="rdata.msnbase.raw" label="${input.name.rsplit('.',1)[0]}.RData" from_work_dir="readmsexp.RData" />
+    </outputs>
+
+    <tests>
+        <test expect_num_outputs="1">
+            <param name="input" value="ko15.CDF"  ftype="netcdf" />
+            <!-- <output name="msexp_obj" file="ko15.msexp.RData"/> -->
+            <assert_stdout>
+                <has_text text="Object of class MsExperiment" />
+                <has_text text="Spectra: MS1 (1278)" />
+                <has_text text="Experiment data: 1 sample(s)" />
+                <has_text text="ko15.CDF        ko15            .      ko15.CDF" />
+            </assert_stdout>
+        </test>
+    </tests>
+<!-- 
+    <creator>
+        <organization name="ABiMS TEAM"/>
+        <organization name="LABERCA based on Workflow4Metabolomics.org [W4M] previous development"/>
+        <organization url="https://www.eu-parc.eu/" name="PARC"/>
+    </creator> -->
+
+    <help><![CDATA[
+
+@HELP_AUTHORS@
+
+=============================
+MsExperiment readMsExperiment
+=============================
+
+-----------
+Description
+-----------
+
+Reads as set of XML-based mass-spectrometry data files and
+generates an MsExperiment object. 
+
+.. _xcms 4: https://sneumann.github.io/xcms/index.html
+
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+========================= ==========================================
+Name                      Format
+========================= ==========================================
+Upload File               mzxml,mzml,mzdata,netcdf
+========================= ==========================================
+
+The easier way to process is to create a Dataset Collection of the type List
+
+**Downstream tools**
+
+=========================== ============== ====================
+Name                        Output file    Format
+=========================== ============== ====================
+xcms4.findChromPeaks        ``*``.RData    rdata.msnbase.raw
+=========================== ============== ====================
+
+
+**Choose your inputs**
+
+Single file (recommended): You can put a single file as input. That way, you will be able to launch several readMsExperiment and findChromPeaks in parallel and use "findChromPeaks Merger" before groupChromPeaks.
+
+We recommend you to convert your raw files into **mzXML** in centroid mode (smaller files); this way the files will be compatible with the xmcs centWave algorithm.
+
+**We recommend you the following parameters:**
+
+Use Filtering: **True**
+
+Use Peak Picking: **True**
+
+Peak Peaking -Apply to MS Levels: **All Levels (1-)** : Centroid Mode
+
+Use zlib: **64**
+
+Binary Encoding: **64**
+
+m/z Encoding: **64**
+
+Intensity Encoding: **64**
+
+
+------------
+Output files
+------------
+
+RData file: rdata.msnbase.raw format
+
+    | Rdata file containing MsExperiment R object that is necessary in the second step of the workflow "xcms.findChromPeaks".
+
+    ]]></help>
+
+    <expand macro="citation" />
+</tool>

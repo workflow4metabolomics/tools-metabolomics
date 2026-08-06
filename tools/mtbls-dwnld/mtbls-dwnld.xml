@@ -1,0 +1,200 @@
+<!-- vi: se fdm=marker : -->
+<tool id="mtbls-dwnld" name="Metabolights downloader" version="4.1.5">
+
+	<description>Import public and private MetaboLights studies</description>
+
+	<requirements>
+		<requirement type="package" version="0.12.0">isatools</requirement>
+	</requirements>
+
+	<!-- Command {{{1 -->
+
+	<command><![CDATA[
+		## @@@BEGIN_CHEETAH@@@
+
+		$__tool_directory__/mtbls-dwnld
+
+		-q -T
+		#if $token:
+			-t "$token"
+		#end if
+		#if $type == 'private':
+			-p
+		#end if
+		#if $downloader == 'aspera':
+			-a
+		#end if
+
+		## Download only the metadata
+		#if $only_metadata == 'yes':
+			-M
+		#end if
+
+		## Set output file
+		-H "$isastudy"
+		-o "$isastudy.files_path"
+
+		## Factor slicing
+		#if $factor_slicing.factor_name:
+			-f "$factor_slicing.factor_name=$factor_slicing.factor_value"
+		#end if
+
+		## Study to output
+		"$study"
+
+		## @@@END_CHEETAH@@@
+	]]></command>
+
+	<!-- Inputs {{{1 -->
+
+	<inputs>
+
+		<!-- Study name -->
+		<param name="study" type="text" label="Study name" help="Study name in the form MTBLSXXXX. For downloading a private study with Aspera client, set to the full path of the study. See details below." refresh_on_change="true"/>
+
+		<!-- Public or private -->
+		<param name="type" label="Study type" type="select" help="Indicate here if the study you want to download is public or private.">
+			<option value="public">Public</option>
+			<option value="private">Private</option>
+		</param>
+
+		<!-- Downloader -->
+		<param name="downloader" label="Downloader" type="select" help="If downloading only the metadata prefer wget, otherwise you can choose aspera.">
+			<option value="wget">wget</option>
+			<option value="aspera">Aspera</option>
+		</param>
+
+		<!-- Token -->
+		<param name="token" type="text" optional="true" format="txt" label="Token"  help="A token is required for private studies. A default token is provided for downloading public studies with aspera, but you can set your own if you wish."/>
+
+		<!-- Metadata -->
+		<param name="only_metadata" label="Content to download" type="select" display="radio" help="Specify here what files you want to download from the study.">
+			<option value="yes">ISA-Tab metadata only.</option>
+			<option value="no">Full study including raw data and ISA-Tab metadata.</option>
+		</param>
+
+		<!-- Factor slicing -->
+		<section name="factor_slicing" title="Slicing by factor value" expanded="true" help="With this option, you can restrict the set of files you download from the study.">
+			<param name="factor_name" type="text" size="128" label="Factor title"/>
+			<param name="factor_value" type="text" size="128" label="Factor value"/>
+		</section>
+	</inputs>
+
+	<!-- Outputs {{{1 -->
+
+    <outputs>
+        <data name="isastudy" label="${study}" format="isa-tab"/>
+    </outputs>
+
+	<!-- Tests {{{1 -->
+	<tests>
+		<!-- Simple retrieving with wget -->
+		<test>
+			<param name="study" value="MTBLS2"/>
+			<param name="type" value="public"/>
+			<param name="downloader" value="wget"/>
+			<param name="metadata" value="yes"/>
+			<param name="token" value=""/>
+			<output name="isastudy" file="MTBLS2.html"/>
+		</test>
+
+		<!-- Slicing -->
+		<test>
+			<param name="study" value="MTBLS2"/>
+			<param name="type" value="public"/>
+			<param name="downloader" value="wget"/>
+			<param name="metadata" value="yes"/>
+			<param name="token" value=""/>
+			<param name="factor_name" value="Factor Value[genotype]"/>
+			<param name="factor_value" value="cyp79"/>
+			<output name="isastudy" file="MTBLS2.html"/>
+		</test>
+	</tests>
+
+	<!-- Help {{{1 -->
+    <help>
+<!-- @@@BEGIN_RST@@@ -->
+
+=======================
+Metabolights Downloader
+=======================
+
+A tool to download data from MetaboLights studies. You can download either a private or a public study, using `wget` as well as `aspera` methods.
+The output is an ISA dataset.
+
+-------------
+Input setting
+-------------
+
+Study name
+==========
+
+Fill this field with the name of the study you want to download.
+
+.. class:: warningmark
+
+In case of the download of a private study with *aspera* downloader, you must write the full path of the study, not only the name.
+It is a requirement that you have requested an "FTP folder" for the private study from the metabolights-curation@ebi.ac.uk team.	    
+
+Study type
+==========
+
+You must select here the type of the study, which can be either *public* or *private*. In case of a *private* study, you will have to input a security token.
+
+Downloader
+==========
+
+With this field, you can control the program used for downloading the study. You have the choice between standard *wget* and *aspera*. *wget* will download the data through *http*, while *aspera* will do it through *ftp*. If you are only interested in the metadata, choose *wget* since it is able to download only these data. If you are interested in *mzML* or *mzData* files, choose *aspera* as it is a faster downloader.
+
+Metadata
+========
+
+If you are only interested in metadata, choose *Yes*, and make sure to select *wget* as well in the **Downloader** field.
+If you set this field to *No*, then the tool will try to extract *mzData* and *mzML* files and output them as collections.
+
+Token
+=====
+
+You need to provide a token when downloading with *aspera* (both for private and public studies), or when downloading a private study with *wget*.
+
+------
+Output
+------
+
+The output is an ISA-Tab dataset that can be used in subsequent tools like isa2w4m.
+The ISA-Tab dataset stores all files contain in the downloaded Metabolights study.
+
+---------------------
+Developer information
+---------------------
+
+The Metabolights downloader downloads a compressed archive from Metabolights database and extract it inside Galaxy dataset folder. It creates an HTML file (used as primary file) and extract all files from archive inside the subfolder ``&lt;name_of_the_HTML_file&gt;_files``.
+
+Note that neither the uploader nor the ISA Galaxy data type are involved during this process. This is the reason why the downloader has to create itself an HTML file that will serve as primary file and to extract files inside ``*_files`` subfolder.
+
+A subsequent tool that would use the output of the Metabolights downloader has to declare the input as ISA type::
+
+  &lt;param name="isa" label="ISA" type="data" format="isa"/&gt;
+
+Then to use it inside the command tag, one must use the variable ``$isa.extra_files_path`` to get the path of the folder where all ISA archive files have been extracted::
+
+  &lt;command&gt;&lt;![CDATA[some-program-to-run --the-isa-folder "$isa.extra_files_path" ]]&gt;&lt;/command&gt;
+
+The easiest way to use the ISA archive inside the run program is then to use the Python3 library isatools to load it. See https://github.com/ISA-tools/isa-api for information.
+
+----------------------
+Network considerations
+----------------------
+	    
+The networking of the Galaxy instance needs to allow UDP connections with source port 33001 for the fast Aspera download. This is the case for most commercial providers, including Amazon AWS and Google GCP, but some local installations might have additional firewall rules in place. See also https://test-connect.asperasoft.com/ for more information. If these connections are not allowed, the fallback to the wget download via is still possible.	    
+	    
+<!-- @@@END_RST@@@ -->
+    </help>
+
+	<!-- Citations {{{1 -->
+    <citations>
+        <citation type="doi">10.1002/0471250953.bi1413s53</citation> <!-- Metabolights -->
+        <citation type="doi">10.1007/s11306-015-0879-3</citation> <!-- Metabolights -->
+        <citation type="doi">10.1038/ng.1054</citation> <!-- ISA -->
+    </citations>
+</tool>

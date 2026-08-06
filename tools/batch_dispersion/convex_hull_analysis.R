@@ -111,14 +111,14 @@ mode <- opt$mode
 
 #### ---- Create data ----
 dataMatrix_t <- t(dataMatrix)
-pool_s <- transform(merge(sampleMetadata, dataMatrix_t, by = 0), row.names=Row.names, Row.names=NULL)
+pool_s <- transform(merge(sampleMetadata, dataMatrix_t, by = 0), row.names = Row.names, Row.names = NULL)
 pool_s <- pool_s[order(pool_s[[order_col]]), ]
 if (length(variables) == 0) {
     variable_columns <- rownames(variableMetadata)
 } else {
     variable_columns <- variables
 }
-variableMetadata <- variableMetadata[variable_columns,]
+variableMetadata <- variableMetadata[variable_columns, ]
 #### ---- Call function for convex analysis ----
 result <- convex_analysis_of_variables(
     pool_s,
@@ -147,11 +147,11 @@ cat("VM saved as", opt$output_vm, "\n")
 #### ---- Call to plotting function ----
 tryCatch(
     {
-        if (opt$single_graph){
+        if (opt$single_graph) {
             shared_single_plot_convex_hulls(
-              target_file_path = opt$output_plot,
-              convex_analysis_res = result,
-              show_points = opt$points
+                target_file_path = opt$output_plot,
+                convex_analysis_res = result,
+                show_points = opt$points
             )
         } else {
             plot_all_convex_hulls(

@@ -1,0 +1,77 @@
+<!-- vi: se fdm=marker : -->
+<tool id="isa2mzdata" name="ISA to mzData" version="1.3.0">
+
+	<description>Extract mzData files from an ISA dataset and output a collection of mzData dataset.</description>
+
+	<!-- Command {{{1 -->
+
+	<command><![CDATA[
+		## @@@BEGIN_CHEETAH@@@
+
+		$__tool_directory__/extract-from-isa
+		-i "$isa.extra_files_path"
+		-e mzData
+		-o mzData
+
+		## @@@END_CHEETAH@@@
+	]]></command>
+
+	<!-- Inputs {{{1 -->
+
+	<inputs>
+		<param name="isa" label="ISA" type="data" format="isa-tab"/>
+	</inputs>
+
+	<!-- Outputs {{{1 -->
+
+    <outputs>
+		<collection name="mzData" type="list" label="mzData files">
+			<discover_datasets pattern="(?P&lt;designation&gt;.+)\.[mM][zZ][dD][aA][tT][aA]$" directory="mzData" format="mzdata"/>
+		</collection>
+	</outputs>
+
+	<!-- Tests {{{1 -->
+	<tests>
+		<test>
+			<param name="isa" value="mzdata_study.zip" ftype="isa-tab"/>
+			<output_collection name="mzData" type="list" count="1">
+				<element name="empty" file="mzdata_study_output/empty.mzData" ftype="mzdata"/>
+			</output_collection>
+		</test>
+	</tests>
+
+	<!-- Help {{{1 -->
+    <help>
+<!-- @@@BEGIN_RST@@@ -->
+
+====================
+ISA to mzData
+====================
+
+Extract mzData files contained inside an ISA archive.
+
+-----
+Input
+-----
+
+ISA dataset
+===========
+
+The ISA-Tab dataset from which to extract the files.
+
+------
+Output
+------
+
+The output is a collection of mzData files.
+
+<!-- @@@END_RST@@@ -->
+    </help>
+
+	<!-- Citations {{{1 -->
+    <citations>
+        <citation type="doi">10.1038/ng.1054</citation> <!-- ISA -->
+        <citation type="doi">10.1093/bioinformatics/btu813</citation> <!-- W4M -->
+    </citations>
+
+</tool>

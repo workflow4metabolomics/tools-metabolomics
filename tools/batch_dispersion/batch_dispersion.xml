@@ -5,7 +5,7 @@
     </description>
     <macros>
         <token name="@TOOL_VERSION@">0.1.6</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>

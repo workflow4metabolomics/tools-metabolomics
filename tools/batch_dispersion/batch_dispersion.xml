@@ -1,11 +1,11 @@
-<tool id="batch_dispersion" name="Batch Dispersion" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.11"
+<tool id="batch_dispersion" name="Batch Dispersion" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
       profile="23.0">
     <description>
         Indicators computation and convex hull plots to assess intra and inter batch dispersion.
     </description>
     <macros>
         <token name="@TOOL_VERSION@">0.1.6</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_3172</edam_topic>

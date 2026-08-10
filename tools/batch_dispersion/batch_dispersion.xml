@@ -1,7 +1,7 @@
 <tool id="batch_dispersion" name="Batch Dispersion" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.11"
       profile="23.0">
-    <description>This tool plots a convex polygon around intensity values based on analysis order and batch to
-        visualize batch variability and computes associated indicators to assess intra and inter batch dispersion.
+    <description>
+        Indicators computation and convex hull plots to assess intra and inter batch dispersion.
     </description>
     <macros>
         <token name="@TOOL_VERSION@">0.1.6</token>
@@ -44,19 +44,19 @@
     ]]></command>
 
     <inputs>
-        <param name="dataMatrix" type="data" format="tabular,tsv" label="Data matrix file" refresh_on_change="true"
+        <param name="dataMatrix" type="data" format="tabular,tsv" label="Data matrix file"
             help="Main data matrix. Rows are variables (features), columns are samples. The first column must contain variable identifiers, and the first row must contain sample identifiers." />
-        <param name="sampleMetadata" type="data" format="tabular,tsv" label="Sample metadata file" refresh_on_change="true"
+        <param name="sampleMetadata" type="data" format="tabular,tsv" label="Sample metadata file"
             help="Sample metadata table. Each row corresponds to a sample, and columns provide sample annotations (e.g., class, batch, group). The first column must contain sample identifiers matching the data matrix columns." />
-        <param name="variableMetadata" type="data" format="tabular,tsv" label="Variable metadata file" refresh_on_change="true"
+        <param name="variableMetadata" type="data" format="tabular,tsv" label="Variable metadata file"
             help="Variable metadata table. Each row corresponds to a variable (feature), and columns provide variable annotations (e.g., m/z, retention time). The first column must contain variable identifiers matching the data matrix rows." />
         <param name='batch_col' type='data_column'
                data_ref="sampleMetadata" use_header_names="true"
-               label='The sampleMetadata column with batch information' refresh_on_change="true" />
+               label='The sampleMetadata column with batch information' />
         <param name='sample_order_col' type='data_column' data_ref="sampleMetadata" use_header_names="true"
-               label='The sampleMetadata column with sample order information' refresh_on_change="true"/>
+               label='The sampleMetadata column with sample order information'/>
         <param name='variables' type='select' label='An optional subset of variables to analyse' optional="true"
-               multiple="true" refresh_on_change="true">
+               multiple="true">
             <options from_dataset="variableMetadata">
                 <column name="name" index="0"/>
                 <column name="value" index="0"/>

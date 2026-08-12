@@ -1,8 +1,14 @@
-<tool id="biosigner" name="Biosigner" version="3.0.0+galaxy@VERSION_SUFFIX@" profile="25.1">
+<tool id="biosigner" name="Biosigner" version="2.2.7+galaxy@VERSION_SUFFIX@" profile="25.1">
   <description>Molecular signature discovery from omics data</description>
   <macros>
-    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@VERSION_SUFFIX@">1</token>
   </macros>
+  <creator>
+    <person givenName="Philippe" familyName="Rinaudo" />
+    <person givenName="Etienne" familyName="Thevenot"  email="etienne.thevenot@cea.fr" />
+    <organization name="CEA, LIST, MetaboHUB Paris" />
+    <organization name="Workflow4Metabolomics" url="https://workflow4metabolomics.org/" />
+  </creator>  
   <requirements>
     <requirement type="package" version="1.1_5">r-batch</requirement>
     <requirement type="package" version="1.38.0">bioconductor-biosigner</requirement>
@@ -79,21 +85,7 @@
       <output name="variable_metadata_out" file="variableMetadata.out" compare="diff" lines_diff="10"/>
     </test>
   </tests>
-  <help>	
-
-.. class:: infomark
-
-**Author**	Philippe Rinaudo and Etienne Thevenot (CEA, LIST, MetaboHUB Paris, etienne.thevenot@cea.fr)
-
----------------------------------------------------
-
-.. class:: infomark
-
-**Please cite**
-
-Rinaudo P., Boudah S., Junot C. and Thevenot E.A. (2016). *biosigner*: a new method for the discovery of significant molecular signatures from omics data. *Frontiers in Molecular Biosciences*, **3** (http://dx.doi.org/10.3389/fmolb.2016.00026).
-
----------------------------------------------------
+  <help>
 
 .. class:: infomark
 
@@ -101,14 +93,6 @@ Rinaudo P., Boudah S., Junot C. and Thevenot E.A. (2016). *biosigner*: a new met
 
 The *biosigner* package is available from the bioconductor repository (http://bioconductor.org/packages/biosigner).
 
----------------------------------------------------
-
-.. class:: infomark
-
-**Tool updates**
-
-See the **NEWS** section at the bottom of this page
-  
 ---------------------------------------------------
 
 ==========================================================
@@ -247,32 +231,11 @@ Figure output
 NEWS
 ----
 
-CHANGES IN VERSION 3.0.0
+CHANGES IN VERSION 2.2.7
 ========================
-
-BREAKING CHANGES
-
-- Updated Galaxy profile to 25.1 for modern Galaxy compatibility
-- Renamed all parameters to follow Galaxy best practices (lowercase with underscores):
-  - `opcC` -&gt; `computational_mode`
-  - `methodC` -&gt; `classification_method`
-  - `bootI` -&gt; `num_bootstraps`
-  - `tierC` -&gt; `selection_tier`
-  - `pvalN` -&gt; `pvalue_threshold`
-  - `seedI` -&gt; `random_seed`
-  - `respC` -&gt; `response_column`
-  - `dataMatrix_in` -&gt; `data_matrix`
-  - `sampleMetadata_in` -&gt; `sample_metadata`
-  - `variableMetadata_in` -&gt; `variable_metadata`
-  - `variableMetadata_out` -&gt; `variable_metadata_out`
-  - `figure_tier` -&gt; `tier_figure`
-  - `figure_boxplot` -&gt; `boxplot_figure`
-  - `information` -&gt; `log_information`
-- Added `detect_errors="exit_code"` to command element for better error handling
 
 INTERNAL MODIFICATIONS
 
-- Tool now targets Galaxy profile 25.1
 
 CHANGES IN VERSION 2.2.6
 ========================
@@ -304,15 +267,7 @@ Creation of the tool
 
 </help>
   <citations>
-    <citation type="bibtex">@Article{Rinaudo2016,
-  Title                    = {biosigner: a new method for the discovery of significant molecular signatures from omics data},
-  Author                   = {Rinaudo, Philippe and Boudah, Samia and Junot, Christophe and Thevenot, Etienne A},
-  Journal                  = {Frontiers in Molecular Biosciences},
-  Year                     = {2016},
-  Pages                    = {--},
-  Volume                   = {3},
-  Doi                      = {10.3389/fmolb.2016.00026}
-  }</citation>
+    <citation type="doi">10.3389/fmolb.2016.00026</citation>
     <citation type="doi">10.1093/bioinformatics/btu813</citation>
   </citations>
 </tool>

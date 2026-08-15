@@ -1,0 +1,8 @@
+name: batchcorrection
+owner: melpetera
+description: '[W4M][Metabolomics][LC-MS] Correction of data intensities for signal drift and batch-effects.'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Instrumental drift and offset differences between batches have been described in LC-MS experiments when the number of samples is large and/or multiple batches of acquisition are needed. Recently a normalization strategy relying on the measurements of a "pooled" (or QC) sample injected periodically has been described: for each variable, a regression model is fitted to the values of the "pool" and subsequently used to adjust the intensities of the samples of interest (van der Kloet et al, 2009; Dunn et al, 2011). The current repository contains two modules: "Determine batch correction" and "Batch correction". The "Batch correction" module provides two strategies for normalization: variables can be either first checked to assess which of them should be corrected (in that case the "Determine Batch Correction" module provides the information about the correction which will be applied), or all variables can be corrected ("all loess" options). In the latter case, it is possible to fit the model on the samples instead of the pools. Output figures and files are provided to assess the quality of the normalization.' 
+remote_repository_url: https://github.com/workflow4metabolomics/batch_correction.git
+categories:
+- Metabolomics

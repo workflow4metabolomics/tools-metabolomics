@@ -1,0 +1,8 @@
+.*.swp
+planemo-venv
+tool_test_output.*
+dist
+*-venv
+tests/output
+.python-version
+.Rproj.user

@@ -1,4 +1,4 @@
-<tool id="CAMERA_findIsotopes" name="CAMERA.findIsotopes" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+<tool id="CAMERA_findIsotopes" name="CAMERA.findIsotopes" version="@W4M_VERSION@+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>Annotate isotope peaks</description>
 

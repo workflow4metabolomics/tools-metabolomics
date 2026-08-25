@@ -1,0 +1,130 @@
+#!/bin/bash
+# vi: fdm=marker
+
+# Constants {{{1
+################################################################
+
+PROG_NAME=$(basename $0)
+PROG_PATH=$(dirname $0)
+YES=yes
+NO=no
+
+# Global variables {{{1
+################################################################
+
+DEBUG=0
+EXT=
+INPUT_DIR=
+OUTPUT_DIR=
+SYMLINK=$NO
+
+# Print help {{{1
+################################################################
+
+function print_help {
+	echo "Usage: $PROG_NAME -i <ISA_DIR> -e <EXT> -o <OUTPUT_DIR>"
+	echo
+	echo "Extract files with a given extension from ISA-Tab archives into a collection."
+	echo
+	echo "Options:"
+	echo "   -e, --ext             EXT   The extension of the files to find."
+	echo "   -h, --help                  Print this help message."
+	echo "   -i, --input           DIR   Input directory containing ISA archive."
+	echo "   -o, --output          DIR   Set the output directory to use."
+	echo "   -s, --symlink               Create symbolic links instead of copying files."
+}
+
+# Error {{{1
+################################################################
+
+function error {
+
+	local msg=$1
+
+	echo "ERROR: $msg" >&2
+
+	exit 1
+}
+
+# Print debug msg {{{1
+################################################################
+
+function print_debug_msg {
+
+	local dbglvl=$1
+	local dbgmsg=$2
+
+	[ $DEBUG -ge $dbglvl ] && echo "[DEBUG] $dbgmsg" >&2
+}
+
+# Read args {{{1
+################################################################
+
+function read_args {
+
+	local args="$*" # save arguments for debugging purpose
+	
+	# Read options
+	while true ; do
+		shift_count=1
+		case $1 in
+			-e|--ext)               EXT="$2" ; shift_count=2 ;;
+			-g|--debug)             DEBUG=$((DEBUG + 1)) ;;
+			-h|--help)              print_help ; exit 0 ;;
+			-i|--input)             INPUT_DIR="$2" ; shift_count=2 ;;
+			-o|--output)            OUTPUT_DIR="$2" ; shift_count=2 ;;
+			-s|--symlink)           SYMLINK=$YES ;;
+			-) error "Illegal option $1." ;;
+			--) error "Illegal option $1." ;;
+			--*) error "Illegal option $1." ;;
+			-?) error "Unknown option $1." ;;
+			-[^-]*) split_opt=$(echo $1 | sed 's/^-//' | sed 's/\([a-zA-Z]\)/ -\1/g') ; set -- $1$split_opt "${@:2}" ;;
+			*) break
+		esac
+		shift $shift_count
+	done
+	shift $((OPTIND - 1))
+
+	# Debug
+	print_debug_msg 1 "Arguments are : $args"
+
+	# Check input params
+	[[ $# -eq 0 ]] || error "No remaining arguments are allowed."
+	[[ -n $INPUT_DIR ]] || error "You must specify an input directory, using -i option."
+	[[ -d $INPUT_DIR ]] || error "\"$INPUT_DIR\" is not a valid directory."
+	[[ -n $OUTPUT_DIR ]] || error "You must specify an output directory, using -o option."
+	[[ ! -e $OUTPUT_DIR ]] || error "\"$OUTPUT_DIR\" already exists."
+	[[ -n $EXT ]] || error "You must specify the extension of the files you are looking for, with the -e option."
+}
+
+# MAIN {{{1
+################################################################
+
+read_args "$@"
+
+# Create output directory
+print_debug_msg 1 "Create output directory \"$OUTPUT_DIR\"."
+mkdir -p "$OUTPUT_DIR"
+
+# Find files to extract
+print_debug_msg 1 "Find \"$EXT\" files to extract in \"$INPUT_DIR\"."
+files_to_extract=$(mktemp -t tmp.XXXXXX)
+find "$(realpath $INPUT_DIR)" -iname "*.$EXT" >files_to_extract
+print_debug_msg 1 "Files to extract:"
+if [[ $DEBUG -ge 1 ]] ; then
+	cat files_to_extract >&2
+fi
+
+# Extract files
+if [[ $SYMLINK == $YES ]] ; then
+	print_debug_msg 1 "Create symbolic links of all \"$EXT\" files to extract into \"$OUTPUT_DIR\"."
+	xargs -I % ln -s % "$OUTPUT_DIR" <files_to_extract
+else
+	print_debug_msg 1 "Copy all \"$EXT\" files to extract to \"$OUTPUT_DIR\"."
+	xargs -I % cp % "$OUTPUT_DIR" <files_to_extract
+fi
+rm files_to_extract
+print_debug_msg 1 "Files extracted:"
+if [[ $DEBUG -ge 1 ]] ; then
+	ls -1 "$OUTPUT_DIR" >&2
+fi

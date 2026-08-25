@@ -1,0 +1,866 @@
+#!/usr/bin/env Rscript
+# vi: ft=r fdm=marker
+
+args <- commandArgs(trailingOnly = F)
+script.path <- sub("--file=","",args[grep("--file=",args)])
+
+library(getopt)
+library(methods)
+library(biodb)
+
+# HTML Writer {{{1
+################################################################
+
+HtmlWriter <- methods::setRefClass("HtmlWriter", fields = list(.con = "ANY", .auto.indent = "numeric"))
+
+# Constructor {{{2
+################################################################
+
+HtmlWriter$methods( initialize = function(auto.indent = TRUE, ...) {
+
+	.auto.indent <<- if (auto.indent) 0 else NA_integer_
+	.con <<- NULL
+
+	callSuper(...) # calls super-class initializer with remaining parameters
+})
+
+# Open {{{2
+################################################################################
+
+HtmlWriter$methods( file.opn = function(file) {
+	.con <<- file(file, open = "w")
+})
+
+# Close {{{2
+################################################################################
+
+HtmlWriter$methods( file.close = function() {
+	close(.self$.con)
+})
+
+# Write {{{2
+################################################################
+
+HtmlWriter$methods( write = function(text, indent = NA_integer_, newline = TRUE, escape = FALSE) {
+
+	# Compute indentation
+	if (is.na(indent))
+		indent <- if (is.na(.self$.auto.indent)) 0 else .self$.auto.indent
+
+	cat(rep("\t", indent), text, if (newline) "\n" else "", sep = '', file = .self$.con)
+})
+
+# Write tag {{{2
+################################################################
+
+HtmlWriter$methods( writeTag = function(tag, attr = NA_character_, text = NA_character_, indent = NA_integer_, newline = TRUE) {
+
+	if (is.na(text)) {
+		attributes <- if (is.na(attr)) '' else paste0(' ', paste(vapply(names(attr), function(a) paste0(a, '="', attr[[a]], '"'), FUN.VALUE=''), collapse = ' '))
+		.self$write(paste0("<", tag, attributes, "/>"), indent = indent, newline = newline, escape = FALSE)
+	}
+	else {
+		.self$writeBegTag(tag, attr = attr, indent = indent, newline = FALSE)
+		.self$write(text, escape = TRUE , indent = 0, newline = FALSE)
+		.self$writeEndTag(tag, indent = 0, newline = newline)
+	}
+})
+
+# Write begin tag {{{2
+###################################################################################
+
+HtmlWriter$methods( writeBegTag = function(tag, attr = NA_character_, indent = NA_integer_, newline = TRUE) {
+
+	# Write opening tag
+	attributes <- if (is.na(attr)) '' else paste0(' ', paste(vapply(names(attr), function(a) paste0(a, '="', attr[[a]], '"'), FUN.VALUE=''), collapse = ' '))
+	.self$write(paste0("<", tag, attributes, ">"), indent = indent, newline = newline, escape = FALSE)
+
+	# Increment auto-indent
+	if ( ! is.na(.self$.auto.indent))
+		.auto.indent <<- .self$.auto.indent + 1
+})
+
+# Write end tag {{{2
+################################################################
+
+HtmlWriter$methods( writeEndTag = function(tag, indent = NA_integer_, newline = TRUE) {
+
+	# Decrement auto-indent
+	if ( ! is.na(.self$.auto.indent))
+		.auto.indent <<- .self$.auto.indent - 1
+
+	# Write closing tag
+	.self$write(paste0("</", tag, ">"), indent = indent, newline = newline, escape = FALSE)
+})
+
+# Write table {{{2
+################################################################
+
+HtmlWriter$methods( writeTable = function(x, indent = NA_integer_, newline = TRUE) {
+
+	.self$writeBegTag('table', indent = indent, newline = newline)
+
+	# Write table header
+	if ( ! is.null(colnames(x))) {
+		.self$writeBegTag('tr', indent = indent + 1, newline = newline)
+		for (field in colnames(x))
+			.self$writeTag('th', text = field, indent = indent + 2, newline = newline)
+		.self$writeEndTag('tr', indent = indent + 1, newline = newline)
+	}
+
+	# Write values
+	if (nrow(x) > 0 && ncol(x) > 0)
+		for (i in 1:nrow(x)) {
+			.self$writeBegTag('tr', indent = indent + 1, newline = newline)
+			for (j in 1:ncol(x))
+				.self$writeTag('td', text = (if (j == 1 && is.na(x[i, j])) 'NA' else x[i, j]), indent = indent + 2, newline = newline)
+			.self$writeEndTag('tr', indent = indent + 1, newline = newline)
+		}
+	.self$writeEndTag('table', indent = indent, newline = newline)
+})
+
+# Split key/value list {{{1
+################################################################
+
+split.kv.list <- function(s, sep = ',', kvsep = '=') {
+
+	# Split
+	kvs <- strsplit(strsplit(s, sep)[[1]], kvsep)
+
+	# Get keys
+	k <- vapply(kvs, function(x) x[[1]], FUN.VALUE = '')
+	v <- vapply(kvs, function(x) x[[2]], FUN.VALUE = '')
+
+	# Set names
+	names(v) <- k
+
+	return(v)
+}
+
+# Concat key/value list {{{1
+################################################################
+
+concat.kv.list <- function(x, sep = ',', kvsep = '=') {
+
+	k <- names(x)
+
+	s = paste(paste(names(x), x, sep = kvsep), collapse = sep)
+
+	return(s)
+}
+
+# Constants {{{1
+################################################################
+
+PROG <- sub('^.*/([^/]+)$', '\\1', commandArgs()[4], perl = TRUE)
+USERAGENT <- 'W4M lcmsmatching ; pk.roger@icloud.com'
+
+# Field tags
+MSDB.TAG.MZ <- 'mz'
+MSDB.TAG.MZEXP <- 'mzexp'
+MSDB.TAG.MZTHEO <- 'mztheo'
+MSDB.TAG.RT <- 'rt'
+MSDB.TAG.MODE <- 'msmode'
+MSDB.TAG.MOLID <- 'compoundid'
+MSDB.TAG.COL <- 'chromcol'
+MSDB.TAG.COLRT <- 'chromcolrt'
+MSDB.TAG.ATTR <- 'peakattr'
+MSDB.TAG.INT <- 'intensity'
+MSDB.TAG.REL <- 'relative.intensity'
+MSDB.TAG.COMP <- 'peakcomp'
+MSDB.TAG.MOLNAMES <- 'fullnames'
+MSDB.TAG.MOLCOMP <- 'compoundcomp'
+MSDB.TAG.MOLMASS <- 'compoundmass'
+MSDB.TAG.INCHI <- 'inchi'
+MSDB.TAG.INCHIKEY <- 'inchikey'
+MSDB.TAG.PUBCHEM <- 'pubchemcompid'
+MSDB.TAG.CHEBI <- 'chebiid'
+MSDB.TAG.HMDB <- 'hmdbid'
+MSDB.TAG.KEGG <- 'keggid'
+
+# Authorized database types
+MSDB.VALS <- c('file', 'peakforest')
+
+# Authorized mode values
+MSDB.TAG.POS           <- 'pos'
+MSDB.TAG.NEG           <- 'neg'
+POS_MODE <- 'pos'
+NEG_MODE <- 'neg'
+MSDB.MODE.VALS <- c(POS_MODE, NEG_MODE)
+
+# Authorized mz tolerance unit values
+MSDB.MZTOLUNIT.PPM <- 'ppm'
+MSDB.MZTOLUNIT.PLAIN <- 'plain' # same as mz: mass-to-charge ratio
+MSDB.MZTOLUNIT.VALS <- c(MSDB.MZTOLUNIT.PPM, MSDB.MZTOLUNIT.PLAIN)
+
+# Authorized rt units
+MSDB.RTUNIT.SEC <- 'sec'
+MSDB.RTUNIT.MIN <- 'min'
+MSDB.RTUNIT.VALS <- c(MSDB.RTUNIT.SEC ,MSDB.RTUNIT.MIN)
+
+# Default values
+MSDB.DFT.PREC <- list()
+MSDB.DFT.PREC[[MSDB.TAG.POS]] <- c("[(M+H)]+", "[M+H]+", "[(M+Na)]+", "[M+Na]+", "[(M+K)]+", "[M+K]+")
+MSDB.DFT.PREC[[MSDB.TAG.NEG]] <- c("[(M-H)]-", "[M-H]-", "[(M+Cl)]-", "[M+Cl]-")
+MSDB.DFT.MATCH.FIELDS <- list( molids = 'molid', molnames = 'molnames')
+MSDB.DFT.MATCH.SEP <- '|'
+MSDB.DFT.MODES <- list( pos = 'POS', neg = 'NEG')
+MSDB.DFT.MZTOLUNIT <- MSDB.MZTOLUNIT.PPM
+
+# Get default db fields
+################################################################
+
+msdb.get.dft.db.fields <- function () {
+
+	dft.fields <- list()
+
+	for (f in c(MSDB.TAG.MZTHEO, MSDB.TAG.COLRT, MSDB.TAG.MOLID, MSDB.TAG.COL, MSDB.TAG.MODE, MSDB.TAG.ATTR, MSDB.TAG.COMP, MSDB.TAG.MOLNAMES, MSDB.TAG.MOLCOMP, MSDB.TAG.MOLMASS, MSDB.TAG.INCHI, MSDB.TAG.INCHIKEY, MSDB.TAG.PUBCHEM, MSDB.TAG.CHEBI, MSDB.TAG.HMDB, MSDB.TAG.KEGG))
+		dft.fields[[f]] <- f
+
+	return(dft.fields)
+}
+
+# Default 
+MSDB.DFT <- list()
+MSDB.DFT[['mzshift']] <- 0 # in ppm
+MSDB.DFT[['mzprec']] <- 5 # in ppm
+MSDB.DFT[['mztolunit']] <- MSDB.DFT.MZTOLUNIT
+MSDB.DFT[['precursor-rt-tol']] <- 5
+MSDB.DFT[['molids-sep']] <- MSDB.DFT.MATCH.SEP
+MSDB.DFT[['db-fields']] <- concat.kv.list(msdb.get.dft.db.fields())
+MSDB.DFT[['db-ms-modes']] <- concat.kv.list(MSDB.DFT.MODES)
+MSDB.DFT[['pos-prec']] <- paste(MSDB.DFT.PREC[[MSDB.TAG.POS]], collapse = ',')
+MSDB.DFT[['neg-prec']] <- paste(MSDB.DFT.PREC[[MSDB.TAG.NEG]], collapse = ',')
+MSDB.DFT[['db-rt-unit']] <- MSDB.RTUNIT.SEC
+MSDB.DFT[['rtunit']] <- MSDB.RTUNIT.SEC
+DEFAULT.ARG.VALUES <- MSDB.DFT
+DEFAULT.ARG.VALUES[['input-col-names']] <- 'mz=mz,rt=rt'
+
+# Get default input fields {{{1
+################################################################
+
+msdb.get.dft.input.fields <- function () {
+
+	dft.fields <- list()
+
+	for(f in c(MSDB.TAG.MZ, MSDB.TAG.RT))
+		dft.fields[[f]] <- f
+
+	return(dft.fields)
+}
+
+# Print help {{{1
+################################################################
+
+print.help <- function() {
+
+	cat("USAGE:\n")
+	prog.mz.match <- paste(PROG, ' -d (', paste(MSDB.VALS, collapse = '|'), ') --url (file|dir|database URL) -i <file> -m (', paste(MSDB.MODE.VALS, collapse = '|'), ") -p <mz precision> -s <mz shift> -u (", paste(MSDB.MZTOLUNIT.VALS, collapse = '|'), ") -o <file>", sep = '')
+	cat("\t(1) ", prog.mz.match, " ...\n", sep = '')
+	cat("\n")
+	cat("\t(2) ", prog.mz.match, "(--all-cols|-c <cols>) -x <X RT tolerance> -y <Y RT tolerance>", " ...\n", sep = '')
+	cat("\n")
+	cat("\t(3) ", PROG, ' -d (', paste(MSDB.VALS, collapse = '|'), ") --url (file|dir|database URL) --list-cols\n", sep = '')
+
+	cat("\nDETAILS:\n")
+	cat("Form (1) is for running an MZ match on a database.\n")
+	cat("Form (2) is for running an MZ/RT match on a database.\n")
+	cat("Form (3) is for getting a list of available chromatographic columns in a database.\n")
+
+	cat("\nOPTIONS:\n")
+	spec <- matrix(make.getopt.spec(), byrow = TRUE, ncol = 5)
+	max.length.opt.cols <- max(nchar(spec[,1])) + 1
+	sections <- list(database = "Database setting", input = "Input file", output = "Output files", mz = "M/Z matching", rt = "RT matching", precursor = "Precursor matching", misc = "Miscellaneous")
+	for (section in names(sections)) {
+		cat("\n\t", sections[[section]], ":\n", sep = '')
+		spec <- matrix(make.getopt.spec(section), byrow = TRUE, ncol = 5)
+		for (i in seq(nrow(spec))) {
+			opt <- ''
+			if ( ! is.na(spec[i,2]))
+				opt <- paste('-', spec[i,2], '|', sep = '')
+			opt <- paste(opt, '--', spec[i, 1], sep = '')
+			nb.space.padding <- max.length.opt.cols - nchar(opt) + 6
+			padding <- paste(rep(' ', nb.space.padding), sep = '')
+			cat("\t\t", opt, padding, "\t", spec[i, 5], "\n", sep = '')
+		}
+	}
+
+	cat("\nEXAMPLES:\n")
+
+	cat("\nSimple M/Z matching with a file database:\n")
+	cat("\t./", PROG, " -d file --url mydbfile.tsv -i input.tsv -m pos -o output.tsv\n", sep = '')
+
+	cat("\nFile database with M/Z tolerance:\n")
+	cat("\t./", PROG, " -d file --url mydbfile.tsv -i input.tsv -m pos -o output.tsv -p 0.5 -s 0\n", sep = '')
+
+	cat("\nFile database with M/Z tolerance unit:\n")
+	cat("\t./", PROG, " -d file --url mydbfile.tsv -i input.tsv -m pos -o output.tsv -p 1 -s 0.5 -u plain\n", sep = '')
+
+	cat("\nPeakforest database:\n")
+	cat("\t./", PROG, " -d peakforest --url https://metabohub.peakforest.org/rest/ --db-token <your Peakforest token> -i input.tsv -m pos -o output.tsv\n", sep = '')
+}
+
+# Set default argument values {{{1
+################################################################
+
+set.dft.arg.val <-function(opt) {
+
+	for (f in names(MSDB.DFT))
+		if (is.null(opt[[f]]))
+			opt[[f]] <- MSDB.DFT[[f]]
+
+	if ( ! is.null(opt$rtcol) && opt$rtcol == '')
+		opt$rtcol <- NULL
+
+	return(opt)
+}
+
+# Parse argument values {{{1
+################################################################
+
+parse.arg.val <- function(opt) {
+
+	# Parse input column names
+	if ( ! is.null(opt[['db-fields']])) {
+		cust <- split.kv.list(opt[['db-fields']])
+		cust <- cust[cust != 'NA']
+		opt[['db-fields']] <- split.kv.list(MSDB.DFT[['db-fields']])
+		for (x in names(cust)) {
+			if ( ! is.na(cust[[x]]) && cust[[x]] != 'NA')
+				opt[['db-fields']][[x]] <- cust[[x]]
+		}
+	}
+
+	# Parse MS modes
+	if ( ! is.null(opt[['db-ms-modes']])) {
+		cust <- split.kv.list(opt[['db-ms-modes']])
+		opt[['db-ms-modes']] <- split.kv.list(MSDB.DFT[['db-ms-modes']])
+		opt[['db-ms-modes']][names(cust)] <- cust
+	}
+
+	# Parse retention time columns
+	if ( ! is.null(opt$rtcol))
+		opt$rtcol <- strsplit(opt$rtcol, ',')[[1]]
+
+	# Parse input column names
+	if (is.null(opt[['input-col-names']])) {
+		opt[['input-col-names']] <- msdb.get.dft.input.fields()
+	}
+	else {
+		custcols <- split.kv.list(opt[['input-col-names']])
+		custcols <- custcols[custcols != 'NA']
+		dftcols <- msdb.get.dft.input.fields()
+		opt[['input-col-names']] <- c(custcols, dftcols[ ! names(dftcols) %in% names(custcols)]) 
+	}
+
+	# Parse lists of precursors
+	if ( ! is.null(opt[['pos-prec']]))
+		opt[['pos-prec']] <- unlist(strsplit(opt[['pos-prec']], ','))
+	if ( ! is.null(opt[['neg-prec']]))
+		opt[['neg-prec']] <- unlist(strsplit(opt[['neg-prec']], ','))
+
+	return(opt)
+}
+
+# Make getopt specifications {{{1
+################################################################
+
+make.getopt.spec <- function(sections = NULL) {
+
+	spec <- character(0)
+
+	if (is.null(sections) || 'input' %in% sections)
+		spec <- c(spec,
+			'input-file',       'i',            1,  'character',    'Set input file.',
+			'input-col-names',  'j',            1,  'character',    paste0('Set the input column names. Default is "', DEFAULT.ARG.VALUES[['input-col-names']], '".')
+		)
+
+	if (is.null(sections) || 'mz' %in% sections)
+		spec <- c(spec,
+			'mode',             'm',            1,  'character',    paste0('MS mode. Possible values are:', paste(MSDB.MODE.VALS, collapse = ", "), '.'),
+			'mzshift',          's',            1,  'numeric',      paste0('Shift on m/z. Default is ', MSDB.DFT$mzshift,'.'),
+			'mzprec',           'p',            1,  'numeric',      paste0('Tolerance on m/z. Default is ', MSDB.DFT$mzprec,'.'),
+			'mztolunit',        'u',            1,  'character',    paste0('Unit used for tolerance values (options -s and -p) on M/Z. Default is ', MSDB.DFT$mztolunit,'.')
+		)
+
+	# Retention time
+	if (is.null(sections) || 'rt' %in% sections)
+		spec <- c(spec,
+			'all-cols',         'A',            0,  'logical',      'Use all available chromatographic columns to match retention times.',
+			'rtcol',            'c',            1,  'character',    paste0('Chromatographic column to use. Unset by default. If set, use the corresponding column to filter on retention times, if retention times are provided.'),
+			'check-cols',       'k',            0,  'logical',      'Check that the chromatographic column names specified with option -c really exist.',
+			'list-cols',        'l',            0,  'logical',      'List all chromatographic columns present in the database. Write list inside the file specified by -o option.',
+			'rttol',            'r',            1,  'numeric',      paste0('Tolerance on retention times, in seconds. Unset by default.'),
+			'rttolx',           'x',            1,  'numeric',      paste0('Tolerance on retention times, in seconds. Unset by default.'),
+			'rttoly',           'y',            1,  'numeric',      paste0('Tolerance on retention times. Unset by default.'),
+			'rtunit',           'v',            1,  'character',    paste0('Retention time unit for the input file. Default is ', MSDB.DFT$rtunit, '. Allowed values are:', paste(MSDB.RTUNIT.VALS, collapse = ", "), '.')
+		)
+
+	if (is.null(sections) || 'precursor' %in% sections)
+		spec <- c(spec,
+			'precursor-match',  'Q',            0,  'logical',      'Remove peaks whose molecule precursor peak has not been matched. Unset by default.',
+			'precursor-rt-tol', 'R',            1,  'numeric',      paste0('Precursor retention time tolerance. Only used when precursor-match is enabled. Default is ', MSDB.DFT[['precursor-rt-tol']], '.'),
+			'pos-prec',         'Y',            1,  'character',    paste0('Set the list of precursors to use in positive mode. Default is "', MSDB.DFT[['pos-prec']], '".'),
+			'neg-prec',         'Z',            1,  'character',    paste0('Set the list of precursors to use in negative mode. Default is "', MSDB.DFT[['neg-prec']], '".')
+		)
+
+	if (is.null(sections) || 'output' %in% sections)
+		spec <- c(spec,
+			'output-file',      'o',            1,  'character',    'Set file to use for the main output. If undefined, standard output will be used.',
+			'peak-output-file', 'O',            1,  'character',    'If set and if --same-rows is set, then output all matches inside the specified file, with one mz match per line. The output columns are: mz, rt, id, col, colrt, composition, attribution. This means that if an mz value is matched several times, then it will repeated on several lines, with one match description per line.',
+			'html-output-file', 'H',            1,  'character',    'Set file to use for the HTML output.',
+			'no-main-table-in-html-output',  't',  0,  'logical',   'Do not display main table in HTML output.',
+			'same-rows',        'a',            0,  'logical',      'If set, output exactly the same number of rows as the input. This means that in case of multiple matches for one mz, then only one line is output (i.e.: the mz value is not duplicated on several lines). In the main output file, an "ms.matching" column is output with inside, for each mz, a comma separated list of matched component/molecule IDs. If unset, then only the main output file is used, and one single is written to it with one line per peak match, and eventual mz line duplicated if there are multiple matches for this mz.',
+			'same-cols',        'b',            0,  'logical',      'If set, output the same columns as inside the input. All input columns are copied to the output.',
+			'molids-sep',       'S',            1,  'character',    paste0('Set character separator used to when concatenating molecule IDs in output. Default is "', MSDB.DFT[['molids-sep']] , '".'),
+			'first-val',        '1',            0,  'logical',      'Keep only the first value in multi-value fields. Unset by default.',
+			'excel2011comp',    'X',            0,  'logical',      'Excel 2011 compatiblity mode. Output ASCII text files instead of UTF-8 files, where greek letters are replaced with their latin names, plusminus sign is replaced with +- and apostrophe is replaced with \"prime\". All other non-ASCII characters are repladed with underscore.'
+		)
+
+	# Database
+	if (is.null(sections) || 'database' %in% sections)
+		spec <- c(spec,
+			'database',         'd',            1,  'character',    paste0('Set database to use: "file" for a single file database and "peakforest" for a connection to PeakForest database.'),
+			'url',              'W',            1,  'character',    'URL of database. For "peakforest" database it is the HTTP URL, for the "xls" database it is the path to the directory containing the Excel files, for the "file" database it is the path to the file database and for the "4tabsql" database it is the IP address of the server.',
+			'db-name',          'N',            1,  'character',    'Name of the database. Used by the "4tabsql" database.',
+			'db-user',          'U',            1,  'character',    'User of the database. Used by the "4tabsql" database.',
+			'db-password',      'P',            1,  'character',    'Password of the database user. Used by the "4tabsql" database.',
+			'db-ms-modes',      'M',            1,  'character',    paste0('Comma separated key/value list giving the MS modes to be used in the single file database. Default is "', MSDB.DFT[['db-ms-modes']], '".'),
+			'db-rt-unit',       'V',            1,  'character',    paste0('Retention time unit for the database, used in the single file database. Default is "', MSDB.DFT[['db-rt-unit']], '". Allowed values are:', paste(MSDB.RTUNIT.VALS, collapse = ", "), '.'),
+			'db-token',         'T',            1,  'character',    'Database token. Used by Peakforest database.',
+			'db-fields',        'F',            1,  'character',    paste0('Comma separated key/value list giving the field names to be used in the single file database. Default is "', MSDB.DFT[['db-fields']], '".')
+		)
+
+	if (is.null(sections) || 'misc' %in% sections)
+		spec <- c(spec,
+			'help',             'h',            0,  'logical',      'Print this help.',
+			'debug',            'g',            0,  'logical',      'Set debug mode.',
+			'quiet',            'q',            0,  'logical',      'Quiet mode.',
+			'log-to-stdout',    'G',            0,  'logical',      'Send log messages to stdout instead of stderr.'
+		)
+
+	return(spec)
+}
+
+# Read args {{{1
+################################################################
+
+read.args <- function() {
+
+	# Get options
+	opt <- getopt(matrix(make.getopt.spec(), byrow = TRUE, ncol = 5))
+
+	# help
+	if ( ! is.null(opt$help)) {
+		print.help()
+		quit()
+	}
+
+	opt <- set.dft.arg.val(opt) # Set default values
+	opt <- parse.arg.val(opt) # Parse list values
+
+	return(opt)
+}
+	
+# Check args {{{1
+################################################################
+
+check.args <- function(opt) {
+
+	# Check database type
+	if (is.null(opt$database))
+		stop("You must provide a database type through --database option.")
+	if ( ! opt$database %in% MSDB.VALS)
+		stop(paste0("Invalid value \"", opt$database, "\" for --database option."))
+
+	# Check filedb database
+	if (opt$database == 'file') {
+		if (is.null(opt$url))
+			stop("When using single file database, you must specify the location of the database file with option --url.")
+		if ( ! file.exists(opt$url))
+			stop(paste0("The file path \"", opt$url,"\" specified with --db-file option is not valid."))
+	}
+
+	# Check Peakforest database
+	if (opt$database == 'peakforest') {
+		if (is.null(opt$url))
+			stop("When using PeakForest database, you must specify the URL of the PeakForest server with option --url.")
+	}
+
+	if (is.null(opt[['list-cols']])) {
+
+		if (is.null(opt[['output-file']]))
+			stop("You must set a path for the output file.")
+
+		if (is.null(opt[['input-file']]))
+			stop("You must provide an input file.")
+
+		if (is.null(opt$mode) || ( ! opt$mode %in% MSDB.MODE.VALS))
+			stop("You must specify a mode through the --mode option.")
+
+		if (is.null(opt$mzprec))
+			stop("You must set a precision in MZ with the --mzprec option.")
+
+		if ( ( ! is.null(opt$rtcol) || ! is.null(opt[['all-cols']])) && (is.null(opt$rttolx) || is.null(opt$rttoly)))
+			stop("When chromatographic columns are set, you must provide values for --rttolx and -rttoly.")
+
+		if (is.null(opt$mztolunit) || ( ! opt$mztolunit %in% MSDB.MZTOLUNIT.VALS))
+			stop("You must specify an M/Z tolerance unit through the --mztolunit option.")
+	}
+}
+
+# Output HTML {{{1
+################################################################
+
+output.html <- function(biodb, peaks, file) {
+
+	# Replace public database IDs by URLs
+	if ( ! is.null(peaks)) {
+		# Loop on all dbs
+		for (extdb in c('kegg.compound', 'hmdb.metabolites', 'chebi', 'ncbi.pubchem.comp')) {
+			conn <- biodb$getFactory()$createConn(extdb, fail.if.exists = FALSE)
+			col.name <- paste('lcmsmatching', extdb, 'id', sep = '.')
+			if (col.name %in% colnames(peaks))
+				peaks[[col.name]] <- vapply(peaks[[col.name]], function(id) if (is.na(id)) '' else paste0('<a href="', conn$getEntryPageUrl(id), '">', id, '</a>'), FUN.VALUE = '')
+		}
+	}
+
+	# Write HTML
+	html <- HtmlWriter()
+	html$file.opn(file = file)
+	html$writeBegTag('html')
+	html$writeBegTag('header')
+	html$writeTag('meta', attr = c(charset = "UTF-8"))
+	html$writeTag('title', text = "LC/MS matching results")
+	html$writeBegTag('style')
+	html$write('table, th, td { border-collapse: collapse; }')
+	html$write('table, th { border: 1px solid black; }')
+	html$write('td { border-left: 1px solid black; border-right: 1px solid black; }')
+	html$write('th, td { padding: 5px; }')
+	html$write('th { background-color: LightBlue; }')
+	html$write('tr:nth-child(even) { background-color: LemonChiffon; }')
+	html$write('tr:nth-child(odd) { background-color: LightGreen; }')
+	html$writeEndTag('style')
+	html$writeEndTag('header')
+	html$writeBegTag('body')
+
+	# Write results
+	results <- FALSE
+	if ( ! is.null(peaks) && nrow(peaks) > 0) {
+		html$writeTag('h3', text = "Matched peaks")
+		html$writeTable(peaks)
+		results <- TRUE
+	}
+	if ( ! results)
+		html$writeTag('p', 'None.')
+
+	html$writeEndTag('body')
+	html$writeEndTag('html')
+	html$file.close()
+}
+
+# Load input file {{{1
+################################################################
+
+load.input.file <- function(file, col.names) {
+
+	if ( ! is.null(file) && ! file.exists(file))
+		stop(paste0("Input file \"", file, "\" does not exist."))
+
+	# Empty file
+	if (file.info(file)$size == 0) {
+		input <- data.frame()
+		input[[col.names[['mz']]]] <- double()
+		input[[col.names[['rt']]]] <- double()
+	}
+
+	# Non-empty file
+	else {
+		# Load file into data frame
+		input <- read.table(file = file, header = TRUE, sep = "\t", stringsAsFactor = FALSE, check.names = FALSE, comment.char = '')
+	}
+
+	return(input)
+}
+
+# Check input column names {{{1
+################################################################
+
+check.input.colnames <- function(col.names, input, needs.rt) {
+
+	# Loop on all fields
+	for (field in names(col.names)) {
+
+		# Is the column not inside the input?
+		if ( ! col.names[[field]] %in% colnames(input)) {
+
+			# Is the column name an index?
+			if (length(grep('^[0-9]+$', col.names[[field]])) > 0) {
+				# Convert each column that is identified by a number into a name
+				col.index <- as.integer(col.names[[field]])
+				if (col.index < 1 || col.index > length(colnames(input)))
+					stop(paste0("No column n°", col.index, " for input field ", field, "."))
+				col.names[[field]] <- colnames(input)[[col.index]]
+			}
+
+			# Unknown column
+			else
+				if (field == 'mz' || (needs.rt && field == 'rt'))
+					stop(paste("Column ",  col.names[[field]], ' for ', field, ' values cannot be found inside input file.', sep = ''))
+		}
+	}
+
+	return(col.names)
+}
+
+# Restrict input to essential columns {{{1
+################################################################
+
+restrict.input.cols <- function(input, col.names, same.cols, keep.rt) {
+
+	# Restrict to essential columns
+	if ( ! same.cols) {
+
+		# Get selected column names
+		cols <- unlist(col.names)
+		names(cols) <- NULL
+
+		# Only keep columns present in input
+		cols <- cols[cols %in% names(input)]
+
+		# Remove retention time column
+		if ( ! keep.rt)
+			cols <- cols[cols != col.names$rt]
+
+		# Restrict input columns
+		input <- input[, cols, drop = FALSE]
+	}
+
+	return(input)
+}
+
+# Create Biodb instance {{{1
+################################################################
+
+create.biodb.instance <- function(quiet = FALSE, ms.modes = NULL) {
+
+	biodb <- NULL
+
+	if (is.null(quiet))
+		quiet <- FALSE
+
+	# Create biodb instance
+	if (quiet)
+		biodb <- biodb::Biodb$new(logger = FALSE)
+	else {
+		log.stream = (if (is.null(opt[['log-to-stdout']])) stderr() else stdout())
+		logger = biodb::BiodbLogger$new(file = log.stream)
+		if ( ! is.null(opt$debug))
+			logger$includeMsgType('debug')
+		biodb <- biodb::Biodb$new(logger = FALSE, observers = logger)
+	}
+
+	# Configure cache
+	biodb$getConfig()$disable('cache.system')
+	#biodb$getConfig()$disable('factory.cache')
+	biodb$getConfig()$disable('cache.subfolders')
+	biodb$getConfig()$disable('cache.all.requests')
+	biodb$getConfig()$set('useragent', USERAGENT)
+
+	# Set MS mode values
+	if ( ! is.null(ms.modes))
+		for (k in names(ms.modes))
+			biodb$getEntryFields()$get('ms.mode')$addAllowedValue(k, ms.modes[[k]])
+
+	return(biodb)
+}
+
+# Get database connector {{{1
+################################################################
+
+get.db.conn <- function(biodb, db.name, url, token, fields, pos.prec, neg.prec) {
+
+	# Set biodb database name
+	if (db.name == 'file')
+		biodb.db.name <- 'mass.csv.file'
+	else if (db.name == 'peakforest')
+		biodb.db.name <- 'peakforest.mass'
+	else
+		stop(paste0('Unknown database "', db.name, '".'))
+
+	# Set URL & token
+	if (is.null(url))
+		url <- NA_character_
+	if (is.null(token))
+		token <- NA_character_
+
+	# Create connector
+	conn <- biodb$getFactory()$createConn(biodb.db.name, url = url, token = token)
+
+	# Set up file database
+	if (db.name == 'file') {
+
+		# Set fields
+		if ( ! MSDB.TAG.MODE %in% names(fields))
+			stop("MS mode field is not defined for file database.")
+		if ( ! MSDB.TAG.MZTHEO %in% names(fields))
+			stop("M/Z field is not defined for file database.")
+		if ( 'accession' %in% names(fields))
+			accession <- fields[['accession']]
+		else {
+			cols <- character()
+			for (c in c(MSDB.TAG.MOLID, MSDB.TAG.MODE, MSDB.TAG.COL, MSDB.TAG.COLRT))
+				if (c %in% names(fields))
+					cols <- c(cols, fields[[c]])
+			accession <- cols
+		}
+		conn$setField('accession', accession)
+		conn$setField('ms.mode', fields[[MSDB.TAG.MODE]])
+		conn$setField('peak.mztheo', fields[[MSDB.TAG.MZTHEO]])
+		conn$setField('fullnames', fields[[MSDB.TAG.MOLNAMES]], ignore.if.missing = TRUE)
+		conn$setField('compound.id', fields[[MSDB.TAG.MOLID]], ignore.if.missing = TRUE)
+		conn$setField('chrom.col.rt', fields[[MSDB.TAG.COLRT]], ignore.if.missing = TRUE)
+		conn$setField('chrom.col', fields[[MSDB.TAG.COL]], ignore.if.missing = TRUE)
+		conn$setField('peak.attr', fields[[MSDB.TAG.ATTR]], ignore.if.missing = TRUE)
+		conn$setField('peak.comp', fields[[MSDB.TAG.COMP]], ignore.if.missing = TRUE)
+		conn$setField('formula', fields[[MSDB.TAG.MOLCOMP]], ignore.if.missing = TRUE)
+		conn$setField('molecular.mass', fields[[MSDB.TAG.MOLMASS]], ignore.if.missing = TRUE)
+		conn$setField('inchi', fields[[MSDB.TAG.INCHI]], ignore.if.missing = TRUE)
+		conn$setField('inchikey', fields[[MSDB.TAG.INCHIKEY]], ignore.if.missing = TRUE)
+		conn$setField('chebi.id', fields[[MSDB.TAG.CHEBI]], ignore.if.missing = TRUE)
+		conn$setField('ncbi.pubchem.comp.id', fields[[MSDB.TAG.PUBCHEM]], ignore.if.missing = TRUE)
+		conn$setField('hmdb.metabolites.id', fields[[MSDB.TAG.HMDB]], ignore.if.missing = TRUE)
+		conn$setField('kegg.compound.id', fields[[MSDB.TAG.KEGG]], ignore.if.missing = TRUE)
+
+		# Set MS level
+		if ( ! conn$hasField('ms.level'))
+			conn$addField('ms.level', 1)
+
+		# Set precursor formulae
+		if ( ! is.null(pos.prec))
+			conn$setPrecursorFormulae(c(pos.prec, neg.prec))
+	}
+
+	return(conn)
+}
+
+# Print chrom cols {{{1
+################################################################
+
+print.chrom.cols <- function(conn, output = NULL) {
+	file <- if (is.null(output)) stdout() else output
+	write.table(conn$getChromCol(), file = file, row.names = FALSE, sep = "\t")
+}
+
+# Get chrom cols {{{1
+################################################################
+
+get.chrom.cols <- function(conn, check.cols, chrom.cols, all.cols) {
+
+	# Get all chromatopgrahic columns
+	if (all.cols)
+		chrom.cols <- conn$getChromCol()[['id']]
+
+	# Check chromatographic columns
+	else if (check.cols && ! is.null(chrom.cols)) {
+		dbcols <- conn$getChromCol()[['id']]
+		unknown.cols <- chrom.cols[ ! chrom.cols %in% dbcols]
+		if (length(unknown.cols) > 0)
+			stop(paste0("unknown chromatographic column", (if (length(unknown.cols) > 1) 's' else ''), ': ', paste(unknown.cols, collapse = ', '), ".\nallowed chromatographic column names are:\n", paste(dbcols, collapse = "\n")))
+	}
+
+	return(chrom.cols)
+}
+
+# Search {{{1
+################################################################
+
+search <- function(conn, input.file, input.colnames, same.cols, mz.tol, mz.tol.unit, mz.shift, ms.mode, main.output, peaks.output, html.output, chrom.cols, rt.unit, rt.tol, rt.tol.exp, results.sep, precursor, precursor.rt.tol) {
+
+	rt.search <- ! is.null(chrom.cols) && ! all(is.na(chrom.cols))
+
+	# Load input file
+	input <- load.input.file(input.file, col.names = input.colnames)
+
+	# Check input column names
+	input.colnames <- check.input.colnames(input.colnames, input = input, needs.rt = rt.search)
+
+	# Restrict input to essential columns
+	input <- restrict.input.cols(input, col.names = input.colnames, same.cols = same.cols, keep.rt = rt.search)
+
+	# Update RT search flag
+	rt.search <- rt.search && 'rt' %in% names(input.colnames) && input.colnames$rt %in% names(input)
+
+	# Run MZ/RT matching
+	rt.unit <- if (rt.search) (if (rt.unit == MSDB.RTUNIT.SEC) 's' else 'min') else NA_character_
+	rt.tol <- if (rt.search && ! is.null(rt.tol)) rt.tol else NA_real_
+	rt.tol.exp <- if (rt.search && ! is.null(rt.tol.exp)) rt.tol.exp else NA_real_
+
+	# Force type for input columns
+	input[[input.colnames$mz]] <- as.numeric(input[[input.colnames$mz]])
+	if (rt.search)
+		input[[input.colnames$rt]] <- as.numeric(input[[input.colnames$rt]])
+
+	peaks <- conn$searchMsPeaks(input.df = input, mz.shift = mz.shift, mz.tol = mz.tol, mz.tol.unit = mz.tol.unit, ms.mode = ms.mode, chrom.col.ids = chrom.cols, rt.unit = rt.unit, rt.tol = rt.tol, rt.tol.exp = rt.tol.exp, precursor = precursor, precursor.rt.tol = precursor.rt.tol, insert.input.values = TRUE, compute = FALSE, prefix.on.result.cols = 'lcmsmatching.', input.df.colnames = c(mz = input.colnames$mz, rt = input.colnames$rt), match.rt = rt.search)
+
+	# Build outputs
+	main <- NULL
+	if ( ! is.null(peaks))
+		main <- conn$collapseResultsDataFrame(results.df = peaks, sep = results.sep, mz.col = input.colnames$mz, rt.col = input.colnames$rt)
+
+	# Write main output
+	if ( ! is.null(main.output))
+		write.table(main, file = main.output, row.names = FALSE, sep = "\t", quote = FALSE)
+
+	# Write peaks output
+	if ( ! is.null(peaks.output))
+		write.table(peaks, file = peaks.output, row.names = FALSE, sep = "\t", quote = FALSE)
+
+	# Write HTML output
+	if ( ! is.null(html.output))
+		output.html(biodb = conn$getBiodb(), peaks = peaks, file = html.output)
+}
+
+# MAIN {{{1
+################################################################
+
+# Read command line arguments
+opt <- read.args()
+
+# Set error function for debugging
+if (is.null(opt$debug)) {
+	options(error = function() { quit(status = 1) }, warn = 0 )
+}
+
+# Create Biodb instance
+biodb <- create.biodb.instance(quiet = opt$quiet, ms.modes = opt[['db-ms-modes']])
+
+# Get database connector
+conn <- get.db.conn(biodb, db.name = opt$database, url = opt$url, token = opt[['db-token']], fields = opt[['db-fields']], pos.prec = opt[['pos-prec']], neg.prec = opt[['neg-prec']])
+
+# Print columns
+if ( ! is.null(opt[['list-cols']])) {
+	print.chrom.cols(conn, opt[['output-file']])
+	quit(status = 0)
+}
+
+# MS mode
+ms.mode <- (if (opt$mode == POS_MODE) MSDB.TAG.POS else MSDB.TAG.NEG)
+
+# Set RT unit
+rt.search <- ! is.null(opt$rtcol) || ! is.null(opt[['all-cols']])
+if ( rt.search && opt$database == 'file' && ! conn$hasField('chrom.rt.unit'))
+	conn$addField('chrom.rt.unit', (if (opt[['db-rt-unit']] == MSDB.RTUNIT.SEC) 's' else 'min'))
+
+# Select chromatographic columns
+chrom.cols <- get.chrom.cols(conn, check.cols = ! is.null(opt[['check-cols']]), chrom.cols = opt$rtcol, all.cols = ! is.null(opt[['all-cols']]))
+
+# Search
+search(conn, input.file = opt[['input-file']], input.colnames = opt[['input-col-names']], same.cols =  ! is.null(opt[['same-cols']]), mz.tol = opt$mzprec, mz.tol.unit = opt$mztolunit, mz.shift = - opt$mzshift,
+	   ms.mode = ms.mode,
+	   chrom.cols = chrom.cols, rt.unit = opt$rtunit, rt.tol = (if (is.null(opt$rttol)) opt$rttolx else opt$rttol), rt.tol.exp = opt$rttoly,
+	   results.sep = opt[['molids-sep']], precursor = ! is.null(opt[['precursor-match']]), precursor.rt.tol = opt[['precursor-rt-tol']],
+	   main.output = opt[['output-file']], peaks.output = opt[['peak-output-file']], html.output = opt[['html-output-file']])
+
+# Terminate Biodb instance
+biodb$terminate()

@@ -1,0 +1,126 @@
+<html>
+	<header>
+		<meta charset="UTF-8"/>
+		<title>LC/MS matching results</title>
+		<style>
+			table, th, td { border-collapse: collapse; }
+			table, th { border: 1px solid black; }
+			td { border-left: 1px solid black; border-right: 1px solid black; }
+			th, td { padding: 5px; }
+			th { background-color: LightBlue; }
+			tr:nth-child(even) { background-color: LemonChiffon; }
+			tr:nth-child(odd) { background-color: LightGreen; }
+		</style>
+	</header>
+	<body>
+		<h1>LC/MS matching</h1>
+		<h2>Parameters</h2>
+		<ul>
+			<li>Mode = neg.</li>
+			<li>M/Z precision = 10.</li>
+			<li>M/Z shift = 0.</li>
+			<li>Precursor match = yes.</li>
+			<li>Positive precursors = [(M+H)]+, [M+H]+, [(M+Na)]+, [M+Na]+, [(M+K)]+, [M+K]+.</li>
+			<li>Negative precursors = [(M-H)]-, [M-H]-, [(M+Cl)]-, [M+Cl]-.</li>
+			<li>Columns = zicphilic-150*5*2.1-42min-shimadzuexactive.</li>
+			<li>RTX = 5.</li>
+			<li>RTY = 0.8.</li>
+			<li>RTZ = 5.</li>
+		</ul>
+		<h2>Results</h2>
+		<h3>Main output</h3>
+		<table>
+			<tr>
+				<th>mz</th>
+				<th>rt</th>
+				<th>compoundid</th>
+				<th>msmode</th>
+				<th>mztheo</th>
+				<th>peakcomp</th>
+				<th>peakattr</th>
+				<th>mzexp</th>
+				<th>int</th>
+				<th>rel</th>
+				<th>pool</th>
+				<th>compoundcomp</th>
+				<th>compoundmass</th>
+				<th>fullnames</th>
+				<th>inchi</th>
+				<th>inchikey</th>
+				<th>pubchemid</th>
+				<th>chebiid</th>
+				<th>hmdbid</th>
+				<th>keggid</th>
+			</tr>
+			<tr>
+				<td>88.04042</td>
+				<td>450.3259</td>
+				<td>339</td>
+				<td>NEG</td>
+				<td>88.0404</td>
+				<td>C3 H6 N O2</td>
+				<td>[(M-H)]-</td>
+				<td>88.04035</td>
+				<td>19792.7</td>
+				<td>2.07</td>
+				<td>24</td>
+				<td>C3H7NO2</td>
+				<td>89.04768</td>
+				<td>β-Alanine</td>
+				<td>InChI=1S/C3H7NO2/c4-2-1-3(5)6/h1-2,4H2,(H,5,6)</td>
+				<td>UCMIRNVEIXFBKS-UHFFFAOYSA-N</td>
+				<td><a href="http://pubchem.ncbi.nlm.nih.gov/compound/239">CID239</a></td>
+				<td><a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:16958">CHEBI:16958</a></td>
+				<td><a href="http://www.hmdb.ca/metabolites/HMDB00056">HMDB00056</a></td>
+				<td><a href="http://www.genome.jp/dbget-bin/www_bget?cpd:C00099">C00099</a></td>
+			</tr>
+		</table>
+		<h3>Matched peaks</h3>
+		<table>
+			<tr>
+				<th>mz</th>
+				<th>rt</th>
+				<th>compoundid</th>
+				<th>msmode</th>
+				<th>mztheo</th>
+				<th>peakcomp</th>
+				<th>peakattr</th>
+				<th>mzexp</th>
+				<th>int</th>
+				<th>rel</th>
+				<th>pool</th>
+				<th>compoundcomp</th>
+				<th>compoundmass</th>
+				<th>fullnames</th>
+				<th>inchi</th>
+				<th>inchikey</th>
+				<th>pubchemid</th>
+				<th>chebiid</th>
+				<th>hmdbid</th>
+				<th>keggid</th>
+			</tr>
+			<tr>
+				<td>88.04042</td>
+				<td>450.3259</td>
+				<td>339</td>
+				<td>NEG</td>
+				<td>88.0404</td>
+				<td>C3 H6 N O2</td>
+				<td>[(M-H)]-</td>
+				<td>88.04035</td>
+				<td>19792.7</td>
+				<td>2.07</td>
+				<td>24</td>
+				<td>C3H7NO2</td>
+				<td>89.04768</td>
+				<td>β-Alanine</td>
+				<td>InChI=1S/C3H7NO2/c4-2-1-3(5)6/h1-2,4H2,(H,5,6)</td>
+				<td>UCMIRNVEIXFBKS-UHFFFAOYSA-N</td>
+				<td><a href="http://pubchem.ncbi.nlm.nih.gov/compound/239">CID239</a></td>
+				<td><a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:16958">CHEBI:16958</a></td>
+				<td><a href="http://www.hmdb.ca/metabolites/HMDB00056">HMDB00056</a></td>
+				<td><a href="http://www.genome.jp/dbget-bin/www_bget?cpd:C00099">C00099</a></td>
+			</tr>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,37 @@
+matrix:
+    include:
+        - name: "Plain file database tests"
+          language: r
+          r: release
+          install: ./travis_install_deps.sh
+          script: DATABASES=file make test
+        - name: "Plain PeakForest tests"
+          language: r
+          r: release
+          install: ./travis_install_deps.sh
+          script: DATABASES=peakforest make test
+        - name: "Planemo tests 18.05"
+          dist: xenial # To get Python >=2.7.7
+          language: python
+          addons:
+              apt:
+                  packages: python-virtualenv
+          script: GALAXY_VERSION=18.05 make planemolint planemotest
+        - name: "Planemo tests 18.09"
+          dist: xenial # To get Python >=2.7.7
+          language: python
+          addons:
+              apt:
+                  packages: python-virtualenv
+          script: GALAXY_VERSION=18.09 make planemolint planemotest
+
+notifications:
+ email:
+  recipients:
+   - pk.roger@icloud.com
+
+branches:
+  only:
+    - master
+    - /^release[/].*$/
+    - /^testing[/]travis-.*$/

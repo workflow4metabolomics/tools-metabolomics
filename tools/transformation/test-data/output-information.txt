@@ -1,0 +1,10 @@
+
+Start of the 'Transformation' module: Thu 28 Jul 2016 03:30:03 AM
+
+'log10' transformation
+
+Missing values in the 'dataMatrix': 4 (4%)
+
+Zero values in the 'dataMatrix': 3 (3%)
+
+End of the 'Transformation' Galaxy module call: Thu 28 Jul 2016 03:30:03 AM

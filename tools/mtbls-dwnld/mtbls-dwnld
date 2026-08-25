@@ -1,0 +1,525 @@
+#!/bin/bash
+# vi: fdm=marker
+
+# Constants {{{1
+################################################################
+
+PROG_NAME=$(basename $0)
+PROG_PATH=$(dirname $0)
+ISASLICER="$PROG_PATH/isaslicer.py"
+YES=yes
+NO=no
+ASPERA_PUBLIC_TOKEN=Xz68YfDe
+ASCP=ascp
+WGET=wget
+PLATFORM=
+DISTRIBUTION=
+[[ -z $(which uname) ]] || PLATFORM=$(uname)
+[[ $PLATFORM == Linux && -e /proc/version ]] && DISTRIBUTION=$(sed 's/^.*(\([^ ]*\).*$/\1/' /proc/version)
+[[ $DISTRIBUTION == Alpine ]] || WGET_FLAGS="--progress=dot"
+
+# Global variables {{{1
+################################################################
+
+ASPERA=
+COMPRESSED=
+DEBUG=0
+FACTOR_VALUE=
+HTML=
+METADATA_ONLY=
+OUTPUT=
+PRIVATE=
+QUIET=0
+TMP_IN_OUTPUT=
+TOKEN=
+
+# Print help {{{1
+################################################################
+
+function print_help {
+	echo "Usage: $PROG_NAME [options] study"
+	echo
+	echo "Retrieves a study from Metabolights database."
+	echo "By default it uses the ftp server, but with -a option you can ask for using aspera server (you will need the aspera client ascp to be installed)."
+	echo
+	echo "Options:"
+	echo "   -a, --aspera                Use aspera server for downloading. You need the ascp client to be installed, it is freely available for linux 64. See http://downloads.asperasoft.com."
+	echo "   -c, --compressed            Output in compressed format. If unset, the output will be a directory."
+	echo "   -f, --factor-value          Filter study on a factor value. Example: \"-f myfactor=myvalue\". Only available with wget downloader."
+	echo "   -g, --debug                 Debug mode."
+	echo "   -h, --help                  Print this help message."
+	echo "   -H, --html           FILE   Write HTML file that list files contained in output directory. Not compatible with compressed output."
+	echo "   -M, --metadata-only         Download only the metadata (ISA-Tab files i_*, m_*, s_* and a_*) files. This option has no effet if aspera is selected (option -a)."
+	echo "   -o, --output         NAME   Set the name of the output (both for directory output or compressed file output). By default the name of the output is determined by the download tool."
+	echo "   -p, --private               Indicate the study to download is not public. This is meant for aspera download, since the URL will be different for a public or a private study."
+	echo "   -q, --quiet                 Does not print any output. Can be specified twice in order to be real quiet."
+	echo "   -t, --token          TOKEN  Set the token or password to use. For aspera public download, if you don't specify a token, the default token '$ASPERA_PUBLIC_TOKEN' will be used."
+	echo "   -T, --tmp-in-output         If an output is specified and it is a directory (-c option must not be set), then use it for writing intermediate files."
+}
+
+# Error {{{1
+################################################################
+
+function error {
+
+	local msg=$1
+
+	echo "ERROR: $msg" >&2
+
+	exit 1
+}
+
+# Debug {{{1
+################################################################
+
+function debug {
+
+	local dbgmsg="$1"
+
+	[[ $DEBUG -ge 1 ]] && echo "[DEBUG] $dbgmsg" >&2
+}
+
+
+# Read args {{{1
+################################################################
+
+function read_args {
+
+	local args="$*" # save arguments for debugging purpose
+	
+	# Read options
+	while true ; do
+		shift_count=1
+		case $1 in
+			-a|--aspera)            ASPERA=$YES ;;
+			-c|--compressed)        COMPRESSED=$YES ;;
+			-f|--factor-value)      FACTOR_VALUE="$2" ; shift_count=2 ;;
+			-g|--debug)             DEBUG=$((DEBUG + 1)) ;;
+			-h|--help)              print_help ; exit 0 ;;
+			-M|--metadata-only)     METADATA_ONLY=$YES ;;
+			-H|--html)              HTML="$2" ; shift_count=2 ;;
+			-o|--output)            OUTPUT="$2" ; shift_count=2 ;;
+			-p|--private)           PRIVATE=$YES ;;
+			-q|--quiet)             QUIET=$((QUIET + 1)) ;;
+			-t|--token)             TOKEN="$2" ; shift_count=2 ;;
+			-T|--tmp-in-output)     TMP_IN_OUTPUT=$YES ;;
+			-) error "Illegal option $1." ;;
+			--) error "Illegal option $1." ;;
+			--*) error "Illegal option $1." ;;
+			-?) error "Unknown option $1." ;;
+			-[^-]*) split_opt=$(echo $1 | sed 's/^-//' | sed 's/\([a-zA-Z]\)/ -\1/g') ; set -- $1$split_opt "${@:2}" ;;
+			*) break
+		esac
+		shift $shift_count
+	done
+	shift $((OPTIND - 1))
+
+	# Read remaining arguments
+	[ $# -eq 1 ] || error "You must specify one, and only one, study to retrieve."
+	STUDY="$1"
+
+	# Check token
+	if [[ -n $ASPERA && -z $TOKEN ]] ; then
+		if [[ -z $PRIVATE ]] ; then
+			TOKEN=$ASPERA_PUBLIC_TOKEN
+		else
+			error "You need to specify a token for retrieving private studies with aspera."
+		fi
+	fi
+	[[ -z $PRIVATE || -n $TOKEN ]] || error "You need to set a token for retrieving private studies."
+
+	# Turn off --tmp-to-output if --compressed is set
+	[[ $TMP_IN_OUTPUT == $YES && ( $COMPRESSED == $YES || -z $OUTPUT ) ]] && TMP_IN_OUTPUT=$NO
+
+	# Debug
+	debug "Arguments are : $args"
+	debug "Study to retrieve is : $STUDY"
+	debug "ASPERA=$ASPERA"
+	debug "COMPRESSED=$COMPRESSED"
+	debug "DEBUG=$DEBUG"
+	debug "FACTOR_VALUE=$FACTOR_VALUE"
+	debug "HTML=$HTML"
+	debug "METADATA_ONLY=$METADATA_ONLY"
+	debug "OUTPUT=$OUTPUT"
+	debug "PRIVATE=$PRIVATE"
+	debug "QUIET=$QUIET"
+	debug "TMP_IN_OUTPUT=$TMP_IN_OUTPUT"
+	debug "TOKEN=$TOKEN"
+	[[ -n $ASPERA ]] && debug "Aspera will be used."
+	[[ -n $TOKEN ]] && debug "Token/Password is \"$TOKEN\"."
+}
+
+# Get download output path {{{1
+################################################################
+
+get_download_output_path() {
+
+	local downloader="$1"
+	local study_name="$2"
+	local output_dir="$3"
+	local output_path="$study_name"
+
+	[[ -z $output_dir ]] || output_path="$output_dir/$output_path"
+	[[ $downloader == $WGET ]] && output_path+=".zip"
+
+	echo "$output_path"
+}
+
+# Download with ascp {{{1
+################################################################
+
+download_with_ascp() {
+
+	local study_name="$1"
+	local metadata_only="$2"
+	local output_dir="$3"
+	local dwnld_flags=
+	local dwnld_link=
+
+	# Check ascp
+	[ -n "$(which ascp)" ] || error "ascp command not found. Please install Aspera client, version 3.7.4 or greater. See http://downloads.asperasoft.com/en/downloads/62."
+	debug "$ASCP: $(which $ASCP)"
+	debug "QUIET: $QUIET"
+
+	# Silence downloader output
+	[[ $QUIET -eq 0 ]] || dwnld_flags=-q
+
+	# Set download flags
+	[[ -z $dwnld_flags ]] || dwnld_flags+=" "
+	dwnld_flags+="--policy=fair -T -l 1g"
+
+	dwnld_flags+=" -P33001"
+
+	# Set download link
+	if [[ -z $PRIVATE ]] ; then
+
+		# Make full path for public study
+		study_path=$STUDY
+		if [[ -z ${study_path##MTBLS*} ]] ; then
+			study_path="/studies/public/$study_path"
+		fi
+		dwnld_link="fasp-ml@fasp.ebi.ac.uk:$study_path"
+
+	# Private study
+	else
+		dwnld_link="mtblight@hx-fasp-1.ebi.ac.uk:$STUDY"
+	fi
+
+	# Export token
+	debug "export ASPERA_SCP_PASS=\"$TOKEN\""
+	export ASPERA_SCP_PASS="$TOKEN"
+
+	# Run download command
+	if [[ -n $output_dir ]] ; then
+		mkdir -p "$output_dir"
+		curdir=$(pwd)
+		cd "$output_dir"
+	fi
+	if [[ $metadata_only == $YES ]] ; then
+		debug "Download command: $ASCP $dwnld_flags -N '?_*.t*' -E '*.*' -E 'p*' $dwnld_link ."
+		$ASCP $dwnld_flags -N '?_*.t*' -E '*.*' -E 'p*' $dwnld_link .
+		[[ $? == 0 ]] || error "Downloading of study $STUDY has failed. Error code returned is $?."
+	else
+		debug "Download command: $ASCP $dwnld_flags $dwnld_link ."
+		$ASCP $dwnld_flags $dwnld_link .
+		[[ $? == 0 ]] || error "Downloading of study $STUDY has failed. Error code returned is $?."
+	fi
+	[[ -z $output_dir ]] || cd "$curdir"
+}
+
+# Download with wget {{{1
+################################################################
+
+download_with_wget() {
+
+	local study_name="$1"
+	local metadata_only="$2"
+	local output_dir="$3"
+	local dwnld_flags=
+
+	# Check wget
+	[ -n "$(which wget)" ] || error "wget command not found."
+	debug "$WGET: $(which $WGET)"
+
+	# Set download link
+	file="$study_name"
+	[[ $metadata_only == $YES ]] && file=metadata
+	dwnld_link="https://www.ebi.ac.uk/metabolights/$study_name/files/$file"
+	[[ -n $TOKEN ]] && dwnld_link+="?token=$TOKEN"
+
+	# Set download output
+	output_path="$study_name.zip"
+	if [[ -n $output_dir ]] ; then
+		mkdir -p "$output_dir"
+		output_path="$output_dir/$output_path"
+	fi
+	dwnld_flags="-O $output_path"
+
+	# Silence downloader output
+	wget_log_file=$(mktemp -t $PROG_NAME.XXXXXX)
+	[[ $QUIET -eq 0 ]] || dwnld_flags+=" -q -o $wget_log_file"
+
+	# Run download command
+	debug "Download command: $WGET $WGET_FLAGS $dwnld_flags $dwnld_link"
+	$WGET $WGET_FLAGS $dwnld_flags $dwnld_link
+	[[ $? == 0 ]] || error "Downloading of study $STUDY has failed. wget log file: $(cat $wget_log_file)"
+	rm -f $wget_log_file
+}
+
+# Download {{{1
+################################################################
+
+download() {
+
+	local downloader="$1"
+	local study_name="$2"
+	local metadata_only="$3"
+	local output_dir="$4"
+
+	if [[ $downloader == $WGET ]] ; then
+		download_with_wget "$2" "$3" "$output_dir"
+	else
+		download_with_ascp "$2" "$3" "$output_dir"
+	fi
+}
+
+# Check download {{{1
+################################################################
+
+check_download() {
+
+	local download_path="$1"
+
+	[[ -d $download_path || -f $download_path ]] || error "The downloading of $tmp_output failed. The output file doesn't exist."
+	[[ ! -f $download_path || -s $download_path ]] || error "The downloading of $tmp_output failed. The output file is empty."
+}
+
+# Unzip study {{{1
+################################################################
+
+unzip_study() {
+
+	local tmp_output="$1"
+	local output="$2"
+	local unzip_flags=
+
+	# Silence unzip program
+	[[ $QUIET -eq 0 ]] || unzip_flags=-qq
+
+	debug "Unzipping file \"$tmp_output\"."
+	[[ -z $output ]] || debug "Unzipping into \"$output\"."
+
+	[[ -n $(which unzip) ]] || error "unzip command not found. Please install zip package."
+
+	zip=$tmp_output
+	debug "Zipped file is \"$zip\"."
+	if [[ -z $output ]] ; then
+		output=${zip%.*}
+		[[ -d "$output" ]] && rm -r "$output"
+	fi
+	debug "Output directory will be \"$output\"."
+	zip_abs_path=$(realpath "$zip")
+	curdir=$(pwd)
+	debug "Current directory is \"$curdir\"."
+	mkdir -p "$output"
+	cd "$output"
+	unzip $unzip_flags "$zip_abs_path" >&2 || error "Unable to unzip archive $zip_abs_path."
+	cd "$curdir"
+
+	echo "$output"
+}
+
+# As zip {{{1
+################################################################
+
+as_zip() {
+
+	local path="$1"
+
+	if [[ -d $path ]] ; then
+
+		zip_file="$path.zip"
+		zip "$zip_file" $path/*
+		rm -r "$path"
+		path="$zip_file"
+	fi
+
+	echo "$path"
+}
+
+# As folder {{{1
+################################################################
+
+as_folder() {
+
+	local path="$1"
+	local output="$2"
+
+	debug "as_folder($path, $output)"
+	if [[ -f $path && ${path##*.} == 'zip' ]] ; then
+		folder=$(unzip_study "$path" "$output")
+		rm "$path"
+		path="$folder"
+	elif [[ -d $path && -n $output && $path != $output ]] ; then
+		mkdir -p "$output"
+		mv "$path"/* "$output"/.
+		rm -r "$path"
+		path="$output"
+	fi
+
+	echo "$path"
+}
+
+# Make folder or zip {{{1
+################################################################
+
+make_folder_or_zip() {
+
+	local path="$1"
+	local compressed="$2"
+	local output="$3"
+
+	debug "make_folder_or_zip($path, $compressed, $output)"
+	[[ -e $path ]] || error "No file or folder at path \"$path\"."
+
+	# Compress folder
+	if [[ $compressed == $YES ]] ; then
+		path=$(as_zip "$path")
+	else
+		path=$(as_folder "$path" "$output")
+	fi
+
+	echo "$path"
+}
+
+# Write HTML file {{{1
+################################################################
+
+function write_html_file {
+
+	local HTML=$1
+	local tmp_output=$2
+
+	cat >$HTML <<EOF
+<html>
+	<header>
+		<title>Metabolights study</title>
+	</header>
+	<body>
+		<a href="i_Investigation.txt">Investigation file</a><br/>
+EOF
+
+	echo "<br/>" >>$HTML
+	echo "          Study files:<br/>" >>$HTML
+	for f in $tmp_output/s_* ; do
+		filename=$(basename "$f")
+		echo "          <a href=\"$filename\">$filename</a><br/>" >>$HTML
+	done
+
+	echo "<br/>" >>$HTML
+	echo "          Assay files:<br/>" >>$HTML
+	for f in $tmp_output/a_* ; do
+		filename=$(basename "$f")
+		echo "          <a href=\"$filename\">$filename</a><br/>" >>$HTML
+	done
+
+	echo "<br/>" >>$HTML
+	echo "          Data files:<br/>" >>$HTML
+	for f in $tmp_output/m_* ; do
+		filename=$(basename "$f")
+		echo "          <a href=\"$filename\">$filename</a><br/>" >>$HTML
+	done
+
+	cat >>$HTML <<EOF
+	</body>
+</html>
+EOF
+}
+
+# Get data files {{{1
+################################################################
+
+get_data_files() {
+
+	local json_file="$1"
+
+	python3 <<EOF
+# @@@BEGIN_PYTHON@@@
+import json
+import sys
+with open('$json_file') as f:
+    data_list = json.load(f)
+    for elem in data_list:
+	    print("\n".join(elem['data_files']))
+# @@@END_PYTHON@@@
+EOF
+}
+
+# MAIN {{{1
+################################################################
+
+read_args "$@"
+
+study_name=$(basename $STUDY)
+downloader=$WGET
+output_dir=
+[[ $ASPERA == $YES ]] && downloader=$ASCP
+[[ $TMP_IN_OUTPUT != $YES ]] || output_dir="$OUTPUT"
+
+# Download only part of the study using factor value
+if [[ -n $FACTOR_VALUE ]] ; then
+
+	# Get factor name and value
+	factor_name=${FACTOR_VALUE%%=*}
+	factor_value=${FACTOR_VALUE#*=}
+
+	# Download only metadata
+	download "$downloader" "$study_name" "$YES" # XXX Download output must be written into $OUTPUT if TMP_IN_OUTPUT is set
+	dwnld_output=$(get_download_output_path "$downloader" "$study_name")
+	dwnld_output=$(as_folder "$dwnld_output")
+
+	# Get data files to download
+	data_files=$(mktemp -t $PROG_NAME.XXXXXX) # XXX must be created into $OUTPUT if TMP_IN_OUTPUT is set
+	[[ -x "$ISASLICER" ]] || error "Cannot find or run isaslicer.py script."
+	debug "Run ISA slicer: \"$ISASLICER\" 'isa-tab-get-data-list' \"$abs_dwnld_output\" \"$data_files\" --json-query \"{ \\\"$factor_name\\\": \\\"$factor_value\\\" }\""
+	abs_dwnld_output=$(realpath "$dwnld_output")
+	"$ISASLICER" --log-level DEBUG 'isa-tab-get-data-list' "$abs_dwnld_output" "$data_files" --json-query "{ \"$factor_name\": \"$factor_value\" }" 2>&1 || error "Call to isaslicer failed."
+
+	# Download data files
+	wget_log_file=$(mktemp -t $PROG_NAME.XXXXXX)
+	get_data_files "$data_files" | sort | uniq | while read file ; do
+		if [[ -n $file ]] ; then
+			dwnld_flags=
+			[[ $QUIET -eq 0 ]] || dwnld_flags+=" -q -o $wget_log_file"
+			dwnld_link="https://www.ebi.ac.uk/metabolights/$study_name/files/$file"
+			debug "Download command: $WGET $WGET_FLAGS $dwnld_flags $dwnld_link"
+			$WGET $WGET_FLAGS $dwnld_flags -O "$dwnld_output/$file" "$dwnld_link" # XXX Download output must be written into $OUTPUT if TMP_IN_OUTPUT is set
+			[[ $? == 0 ]] || error "Downlad of study file \"$file\" has failed. wget log file: $(cat $wget_log_file)"
+		fi
+	done
+	rm -f $wget_log_file
+
+	# Remove data files list
+	rm "$data_files"
+
+# Download whole study
+else
+
+	# Download whole study
+	download "$downloader" "$study_name" "$METADATA_ONLY" "$output_dir" # XXX Download output must be written into $OUTPUT if TMP_IN_OUTPUT is set
+
+	# Get output path
+	dwnld_output=$(get_download_output_path "$downloader" "$study_name" "$output_dir") # XXX Correct output path when TMP_IN_OUTPUT is set
+fi
+
+# Check output
+check_download "$dwnld_output"
+
+# Output in right format (zipped or folder)
+dwnld_output=$(make_folder_or_zip "$dwnld_output" "$COMPRESSED" "$output_dir") # XXX zip must be written into $OUTPUT and unzipped into $OUTPUT if TMP_IN_OUTPUT is set
+
+# Output HTML
+[[ -z $HTML || ! -d $dwnld_output ]] || write_html_file "$HTML" "$dwnld_output"
+
+# Rename output
+[[ -z $OUTPUT || $TMP_IN_OUTPUT == $YES ]] || mv "$dwnld_output" "$OUTPUT"

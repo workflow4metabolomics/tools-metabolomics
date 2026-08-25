@@ -1,0 +1,6 @@
+[submodule "bash-testthat"]
+	path = bash-testthat
+	url = https://github.com/pkrog/bash-testthat
+[submodule "isatools-galaxy"]
+	path = isatools-galaxy
+	url = https://github.com/ISA-tools/isatools-galaxy

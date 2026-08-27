@@ -183,9 +183,9 @@ def get_mzxml_software_list(text1):
                 softwaresList1 = softwaresList1 + ' + '
             softwaresList1 = softwaresList1 + \
               text1.split("<software")[i+1].split('type="')[1]\
-              .split('"')[0] + ': ' +\
+              .split('"')[0] + ': ' + \
               text1.split("<software")[i+1].split('name="')[1]\
-              .split('"')[0] + ' ' +\
+              .split('"')[0] + ' ' + \
               text1.split("<software")[i+1]\
               .split('version="')[1]\
               .split('"')[0]
@@ -333,13 +333,13 @@ def get_acquisition_date(text1):
 def get_softwares_list(text1):
     try:
         softwaresList1 = ''
-        subtext1 = text1.split('softwareList count')[1] \
-          .split('</softwareList>')[0]
+        subtext1 = text1.split('softwareList count')[1]\
+                   .split('</softwareList>')[0]
         for i in range(subtext1.count("<software")):
             if i != 0:
                 softwaresList1 = softwaresList1 + ' + '
             softwaresversions1 = subtext1.split("<software")[i+1]\
-              .split('version="')[1].split('"')[0]
+                                .split('version="')[1].split('"')[0]
             if ('cvRef="MS" name="' in subtext1):
                 softwares1 = subtext1.split('cvRef="MS" name="')[i+1]\
                         .split('"')[0]

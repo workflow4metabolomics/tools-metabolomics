@@ -347,7 +347,7 @@ def get_softwares_list(text1):
                 softwares1 = subtext1.split('<software id="')[i+1]\
                         .split('"')[0]
             softwaresList1 = softwaresList1 + \
-                        softwares1 + ' ' + softwaresversions1
+                softwares1 + ' ' + softwaresversions1
     except Exception:
         softwaresList1 = "Not found"
     return softwaresList1

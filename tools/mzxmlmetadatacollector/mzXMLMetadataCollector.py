@@ -182,13 +182,13 @@ def get_mzxml_software_list(text1):
             if i != 0:
                 softwaresList1 = softwaresList1 + ' + '
             softwaresList1 = softwaresList1 + \
-                             text1.split("<software")[i+1].split('type="')[1]\
-                                  .split('"')[0] + ': ' + \
-                             text1.split("<software")[i+1].split('name="')[1]\
-                                  .split('"')[0] + ' ' + \
-                             text1.split("<software")[i+1]\
-                                  .split('version="')[1]\
-                                  .split('"')[0]
+                text1.split("<software")[i+1].split('type="')[1]\
+                     .split('"')[0] + ': ' + \
+                text1.split("<software")[i+1].split('name="')[1]\
+                     .split('"')[0] + ' ' + \
+                text1.split("<software")[i+1]\
+                     .split('version="')[1]\
+                     .split('"')[0]
     except Exception:
         softwaresList1 = "Not found"
     return softwaresList1
@@ -347,7 +347,7 @@ def get_softwares_list(text1):
                 softwares1 = subtext1.split('<software id="')[i+1]\
                         .split('"')[0]
             softwaresList1 = softwaresList1 + \
-                             softwares1 + ' ' + softwaresversions1
+                        softwares1 + ' ' + softwaresversions1
     except Exception:
         softwaresList1 = "Not found"
     return softwaresList1

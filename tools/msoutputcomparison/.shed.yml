@@ -1,0 +1,8 @@
+categories: [Metabolomics]
+description: '[W4M][Utils] Compares two MS pipeline outputs'
+homepage_url: http://workflow4metabolomics.org
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The
+  tool compares two MS pipeline outputs (ions, masses, retention times, intensities).'
+name: msoutputcomparison
+owner: workflow4metabolomics
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/msoutputcomparison

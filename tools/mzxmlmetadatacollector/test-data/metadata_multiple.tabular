@@ -1,0 +1,5 @@
+Name	format	version	size(ko)	size(Mo)	size(Go)	MSlevel	Spectrum type	Source file	Acquisition date	Software(s) used	Processing method(s)	Machine	Number of scans	Number of points	Encoding
+Blanc16.mzML	mzML	1.1.0	81098.05	79.2	0.08	MS1 spectrum	Not found	file:///D:\data\439020-urines\090507NEG Part1\raw	2009-05-10 02:45:53Z	Xcalibur 2.4 SP1 + pwiz 3.0.7099	pwiz Conversion to mzML	Not available	1485	7163092	64-bit float	
+QC1_014.mzML	mzML	1.1.0	93745.78	91.55	0.09	MS1 spectrum	Not found	file:///D:\data\439020-urines\090507NEG Part1\raw	2009-05-10 06:44:45Z	Xcalibur 2.4 SP1 + pwiz 3.0.7099	pwiz Conversion to mzML	Not available	1533	8328513	64-bit float	
+Blanc10.mzML	mzML	1.1.0	20378.72	19.9	0.02	MS1 spectrum	centroid spectrum	file:///C:\Users\SD265344\Desktop\sacurine_raw	2009-05-08 22:35:08Z	Xcalibur 2.4 SP1 + pwiz 3.0.21096	pwiz Conversion to mzML + pwiz peak picking	Not available	1882	650796	64-bit float	
+Blanc05.mzML	mzML	1.1.0	21594.17	21.09	0.02	MS1 spectrum	centroid spectrum	file:///C:\Users\SD265344\Desktop\sacurine_raw	2009-05-08 01:01:45Z	Xcalibur 2.4 SP1 + pwiz 3.0.21096	pwiz Conversion to mzML + pwiz peak picking	Not available	2022	684806	64-bit float	

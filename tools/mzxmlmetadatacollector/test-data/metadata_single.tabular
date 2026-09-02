@@ -1,0 +1,2 @@
+Name	format	version	size(ko)	size(Mo)	size(Go)	MSlevel	Spectrum type	Source file	Acquisition date	Software(s) used	Processing method(s)	Machine	Number of scans	Number of points	Encoding
+Blanc16.mzML	mzML	1.1.0	81098.05	79.2	0.08	MS1 spectrum	Not found	file:///D:\data\439020-urines\090507NEG Part1\raw	2009-05-10 02:45:53Z	Xcalibur 2.4 SP1 + pwiz 3.0.7099	pwiz Conversion to mzML	Not available	1485	7163092	64-bit float	

@@ -51,7 +51,7 @@
     <test>
       <conditional name="input">
         <param name="files" value="SINGLE"/>
-        <param name="SingleInputFile" location="https://nextcloud.inrae.fr/s/YPFKGaBrWgrfdnE/download/BlancFin_POS_RA1_1_6869.mzML"/>
+        <param name="SingleInputFile" location="https://zenodo.org/record/3757956/files/Blanc16.mzML"/>
       </conditional>
       <output name="outputFile" file="metadata_single.tabular" ftype="tabular"/>
     </test>

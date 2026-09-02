@@ -229,7 +229,7 @@ def get_mzxml_version(text1):
 
 
 def read_mzxml_file(file):
-    f = open(file, 'r+', encoding="utf-8")
+    f = open(file, 'r', encoding="utf-8")
     with f:
         text1 = ''
         while ('</scan>' not in text1):
@@ -239,7 +239,7 @@ def read_mzxml_file(file):
 
 
 def read_mzml_file(file):
-    with open(file, 'r+', encoding="utf-8") as f:
+    with open(file, 'r', encoding="utf-8") as f:
         text1 = ''
         while ('<binary>' not in text1):
             text1 = text1 + f.readline()
@@ -516,6 +516,7 @@ def update_entries(infile, singleFile):
         return info
 
 
+print('Parameters passed to the tool:\n')
 print([i for i in sys.argv])
 outfile = sys.argv[1]
 singleFile = sys.argv[2]

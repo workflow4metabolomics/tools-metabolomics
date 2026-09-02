@@ -202,15 +202,18 @@ def get_mzxml_instrument_model(text1):
         else:
             if ('accession="MS:1001547"' in text1):
                 modele1 = text1.split('<cvParam cvRef="MS" '
-                                      'accession="MS:1001547" name="')[1].split('"')[0]
+                                      'accession="MS:1001547"'
+                                      ' name="')[1].split('"')[0]
             else:
                 if ('accession="MS:1003123"' in text1):
                     modele1 = text1.split('<cvParam cvRef="MS" '
-                                          'accession="MS:1003123" name="')[1].split('"')[0]
+                                          'accession="MS:1003123"'
+                                          ' name="')[1].split('"')[0]
                 else:
                     if ('accession="MS:1000495"' in text1):
                         modele1 = text1.split('<cvParam cvRef="MS" '
-                                              'accession="MS:1000495" name="')[1]\
+                                              'accession="MS:1000495"'
+                                              ' name="')[1]\
                                     .split('"')[0]
                     else:
                         modele1 = "Not found"
@@ -282,21 +285,24 @@ def get_version(text1):
 def get_spectrum_type(text1):
     try:
         if ('<cvParam cvRef="MS" accession="MS:1000127" '
-            'name="' in text1):
+                'name="' in text1):
             spectrum1 = text1.split('<cvParam cvRef="MS" '
-                                    'accession="MS:1000127" name="')[1].split('"')[0]
+                                    'accession="MS:1000127"'
+                                    ' name="')[1].split('"')[0]
         else:
             if ('<cvParam cvRef="MS" accession="MS:1000127" '
-                'value="" name="' in text1):
+                    'value="" name="' in text1):
                 spectrum1 = text1.split('<cvParam cvRef="MS" '
-                                        'accession="MS:1000127" value="" name="')[1]\
+                                        'accession="MS:1000127"'
+                                        ' value="" name="')[1]\
                             .split('"')[0]
             else:
                 if ('<cvParam accession="MS:1000127" '
-                    'cvRef="MS" name="' in text1):
+                        'cvRef="MS" name="' in text1):
                     spectrum1 = text1.split('<cvParam '
                                             'accession="MS:1000127" '
-                                            'cvRef="MS" name="')[1].split('"')[0]
+                                            'cvRef="MS" name="')[1] \
+                                     .split('"')[0]
                 else:
                     spectrum1 = "Not found"
     except Exception:
@@ -406,49 +412,57 @@ def get_instrument_model(text1):
     try:
         if ('<cvParam cvRef="MS" accession="MS:1000703" name="' in text1):
             modele1 = text1.split('<cvParam cvRef="MS" '
-                                  'accession="MS:1000703" name="')[1].split('"')[0]
+                                  'accession="MS:1000703"'
+                                  ' name="')[1].split('"')[0]
         else:
             if ('accession="MS:1001547"' in text1):
                 modele1 = text1.split('<cvParam cvRef="MS" '
-                                      'accession="MS:1001547" name="')[1].split('"')[0]
+                                      'accession="MS:1001547"'
+                                      ' name="')[1].split('"')[0]
             else:
                 if ('<cvParam cvRef="MS" '
-                    'accession="MS:1003094" name="' in text1):
+                        'accession="MS:1003094" name="' in text1):
                     modele1 = text1.split('<cvParam cvRef="MS" '
-                                          'accession="MS:1003094" name="')[1].split('"')[0]
+                                          'accession="MS:1003094"'
+                                          ' name="')[1].split('"')[0]
                 else:
                     if ('accession="MS:1003123" name="' in text1):
                         modele1 = text1.split('<cvParam cvRef="MS" '
-                                              'accession="MS:1003123" name="')[1] \
+                                              'accession="MS:1003123"'
+                                              ' name="')[1] \
                                     .split('"')[0]
                     else:
                         if ('<cvParam cvRef="MS" '
-                            'accession="MS:1000495"' in text1):
+                                'accession="MS:1000495"' in text1):
                             modele1 = text1.split('<cvParam cvRef="MS" '
-                                                  'accession="MS:1000495" name="')[1]\
+                                                  'accession="MS:1000495"'
+                                                  ' name="')[1]\
                                         .split('value="')[1].split('"')[0]
                         else:
                             if ('<cvParam accession="MS:1000703" '
-                                'cvRef="MS" name="' in text1):
+                                    'cvRef="MS" name="' in text1):
                                 modele1 = text1.split('<cvParam '
                                                       'accession="MS:1000703" '
                                                       'cvRef="MS" name="')[1] \
                                                 .split('"')[0]
                             else:
                                 if ('<cvParam cvRef="MS" accession= '
-                                    '"MS:1000483" '
-                                    'value="" name="' in text1):
+                                        '"MS:1000483" '
+                                        'value="" name="' in text1):
                                     modele1 = text1.split('<cvParam '
                                                           'cvRef="MS" '
-                                                          'accession="MS:1000483" '
-                                                          'value="" name="')[1] \
+                                                          'accession='
+                                                          '"MS:1000483"'
+                                                          ' value="" '
+                                                          'name="')[1] \
                                                     .split('"')[0]
                                 else:
                                     if ('<cvParam accession="MS:1000703" '
-                                        'cvRef="MS" name="' in text1):
+                                            'cvRef="MS" name="' in text1):
                                         modele1 = text1.split('<cvParam '
-                                                              'accession="MS:1000703" '
-                                                              'cvRef="MS" '
+                                                              'accession='
+                                                              '"MS:1000703"'
+                                                              ' cvRef="MS" '
                                                               'name="')[1] \
                                                             .split('"')[0]
                                     else:
@@ -464,10 +478,11 @@ def get_ms_level(text1):
     try:
         if ('<cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
             return text1.split('<cvParam cvRef="MS" '
-                               'accession="MS:1000580" name="')[1].split('"')[0]
+                               'accession="MS:1000580" name="')[1] \
+                        .split('"')[0]
 
         if ('<cvParam cvRef="MS" accession="MS:1000580" '
-              'value="" name="' in text1):
+                'value="" name="' in text1):
             return text1.split('<cvParam cvRef="MS" accession="MS:1000580" '
                                'value="" name="')[1].split('"')[0]
 
@@ -480,7 +495,8 @@ def get_ms_level(text1):
                                'name="')[1].split('"')[0]
         if (' <cvParam cvRef="MS" accession="MS:1000580" name="' in text1):
             return text1.split(' <cvParam cvRef="MS" '
-                               'accession="MS:1000580" name="')[1].split('"')[0]
+                               'accession="MS:1000580" name="')[1] \
+                        .split('"')[0]
         return "Not found"
     except Exception:
         mslevel1 = 'Error'

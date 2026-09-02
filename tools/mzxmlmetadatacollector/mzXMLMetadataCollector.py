@@ -490,7 +490,7 @@ def update_entries(infile, singleFile):
     if (singleFile == "SINGLE"):
         info = ''
         info += ('Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)'
-        '\tMSlevel\tSpectrum type\tSource file\tAcquisition'
+        '\tMSlevel\tSpectrum type\tSource file\tAcquisition '
         'date\tSoftware(s) used\tProcessing method(s)\tMachine\t'
         'Number of scans\tNumber of points\tEncoding\n')
         x = get_info(infile, sys.argv[4].split('.')[-1])
@@ -502,7 +502,7 @@ def update_entries(infile, singleFile):
     else:
         info = ''
         info += ('Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)\t'
-        'MSlevel\tSpectrum type\tSource file\tAcquisition'
+        'MSlevel\tSpectrum type\tSource file\tAcquisition '
         'date\tSoftware(s) used\tProcessing method(s)\tMachine\t'
         'Number of scans\tNumber of points\tEncoding\n')
         ii = 4

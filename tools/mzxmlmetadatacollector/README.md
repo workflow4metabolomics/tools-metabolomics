@@ -1,4 +1,4 @@
-# mzXML Shaper
+# mz(X)MLMetadataCollector
 
 
 Metadata
@@ -39,17 +39,6 @@ Main files:
 - mzXMLMetadataCollector.xml: XML wrapper (interface for Galaxy)
 - metadata_multiple.tabular: test file, expected resultats for the "multiple files or collection" parameter test
 - metadata_single.tabular: test file, expected resultats for the "single file" parameter test
-- BlancFin_POS_RA1_1_6869.mzML: test file (truncated to be lighter)
-- BlancFin_POS_RA1_1_6869.mzXML: test file (truncated to be lighter)
-- Blank1_POS_RA1_1_6727.mzXML: test file (truncated to be lighter)
-- Bruker_inhouse_mzml.mzML: test file (truncated to be lighter)
-- Impact_DA53_mzml.mzML: test file (truncated to be lighter)
-- OE240_DS_QC_ID_01.mzML: test file (truncated to be lighter)
-- OE240_DS_QC_ID_012.mzML: test file (truncated to be lighter)
-- Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A.mzML: test file (truncated to be lighter)
-- Pos_Xenobio_DDA_30_35CE_incl_90_Spk_3_A2.mzML: test file (truncated to be lighter)
-- QC_20autoMSMS_10_1_2969.mzXML: test file (truncated to be lighter)
-- QC_autoMSMS_10_1_2969.mzML: test file (truncated to be lighter)
 
 Services provided
 -----------

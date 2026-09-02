@@ -44,7 +44,7 @@
     <test>
       <conditional name="input">
         <param name="files" value="MULTIPLE"/>
-        <param name="inputFiles" value="https://zenodo.org/record/3757956/files/Blanc16.mzML,https://zenodo.org/record/3757956/files/QC1_014.mzML,https://zenodo.org/records/10130758/files/Blanc10.mzML,https://zenodo.org/records/10130758/files/Blanc05.mzML"/>
+        <param name="inputFiles" location="https://zenodo.org/record/3757956/files/Blanc16.mzML,https://zenodo.org/record/3757956/files/QC1_014.mzML,https://zenodo.org/records/10130758/files/Blanc10.mzML,https://zenodo.org/records/10130758/files/Blanc05.mzML"/>
       </conditional>
       <output name="outputFile" file="metadata_multiple.tabular" ftype="tabular"/>
     </test>

@@ -1,4 +1,4 @@
-<tool id="mzxmlmetadatacollector" name="mz(X)MLMetadataCollector" version="1.0.0+galaxy0" profile="23.0">
+<tool id="mzxmlmetadatacollector" name="mz(X)MLMetadataCollector" version="1.0.0+galaxy0" profile="22.01">
   <description>
     gathers mzML and mzXML metadata into a tabular file
   </description>

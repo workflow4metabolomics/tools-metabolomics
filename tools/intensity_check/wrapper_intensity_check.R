@@ -11,7 +11,7 @@
 
 suppressPackageStartupMessages(library(W4MRUtils))
 
-args <- parse_args() #interpretation of arguments given in command line as an R list of objects
+args <- parse_args() # interpretation of arguments given in command line as an R list of objects
 
 if (length(args) < 7) {
     stop("NOT enough argument !!!")

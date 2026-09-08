@@ -1,35 +1,12 @@
-#!/usr/bin/Rscript --vanilla --slave --no-site-file
+#############################################################################
+# Wrapper for the generic_filter() function from the W4MRUtils R package
+# XML associated to the tool: generic_filter.xml
+# 
+# Input data: Data Matrix, Variable Metadata, Sample Metadata
+# Output data: Data Matrix, Variable Metadata, Sample Metadata
+#############################################################################
 
-################################################################################################
-# WRAPPER FOR filter_script.R (GENERIC FILTERS)                                                #
-#                                                                                              #
-# Author: Melanie PETERA based on Marion LANDI's filters' wrapper                              #
-# User: Galaxy                                                                                 #
-# Original data: used with filter_script.R                                                     #
-# Starting date: 04-09-2014                                                                    #
-# V-1: Restriction of old filter wrapper to Filter according to factors                        #
-# V-1.1: Modification to allow the choice of meta-data table for filtering                     #
-# V-2: Addition of numerical filter                                                            #
-# V-2.5: -h option + additional information in stdout                                          #
-# V-2.6: The tool does not rely on the batch package anymore to parse its command line.        #                                                                                #
-#                                                                                              #
-# Input files: dataMatrix.txt ; sampleMetadata.txt ; variableMetadata.txt                      #
-# Output files: dataMatrix.txt ; sampleMetadata.txt ; variableMetadata.txt                     #
-#                                                                                              #
-################################################################################################
-
-
-parse_args <- function() {
-  args <- commandArgs()
-  start <- which(args == "--args")[1] + 1
-  if (is.na(start)) {
-    return(list())
-  }
-  seq_by2 <- seq(start, length(args), by = 2)
-  result <- as.list(args[seq_by2 + 1])
-  names(result) <- args[seq_by2]
-  return(result)
-}
+suppressPackageStartupMessages(library(W4MRUtils))
 
 # Constants
 argv <- commandArgs(trailingOnly = FALSE)
@@ -47,27 +24,17 @@ if (length(grep('-h', argv)) >0) {
 	quit(status = 0)
 }
 
-args <- parse_args() #interpretation of arguments given in command line as an R list of objects
+# Parameter formating -----------------------------------------------------
 
-source_local <- function(...){
-	argv <- commandArgs(trailingOnly = FALSE)
-	base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
-	for(i in 1:length(list(...))){source(paste(base_dir, list(...)[[i]], sep="/"))}
-}
-#Import the different functions
-source_local("filter_script.R")
-library(W4MRUtils)
-
+args <- parse_args() # interpretation of arguments given in command line as an R list of objects
 
 if(length(args) < 8){ stop("NOT enough argument !!!") }
-
 
 cat('\nJob starting time:\n',format(Sys.time(), "%a %d %b %Y %X"),
 '\n\n--------------------------------------------------------------------', 
 '\nParameters used in "Generic Filter":\n\n')
 print(args)
 cat('--------------------------------------------------------------------\n\n')
-
 
 list_num <- NULL
 if(!is.null(args$parm_col)){
@@ -88,21 +55,31 @@ if(!is.null(args$factor_col)){
 	}
 }	
 
-filters(args$dataMatrix_in, args$sampleMetadata_in, args$variableMetadata_in,
-        args$Numeric, list_num, args$Factors, list_fact,
-        args$dataMatrix_out, args$sampleMetadata_out, args$variableMetadata_out)
+# Begining of processing --------------------------------------------------
 
-#filters(ion.file.in, meta.samp.file.in, meta.ion.file.in,
-#        NUM, ls.num, FACT, ls.fact,
-#        ion.file.out, meta.samp.file.out, meta.ion.file.out)
+data3tables <- W4MRUtils::import3(args$dataMatrix_in, args$sampleMetadata_in, args$variableMetadata_in)
 
+filteredset <- generic_filter(
+    data3tables$dataMatrix,
+	data3tables$sampleMetadata,
+	data3tables$variableMetadata,
+    args$Numeric,
+	list_num,
+	args$Factors,
+    list_fact
+)
+
+write.table(filteredset$dataMatrix, args$dataMatrix_out, sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(filteredset$sampleMetadata, args$sampleMetadata_out, sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(filteredset$variableMetadata, args$variableMetadata_out, sep = "\t", quote = FALSE, row.names = FALSE)
+
+# End of processing -------------------------------------------------------
 
 cat('\n--------------------------------------------------------------------',
 '\nInformation about R (version, Operating System, attached or loaded packages):\n\n')
 sessionInfo()
 cat('--------------------------------------------------------------------\n',
 '\nJob ending time:\n',format(Sys.time(), "%a %d %b %Y %X"))
-
 
 #delete the parameters to avoid the passage to the next tool in .RData image
 rm(args)

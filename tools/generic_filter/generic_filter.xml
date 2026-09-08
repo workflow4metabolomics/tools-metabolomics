@@ -13,7 +13,6 @@
   </requirements>
   <required_files>
     <include path="filter_wrap.R"/>
-    <include path="filter_script.R"/>
   </required_files>
   <command><![CDATA[
     Rscript '$__tool_directory__/filter_wrap.R'

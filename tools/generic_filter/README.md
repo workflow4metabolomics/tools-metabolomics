@@ -5,7 +5,7 @@ Metadata
 -----------
 
  * **@name**: Generic Filter
- * **@version**: 2020.01
+ * **@version**: 1.2.2
  * **@authors**: Marion Landi and Melanie Petera for first version - Maintainer: Melanie Petera (PFEM ; INRAE ; MetaboHUB)
  * **@init date**: 2014, december
  * **@main usage**: This tool allows to remove all samples and/or variables corresponding to specific values regarding designated factors or numerical variables. 
@@ -24,11 +24,7 @@ Configuration
 
 ### Requirement:
  * R software: version > 3.0.0 recommended
- * Specific R library: 'batch'
-
-### Docker:
- * Use of this tool in a docker context:
-Information is provided in the [about_docker.md file](about_docker.md).
+ * Specific R library: 'W4MRUtils'
 
 
 Technical description
@@ -36,15 +32,14 @@ Technical description
 
 Main files:
 
-- filter_script.R: R function (core script)
-- filter_wrap.R: R script to link the main R function to inputs
+- filter_wrap.R: R script to format parameters and call the main R function
 - generic_filter.xml: XML wrapper (interface for Galaxy)
 
 
 Services provided
 -----------
 
- * Help and support: support@workflow4metabolomics.org
+ * Help and support: https://community.france-bioinformatique.fr/c/workflow4metabolomics/10
 
 
 License

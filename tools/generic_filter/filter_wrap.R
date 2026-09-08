@@ -10,17 +10,19 @@ suppressPackageStartupMessages(library(W4MRUtils))
 
 # Constants
 argv <- commandArgs(trailingOnly = FALSE)
-script.path <- sub("--file=","",argv[grep("--file=",argv)])
+script.path <- sub("--file=", "", argv[grep("--file=", argv)])
 prog.name <- basename(script.path)
 
 # Help
-if (length(grep('-h', argv)) >0) {
-    cat("Usage:", prog.name,
+if (length(grep('-h', argv)) > 0) {
+    cat(
+        "Usage:", prog.name,
         "dataMatrix_in myDataMatrix.tsv",
         "sampleMetadata_in mySampleMetadata.tsv",
         "variableMetadata_in myVariableMetadata.tsv",
         "...",
-        "\n")
+        "\n"
+    )
     quit(status = 0)
 }
 
@@ -32,30 +34,32 @@ if (length(args) < 8) {
     stop("NOT enough argument!!!")
 }
 
-cat('\nJob starting time:\n', format(Sys.time(), "%a %d %b %Y %X"),
-    '\n\n--------------------------------------------------------------------',
-    '\nParameters used in "Generic Filter":\n\n')
+cat(
+    "\nJob starting time:\n", format(Sys.time(), "%a %d %b %Y %X"),
+    "\n\n--------------------------------------------------------------------",
+    "\nParameters used in 'Generic Filter':\n\n"
+)
 print(args)
-cat('--------------------------------------------------------------------\n\n')
+cat("--------------------------------------------------------------------\n\n")
 
 list_num <- NULL
 if (!is.null(args$parm_col)) {
     for (i in which(names(args) == "num_file")) {
-        if (args[[i+2]] %in% c("lower", "upper")) {
-            list_num <- c(list_num, list(c(args[[i]], args[[i+1]], args[[i+2]], args[[i+3]])))
+        if (args[[i + 2]] %in% c("lower", "upper")) {
+            list_num <- c(list_num, list(c(args[[i]], args[[i + 1]], args[[i + 2]], args[[i + 3]])))
         }
-        if (args[[i+2]] %in% c("between","extremity")) {
-            list_num <- c(list_num, list(c(args[[i]], args[[i+1]], args[[i+2]], args[[i+3]], args[[i+4]])))
+        if (args[[i + 2]] %in% c("between", "extremity")) {
+            list_num <- c(list_num, list(c(args[[i]], args[[i + 1]], args[[i + 2]], args[[i + 3]], args[[i + 4]])))
         }
     }
-}    
+}
 
 list_fact <- NULL
 if (!is.null(args$factor_col)) {
     for (i in which(names(args) == "qual_file")) {
-        list_fact <- c(list_fact, list(c(args[[i+1]], args[[i+2]], args[[i]])))
+        list_fact <- c(list_fact, list(c(args[[i + 1]], args[[i + 2]], args[[i]])))
     }
-}    
+}
 
 # Begining of processing --------------------------------------------------
 
@@ -77,11 +81,15 @@ write.table(filteredset$variableMetadata, args$variableMetadata_out, sep = "\t",
 
 # End of processing -------------------------------------------------------
 
-cat('\n--------------------------------------------------------------------',
-    '\nInformation about R (version, Operating System, attached or loaded packages):\n\n')
+cat(
+    "\n--------------------------------------------------------------------",
+    "\nInformation about R (version, Operating System, attached or loaded packages):\n\n"
+)
 sessionInfo()
-cat('--------------------------------------------------------------------\n',
-    '\nJob ending time:\n',format(Sys.time(), "%a %d %b %Y %X"))
+cat(
+    "--------------------------------------------------------------------\n",
+    "\nJob ending time:\n", format(Sys.time(), "%a %d %b %Y %X")
+)
 
-#delete the parameters to avoid the passage to the next tool in .RData image
+# delete the parameters to avoid the passage to the next tool in .RData image
 rm(args)

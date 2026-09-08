@@ -1,14 +1,14 @@
-<tool id="intens_check" name="Intensity Check" version="@TOOL_VERSION@" profile="22.05">
+<tool id="intens_check" name="Intensity Check" version="@TOOL_VERSION@" profile="22.01">
     <description>Statistical measures, number of missing values and mean fold change</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.0.1</token>
+        <token name="@TOOL_VERSION@">2.0.2</token>
     </macros>
 
     <edam_topics>
         <edam_topic>topic_3172</edam_topic>
     </edam_topics>
     <edam_operations>
-        <edam_operation>operation_2428</edam_operation>
+        <edam_operation>operation_3438</edam_operation>
         <edam_operation>operation_2428</edam_operation>
     </edam_operations>
 
@@ -205,13 +205,9 @@ Anthony Fernandes for original code (PFEM - INRA)
 
 ---------------------------------------------------
 
-====================
-Intensity Check
-====================
-
------------
-Description
------------
+------------------------------
+Intensity Check - Description
+------------------------------
 
 This tool performs various metrics: mean fold change calculation, number and proportion of missing values, and mean, sd and decile calculation.
 You can choose to perform these metrics according to sample groups defined in the sample metadata file given as input.
@@ -237,8 +233,9 @@ Input files
 | 3 : Variable metadata file |   tabular  |
 +----------------------------+------------+
 
-----------
+---------------------------------------------------
 
+----------
 Parameters
 ----------
 
@@ -253,7 +250,7 @@ Parameters
     Select the statistical measures you want to add in the variable metadata table. If the method is "each class" or "one class", you can choose to leave this section blank if you only want to calculate the mean fold change (see below).
 
 **Class column** (*only if "each class" or "one class"*)  
-    Select the class column in sample metadata table.
+    Fill the name of the class column in sample metadata table; it is case-sensitive.
 
 **Selected class** (*only if "one class"*)  
     If the method is "one class", specify it. Remaining samples will be named "Other".
@@ -267,6 +264,8 @@ Parameters
 **Logarithm** (*only if "each class" or "one class"*)  
     Choose if you want to transform the mean fold change with a log2 or log10.
 
+---------------------------------------------------
+
 ------------
 Output files
 ------------
@@ -274,8 +273,8 @@ Output files
 **Variable metadata file**  
     Contains the previous columns in variable metadata file and the new ones.  
     In the column names for fold, the first class specified is the one used as numerator in the ratio.
-
-**Graphs file**  
+    
+**Graph file**  
     Contains barplots with the proportion of NA considering classes and boxplots with the fold values.
 
 ---------------------------------------------------
@@ -293,4 +292,4 @@ For more information about input files, refer to the corresponding "W4M HowTo" p
     <citations>
         <citation type="doi">10.1002/cpz1.70095</citation>
     </citations>
-</tool>
+</tool> 

@@ -1,7 +1,7 @@
 #############################################################################
 # Wrapper for the generic_filter() function from the W4MRUtils R package
 # XML associated to the tool: generic_filter.xml
-# 
+#
 # Input data: Data Matrix, Variable Metadata, Sample Metadata
 # Output data: Data Matrix, Variable Metadata, Sample Metadata
 #############################################################################
@@ -14,7 +14,7 @@ script.path <- sub("--file=", "", argv[grep("--file=", argv)])
 prog.name <- basename(script.path)
 
 # Help
-if (length(grep('-h', argv)) > 0) {
+if (length(grep("-h", argv)) > 0) {
     cat(
         "Usage:", prog.name,
         "dataMatrix_in myDataMatrix.tsv",

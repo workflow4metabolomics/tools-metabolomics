@@ -1,20 +1,16 @@
 <tool id="abims_xcms_group" name="xcms groupChromPeaks (group)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
-
     <description>Perform the correspondence, the grouping of chromatographic peaks within and between samples.</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_group.r" />
-        <include path="lib.r" />
+        <include path="xcms_group.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_group.r
         image '$image'
 
@@ -44,9 +40,8 @@
 
         @COMMAND_LOG_EXIT@
    ]]></command>
-
     <inputs>
-        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks, groupChromPeaks or adjustRtime" />
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks, groupChromPeaks or adjustRtime"/>
         <conditional name="methods">
             <param name="method" type="select" label="Method to use for grouping" help="See the help section below">
                 <option value="PeakDensity" selected="true">PeakDensity - peak grouping based on time dimension peak densities</option>
@@ -54,40 +49,35 @@
                 <option value="NearestPeaks">NearestPeaks - chromatographic peak grouping based on their proximity in the mz-rt space</option>
             </param>
             <when value="PeakDensity">
-                <param argument="bw" type="float" value="30" label="Bandwidth" help="bandwidth (standard deviation or half width at half maximum) of gaussian smoothing kernel to apply to the peak density chromatogram" />
-                <param argument="minFraction" type="float" value="0.5" label="Minimum fraction of samples" help="in at least one sample group in which the peaks have to be present to be considered as a peak group (feature)" />
-                <param argument="minSamples" type="integer" value="1" label="Minimum number of samples" help="in at least one sample group in which the peaks have to be detected to be considered a peak group (feature)" />
-                <param argument="binSize" type="float" value="0.25" label="Width of overlapping m/z slices" help="to use for creating peak density chromatograms and grouping peaks across samples (previously mzdiff)" />
-
+                <param argument="bw" type="float" value="30" label="Bandwidth" help="bandwidth (standard deviation or half width at half maximum) of gaussian smoothing kernel to apply to the peak density chromatogram"/>
+                <param argument="minFraction" type="float" value="0.5" label="Minimum fraction of samples" help="in at least one sample group in which the peaks have to be present to be considered as a peak group (feature)"/>
+                <param argument="minSamples" type="integer" value="1" label="Minimum number of samples" help="in at least one sample group in which the peaks have to be detected to be considered a peak group (feature)"/>
+                <param argument="binSize" type="float" value="0.25" label="Width of overlapping m/z slices" help="to use for creating peak density chromatograms and grouping peaks across samples (previously mzdiff)"/>
                 <section name="PeakDensityAdv" title="Advanced Options" expanded="False">
-                    <param argument="maxFeatures" type="integer" value="50" label="Maximum number of groups to identify in a single m/z slice" />
+                    <param argument="maxFeatures" type="integer" value="50" label="Maximum number of groups to identify in a single m/z slice"/>
                 </section>
             </when>
             <when value="MzClust">
-                <param argument="ppm" type="integer" value="20" label="Relative mz error for clustering/grouping in ppm" />
-                <param argument="absMz" type="float" value="0" label="Absolute mz error for clustering/grouping" />
-                <param argument="minFraction" type="float" value="0.5" label="Minimum fraction of samples" help="in at least one sample group in which the peaks have to be present to be considered as a peak group (feature)" />
-                <param argument="minSamples" type="integer" value="1" label="Minimum number of samples" help="in at least one sample group in which the peaks have to be detected to be considered a peak group (feature)" />
+                <param argument="ppm" type="integer" value="20" label="Relative mz error for clustering/grouping in ppm"/>
+                <param argument="absMz" type="float" value="0" label="Absolute mz error for clustering/grouping"/>
+                <param argument="minFraction" type="float" value="0.5" label="Minimum fraction of samples" help="in at least one sample group in which the peaks have to be present to be considered as a peak group (feature)"/>
+                <param argument="minSamples" type="integer" value="1" label="Minimum number of samples" help="in at least one sample group in which the peaks have to be detected to be considered a peak group (feature)"/>
             </when>
             <when value="NearestPeaks">
-                <param argument="mzVsRtBalance" type="integer" value="10" label="Factor by which mz values are multiplied before calculating the (euclician) distance between two peaks" />
-                <param argument="absMz" type="float" value="0.2" label="Maximum tolerated distance for mz values" />
-                <param argument="absRt" type="integer" value="15" label="Maximum tolerated distance for RT values" />
-                <param argument="kNN" type="integer" value="10" label="Number of nearest Neighbours to check" />
+                <param argument="mzVsRtBalance" type="integer" value="10" label="Factor by which mz values are multiplied before calculating the (euclician) distance between two peaks"/>
+                <param argument="absMz" type="float" value="0.2" label="Maximum tolerated distance for mz values"/>
+                <param argument="absRt" type="integer" value="15" label="Maximum tolerated distance for RT values"/>
+                <param argument="kNN" type="integer" value="10" label="Number of nearest Neighbours to check"/>
             </when>
         </conditional>
-
         <expand macro="input_peaklist_conditional"/>
-
         <expand macro="input_file_load"/>
     </inputs>
-
     <outputs>
         <data name="xsetRData" format="rdata.xcms.group" label="${image.name[:-6]}.groupChromPeaks.RData" from_work_dir="group.RData"/>
         <data name="plotChromPeakDensity" format="pdf" label="${image.name[:-6]}.groupChromPeaks.plotChromPeakDensity.pdf" from_work_dir="plotChromPeakDensity.pdf"/>
         <expand macro="output_peaklist" function="group"/>
     </outputs>
-
     <tests>
         <!-- from merge -->
         <!-- DISABLE FOR TRAVIS but useful in order to REFRESH TEST-DATA
@@ -181,7 +171,6 @@
             <output name="dataMatrix" file="faahKO.xset.group.dataMatrix.tsv" />
         </test>
         -->
-
         <!-- DISABLE FOR TRAVIS Zip from retcor
         <test>
             <param name="image" value="faahKO.xset.group.retcor.RData" ftype="rdata"/>
@@ -220,16 +209,16 @@
             </conditional>
             <expand macro="test_file_load_single"/>
             <assert_stdout>
-                <has_text text="bw: 5" />
-                <has_text text="minFraction: 0.3" />
+                <has_text text="bw: 5"/>
+                <has_text text="minFraction: 0.3"/>
                 <has_text text="binSize: 0.01"/>
-                <has_text text="maxFeatures: 50" />
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2509.2-4480.3 seconds (41.8-74.7 minutes)" />
-                <has_text text="Mass range: 200.1-600 m/z" />
-                <has_text text="Peaks: 9251 (about 2313 per sample)" />
-                <has_text text="Peak Groups: 8209" />
-                <has_text text="Sample classes: KO, WT" />
+                <has_text text="maxFeatures: 50"/>
+                <has_text text="object with 4 samples"/>
+                <has_text text="Time range: 2509.2-4480.3 seconds (41.8-74.7 minutes)"/>
+                <has_text text="Mass range: 200.1-600 m/z"/>
+                <has_text text="Peaks: 9251 (about 2313 per sample)"/>
+                <has_text text="Peak Groups: 8209"/>
+                <has_text text="Sample classes: KO, WT"/>
             </assert_stdout>
         </test>
         <!-- DISABLE FOR TRAVIS
@@ -262,7 +251,6 @@
         </test>
         -->
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -332,9 +320,9 @@ Method to use for grouping
     | This method is inspired by the grouping algorithm of mzMine [Katajamaa 2006] and performs correspondence based on proximity of peaks in the space spanned by retention time and mz values.  The method creates first a master peak list consisting of all chromatographic peaks from the sample in which most peaks were identified, and starting from that, calculates distances to peaks from the sample with the next most number of peaks. If peaks are closer than the defined threshold they are grouped together.
     | See the NearestPeaks_manual_
 
-.. _MzClust_manual: https://rdrr.io/bioc/xcms/man/groupChromPeaks-mzClust.html#heading-2
-.. _PeakDensity_manual: https://rdrr.io/bioc/xcms/man/groupChromPeaks-density.html#heading-2
-.. _NearestPeaks_manual: https://rdrr.io/bioc/xcms/man/groupChromPeaks-nearest.html#heading-2
+.. _MzClust_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.group.mzClust.1
+.. _PeakDensity_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.group.density.1
+.. _NearestPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.group.nearest.1
 
 @HELP_XCMS_MANUAL@
 
@@ -430,9 +418,5 @@ Changelog/News
 
 
     ]]></help>
-
-
-    <expand macro="citation" />
-
-
+    <expand macro="citation"/>
 </tool>

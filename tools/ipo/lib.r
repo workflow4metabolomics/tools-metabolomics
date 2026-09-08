@@ -98,7 +98,6 @@ ipo4retgroup <- function(xset, directory, parametersOutput, args, samplebyclass 
 }
 
 
-
 # This function check if XML contains special caracters. It also checks integrity and completness.
 # @author Misharl Monsoor misharl.monsoor@sb-roscoff.fr ABiMS TEAM
 checkXmlStructure <- function(directory) {

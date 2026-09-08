@@ -1,20 +1,16 @@
 <tool id="abims_xcms_fillPeaks" name="xcms fillChromPeaks (fillPeaks)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
-
     <description>Integrate areas of missing peaks</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_fillpeaks.r" />
-        <include path="lib.r" />
+        <include path="xcms_fillpeaks.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code" ><![CDATA[
         @COMMAND_RSCRIPT@xcms_fillpeaks.r
 
         image '$image'
@@ -31,27 +27,20 @@
         @COMMAND_LOG_EXIT@
 
     ]]></command>
-
     <inputs>
-        <param name="image" type="data" format="rdata.xcms.group,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from groupChromPeaks" />
-
+        <param name="image" type="data" format="rdata.xcms.group,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from groupChromPeaks"/>
         <section name="Adv" title="Advanced Options" expanded="False">
-            <param argument="expandMz" type="integer" value="0" label="Value by which the mz width of peaks should be expanded" help="Each peak is expanded in mz direction by ‘expandMz *’ their original mz width. A value of ‘0’ means no expansion, a value of ‘1’ grows each peak by 1 * the mz width of the peak resulting in peakswith twice their original size in mz direction (expansion by half mz width to both sides)." />
+            <param argument="expandMz" type="integer" value="0" label="Value by which the mz width of peaks should be expanded" help="Each peak is expanded in mz direction by ‘expandMz *’ their original mz width. A value of ‘0’ means no expansion, a value of ‘1’ grows each peak by 1 * the mz width of the peak resulting in peakswith twice their original size in mz direction (expansion by half mz width to both sides)."/>
             <param argument="expandRt" type="integer" value="0" label="Value by which the RT width of peaks should be expanded" help="Each peak is expanded in RT direction by ‘expandRt *’ their original RT width. A value of ‘0’ means no expansion, a value of ‘1’ grows each peak by 1 * the RT width of the peak resulting in peakswith twice their original size in RT direction (expansion by half RT width to both sides)."/>
-            <param argument="ppm" type="integer" value="0" label="Specifying a ppm by which the mz width of the peak region should be expanded" help="For peaks with an mz width smaller than ‘mean(c(mzmin, mzmax)) * ppm / 1e6’, the ‘mzmin’ will be replaced by ‘mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)’ and ‘mzmax’ by ‘mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)’. This is applied before eventually expanding the mz width using the ‘expandMz’ parameter." />
+            <param argument="ppm" type="integer" value="0" label="Specifying a ppm by which the mz width of the peak region should be expanded" help="For peaks with an mz width smaller than ‘mean(c(mzmin, mzmax)) * ppm / 1e6’, the ‘mzmin’ will be replaced by ‘mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)’ and ‘mzmax’ by ‘mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)’. This is applied before eventually expanding the mz width using the ‘expandMz’ parameter."/>
         </section>
-
         <expand macro="input_peaklist_section"/>
-
         <expand macro="input_file_load"/>
-
     </inputs>
-
     <outputs>
-        <data name="xsetRData" format="rdata.xcms.fillpeaks" label="${image.name[:-6]}.fillChromPeaks.RData" from_work_dir="fillpeaks.RData" />
-        <expand macro="output_peaklist" function="fillpeaks" />
+        <data name="xsetRData" format="rdata.xcms.fillpeaks" label="${image.name[:-6]}.fillChromPeaks.RData" from_work_dir="fillpeaks.RData"/>
+        <expand macro="output_peaklist" function="fillpeaks"/>
     </outputs>
-
     <tests>
         <!--<test>
             <param name="image" value="xset.group.retcor.group.RData" ftype="rdata"/>
@@ -135,27 +124,26 @@
         <test expect_num_outputs="3">
             <param name="image" value="faahKO-single-class.xset.merged.group.retcor.group.RData" ftype="rdata"/>
             <section name="peaklist">
-                <param name="peaklistBool" value="true" />
-                <param name="convertRTMinute" value="false" />
-                <param name="numDigitsMZ" value="4" />
-                <param name="numDigitsRT" value="1" />
+                <param name="peaklistBool" value="true"/>
+                <param name="convertRTMinute" value="false"/>
+                <param name="numDigitsMZ" value="4"/>
+                <param name="numDigitsRT" value="1"/>
             </section>
             <expand macro="test_file_load_single"/>
             <assert_stdout>
-                <has_text text="expandMz: 0" />
-                <has_text text="expandRt: 0" />
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2507.6-4481.8 seconds (41.8-74.7 minutes)" />
-                <has_text text="Mass range: 200.1-600 m/z" />
-                <has_text text="Peaks: 18995 (about 4749 per sample)" />
-                <has_text text="Peak Groups: 8209" />
-                <has_text text="Sample classes: KO, WT" />
+                <has_text text="expandMz: 0"/>
+                <has_text text="expandRt: 0"/>
+                <has_text text="object with 4 samples"/>
+                <has_text text="Time range: 2507.6-4481.8 seconds (41.8-74.7 minutes)"/>
+                <has_text text="Mass range: 200.1-600 m/z"/>
+                <has_text text="Peaks: 18995 (about 4749 per sample)"/>
+                <has_text text="Peak Groups: 8209"/>
+                <has_text text="Sample classes: KO, WT"/>
             </assert_stdout>
-            <output name="variableMetadata" file="faahKO-single-class.xset.group.retcor.group.fillPeaks.variableMetadata.tsv" />
-            <output name="dataMatrix" file="faahKO-single-class.xset.group.retcor.group.fillPeaks.dataMatrix.NAless.tsv" />
+            <output name="variableMetadata" file="faahKO-single-class.xset.group.retcor.group.fillPeaks.variableMetadata.tsv"/>
+            <output name="dataMatrix" file="faahKO-single-class.xset.group.retcor.group.fillPeaks.dataMatrix.NAless.tsv"/>
         </test>
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -212,7 +200,7 @@ Parameters
 
 | See the fillChromPeaks_manual_
 
-.. _fillChromPeaks_manual: https://rdrr.io/bioc/xcms/man/fillChromPeaks.html
+.. _fillChromPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.fillPeaks.Rdash.methods.1
 
 @HELP_XCMS_MANUAL@
 
@@ -305,9 +293,5 @@ Changelog/News
 
 
     ]]></help>
-
-
-    <expand macro="citation" />
-
-
+    <expand macro="citation"/>
 </tool>

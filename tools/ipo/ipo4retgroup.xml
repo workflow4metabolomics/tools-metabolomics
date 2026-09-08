@@ -1,15 +1,13 @@
-<tool id="ipo4retgroup" name="IPO for group and retcor" version="@TOOL_VERSION@+galaxy1">
-
+<tool id="ipo4retgroup" name="IPO for group and retcor" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0">
     <description>IPO optimization process for xcms.groupChromPeaks and xcms.adjustRtime</description>
-
     <macros>
         <import>macros.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="ipo4retgroup.r" />
-        <include path="lib.r" />
+        <include path="ipo4retgroup.r"/>
+        <include path="lib.r"/>
     </required_files>
     <command detect_errors="exit_code"><![CDATA[
         LANG=C Rscript '$__tool_directory__/ipo4retgroup.r'
@@ -53,52 +51,47 @@
 
         @COMMAND_FILE_LOAD@
     ]]></command>
-
     <inputs>
-
-        <param name="image" type="data" format="rdata.xcms.raw,rdata.xcms.group,rdata.xcms.retcor,rdata" label="xset RData file" help="output file from another function xcms (xcmsSet, retcor etc.)" />
-
-        <param name="samplebyclass" type="integer" value="2" min="0" label="Number of samples used per class to estimate the best parameters" help="Set to 0 to use the whole dataset. To save time, reduce this number" />
-
+        <param name="image" type="data" format="rdata.xcms.raw,rdata.xcms.group,rdata.xcms.retcor,rdata" label="xset RData file" help="output file from another function xcms (xcmsSet, retcor etc.)"/>
+        <param name="samplebyclass" type="integer" value="2" min="0" label="Number of samples used per class to estimate the best parameters" help="Set to 0 to use the whole dataset. To save time, reduce this number"/>
         <section name="group" title="groupChromPeaks Options" expanded="True">
             <param argument="method" type="select" label="Method to use for grouping" help="See the help section below. Only the density method is available so far">
                 <option value="density" selected="true">density</option>
             </param>
-            <section name="section_group_density_optiomizable"  title="Optimizable parameters" expanded="True">
+            <section name="section_group_density_optiomizable" title="Optimizable parameters" expanded="True">
                 <param argument="bw" type="text" value="22,38" label="Range or a fixed value for Bandwidth" help="bandwidth (standard deviation or half width at half maximum) of gaussian smoothing kernel to apply to the peak density chromatogram (ex: 22,38)">
                     <expand macro="input_validator_range_integer"/>
                 </param>
-                <param argument="mzwid" type="text" value="0.015,0.035" label="Range or a fixed value for Width of overlapping m/z slices" help="to use for creating peak density chromatograms and grouping peaks across samples (ex: 0.015,0.035)" >
+                <param argument="mzwid" type="text" value="0.015,0.035" label="Range or a fixed value for Width of overlapping m/z slices" help="to use for creating peak density chromatograms and grouping peaks across samples (ex: 0.015,0.035)">
                     <expand macro="input_validator_range_float_neg"/>
                 </param>
             </section>
-            <section name="section_group_density_non_optimizable" title="Non optimizable parameters"  expanded="True">
-                <param argument="minfrac" type="float" value="0.5" label="Minimum fraction of samples necessary" help="in at least one of the sample groups for it to be a valid group" />
-                <param argument="max" type="integer" value="50" label="Maximum number of groups to identify in a single m/z slice" />
+            <section name="section_group_density_non_optimizable" title="Non optimizable parameters" expanded="True">
+                <param argument="minfrac" type="float" value="0.5" label="Minimum fraction of samples necessary" help="in at least one of the sample groups for it to be a valid group"/>
+                <param argument="max" type="integer" value="50" label="Maximum number of groups to identify in a single m/z slice"/>
             </section>
         </section>
-
         <section name="retcor" title="adjustRtime Options" expanded="True">
             <conditional name="methods">
-                <param argument="method" type="select" label="Method to use for retention time correction" help="See the help section below" >
+                <param argument="method" type="select" label="Method to use for retention time correction" help="See the help section below">
                     <option value="obiwarp">obiwarp</option>
                     <option value="peakgroups">peakgroups</option>
                 </param>
                 <when value="obiwarp">
-                    <section name="section_retcor_obiwarp_non_optimizable" title="Non optimizable parameters"  expanded="True">
-                        <param argument="profStep" type="text" value="0.7,1.0" label="Range or a fixed value for Step size (in m/z)" help="to use for profile generation from the raw data files (ex: 1 or 0.7 1.0)" >
+                    <section name="section_retcor_obiwarp_non_optimizable" title="Non optimizable parameters" expanded="True">
+                        <param argument="profStep" type="text" value="0.7,1.0" label="Range or a fixed value for Step size (in m/z)" help="to use for profile generation from the raw data files (ex: 1 or 0.7 1.0)">
                             <expand macro="input_validator_range_float_neg"/>
                         </param>
                     </section>
                 </when>
                 <when value="peakgroups">
-                    <section name="section_retcor_peakgroups_non_optimizable" title="Non optimizable parameters"  expanded="True">
-                        <param argument="smooth" type="select" label="Smooth method" help="only the 'loess’ for non-linear alignment is available so far" >
+                    <section name="section_retcor_peakgroups_non_optimizable" title="Non optimizable parameters" expanded="True">
+                        <param argument="smooth" type="select" label="Smooth method" help="only the 'loess’ for non-linear alignment is available so far">
                             <option value="loess">loess</option>
                         </param>
-                        <param argument="extra" type="integer" value="1" min="0" label="Number of extra peaks to allow in retention time correction correction groups" />
-                        <param argument="missing" type="integer" value="1" min="0" label="Number of missing samples to allow in retention time correction groups" />
-                        <param argument="span" type="float" value="0.2" min="0" label="Degree of smoothing for local polynomial regression fitting" />
+                        <param argument="extra" type="integer" value="1" min="0" label="Number of extra peaks to allow in retention time correction correction groups"/>
+                        <param argument="missing" type="integer" value="1" min="0" label="Number of missing samples to allow in retention time correction groups"/>
+                        <param argument="span" type="float" value="0.2" min="0" label="Degree of smoothing for local polynomial regression fitting"/>
                         <param argument="family" type="select" label="Family" help="if gaussian fitting is by least-squares with no outlier removal, and if symmetric a re descending M estimator is used with Tukey's biweight function, allowing outlier removal">
                             <option value="gaussian" selected="true">gaussian</option>
                             <option value="symmetric">symmetric</option>
@@ -111,17 +104,12 @@
                     </section>
                 </when>
             </conditional>
-
         </section>
-
         <expand macro="input_file_load"/>
-
     </inputs>
-
     <outputs>
         <data name="parametersOutput" format="tabular" label="IPO_parameters4xcmsSet.tsv" from_work_dir="IPO_parameters4xcmsSet.tsv"/>
     </outputs>
-
     <tests>
         <test>
             <param name="image" value="faahKO.xset_single.RData"/>
@@ -141,16 +129,15 @@
                     <param name="method" value="peakgroups"/>
                     <section name="section_retcor_peakgroups_non_optimizable">
                         <param name="smooth" value="loess"/>
-                        <param name="rextra" value="1"/>
+                        <param name="extra" value="1"/>
                         <param name="missing" value="1"/>
                     </section>
                 </conditional>
             </section>
             <expand macro="test_file_load_single"/>
-            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv" />
+            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv"/>
         </test>
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -203,7 +190,7 @@ Method to use for groupChromPeaks
     | See the PeakDensity_manual_
 
 
-.. _PeakDensity_manual: https://rdrr.io/bioc/xcms/man/groupChromPeaks-density.html#heading-2
+.. _PeakDensity_manual: https://bioconductor.org/packages//release/bioc/vignettes/xcms/inst/doc/LC-MS-feature-grouping.html
 
 
 Method to use for adjustRtime
@@ -219,8 +206,8 @@ Method to use for adjustRtime
     | This method performs retention time adjustment using the Obiwarp method [Prince 2006]. It is based on the code at http://obi-warp.sourceforge.net but supports alignment of multiple samples by aligning each against a _center_ sample. The alignment is performed directly on the ‘profile-matrix’ and can hence be performed independently of the peak detection or peak grouping.
     | See the Obiwarp_manual_
 
-.. _PeakGroups_manual: https://rdrr.io/bioc/xcms/man/adjustRtime-peakGroups.html#heading-2
-.. _Obiwarp_manual: https://rdrr.io/bioc/xcms/man/adjustRtime-obiwarp.html
+.. _PeakGroups_manual: https://bioconductor.org/packages//release/bioc/vignettes/xcms/inst/doc/LC-MS-feature-grouping.html
+.. _Obiwarp_manual: https://bioconductor.org/packages//release/bioc/vignettes/xcms/inst/doc/xcms.html
 
 ---------------------------------------------------
 
@@ -230,6 +217,5 @@ Changelog/News
 @HELP_NEWVERSION_1_10_0_0@
 
     ]]></help>
-
-    <expand macro="citation" />
+    <expand macro="citation"/>
 </tool>

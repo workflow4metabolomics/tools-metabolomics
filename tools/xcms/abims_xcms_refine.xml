@@ -12,9 +12,8 @@
         <include path="xcms_refine.r" />
         <include path="lib.r" />
     </required_files>
-    <expand macro="stdio"/>
 
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_refine.r
         image '$image'
 
@@ -226,9 +225,9 @@ Method to use for refinement
     | Merge neighboring and overlapping chromatographic peaks.
     | See the MergeNeighboringPeaks_manual_
 
-.. _CleanPeaks_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-clean.html
-.. _FilterIntensity_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-filter-intensity.html
-.. _MergeNeighboringPeaks_manual: https://rdrr.io/bioc/xcms/man/refineChromPeaks-merge.html
+.. _CleanPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
+.. _FilterIntensity_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
+.. _MergeNeighboringPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
 
 @HELP_XCMS_MANUAL@
 

@@ -1,53 +1,53 @@
-<tool id='physiofit' name='PhysioFit: extracellular flux calculation' version='@TOOL_VERSION@+galaxy0' python_template_version='3.5' profile='21.05'>
+<tool id="physiofit" name="PhysioFit: extracellular flux calculation" version="@TOOL_VERSION@+galaxy1" python_template_version="3.5" profile="21.05">
     <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
     <macros>
-        <token name='@TOOL_VERSION@'>3.4.0</token>
+        <token name="@TOOL_VERSION@">3.4.0</token>
     </macros>
-
     <requirements>
-        <requirement type='package' version="@TOOL_VERSION@">physiofit</requirement>
+        <requirement type="package" version="@TOOL_VERSION@">physiofit</requirement>
     </requirements>
-    
-    <command detect_errors='exit_code'><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
     physiofit
     --galaxy 
     --config $configfile 
     --data $datafile 
     -or '$recap' 
     -oz $zip 
+    $verbose
     2> $log 
     ]]>
     </command>
     <inputs>
-        <param name='datafile' type='data' format='tabular, txt' multiple='true' label='Upload data file containing biomass and concentration values'/>
-        <param name='configfile' type='data' format='yaml' multiple='true' label='Upload yaml configuration file containing run parameters'/>
+        <param name="datafile" type="data" format="tabular,txt" multiple="true" label="Upload data file containing biomass and concentration values"/>
+        <param name="configfile" type="data" format="yaml" multiple="true" label="Upload yaml configuration file containing run parameters"/>
+        <param name="verbose" type="boolean" truevalue="--debug_mode" falsevalue="" label="Debug mode" help="Select &quot;Yes&quot; to have debug logs be printed out"/>
     </inputs>
     <outputs>
-        <data name='recap' label='Summary file' format='csv'/>
-        <data name='zip' label='Results' format='zip'/>
-        <data name='log' label='Log' format='txt'/>
+        <data name="recap" label="Summary file" format="csv"/>
+        <data name="zip" label="Results" format="zip"/>
+        <data name="log" label="Log" format="txt"/>
     </outputs>
     <tests>
         <test>
-            <param name='datafile' value='data.txt'/>
-            <param name='configfile' value='config_file.yml'/>
-            <output name='recap'>
+            <param name="datafile" value="data.txt"/>
+            <param name="configfile" value="config_file.yml"/>
+            <output name="recap">
                 <assert_contents>
-                    <has_text text='experiments'/>
-                    <has_text text='growth_rate'/>
-                    <has_text text='Glc_q'/>
-                    <has_text text='Glc_M0'/>
-                    <has_text text='Ace_q'/>
-                    <has_text text='Ace_M0'/>
-                    <has_text text='optimal'/>
-                    <has_text text='mean'/>
+                    <has_text text="experiments"/>
+                    <has_text text="growth_rate"/>
+                    <has_text text="Glc_q"/>
+                    <has_text text="Glc_M0"/>
+                    <has_text text="Ace_q"/>
+                    <has_text text="Ace_M0"/>
+                    <has_text text="optimal"/>
+                    <has_text text="mean"/>
                 </assert_contents>
             </output>
-            <output name='zip'>
+            <output name="zip">
                 <assert_contents>
-                    <has_archive_member path='.*\.svg' min='3'/>
-                    <has_archive_member path='.*\.tsv' min='2'/>
-                    <has_archive_member path='.*\.pdf' min='1'/>
+                    <has_archive_member path=".*\.svg" min="3"/>
+                    <has_archive_member path=".*\.tsv" min="2"/>
+                    <has_archive_member path=".*\.pdf" min="1"/>
                 </assert_contents>
             </output>
         </test>
@@ -72,7 +72,7 @@
         
         It is one of the routine tools that we use at the
         `MetaSys team <https://www.toulouse-biotechnology-institute.fr/en/poles/equipe-metasys/>`_
-        and `MetaToul platform <https://mth-metatoul.com/>`_ to calculate fluxes.
+        and MetaToul platform to calculate fluxes.
         
         The code is open-source, and available on `GitHub <https://github.com/MetaSys-LISBP/PhysioFit/>`_ under a GPLv3 license.
         
@@ -81,7 +81,7 @@
         
 ]]></help>
     <citations>
-        <citation type='bibtex'>@article{10.1101/2023.10.12.561695,
+        <citation type="bibtex">@article{10.1101/2023.10.12.561695,
             author = {Le Grégam, Loïc and Guitton, Yann and Bellvert, Floriant and Heux, Stéphanie and Jourdan, Fabien and Portais, Jean-Charles and Millard, Pierre},
             title = "{Physiofit: a software to quantify cell growth parameters and extracellular fluxes}",
             year = {2023},

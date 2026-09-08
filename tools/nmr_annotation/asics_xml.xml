@@ -1,23 +1,32 @@
-<tool id="NmrAnnotation" name="NMR_Annotation" version="3.0.0+galaxy1">
-
+<tool id="NmrAnnotation" name="NMR_Annotation" version="3.0.0+galaxy2">
     <description> Annotation of complex mixture NMR spectra and metabolite proportion estimation </description>
-
+    <edam_topics>
+        <edam_topic>topic_2259</edam_topic>
+        <!-- Systems biology -->
+        <edam_topic>topic_3172</edam_topic>
+        <!-- Metabolomics -->
+        <edam_topic>topic_3307</edam_topic>
+        <!-- Computational biology -->
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_0226</edam_operation>
+        <!-- Annotation -->
+    </edam_operations>
+    <xrefs>
+        <xref type="bio.tools">asics</xref>
+        <xref type="bio.tools">workflow4metabolomics</xref>
+    </xrefs>
     <requirements>
         <requirement type="package" version="3.0.0">libgfortran</requirement>
         <requirement type="package" version="1.1_4">r-batch</requirement>
         <requirement type="package" version="1.0.1">r-asics</requirement>
     </requirements>
     <required_files>
-        <include path="asics_wrapper.R" />
-        <include path="DrawSpec.R" />
-        <include path="Library.Rdata" />
+        <include path="asics_wrapper.R"/>
+        <include path="DrawSpec.R"/>
+        <include path="Library.Rdata"/>
     </required_files>
-
-    <stdio>
-        <exit_code range="1:" level="fatal" />
-    </stdio>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         ## Wrapper
         Rscript '$__tool_directory__/asics_wrapper.R' standards '$__tool_directory__/Library.Rdata'
 
@@ -50,55 +59,48 @@
         proportionEstimation '$proportionEstimation'
         graphOut '$graphOut'
     ]]></command>
-
     <inputs>
-        <param name="zip_file" type="data" format="no_unzip.zip, zip" label="Zip file" />
-
-    <conditional name="zone_exclusion_choices">
-        <param name="choice" type="select" label="Exclusion zone(s)" help="Choose if you want to exclude particular zone(s)" >
-            <option value="yes" > yes </option>
-            <option value="no" selected="true"> no </option>
-        </param>
-        <when value="yes">
-            <repeat name="conditions" title="exclusion zones">
-                <param name="zone_exclusion_left" label="Left exclusion zone border" type="float" value="10.0" />
-                <param name="zone_exclusion_right" label="Right exclusion zone border" type="float" value="10.0" />
-            </repeat>
-        </when>
-        <when value="no" />
-    </conditional>
-
-    <param name="shift" type="float" value="0.01" help="Maximal allowed shift for spectra alignment. Default value is 0.01 ppm" />
-
-    <conditional name="zone_graphical_choices">
-        <param name="choice" type="select" label="Graphical zone(s)" help="Choose if you want to display particular zone(s)" >
-            <option value="yes" > yes </option>
-            <option value="no" selected="true"> no </option>
-        </param>
-        <when value="yes">
-            <repeat name="conditions" title="grapical zones">
-                <param name="zone_graphical_left" label="Left graphical zone border" type="float" value="10.0" />
-                <param name="zone_graphical_right" label="Right graphical zone border" type="float" value="10.0" />
-            </repeat>
-        </when>
-        <when value="no" />
-    </conditional>
+        <param name="zip_file" type="data" format="zip" label="Zip file"/>
+        <conditional name="zone_exclusion_choices">
+            <param name="choice" type="select" label="Exclusion zone(s)" help="Choose if you want to exclude particular zone(s)">
+                <option value="yes"> yes </option>
+                <option value="no" selected="true"> no </option>
+            </param>
+            <when value="yes">
+                <repeat name="conditions" title="exclusion zones">
+                    <param name="zone_exclusion_left" label="Left exclusion zone border" type="float" value="10.0"/>
+                    <param name="zone_exclusion_right" label="Right exclusion zone border" type="float" value="10.0"/>
+                </repeat>
+            </when>
+            <when value="no"/>
+        </conditional>
+        <param name="shift" type="float" value="0.01" help="Maximal allowed shift for spectra alignment. Default value is 0.01 ppm"/>
+        <conditional name="zone_graphical_choices">
+            <param name="choice" type="select" label="Graphical zone(s)" help="Choose if you want to display particular zone(s)">
+                <option value="yes"> yes </option>
+                <option value="no" selected="true"> no </option>
+            </param>
+            <when value="yes">
+                <repeat name="conditions" title="grapical zones">
+                    <param name="zone_graphical_left" label="Left graphical zone border" type="float" value="10.0"/>
+                    <param name="zone_graphical_right" label="Right graphical zone border" type="float" value="10.0"/>
+                </repeat>
+            </when>
+            <when value="no"/>
+        </conditional>
     </inputs>
-
     <outputs>
-        <data format="txt" name="logOut" label="${tool.name}_log" />
-        <data format="tabular" name="proportionEstimation" label="${tool.name}_proportionEstimation" />
-        <data format="pdf" name="graphOut" label="${tool.name}_graph" />
+        <data format="txt" name="logOut" label="${tool.name}_log"/>
+        <data format="tabular" name="proportionEstimation" label="${tool.name}_proportionEstimation"/>
+        <data format="pdf" name="graphOut" label="${tool.name}_graph"/>
     </outputs>
-
     <tests>
         <test>
-            <param name="zip_file" value="ADG_007.zip" ftype="zip" />
-            <output name="proportionEstimation" value="MTBLS1_177_NMR_Annotation_proportionEstimation.tabular" />
-            <output name="graphOut"  value="MTBLS1_177_NMR_Annotation.pdf" compare="sim_size" delta="300" />
+            <param name="zip_file" value="ADG_007.zip" ftype="zip"/>
+            <output name="proportionEstimation" value="MTBLS1_177_NMR_Annotation_proportionEstimation.tabular"/>
+            <output name="graphOut" value="MTBLS1_177_NMR_Annotation.pdf" compare="sim_size" delta="300"/>
         </test>
     </tests>
-
     <help><![CDATA[
 
 .. class:: infomark
@@ -223,10 +225,8 @@ Example
 
 
    ]]></help>
-
-   <citations>
-       <citation type="doi">10.1007/s11306-017-1244-5</citation>
-       <citation type="doi">10.1093/bioinformatics/btu813</citation>
-   </citations>
-
+    <citations>
+        <citation type="doi">10.1007/s11306-017-1244-5</citation>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
 </tool>

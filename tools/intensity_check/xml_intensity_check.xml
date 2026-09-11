@@ -12,6 +12,13 @@
         <edam_operation>operation_2428</edam_operation>
     </edam_operations>
 
+    <creator>
+        <organization name="PFEM" url="https://eng-pfem.isc.inrae.fr/"></organization>
+        <organization name="Workflow4metabolomics" url="https://workflow4metabolomics.org/"></organization>
+        <person givenName="Anthony" familyName="Fernandes"></person>
+        <person givenName="Mélanie" familyName="Petera"></person>
+    </creator>
+
     <requirements>
         <requirement type="package" version="4.5.2">r-base</requirement>
         <requirement type="package" version="1.2.1">r-w4mrutils</requirement>

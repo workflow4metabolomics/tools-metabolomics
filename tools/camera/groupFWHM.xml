@@ -1,4 +1,4 @@
-<tool id="CAMERA_groupFWHM" name="CAMERA.groupFWHM" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+<tool id="CAMERA_groupFWHM" name="CAMERA.groupFWHM" version="@W4M_VERSION@+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>Group peaks into pseudospectra-groups</description>
 

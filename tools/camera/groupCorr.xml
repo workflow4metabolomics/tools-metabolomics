@@ -1,4 +1,4 @@
-<tool id="CAMERA_groupCorr" name="CAMERA.groupCorr" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+<tool id="CAMERA_groupCorr" name="CAMERA.groupCorr" version="@W4M_VERSION@+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>EIC correlation grouping of LC/ESI-MS data</description>
 

@@ -1,4 +1,4 @@
-<tool id="CAMERA_findAdducts" name="CAMERA.findAdducts" version="0.1.0+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
+<tool id="CAMERA_findAdducts" name="CAMERA.findAdducts" version="@W4M_VERSION@+camera@TOOL_VERSION@-galaxy@VERSION_SUFFIX@" profile="23.0">
 
     <description>Annotate adducts</description>
 

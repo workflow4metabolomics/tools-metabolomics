@@ -28,11 +28,17 @@ option_list <- list(
         help = "variableMetadata containing the data",
         metavar = "NAME"
     ),
-    make_option(c("-g", "--global"),
+    make_option(c("--single_graph"),
         type = "logical",
         default = FALSE,
-        help = "Injection Order Global used",
+        help = "Display all variables on the same graph",
         metavar = "BOOL"
+    ),
+    make_option(c("--mode"),
+        type = "character",
+        default = "global",
+        help = "Injection Order Mode (batchwise/global)",
+        metavar = "MODE"
     ),
     make_option(c("-x", "--batch_col"),
         type = "character",
@@ -69,6 +75,14 @@ option_list <- list(
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
 
+if (!(opt$mode %in% c("batchwise", "global"))) {
+    stop("Invalid mode. Please specify either 'batchwise' or 'global'.")
+}
+
+if ((opt$single_graph) & (opt$mode == "batchwise")) {
+    stop("When displaying all variables on the same graph, the global injection order must be used.")
+}
+
 #### ---- Read data function ----
 read_data_file <- function(file, description) {
     if (!file.exists(file)) {
@@ -76,7 +90,7 @@ read_data_file <- function(file, description) {
     }
     df <- tryCatch(
         {
-            read.table(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE, fill = TRUE)
+            read.csv(file, header = TRUE, sep = "\t", row.names = 1)
         },
         error = function(e) {
             stop(paste("Error reading", description, "file:", conditionMessage(e)))
@@ -90,26 +104,21 @@ dataMatrix <- read_data_file(opt$dataMatrix, "dataMatrix")
 sampleMetadata <- read_data_file(opt$sampleMetadata, "sampleMetadata")
 variableMetadata <- read_data_file(opt$variableMetadata, "variableMetadata")
 variables <- strsplit(opt$variables, ",")[[1]]
-batch_col <- names(sampleMetadata)[as.integer(opt$batch)]
-order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col)]
-mode <- "batchwise"
-if (opt$global) {
-    mode <- "global"
-}
+# We remove 1 from the column number, because the first column actually turns into rownames
+batch_col <- names(sampleMetadata)[as.integer(opt$batch) - 1]
+order_col <- names(sampleMetadata)[as.integer(opt$sample_order_col) - 1]
+mode <- opt$mode
 
 #### ---- Create data ----
-variableMetadata <- data.frame(variableMetadata, row.names = 1)
-dataMatrix_t <- as.data.frame(t(dataMatrix[-1]))
-colnames(dataMatrix_t) <- dataMatrix[[1]]
-dataMatrix_t$sampleMetadata <- rownames(dataMatrix_t)
-dataMatrix_t <- dataMatrix_t[, c("sampleMetadata", setdiff(names(dataMatrix_t), "sampleMetadata"))]
-pool_s <- merge(sampleMetadata, dataMatrix_t, by = "sampleMetadata")
+dataMatrix_t <- t(dataMatrix)
+pool_s <- transform(merge(sampleMetadata, dataMatrix_t, by = 0), row.names = Row.names, Row.names = NULL)
 pool_s <- pool_s[order(pool_s[[order_col]]), ]
 if (length(variables) == 0) {
     variable_columns <- rownames(variableMetadata)
 } else {
     variable_columns <- variables
 }
+variableMetadata <- variableMetadata[variable_columns, ]
 #### ---- Call function for convex analysis ----
 result <- convex_analysis_of_variables(
     pool_s,
@@ -131,18 +140,27 @@ write.table(
     variableMetadata[variable_columns, ],
     file = opt$output_vm,
     sep = "\t",
+    quote = FALSE,
     row.names = FALSE
 )
 cat("VM saved as", opt$output_vm, "\n")
-#### ---- Call to ploting function ----
+#### ---- Call to plotting function ----
 tryCatch(
     {
-        plot_all_convex_hulls(
-            target_file_path = opt$output_plot,
-            convex_analysis_res = result,
-            show_points = opt$points,
-            mode = mode
-        )
+        if (opt$single_graph) {
+            shared_single_plot_convex_hulls(
+                target_file_path = opt$output_plot,
+                convex_analysis_res = result,
+                show_points = opt$points
+            )
+        } else {
+            plot_all_convex_hulls(
+                target_file_path = opt$output_plot,
+                convex_analysis_res = result,
+                show_points = opt$points,
+                mode = mode
+            )
+        }
         cat("Plot saved as", opt$output_plot, "\n")
     },
     warning = function(war) {

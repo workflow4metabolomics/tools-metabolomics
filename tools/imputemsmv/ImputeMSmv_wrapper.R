@@ -228,11 +228,12 @@ if (para$mnar_method == "lod") {
 
 
 # ====================== If Seed =========================.
-if (para$setSeed == TRUE) {
-    cat(" - A seed has been set to:", para$seed, "(Seeds are used for reproductibility)\n")
-    set.seed(as.numeric(para$seed))
+# The seed itself is applied inside imputemsmv(), which owns the random draws;
+# this block only reports what will happen.
+if (isTRUE(para$setSeed)) {
+    cat(" - A seed has been set to:", para$seed, "(Seeds are used for reproducibility)\n")
 } else {
-    cat(" - No seed has been manually set by the user. Consequently, a seed will be randomly assigned, that can be reused for reproducibility. ")
+    cat(" - No seed has been manually set by the user; one will be drawn and logged by the tool, and can be reused for reproducibility.\n")
 }
 # ========================================================.
 

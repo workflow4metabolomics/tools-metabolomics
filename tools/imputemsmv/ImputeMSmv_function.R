@@ -93,12 +93,19 @@ imputemsmv <- function(DataMatrix,
     mar_method <- match.arg(mar_method)
     mnar_computation <- match.arg(mnar_computation)
 
-    # Optional reproductibility
-    if (setSeed == TRUE) {
+    # Reproducibility. Seeding happens here and only here: this function owns the
+    # draws, so seeding it twice (here and in the wrapper) only lets the two drift.
+    if (isTRUE(setSeed)) {
         set.seed(seed)
+        cat("Seed set by the user:", seed, "\n")
     } else {
-        random_seed <- sample(1:10000, 1)
-        cat("Seed number assigned value:", random_seed, ".\n")
+        # Draw a seed, then actually seed the RNG with it. The value printed used
+        # to be discarded, so the log advertised a seed that could not reproduce
+        # the run.
+        random_seed <- sample.int(.Machine$integer.max, 1L)
+        set.seed(random_seed)
+        cat("No seed was set by the user. RNG seeded with:", random_seed,
+            "- record this value to reproduce this exact run.\n")
     }
 
     cat(strrep("-", 60), "\nCounting features: \n")

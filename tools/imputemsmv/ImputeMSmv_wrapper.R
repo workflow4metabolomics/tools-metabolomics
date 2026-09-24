@@ -35,10 +35,11 @@ para <- W4MRUtils::parse_args(args = commandArgs())
 
 cat(
     "Job starting time:", format(Sys.time(), "%a %d %b %Y %X"), "\n", strrep("-", 60),
-    "\nWelcome to MissMDA, a Galaxy tool dedicated to the handling of missing values from Mass Spectrometry data. \n\n",
+    "\nWelcome to ImputeMSmv, a Galaxy tool that classifies missing values in mass spectrometry\n",
+    "data as MAR or MNAR and imputes them with group-aware strategies. \n\n",
     "\nParameters used by this tool:\n"
 )
-cat("Paramters set: \n")
+cat("Parameters set: \n")
 print(para)
 cat("\n", strrep("-", 60), "\n")
 # ========================================================.

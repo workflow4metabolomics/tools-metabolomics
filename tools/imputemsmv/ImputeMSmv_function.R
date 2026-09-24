@@ -1,5 +1,5 @@
 # ========================================================.
-# Tool: ImputeMsmv
+# Tool: ImputeMSmv
 #
 # Original tool code: Mathieu CLADIERE (Université Paris Saclay, INRAE, AgroParisTech, UMR Sayfood, Campus Agro Paris Saclay - Palaiseau, France)
 # Original tool wrapping: Anthony SLEIMAN (Internship student, PFEM, INRAE, MetaboHub)
@@ -13,7 +13,7 @@
 # Version 1.0.0: version 1.0.0 - 2026-06-29 - addition of new features
 #
 # Description:
-# This tool performs imputation of missing values in mass spectrometry–based data
+# This tool performs imputation of missing values in mass spectrometry-based data
 # matrices. The primary objective is to handle incomplete metabolomic datasets by
 # estimating and replacing missing intensities in a statistically informed manner.
 #
@@ -30,7 +30,7 @@
 # Output:
 # Datamatrix with no missing values (all imputed)
 # Sample Metadata with additional columns describing NA category and proportions in samples
-# Variable Metadata with additionam columns describing NA category and proportions in variables
+# Variable Metadata with additional columns describing NA category and proportions in variables
 # Graphics and plots in a pdf format
 # ========================================================.
 
@@ -89,23 +89,23 @@ plot_placeholder <- function(message) {
 #' @param sampleMetadata Data frame containing sample annotations and grouping variable
 #' @param variableMetadata Data frame containing feature annotations
 #' @param colClass Column name in sampleMetadata defining sample's group
-#' @param LimNan Numeric (0–1); threshold of missingness per feature within a group above which values are considered MNAR
+#' @param LimNan Numeric (0-1); threshold of missingness per feature within a group above which values are considered MNAR
 #' @param setSeed Whether to set random seed for reproducibility
 #' @param seed Random seed value
 #' @param mnar_method Method for MNAR imputation ("lod" or "min")
-#' @param percLOD Numeric (0–1); quantile used to estimate limit of detection (LOD)
-#' @param SDLOD Numeric (0–1); multiplicative noise amplitude for MNAR imputation
-#' @param pmin Numeric (0–1); scaling factor applied in "min" MNAR strategy
+#' @param percLOD Numeric (0-1); quantile used to estimate limit of detection (LOD)
+#' @param SDLOD Numeric (0-1); multiplicative noise amplitude for MNAR imputation
+#' @param pmin Numeric (0-1); scaling factor applied in "min" MNAR strategy
 #' @param mar_method Method for MAR imputation ("mean" or "median")
-#' @param SDmean Numeric (0–1); multiplicative noise amplitude for MAR imputation
+#' @param SDmean Numeric (0-1); multiplicative noise amplitude for MAR imputation
 #' @param advanced Modifies MNAR/MAR classification threshold behavior
 #' @param digits Rounding precision applied during imputation
 #'
-#' @returns A list containing 3 W4M-compatible tables with no missing values: Datamatrix sampleMetadata VariableMetadata
-#'
-#' @return Imputed intensity data matrix with no NA values
-#' @return Original sample metadata with added MV percentage per sample
-#' @return Original variable metadata with added missing value classification per group
+#' @return A named list of 3 W4M-compatible tables with no missing values:
+#'   \code{Datamatrix}, the imputed intensity data matrix with no NA values;
+#'   \code{sampleMetadata}, the original sample metadata with the missing value
+#'   percentage added per sample; \code{VariableMetadata}, the original variable
+#'   metadata with the missing value classification added per group.
 #'
 #' @author
 #' Original code: Mathieu CLADIERE
@@ -179,7 +179,7 @@ imputemsmv <- function(DataMatrix,
     # Extract unique group labels from sample metadata
     tUclass <- t(unique(sampleMetadata[colClass]))
 
-    # Global missing valu statitics
+    # Global missing value statistics
     nMV <- sum(is.na(DataMatrix))
     pMV <- (nMV / (nrow(DataMatrix) * ncol(DataMatrix))) * 100
     cat("In raw data matrix there are: \n .", length(numero), "feature(s) \n .", length(tUclass), "group(s)")
@@ -456,7 +456,7 @@ fix_head <- function(df) {
 
 
 # ====================== plt_density =====================.
-#' Comapre intensity distribution before and after imputation
+#' Compare intensity distribution before and after imputation
 #'
 #' This function plots density of Log10-transformed intensity values from two data
 #' matrices: one before imputation and one after imputation.
@@ -516,20 +516,20 @@ plt_density <- function(df1, df2) {
 #' Converts a data matrix into a binary presence/absence map.
 #' Missing values are encoded as 0 and observed intensities as 1.
 #'
-#' @param df Numeric data matrix
+#' @param df_original Numeric data matrix
 #'
-#' @return Presence/absence map of data matix intensities. NA in black, intensities in white
+#' @return Presence/absence map of data matrix intensities. NA in black, intensities in white
 #'
 #' @author
 #' Original code: Anthony SLEIMAN
 #' Maintainer: Mélanie PETERA
 plt_matrix <- function(df_original) {
-    # Convert to binary presence/absence matrix (Na -> 0 ; everything else -> 1)
+    # Convert to binary presence/absence matrix (NA -> 0 ; everything else -> 1)
     df <- ifelse(is.na(df_original), 0, 1)
     # Transpose so samples become columns
     df <- t(df)
 
-    # Chosen colors
+    # Choose colors
     color <- c("black", "white") # black for missing values, white for non missing values
 
     # Plot binary matrix
@@ -721,7 +721,7 @@ plt_type <- function(SM, VM, ID) {
 #' @param VM Variable metadata containing missing value classification (output of imputemsmv)
 #' @param ID Column name in SM defining sample groups
 #'
-#' @return A pie chart showing global propotions of No_MV, MAR, MNAR
+#' @return A pie chart showing global proportions of No_MV, MAR, MNAR
 #'
 #' @author
 #' Original code: Anthony SLEIMAN
@@ -783,8 +783,8 @@ plt_pie <- function(SM, VM, ID) {
 #' The total number within each bin is then summed and displayed as a bar plot
 #' Help assess MNAR behavior when the minimum-method is chosen
 #'
-#' @param df Numeric data matrix
-#' @param bins Number of bins used to cut intesity values
+#' @param df_original Numeric data matrix
+#' @param bins Number of bins used to cut intensity values
 #'
 #' @return A bar plot showing total NA per intensity bin
 #'

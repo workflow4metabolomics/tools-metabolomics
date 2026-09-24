@@ -5,7 +5,7 @@ Metadata
 -----------
 
  * **@name**: ImputeMSmv
- * **@galaxyID**: imoutemsmv
+ * **@galaxyID**: imputemsmv
  * **@version**: 1.0.0
  * **@authors**:
   - Original R code: Mathieu Cladière

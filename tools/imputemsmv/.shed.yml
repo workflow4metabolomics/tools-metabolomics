@@ -1,8 +1,10 @@
 categories: [Metabolomics]
-description: '[W4M][Preprocessing] Imputes MS missing values'
+description: '[W4M][Preprocessing] Classifies and imputes MS missing values (MAR/MNAR)'
 homepage_url: http://workflow4metabolomics.org
-long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The tool performs missing value classification and imputation in mass spectrometry–based data matrices.
-  Based on the work presented by Delaporte et al. (2019).'
+long_description: 'Part of the W4M project: http://workflow4metabolomics.org / The tool performs missing value classification and imputation in mass spectrometry-based data matrices.
+  Missing values are classified per feature and per replicate group as MAR or MNAR from the within-group missingness rate, then imputed with group-aware strategies: MAR from the group mean or median,
+  MNAR from a global limit of detection or from a per-feature fraction of the lowest detected intensity, both combined with multiplicative uniform noise.
+  Method described in Delaporte et al. (2019), DOI 10.1016/j.chemolab.2019.03.005.'
 name: imputemsmv
 owner: workflow4metabolomics
 remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/imputemsmv

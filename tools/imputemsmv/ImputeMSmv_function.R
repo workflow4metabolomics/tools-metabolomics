@@ -79,19 +79,39 @@ imputemsmv <- function(DataMatrix,
                        LimNan,
                        setSeed,
                        seed,
-                       mnar_method = c("lod", "min"),
+                       mnar_method,
                        percLOD,
                        SDLOD,
                        pmin,
-                       mar_method = c("mean", "median"),
+                       mar_method,
                        SDmean,
-                       mnar_computation = c("quantile", "mean", "median"),
+                       mnar_computation,
                        advanced,
                        digits) {
-    # Match user-selected methods
-    mnar_method <- match.arg(mnar_method)
-    mar_method <- match.arg(mar_method)
-    mnar_computation <- match.arg(mnar_computation)
+    # No argument defaults (C6): the tool is driven from Galaxy, which always
+    # supplies these, so a missing parameter must be an error rather than a
+    # silent first choice. Note that match.arg(NULL, choices = ...) returns
+    # choices[1], which would quietly reinstate the default -- hence require_arg.
+    require_arg <- function(value, name, choices) {
+        if (length(value) != 1L || is.na(value)) {
+            stop("Parameter '", name, "' is missing; expected one of: ",
+                 paste(choices, collapse = ", "), call. = FALSE)
+        }
+        match.arg(value, choices = choices)
+    }
+
+    require_num <- function(value, name) {
+        if (length(value) != 1L || is.na(value) || !is.numeric(value)) {
+            stop("Parameter '", name, "' is missing or not a single number.",
+                 call. = FALSE)
+        }
+        value
+    }
+
+    mnar_method <- require_arg(mnar_method, "mnar_method", c("lod", "min"))
+    mar_method <- require_arg(mar_method, "mar_method", c("mean", "median"))
+    # mnar_computation applies only to the "lod" branch, which the command block
+    # does not emit on the "min" branch; it is checked inside that branch.
 
     # Reproducibility. Seeding happens here and only here: this function owns the
     # draws, so seeding it twice (here and in the wrapper) only lets the two drift.
@@ -265,7 +285,14 @@ imputemsmv <- function(DataMatrix,
 
     # Impute according to chosen method (LOD or minimum)
     if (mnar_method == "lod") {
-        # Compute global LOD from quantile
+        # Validated here rather than in the signature: the command block emits
+        # --mnar_computation only on this branch, so on the "min" path the
+        # argument legitimately never arrives.
+        mnar_computation <- require_arg(mnar_computation, "mnar_computation",
+                                        c("quantile", "mean", "median"))
+        percLOD <- require_num(percLOD, "percLOD")
+        # Compute global LOD from quantile. Checked here because quantile() with
+        # prob = NULL does not fail -- it silently returns every quantile.
         Lod <- quantile(DataMatrix, na.rm = TRUE, prob = percLOD, names = FALSE)
         if (mnar_computation != "quantile") {
             low_lod <- na.omit(unlist(DataMatrix[DataMatrix <= Lod]))
@@ -303,6 +330,10 @@ imputemsmv <- function(DataMatrix,
         }
         # Minimum-based per feature MNAR imputation
     } else if (mnar_method == "min") {
+        # Checked up front: the loop below only runs when a group actually has
+        # MNAR features, so a missing pmin would otherwise slip through until it
+        # surfaced as "replacement has length zero" deep inside the sweep.
+        pmin <- require_num(pmin, "pmin")
         for (i in seq_along(nom_DataMatrix_gp)) {
             nom_DataMatrix_gp_MNAR[i] <- paste(nom_DataMatrix_gp[i], "_MNAR", sep = "")
             assign(nom_DataMatrix_gp_MNAR[i], subset(get(nom_DataMatrix_gpMV[i]), pNbNaN > LimNan))

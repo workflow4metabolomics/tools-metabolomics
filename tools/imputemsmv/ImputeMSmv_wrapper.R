@@ -83,19 +83,76 @@ v <- fix_head(v)
 
 
 # ====================== Quality control =================.
-# Check that all columns are numeric
-if (!all(vapply(d, is.numeric, logical(1)))) {
-    warning("Input data matrix contains non-numeric values")
-    stop("Please provide a numeric data matrix")
+# All preconditions are checked here, before any computation starts, so that a
+# bad job fails fast instead of half-way through the imputation.
+validate_inputs <- function(d, s, v, col, LimNan, percLOD, pmin) {
+    problems <- character(0)
+    require_ <- function(cond, msg) {
+        if (!isTRUE(cond)) problems <<- c(problems, msg)
+    }
+
+    require_(nrow(d) > 0, "The data matrix contains no features.")
+    require_(ncol(d) > 0, "The data matrix contains no samples.")
+    require_(nrow(v) == nrow(d),
+              "The data matrix and the variable metadata describe a different number of features.")
+    require_(nrow(s) == ncol(d),
+              "The data matrix and the sample metadata describe a different number of samples.")
+    require_(setequal(rownames(v), rownames(d)),
+              "Feature identifiers differ between the data matrix and the variable metadata.")
+    require_(setequal(rownames(s), colnames(d)),
+              "Sample identifiers differ between the data matrix and the sample metadata.")
+    require_(all(vapply(d, is.numeric, logical(1))),
+              "The data matrix contains non-numeric values.")
+    require_(col %in% colnames(s),
+              paste0("Column '", col, "' is not found in the sample metadata."))
+    require_(!any(is.na(s[[col]])),
+              paste0("Column '", col, "' contains missing values."))
+
+    require_(is.numeric(LimNan) && length(LimNan) == 1L && !is.na(LimNan) &&
+                 LimNan >= 0 && LimNan <= 1,
+              paste0("The missing value rate threshold must be a single number in [0, 1]; got: ",
+                     format(LimNan)))
+
+    # percLOD / pmin arrive only on their own MNAR branch, so NULL is legitimate.
+    # percLOD = 0 is allowed on purpose: quantile(x, 0) is the global minimum,
+    # which is a defensible LOD.
+    if (!is.null(percLOD)) {
+        require_(is.numeric(percLOD) && length(percLOD) == 1L && !is.na(percLOD) &&
+                     percLOD >= 0 && percLOD <= 1,
+                  paste0("The LOD quantile must be a single number in [0, 1]; got: ",
+                         format(percLOD)))
+    }
+    if (!is.null(pmin)) {
+        require_(is.numeric(pmin) && length(pmin) == 1L && !is.na(pmin) &&
+                     pmin > 0 && pmin <= 1,
+                  paste0("The fraction of the lowest detected intensity must be a single ",
+                         "number in (0, 1]; got: ", format(pmin),
+                         " (imputing literal zeros is what this tool exists to avoid)."))
+    }
+
+    if (length(problems) > 0) {
+        stop(paste(problems, collapse = "\n"), call. = FALSE)
+    }
 }
 
-# Convert NaN to NA
+# parse_args applies a numeric converter to every value, so a grouping column
+# literally named "1" would arrive as the number 1 and later resolve by
+# position. Force the identifier back to a name before it is used.
+colGroup <- as.character(para$col)
+
+# Convert NaN to NA (must happen before validation: NaN counts as missing)
 if (any(sapply(d, function(x) any(is.nan(x))))) {
     cat("NaN values detected in the input data matrix. They have been converted to NA.\n")
     for (i in seq_along(d)) {
         d[[i]][is.nan(d[[i]])] <- NA
     }
 }
+
+LimNan <- suppressWarnings(as.numeric(para$LimNan))
+percLOD <- if (is.null(para$percLOD)) NULL else suppressWarnings(as.numeric(para$percLOD))
+pmin <- if (is.null(para$pmin)) NULL else suppressWarnings(as.numeric(para$pmin))
+
+validate_inputs(d, s, v, colGroup, LimNan, percLOD, pmin)
 
 # Check presence of missing values
 # In global data matrix
@@ -137,12 +194,8 @@ if (identical(rownames(s), colnames(d))) {
     cat("Sorting done.\n")
 }
 
-# Check column name entered by user
-if (para$col %in% colnames(s)) {
-    cat("Column name check passed. \n")
-} else {
-    stop("Column name: '", para$col, "' is not found in the sample metadata file.\nMake sure that the entered name matches the column name in the sample metadata.\n")
-}
+# Grouping column presence/validity is already enforced by validate_inputs()
+cat("Column name check passed. \n")
 # ========================================================.
 
 
@@ -187,11 +240,28 @@ if (para$setSeed == TRUE) {
 # ====================== Run imputation ==================.
 result_tables <- imputemsmv(
     DataMatrix = d, sampleMetadata = s, variableMetadata = v,
-    colClass = para$col, LimNan = para$LimNan, setSeed = para$setSeed, seed = para$seed,
-    mnar_method = para$mnar_methods, percLOD = para$percLOD, SDLOD = para$SDLOD, pmin = para$pmin,
+    colClass = colGroup, LimNan = LimNan, setSeed = para$setSeed, seed = para$seed,
+    mnar_method = para$mnar_methods, percLOD = percLOD, SDLOD = para$SDLOD, pmin = pmin,
     mar_method = para$mar_methods, SDmean = para$SDmean, mnar_computation = para$mnar_computation,
     advanced = para$advanced, digits = digits
 )
+
+# Post-condition: imputation must leave no gap behind. Without this, a matrix
+# that is entirely missing runs to completion and Galaxy reports a green
+# dataset full of NAs.
+if (any(is.na(result_tables$Datamatrix))) {
+    still_na <- rownames(result_tables$Datamatrix)[
+        rowSums(is.na(result_tables$Datamatrix)) > 0
+    ]
+    stop(
+        "Imputation finished but ", sum(is.na(result_tables$Datamatrix)),
+        " value(s) are still missing across ", length(still_na),
+        " feature(s), so no reference value could be found for them.\n",
+        "Features left unimputed:\n", paste(utils::head(still_na, 20), collapse = ", "),
+        if (length(still_na) > 20) " ..." else "",
+        call. = FALSE
+    )
+}
 # ========================================================.
 
 

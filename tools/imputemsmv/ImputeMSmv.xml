@@ -28,11 +28,7 @@
     <include path="ImputeMSmv_wrapper.R" />
   </required_files>
   
-  <stdio>
-    <exit_code range="1" level="fatal" />
-  </stdio>
-  
-  <command>
+  <command detect_errors="exit_code">
     <![CDATA[
       Rscript '$__tool_directory__/ImputeMSmv_wrapper.R'
 
@@ -151,7 +147,7 @@
           <option value='FALSE' selected='true'>No</option>
         </param>
         <when value='TRUE'>
-          <param name='LimNan2' type='float' value='' min='0.50' max='1' label='Extended missing value rate threshold' help='WARNING: using high threshold values may lead to unintuitive or misleading classification results; only use this parameter if you have a specific reason to do so. The use of the advanced option overrides the default "Missing value rate threshold for missing value labeling" parameter.' />
+          <param name='LimNan2' type='float' value='0.75' min='0.50' max='1' required='true' label='Extended missing value rate threshold' help='WARNING: using high threshold values may lead to unintuitive or misleading classification results; only use this parameter if you have a specific reason to do so. The use of the advanced option overrides the default "Missing value rate threshold for missing value labeling" parameter.' />
         </when>
         <when value='FALSE'></when>
       </conditional>

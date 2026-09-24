@@ -14,32 +14,19 @@
 
 
 # ====================== Prepare environment =============.
-# Clean R environment
-rm(list = ls())
-
 # Import libraries
 library("W4MRUtils")
 # ========================================================.
 
 
-# ====================== Establish XML connections =======.
-args <- commandArgs(trailingOnly = TRUE)
-
-get_arg <- function(flag) {
-    idx <- which(args == flag)
-    if (length(idx) == 1 && idx < length(args)) {
-        return(args[idx + 1])
-    }
-    return(NULL)
-}
-
-tool_dir <- get_arg("--tool_dir")
-
-if (is.null(tool_dir)) {
-    stop("tool_dir not provided")
-}
-
-source(file.path(tool_dir, "ImputeMSmv_function.R"))
+# ====================== Load the tool functions =========.
+# Resolved against the script's own directory by W4MRUtils, the same way
+# w4mconcatenate does it. Hand-rolling this -- recovering --tool_dir from the
+# command line and sourcing the result -- duplicated source_local(), and put
+# the wrapper's install path into para, which print(para) then echoed to the
+# job log as if it were a tool parameter. A missing file now errors from
+# source() itself, naming the path it tried.
+source_local("ImputeMSmv_function.R")
 # ========================================================.
 
 
@@ -214,14 +201,14 @@ cat(" - Imputing missing values of the MAR category with the", para$mar_methods,
 
 
 # ====================== If MNAR_Method ==================.
-if (para$mnar_method == "lod") {
+if (para$mnar_methods == "lod") {
     cat(" - Missing values categorized as MNAR will be imputed using the limit of detection found in the global datamatrix.\n")
     if (para$mnar_computation == "quantile") {
         cat(" - LOD will be computed using the user-defined quantile of the global data matrix.\n")
     } else {
         cat(" - LOD will be computed using the", para$mnar_computation, "of values below the user-defined LOD.\n")
     }
-} else if (para$mnar_method == "min") {
+} else if (para$mnar_methods == "min") {
     cat(" - Missing values categorized as MNAR will be imputed using", ((para$pmin) * 100), "percent of the lowest value computed per feature across all samples.\n")
 }
 # ========================================================.
@@ -267,18 +254,24 @@ if (any(is.na(result_tables$Datamatrix))) {
 
 
 # ====================== Get tabular outputs =============.
-# DM
-DM_out <- data.frame(df = rownames(d), result_tables[[1]], check.names = FALSE)
-colnames(DM_out)[colnames(DM_out) == "df"] <- dName
+# Named access: imputemsmv() returns a named list, and [[1]]/[[2]]/[[3]] silently
+# follow any reordering of that return value.
+# The identifier column is named by position, not by matching the placeholder:
+# matching on the name also renamed any sample, feature or metadata field
+# genuinely called "df", yielding two columns of the same name.
+DM_out <- data.frame(id = rownames(d), result_tables$Datamatrix, check.names = FALSE)
+colnames(DM_out)[1] <- dName
 # SM
-SM_out <- data.frame(df = rownames(s), result_tables[[2]], check.names = FALSE)
-colnames(SM_out)[colnames(SM_out) == "df"] <- sName
+SM_out <- data.frame(id = rownames(s), result_tables$sampleMetadata, check.names = FALSE)
+colnames(SM_out)[1] <- sName
 # VM
-VM_out <- data.frame(df = rownames(v), result_tables[[3]], check.names = FALSE)
-colnames(VM_out)[colnames(VM_out) == "df"] <- vName
+VM_out <- data.frame(id = rownames(v), result_tables$VariableMetadata, check.names = FALSE)
+colnames(VM_out)[1] <- vName
 
 # Export output tables
-write.table(DM_out, file = para$DM_out, sep = "\t", row.names = FALSE)
+# quote = FALSE for all three, as the SM/VM writes already did and as
+# w4mconcatenate does: quoting left identifiers as "M60T53" in the data matrix.
+write.table(DM_out, file = para$DM_out, sep = "\t", row.names = FALSE, quote = FALSE)
 write.table(SM_out, file = para$SM_out, sep = "\t", row.names = FALSE, quote = FALSE)
 write.table(VM_out, file = para$VM_out, sep = "\t", row.names = FALSE, quote = FALSE)
 # ========================================================.

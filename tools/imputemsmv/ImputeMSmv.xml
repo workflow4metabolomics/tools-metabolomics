@@ -32,8 +32,6 @@
     <![CDATA[
       Rscript '$__tool_directory__/ImputeMSmv_wrapper.R'
 
-      --tool_dir '$__tool_directory__'
-
 
       --DM_in '$DM_input'
       --SM_in '$SM_input'

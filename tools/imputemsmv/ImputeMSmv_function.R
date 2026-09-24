@@ -35,6 +35,45 @@
 # ========================================================.
 
 
+# ============ shared plotting helpers ===================.
+# Missing value categories, each bound to one colour. Keying the colour to the
+# category name means a slice can never pick up another category's colour when
+# a category happens to be absent (see plt_pie).
+MV_COLORS <- c(No_MV = "white", MAR = "#6551CC", MNAR = "#B22C2C")
+
+#' Percentages of `x`, guarded against a zero total
+#'
+#' Dividing by a zero total yields NaN, which base graphics happily renders as a
+#' literal "NaN%" label rather than failing. A zero total returns all zeros.
+#'
+#' @param x Numeric vector of counts
+#'
+#' @return Numeric vector of percentages summing to 100, or all zeros if the
+#'   total is zero or not finite
+pc <- function(x) {
+    total <- sum(x)
+    if (!is.finite(total) || total == 0) {
+        return(rep_len(0, length(x)))
+    }
+    x / total * 100
+}
+
+#' Draw a page saying there is nothing to plot
+#'
+#' Used when a chart has no data to show, so that the PDF still contains a
+#' readable page instead of a silently missing chart.
+#'
+#' @param message Text to centre on the page
+#'
+#' @return The page is drawn; nothing is returned
+plot_placeholder <- function(message) {
+    plot.new()
+    plot.window(xlim = c(0, 1), ylim = c(0, 1))
+    text(0.5, 0.5, message)
+}
+# ========================================================.
+
+
 # ================= imputemsmv ===========================.
 #' Main tool function imputemsmv
 #'
@@ -424,10 +463,14 @@ fix_head <- function(df) {
 #'
 #' Missing values are removed prior to density estimation
 #'
+#' Both matrices must hold intensities only: no identifier column, since an
+#' identifier column would be silently dropped from the "after" curve by
+#' `fix_head()` and its absence would be a plotting-only failure.
+#'
 #' @param df1 Data matrix before imputation to be plotted
 #' @param df2 Data matrix after imputation to be plotted
 #'
-#' @return A base R plot showing density curves before (solid cyan line) and after (dashed magenta line) imputation
+#' @return A base R plot showing density curves before (dashed cyan line) and after (solid magenta line) imputation
 #'
 #' @author
 #' Original code: Anthony SLEIMAN
@@ -436,13 +479,9 @@ plt_density <- function(df1, df2) {
     # Choose plot colors
     color <- c("#009B9F", "#C75DAA")
 
-    # Flatten matrix and remove missing values
+    # Flatten matrices and remove missing values
     logDataVector1 <- log10(na.omit(unlist(df1)))
-
-    # Restore structure if first column is row identifiers (which is the case in our W4M case)
-    df2_fixed <- fix_head(df2)
-    # Flatten second matrix and remove missing values
-    logDataVector2 <- log10(na.omit(unlist(df2_fixed)))
+    logDataVector2 <- log10(na.omit(unlist(df2)))
 
     # Density of original data
     plot(density(logDataVector1),
@@ -545,19 +584,21 @@ plt_group <- function(SM, VM, ID) {
     group_cols <- paste0("mv_type_", group_name)
     groups <- as.data.frame(VM[, group_cols])
 
-    n_features <- nrow(groups)
-
-    # Compute percentage per category per group
-    info <- data.frame(type = c("NMV", "MAR", "MNAR"))
+    # Compute percentage per category per group, as named vectors so that
+    # counts, colours and labels can never fall out of step
+    info <- data.frame(type = names(MV_COLORS))
     for (i in seq_along(group_name)) {
         # Count categories
-        No_MV <- sum(groups[, i] == "No_MV")
-        MAR <- sum(groups[, i] == "MAR")
-        MNAR <- sum(groups[, i] == "MNAR")
-        # convert to percentage
-        col_vals <- c(No_MV, MAR, MNAR) / n_features * 100
-        # Append as a new column
-        info <- cbind(info, col_vals)
+        counts <- c(
+            No_MV = sum(groups[, i] == "No_MV"),
+            MAR = sum(groups[, i] == "MAR"),
+            MNAR = sum(groups[, i] == "MNAR")
+        )
+        # Convert to percentage and append as a new column. pc() keeps a group
+        # with nothing classified at 0 instead of producing NaN, which barplot()
+        # would otherwise draw as a "NaN%" label. Its denominator is the number
+        # of classified cells, matching plt_type and plt_pie.
+        info <- cbind(info, pc(counts))
     }
 
     # Fix column structure (using helper function fix_head from above)
@@ -566,7 +607,7 @@ plt_group <- function(SM, VM, ID) {
     info <- as.matrix(info)
 
     # Choose colors per category
-    color <- c("white", "#6551CC", "#B22C2C") # white for No_MV, purple for MAR and maroon for MNAR
+    color <- unname(MV_COLORS) # white for No_MV, purple for MAR and maroon for MNAR
 
     # Stacked bar plot
     bp <- barplot(info, col = color, yaxt = "n", log = "")
@@ -590,7 +631,7 @@ plt_group <- function(SM, VM, ID) {
     par(xpd = FALSE)
     legend(
         x = "topright", xpd = TRUE, inset = c(0, -0.13),
-        legend = c("No_MV", "MAR", "MNAR"),
+        legend = names(MV_COLORS),
         fill = color,
         border = "black",
         cex = 0.6, horiz = FALSE
@@ -623,19 +664,29 @@ plt_type <- function(SM, VM, ID) {
     groups <- as.data.frame(VM[, group_cols])
 
     # Count occurences per group for each MV category
-    No_MV <- colSums(groups == "No_MV")
-    MAR <- colSums(groups == "MAR")
-    MNAR <- colSums(groups == "MNAR")
+    info <- cbind(
+        No_MV = colSums(groups == "No_MV"),
+        MAR = colSums(groups == "MAR"),
+        MNAR = colSums(groups == "MNAR")
+    )
 
-    # Normalize occurences per group for each MV category
-    No_MV <- (No_MV / sum(No_MV)) * 100
-    MAR <- (MAR / sum(MAR)) * 100
-    MNAR <- (MNAR / sum(MNAR)) * 100
+    # Drop categories that are absent from the whole dataset before
+    # normalizing: such a column sums to zero, and dividing by that total used
+    # to yield NaN, which barplot() drew as "NaN%" labels without complaining
+    # (C15). An empty stack carries no information, so it is not drawn at all.
+    info <- info[, colSums(info) > 0, drop = FALSE]
 
-    # Combine into matrix (rows are groups, columns are MV category)
-    info <- cbind(No_MV, MAR, MNAR)
+    if (ncol(info) == 0) {
+        plot_placeholder("No classified values to display")
+        return(invisible(NULL))
+    }
 
-    # Choose colors
+    # Normalize occurences per group for each MV category. sweep() rather than
+    # apply(), which would collapse the shape to a vector when a single group or
+    # a single category is left. Totals are all non-zero after the drop above.
+    info <- sweep(info, 2, colSums(info), "/") * 100
+
+    # Choose colors: one shade per sample group
     color <- hcl.colors(nrow(info), palette = "Tropic")
 
     # Stacked bar plot
@@ -650,7 +701,10 @@ plt_type <- function(SM, VM, ID) {
     legend(
         x = "topright", xpd = TRUE, inset = c(-0.025, 0),
         legend = group_name, title = "Groups",
-        fill = hcl.colors(length(groups), palette = "Tropic"),
+        # reuse the shades actually drawn: rebuilding them from length(groups),
+        # the number of feature x group cells rather than of groups, gave legend
+        # swatches that did not match the bars
+        fill = color,
         border = "black",
         cex = 0.6, horiz = FALSE
     )
@@ -678,30 +732,30 @@ plt_pie <- function(SM, VM, ID) {
     # Corresponding VM columns
     group_cols <- paste0("mv_type_", group_name)
     groups <- as.data.frame(VM[, group_cols])
-    # Total number of entries (features x groups)
-    numero <- nrow(groups) * ncol(groups)
 
-    # Count occurences of each missing value type
-    No_MV <- sum(groups == "No_MV")
-    MAR <- sum(groups == "MAR")
-    MNAR <- sum(groups == "MNAR")
+    # Count occurrences of each missing value type, as one named vector so that
+    # counts, colours and labels can never fall out of step
+    counts <- c(
+        No_MV = sum(groups == "No_MV"),
+        MAR = sum(groups == "MAR"),
+        MNAR = sum(groups == "MNAR")
+    )
 
-    # Convert counts to percentages
-    pNo_MV <- (No_MV / numero) * 100
-    pMAR <- (MAR / numero) * 100
-    pMNAR <- (MNAR / numero) * 100
+    # Drop empty categories once, up front, and reuse that single mask. The old
+    # code recomputed `info > 0` after shortening `info`, and R recycles a short
+    # logical subscript, so colours and legend entries kept their full length and
+    # slices were drawn in the wrong colour.
+    keep <- counts > 0
+    counts <- counts[keep]
+    info <- pc(counts)
+    color <- unname(MV_COLORS[names(counts)])
+    label <- names(counts)
 
-    # Combine into vector
-    info <- c(pNo_MV, pMAR, pMNAR)
-
-    # Choose color
-    color <- c("white", "#6551CC", "#B22C2C") # white for No_MV, purple for MAR and maroon for MNAR
-    label <- c("No_MV", "MAR", "MNAR")
-
-    # Check if a category is absent
-    info <- info[info > 0]
-    color <- color[info > 0]
-    label <- label[info > 0]
+    if (length(info) == 0) {
+        plot_placeholder("No classified values to display")
+        title(main = "Pie chart of values category in datamatrix", col.main = "black")
+        return(invisible(NULL))
+    }
 
     # Plot pie chart
     pie(info,

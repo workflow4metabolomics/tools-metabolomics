@@ -285,16 +285,31 @@ write.table(VM_out, file = para$VM_out, sep = "\t", row.names = FALSE, quote = F
 
 
 # ====================== Plots ===========================.
-chosen_plots <- as.vector(strsplit(para$plots, ",")[[1]])
+# Plotting lives in a function so the device close is a real handler rather than
+# dead code (C13): a top-level on.exit() registers into R_GlobalContext, which
+# Rscript's exit path never unwinds, so the registration at the end of the old
+# block could only ever have double-closed the explicit dev.off() below it -- it
+# ran in neither case. Inside a function the handler does fire on the error path.
+# Measured with graphics::image patched to fail mid-plot: old and new both exit 1
+# and leave a well-formed PDF holding the pages completed so far, because
+# grDevices finalises the device at process exit. So this is hygiene -- cleanup
+# that no longer depends on that finalisation -- not a fix for an observable bug.
+make_plots <- function(chosen_plots) {
+    pdf(file = para$plot_out, width = 11, height = 7)
+    on.exit(dev.off(), add = TRUE)
 
-pdf(file = para$plot_out, width = 11, height = 7)
+    # "None" was accepted here but is not one of the tool's option values, so the
+    # branch was unreachable and an empty selection fell through to the plotting
+    # path, which logged "plotting 0 chart(s)" and left Galaxy holding a valid
+    # 0-page PDF (C5). Treat "None" as what it always meant -- no plot -- and say
+    # so on the page, so the PDF always has at least one readable page.
+    chosen_plots <- setdiff(chosen_plots, c("None", ""))
 
-on.exit(dev.off(), add = TRUE)
+    if (length(chosen_plots) == 0) {
+        plot_placeholder("NO PLOT SELECTED")
+        return(invisible(NULL))
+    }
 
-if ("None" %in% chosen_plots) {
-    plot.new()
-    text(0.5, 0.5, "NO PLOT SELECTED")
-} else {
     cat("\n", strrep("-", 60), "\n")
     cat("\nGraphical representations: plotting", length(chosen_plots), "chart(s):\n")
 
@@ -305,7 +320,9 @@ if ("None" %in% chosen_plots) {
 
     if ("DP" %in% chosen_plots) {
         cat("\nDensity plot")
-        plt_density(d, DM_out)
+        # the tidy matrix, not DM_out: passing the output table meant the "after"
+        # curve depended on whether column 1 happened to hold identifiers (R25)
+        plt_density(d, result_tables$Datamatrix)
     }
 
     if ("HM" %in% chosen_plots) {
@@ -329,7 +346,7 @@ if ("None" %in% chosen_plots) {
     }
 }
 
-dev.off()
+make_plots(as.vector(strsplit(para$plots, ",")[[1]]))
 # ========================================================.
 
 

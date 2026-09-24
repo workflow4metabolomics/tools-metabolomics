@@ -131,7 +131,7 @@
     </section>
 
     <section name='plottings' title='Visual representations' expanded='true'>
-      <param name='plots' type='select' display='checkboxes' multiple='true' label='Plots to generate' optional='true' help='Optional. Select which visualizations to generate. Multiple plots can be selected.'>
+      <param name='plots' type='select' display='checkboxes' multiple='true' label='Plots to generate' optional='true' help='Optional. Select which visualizations to generate. Multiple plots can be selected. If none is selected, the PDF contains a single page stating that no plot was requested.'>
         <option value='DP'>Density plot (before vs after imputation)</option>
         <option value='HM'>Map of missing values</option>
         <option value='BP1'>Bar plot of MNAR/MAR/No_MV counts per replicate group - recommended only for limited numbers of groups</option>

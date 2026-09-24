@@ -225,7 +225,10 @@ imputemsmv <- function(DataMatrix,
         nom_DataMatrix_gp_MAR[i] <- paste(nom_DataMatrix_gp[i], "_MAR", sep = "")
         assign(nom_DataMatrix_gp_MAR[i], subset(get(nom_DataMatrix_gpMV[i]), pNbNaN <= LimNan))
         Mat_noMAR_temp <- t(get(nom_DataMatrix_gp_MAR[i]))
-        Mat_noMar_temp_2 <- Mat_noMAR_temp[!(row.names(Mat_noMAR_temp) %in% c("NbNaN", "pNbNaN")), ]
+        # drop = FALSE: with a single MAR feature the transposed subset has one
+        # column left after removing the bookkeeping rows, and R would drop it
+        # to a plain vector, making the seq_len(nrow(...)) below fail.
+        Mat_noMar_temp_2 <- Mat_noMAR_temp[!(row.names(Mat_noMAR_temp) %in% c("NbNaN", "pNbNaN")), , drop = FALSE]
 
         # Impute according to chosen method (mean or median)
         if (mar_method == "mean") {
@@ -286,7 +289,8 @@ imputemsmv <- function(DataMatrix,
                     }
                 }
             }
-            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN")]
+            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN"),
+                                                 drop = FALSE]
             nom_DataMatrix_gp_noMNAR[i] <- paste(nom_DataMatrix_gp[i], "_noMNAR", sep = "")
             assign(nom_DataMatrix_gp_noMNAR[i], Mat_noMNAR_temp_2)
         }
@@ -305,7 +309,8 @@ imputemsmv <- function(DataMatrix,
                     }
                 }
             }
-            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN")]
+            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN"),
+                                                 drop = FALSE]
             nom_DataMatrix_gp_noMNAR[i] <- paste(nom_DataMatrix_gp[i], "_noMNAR", sep = "")
             assign(nom_DataMatrix_gp_noMNAR[i], Mat_noMNAR_temp_2)
         }

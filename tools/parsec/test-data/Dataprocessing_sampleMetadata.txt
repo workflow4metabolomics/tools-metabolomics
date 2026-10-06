@@ -1,0 +1,45 @@
+sampleMetadata	Group	Osmo	batch	sampleType	injectionOrder
+Samp1	A	389	B2	sample	36
+Samp2	A	857	B2	sample	34
+Samp3	A	978	B1	sample	11
+Samp4	A	317	B1	sample	20
+Samp5	A	633	B1	sample	18
+Samp6	A	292	B2	sample	31
+Samp7	A	995	B1	sample	13
+Samp8	A	1035	B2	sample	37
+Samp9	A	1120	B2	sample	43
+Samp10	A	1175	B2	sample	27
+Samp11	A	902	B1	sample	15
+Samp12	A	291	B1	sample	6
+Samp13	A	894	B1	sample	8
+Samp14	A	482	B2	sample	29
+Samp15	A	1019	B2	sample	41
+Samp16	B	1120	B2	sample	35
+Samp17	B	479	B1	sample	12
+Samp18	B	435	B2	sample	42
+Samp19	B	903	B1	sample	14
+Samp20	B	860	B2	sample	39
+Samp21	B	410	B2	sample	28
+Samp22	B	938	B1	sample	17
+Samp23	B	1150	B1	sample	7
+Samp24	B	622	B1	sample	9
+Samp25	B	1014	B1	sample	19
+Samp26	B	767	B2	sample	30
+Samp27	B	624	B2	sample	40
+Samp28	B	546	B1	sample	5
+Samp29	B	899	B1	sample	21
+Samp30	B	380	B2	sample	33
+Pool1			B1	pool	4
+Pool2			B1	pool	10
+Pool3			B1	pool	16
+Pool4			B1	pool	22
+Pool5			B2	pool	26
+Pool6			B2	pool	32
+Pool7			B2	pool	38
+Pool8			B2	pool	44
+Blank1			B1	blank	1
+Blank2			B1	blank	2
+Blank3			B1	blank	3
+Blank4			B2	blank	23
+Blank5			B2	blank	24
+Blank6			B2	blank	25

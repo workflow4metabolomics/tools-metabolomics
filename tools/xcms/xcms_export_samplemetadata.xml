@@ -1,39 +1,32 @@
 <tool id="xcms_export_samplemetadata" name="xcms get a sampleMetadata file" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>which need to be filled with extra information</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_export_samplemetadata.r" />
-        <include path="lib.r" />
+        <include path="xcms_export_samplemetadata.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_export_samplemetadata.r
 
         images 'c("${"\",\"".join(map(str, $images))}")'
     ]]></command>
-
     <inputs>
-        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from multiple findChromPeaks" multiple="true" />
+        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from multiple findChromPeaks" multiple="true"/>
     </inputs>
-
     <outputs>
-        <data name="sampleMetadataOutput" format="tabular" label="sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv" />
+        <data name="sampleMetadataOutput" format="tabular" label="sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv"/>
     </outputs>
-
     <tests>
         <test>
             <param name="images" value="ko15-xset.RData,ko16-xset.RData,wt15-xset.RData,wt16-xset.RData" ftype="rdata"/>
-            <output name="sampleMetadataOutput" file="noclass.merged.sampleMetadata.tsv" />
+            <output name="sampleMetadataOutput" file="noclass.merged.sampleMetadata.tsv"/>
         </test>
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -136,6 +129,5 @@ Changelog/News
 - NEW: a new tool to generate a sampleMetadata file you will be able to complete
 
     ]]></help>
-
-    <expand macro="citation" />
+    <expand macro="citation"/>
 </tool>

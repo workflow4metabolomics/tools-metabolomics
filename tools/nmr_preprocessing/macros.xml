@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <macros>
-    <token name="@WRAPPER_VERSION@">3.3.0</token>
+    <token name="@WRAPPER_VERSION@">3.4.0</token>
 
     <xml name="requirements">
         <requirements>
@@ -32,6 +32,9 @@
 
 Changelog/News
 --------------
+**Version 3.4.0**
+* Add the reading of NEO console format
+
 **Version 3.3.0**
 
 * Debugged R scripts for possibly negative baselines

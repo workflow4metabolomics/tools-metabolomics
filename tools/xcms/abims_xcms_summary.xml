@@ -1,24 +1,20 @@
 <tool id="abims_xcms_summary" name="xcms process history" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
-
     <description>Create a summary of XCMS analysis</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
         <requirement type="package" version="1.46.0">bioconductor-camera</requirement>
         <requirement type="package" version="1.1_5">r-batch</requirement>
     </requirements>
     <required_files>
-        <include path="xcms_summary.r" />
-        <include path="lib.r" />
+        <include path="xcms_summary.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_summary.r
 
         image '$image'
@@ -26,17 +22,12 @@
         user_email $__user_email__
 
     ]]></command>
-
     <inputs>
-
-        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata.xcms.fillpeaks,rdata.camera.quick,rdata.camera.positive,rdata.camera.negative,rdata" label="xset RData file" help="output file from another function xcms (xcmsSet, group, retcor, fillpeaks etc.)" />
-
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata.xcms.fillpeaks,rdata.camera.quick,rdata.camera.positive,rdata.camera.negative,rdata" label="xset RData file" help="output file from another function xcms (xcmsSet, group, retcor, fillpeaks etc.)"/>
     </inputs>
-
     <outputs>
-        <data name="htmlOutput" format="html" label="xcms summary html" />
+        <data name="htmlOutput" format="html" label="xcms summary html"/>
     </outputs>
-
     <tests>
         <!--<test>
             <param name="image" value="faahKO.xset.group.retcor.group.fillpeaks.RData" ftype="rdata"/>
@@ -47,7 +38,6 @@
             <output name="htmlOutput" file="faahKO-single.xset.merged.group.retcor.group.fillpeaks.summary.html" lines_diff="2"/>
         </test>
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -141,8 +131,5 @@ Changelog/News
 
 
     ]]></help>
-
-
-    <expand macro="citation" />
-
+    <expand macro="citation"/>
 </tool>

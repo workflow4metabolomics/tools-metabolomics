@@ -1,4 +1,4 @@
-<tool id="influx_data_manager" name="Influx Data Connector: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy0" profile="23.0">
+<tool id="influx_data_manager" name="Influx Data Connector: Handling influx_si data inputs in Galaxy workflows" version="@TOOL_VERSION@+galaxy1" profile="23.0">
     <macros>
         <token name='@TOOL_VERSION@'>1.1.0</token>
     </macros>
@@ -9,7 +9,9 @@
     influx_data_manager
     --physiofit '$physiofit' 
     --isocor '$isocor'
+#if $mapping:
     --mapping '$mapping'
+#end if
     --linp '$linp'
     --netw '$netw'
     --mmet '$mmet'

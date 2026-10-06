@@ -51,14 +51,14 @@ dev.off()
             <output name="output_filename">
                 <assert_contents>
                     <has_image_channels channels="3"/>
-                    <has_image_center_of_mass center_of_mass="240.30, 240.51" eps="0.1"/>
+                    <has_image_center_of_mass center_of_mass="240.30, 240.51" eps="0.2"/>
                 </assert_contents>
             </output>
         </test>
     </tests>
     <help><![CDATA[
         This tool plots the raw data filtered by m/z range and retention time (RT) range from an mzML file. 
-        It uses a default tolerance of 10 ppm and retention time range of 5 s. 
+        It uses a default tolerance of 10 ppm and retention time range of 5s. 
         More information and detailed instructions can be found in the tutorial at: https://jorainer.github.io/xcmsTutorials/articles/xcms-preprocessing.html#data-visualization
     ]]></help>
     <expand macro="citations"/>

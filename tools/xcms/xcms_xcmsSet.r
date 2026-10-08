@@ -1,10 +1,12 @@
 #!/usr/bin/env Rscript
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # ----- LOG FILE -----
 log_file <- file("log.txt", open = "wt")
 sink(log_file)
 sink(log_file, type = "output")
-
 
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
@@ -17,10 +19,9 @@ source_local <- function(fname) {
 }
 source_local("lib.r")
 
-pkgs <- c("xcms", "batch")
+pkgs <- c("xcms", "batch", "Spectra", "MsExperiment")
 loadAndDisplayPackages(pkgs)
 cat("\n\n")
-
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
@@ -28,7 +29,6 @@ args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given i
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
-
 
 # ----- PROCESSING INFILE -----
 cat("\tARGUMENTS PROCESSING INFO\n")
@@ -61,34 +61,37 @@ cat("\tINFILE PROCESSING INFO\n")
 
 # image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
-if (!exists("raw_data")) stop("\n\nERROR: The RData doesn't contain any object called 'raw_data' which is provided by the tool: MSnbase readMSData")
+if (!exists("raw_data")) stop("\n\nERROR: The RData doesn't contain any object called 'raw_data' which is provided by the tool: readMsExperiment")
 
 # Handle infiles
-rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
-
+# rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
+# zipfile <- rawFilePath$zipfile
+# singlefile <- rawFilePath$singlefile
 
 cat("\n\n")
-
 
 # ----- MAIN PROCESSING INFO -----
 cat("\tMAIN PROCESSING INFO\n")
 
-
 cat("\t\tCOMPUTE\n")
 
 cat("\t\t\tApply filter[s] (if asked)\n")
-if (exists("filterAcquisitionNumParam")) raw_data <- filterAcquisitionNum(raw_data, filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
-if (exists("filterRtParam")) raw_data <- filterRt(raw_data, filterRtParam)
-if (exists("filterMzParam")) raw_data <- filterMz(raw_data, filterMzParam)
+if (exists("filterAcquisitionNumParam")) {
+    raw_data <- filterSpectra(raw_data, filterAcquisitionNum, n = filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
+}
+if (exists("filterRtParam")) {
+    raw_data <- filterRt(raw_data, filterRtParam)
+}
+if (exists("filterMzParam")) {
+    raw_data <- filterMz(raw_data, filterMzParam)
+}
 # Apply this filter only if file contain MS and MSn
-if (length(unique(msLevel(raw_data))) != 1) {
-    raw_data <- filterMsLevel(raw_data, msLevel = 1)
+if (length(unique(msLevel(spectra(raw_data)))) != 1) {
+    raw_data <- filterSpectra(raw_data, filterMsLevel, msLevel. = 1)
 }
 
 cat("\t\t\tChromatographic peak detection\n")
-# clear the arguement list to remove unexpected key/value as singlefile_galaxyPath or method ...
+# Clear the arguement list to remove unexpected key/value
 args <- args[names(args) %in% slotNames(do.call(paste0(method, "Param"), list()))]
 
 findChromPeaksParam <- do.call(paste0(method, "Param"), args)
@@ -113,19 +116,11 @@ cat("\n\n")
 
 # ----- EXPORT -----
 
-cat("\tXCMSnExp OBJECT INFO\n")
+cat("\tMsExperiment OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
-
-cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-xset <- getxcmsSetObject(xdata)
-print(xset)
-cat("\n\n")
-
-# saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList")
-save(list = objects2save[objects2save %in% ls()], file = "xcmsSet.RData")
-
+# saving in .Rdata file
+objects2save <- c("xdata", "md5sumList", "sampleNamesList")
+save(list = objects2save[objects2save %in% ls()], file = "XcmsExpDatasets.RData")
 
 cat("\tDONE\n")

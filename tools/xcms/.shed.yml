@@ -9,7 +9,7 @@ definitions:
 name: xcms
 owner: workflow4metabolomics
 remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/xcms
-homepage_url: https://github.com/sneumann/xcms
+homepage_url: https://sneumann.github.io/xcms/index.html
 categories:
 - Metabolomics
 
@@ -19,8 +19,8 @@ repositories:
     long_description: |
       Generates a skeleton of sampleMetadata
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
       [*default-includes, xcms_export_samplemetadata.xml, xcms_export_samplemetadata.r]
   xcms_fillpeaks:
@@ -29,8 +29,8 @@ repositories:
       For each sample, identify peak groups where that sample is not represented.
       For each of those peak groups, integrate the signal in the region of that peak group and create a new peak.
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html
+    owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_fillPeaks.xml, xcms_fillpeaks.r]
   xcms_group:
@@ -39,8 +39,8 @@ repositories:
       Group peaks together across samples using overlapping m/z bins and
       calculation of smoothed peak distributions in chromatographic time.
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html
+    owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_group.xml, xcms_group.r]
   xcms_merge:
@@ -50,8 +50,8 @@ repositories:
       package to preprocess LC/MS data for relative quantification and
       statistical analysis
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
       [*default-includes, xcms_merge.xml, xcms_merge.r]
   xcms_plot_chromatogram:
@@ -59,8 +59,8 @@ repositories:
     long_description: |
       Plot base peak intensity chromatogram (BPI) and total ion chromatogram (TIC)
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
       [*default-includes, xcms_plot_chromatogram.xml, xcms_plot_chromatogram.r]
   xcms_refine:
@@ -68,7 +68,7 @@ repositories:
     long_description: |
       Remove or merge chromatographic peaks based on specific criteria.
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
+      XCMS: https://sneumann.github.io/xcms/index.html 
     owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_refine.xml, xcms_refine.r]
@@ -77,8 +77,8 @@ repositories:
     long_description: |
       Retention Time Correction using retcor function from xcms R package
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_retcor.xml, xcms_retcor.r]
   xcms_xcmsset:
@@ -88,29 +88,20 @@ repositories:
       package to preprocess LC/MS data for relative quantification and
       statistical analysis
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
       [*default-includes, abims_xcms_xcmsSet.xml, xcms_xcmsSet.r]
-  xcms_summary:
-    description: '[Metabolomics][W4M][LC-MS] XCMS R Package - Preprocessing - HTML Summary for XCMS and CAMERA analysis'
-    long_description: |
-      This tool create a HTML summary of XCMS and CAMERA analysis
-      Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
-    include:
-      [*default-includes, abims_xcms_summary.xml, xcms_summary.r]
-  msnbase_readmsdata:
-    description: '[Metabolomics][W4M][LC-MS] MSnbase R Package - Preprocessing - Imports Mass-Spectrometry Data Files'
+  xcms_read_msexperiment:
+    description: '[Metabolomics][W4M][LC-MS] MsExperiment R Package - Preprocessing - Imports Mass-Spectrometry raw data files'
     long_description: |
       Reads XML-based mass-spectrometry data files.  Can be chained with the W4M
       xcms.findChromPeaks tool
       Part of the W4M project: http://workflow4metabolomics.org
-      XCMS: http://www.bioconductor.org/packages/release/bioc/html/xcms.html 
-    owner: lecorguille
+      XCMS: https://sneumann.github.io/xcms/index.html 
+    owner: workflow4metabolomics
     include:
-      [*default-includes, msnbase_readmsdata.xml, msnbase_readmsdata.r, macros_msnbase.xml]
+      [*default-includes, xcms_read_msexperiment.xml, xcms_read_msexperiment.r]
   xcms_plot_raw:
     description: Plot raw mzml file content with xcms
     long_description: |

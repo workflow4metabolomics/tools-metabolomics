@@ -1,15 +1,23 @@
 <?xml version="1.0"?>
 <macros>
 
-    <token name="@TOOL_VERSION@">3.12.0</token>
-    <token name="@VERSION_SUFFIX@">4</token>
-    <token name="@PROFILE@">21.09</token>
+    <token name="@TOOL_VERSION@">4.8.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">24.1</token>
+    <xml name="creators">
+        <creator>
+            <organization name="ABiMS TEAM"/>
+            <organization name="LABERCA"/>
+            <organization url="https://www.eu-parc.eu/" name="PARC"/>
+        </creator>
+    </xml>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@TOOL_VERSION@">bioconductor-xcms</requirement>
+            <requirement type="package" version="1.12.0">bioconductor-msexperiment</requirement>
             <requirement type="package" version="1.1_5">r-batch</requirement>
-            <requirement type="package" version="1.1_2">r-rcolorbrewer</requirement>
-            <requirement type="package" version="6.0">unzip</requirement>
+            <requirement type="package" version="1.8_1">r-signal</requirement>
+            <requirement type="package" version="2.6.2">r-rann</requirement>
             <yield />
         </requirements>
     </xml>
@@ -66,7 +74,7 @@
         <section name="file_load_section">
             <conditional name="file_load_conditional">
                 <param name="file_load_select" value="yes" />
-                <param name="input" value="wt15.CDF,ko16.CDF,ko15.CDF,wt16.CDF" ftype="netcdf" />
+                <param name="input" location="https://zenodo.org/records/22940496/files/ko15.CDF,https://zenodo.org/records/22940496/files/ko16.CDF,https://zenodo.org/records/22940496/files/wt15.CDF,https://zenodo.org/records/22940496/files/wt16.CDF" ftype="netcdf" />
             </conditional>
         </section>
     </xml>
@@ -134,6 +142,7 @@
 
     <token name="@HELP_PEAKLIST@">
 
+---------------
 Get a Peak List
 ---------------
 
@@ -231,9 +240,6 @@ xset.dataMatrix.tsv : tabular format
 
     <!-- MISC -->
     <token name="@HELP_AUTHORS@">
-.. class:: infomark
-
-**Authors**  Colin A. Smith csmith@scripps.edu, Ralf Tautenhahn rtautenh@gmail.com, Steffen Neumann sneumann@ipb-halle.de, Paul Benton hpaul.benton08@imperial.ac.uk and Christopher Conley cjconley@ucdavis.edu
 
 @HELP_AUTHORS_WRAPPERS@
 
@@ -243,43 +249,27 @@ xset.dataMatrix.tsv : tabular format
 
     <token name="@HELP_XCMS_MANUAL@">
 
-For details and explanations concerning all the parameters and workflow of xcms_ package, see its manual_ and this example_
+For details and explanations concerning all the parameters and workflow of bio.tools_ package, see its manual_ and this example_
 
-.. _xcms: https://bioconductor.org/packages/release/bioc/html/xcms.html
 .. _manual: http://www.bioconductor.org/packages/release/bioc/manuals/xcms/man/xcms.pdf
 .. _example: https://bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms.html
 .. _news: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
+.. _bio.tools: https://bio.tools/xcms
 
     </token>
 
-    <token name="@HELP_XCMS_NEWVERSION_3440@">
-**Version 3.4.4.0 - 08/02/2019**
+    <token name="@HELP_XCMS_NEWVERSION_480@">
+**New version 4.8.0 - March-2026**
+Major update : native support for the Spectra package and allows to perform pre-processing steps on new supported data containers (Spectra, MsExperiment and XcmsExperiment).
 
-- UPGRADE: upgrade the xcms version from 3.0.0 to 3.4.4 (see XCMS news_)
-    </token>
-    <token name="@HELP_XCMS_NEWVERSION_3610@">
-**Version 3.6.1+galaxy* - 03/09/2019**
-
-- UPGRADE: upgrade the xcms version from 3.4.4 to 3.6.1 (see XCMS news_)
-    </token>
-    <token name="@HELP_XCMS_NEWVERSION_31200@">
-**Version 3.12.0+galaxy* - 03/03/2020**
-
-- UPGRADE: upgrade the xcms version from 3.6.1 to 3.12.0 (see XCMS news_)
     </token>
 
     <xml name="citation">
         <citations>
+            <citation type="doi">10.1021/acs.analchem.5c04338</citation>
             <citation type="doi">10.1021/ac051437y</citation>
             <expand macro="citation_w4m"/>
         </citations>
-    </xml>
-    <xml name="edam_topics">
-        <edam_topics>
-            <edam_topic>topic_2259</edam_topic> <!-- Systems biology -->
-            <edam_topic>topic_3172</edam_topic> <!-- Metabolomics -->
-            <edam_topic>topic_3307</edam_topic> <!-- Computational biology -->
-        </edam_topics>
     </xml>
     <xml name="xrefs">
       <xrefs>

@@ -1,30 +1,36 @@
 <tool id="xcms_export_samplemetadata" name="xcms get a sampleMetadata file" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>which need to be filled with extra information</description>
+
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-    <expand macro="xrefs"/>
+
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_export_samplemetadata.r"/>
-        <include path="lib.r"/>
+        <include path="xcms_export_samplemetadata.r" />
+        <include path="lib.r" />
     </required_files>
-    <command detect_errors="exit_code"><![CDATA[
+    <expand macro="stdio"/>
+
+    <command><![CDATA[
         @COMMAND_RSCRIPT@xcms_export_samplemetadata.r
 
         images 'c("${"\",\"".join(map(str, $images))}")'
     ]]></command>
+
     <inputs>
-        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from multiple findChromPeaks" multiple="true"/>
+        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::MsExperiment object" multiple="true" />
     </inputs>
+
     <outputs>
-        <data name="sampleMetadataOutput" format="tabular" label="sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv"/>
+        <data name="sampleMetadataOutput" format="tabular" label="sampleMetadata.tsv" from_work_dir="sampleMetadata.tsv" />
     </outputs>
+
     <tests>
         <test>
-            <param name="images" value="ko15-xset.RData,ko16-xset.RData,wt15-xset.RData,wt16-xset.RData" ftype="rdata"/>
-            <output name="sampleMetadataOutput" file="noclass.merged.sampleMetadata.tsv"/>
+            <param name="images" location="https://zenodo.org/records/22940496/files/ko15.raw.RData,https://zenodo.org/records/22940496/files/ko16.raw.RData,https://zenodo.org/records/22940496/files/wt15.raw.RData,https://zenodo.org/records/22940496/files/wt16.raw.RData" ftype="rdata"/>
+            <output name="sampleMetadataOutput" file="templateSampleMetadata.tsv" />
         </test>
     </tests>
     <help><![CDATA[
@@ -41,7 +47,7 @@ Description
 
 This tool generates a skeleton of sampleMetadata with perhaps some strange sample names which are definitely compatible with xcms and R
 
-This sampleMetadata file have to be filled with extra information as the class, batch information and maybe conditions
+This sampleMetadata file have to be filled with extra information as the sample groups, injection order, batch information and maybe other conditions or informations.
 
 -----------------
 Workflow position
@@ -52,15 +58,14 @@ Workflow position
 ========================= ===================== ==============================
 Name                      Output file           Format
 ========================= ===================== ==============================
-xcms.findChromPeaks       ``*``.raw.xset.RData  rdata.xcms.findchrompeaks
+xcms4.readMsExperiment    ``*``.raw.RData       rdata.msnbase.raw
 ------------------------- --------------------- ------------------------------
-xcms.findChromPeaks       ``*``.raw.xset.RData  rdata.xcms.findchrompeaks
-------------------------- --------------------- ------------------------------
-xcms.findChromPeaks       ``*``.raw.xset.RData  rdata.xcms.findchrompeaks
+xcms4.findChromPeaks      ``*``.xset.RData      rdata.xcms.findchrompeaks
 ------------------------- --------------------- ------------------------------
 ...                       ...                   ...
-========================= ===================== ==============================
+========================= ===================== ==============================  
 
+\
 
 **Downstream tools**
 
@@ -68,46 +73,46 @@ xcms.findChromPeaks       ``*``.raw.xset.RData  rdata.xcms.findchrompeaks
 Name                        Output file          Format
 =========================== ==================== ============================
 xcms.findChromPeaks Merger  sampleMetadata.tsv   tabular
-=========================== ==================== ============================
+=========================== ==================== ============================  
 
-.. image:: xcms_merge_workflow.png
+\
 
------------
-Input files
------------
+------------
+Input files:
+------------
 
-=========================== ==================================
+=========================== ====================================================
 Parameter : num + label     Format
-=========================== ==================================
-1 : RData file              rdata.xcms.findchrompeaks
---------------------------- ----------------------------------
-2 : RData file              rdata.xcms.findchrompeaks
---------------------------- ----------------------------------
-N : RData file              rdata.xcms.findchrompeaks
-=========================== ==================================
+=========================== ====================================================
+1 : RData file              rdata, rdata.msnbase.raw, rdata.xcms.findchrompeaks
+--------------------------- ----------------------------------------------------
+2 : RData file              rdata, rdata.msnbase.raw, rdata.xcms.findchrompeaks
+--------------------------- ----------------------------------------------------
+N : RData file              rdata, rdata.msnbase.raw, rdata.xcms.findchrompeaks
+=========================== ====================================================
 
+\
 
-
-
-------------
-Output files
-------------
+-------------
+Output files:
+-------------
 
 Example of a sampleMetadata:
 
-=========================== ============
-sample_name                 class
-=========================== ============
+=========================== ==============
+sample_name                 sample_group
+=========================== ==============
 HU_neg_028                  bio
---------------------------- ------------
+--------------------------- --------------
 HU_neg_034                  bio
---------------------------- ------------
+--------------------------- --------------
 Blanc04                     blank
---------------------------- ------------
+--------------------------- --------------
 Blanc06                     blank
---------------------------- ------------
+--------------------------- --------------
 Blanc09                     blank
-=========================== ============
+=========================== ==============
+
 
 @HELP_XCMS_MANUAL@
 
@@ -116,18 +121,9 @@ Blanc09                     blank
 Changelog/News
 --------------
 
-@HELP_XCMS_NEWVERSION_31200@
-
-@HELP_XCMS_NEWVERSION_3610@
-
-@HELP_XCMS_NEWVERSION_3610@
-
-@HELP_XCMS_NEWVERSION_3440@
-
-**Version 3.0.0.0 - 09/10/2018**
-
-- NEW: a new tool to generate a sampleMetadata file you will be able to complete
+@HELP_XCMS_NEWVERSION_480@
 
     ]]></help>
-    <expand macro="citation"/>
+
+    <expand macro="citation" />
 </tool>

@@ -33,13 +33,11 @@
 
         msLevel $msLevel
 
-        @COMMAND_FILE_LOAD@
-
         @COMMAND_LOG_EXIT@
    ]]></command>
 
     <inputs>
-        <param name="image" type="data" format="rdata.xcms.findchrompeaks" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks" />
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks" />
         <conditional name="methods">
             <param name="method" type="select" label="Method for peak refinement" help="See the help section below">
                 <option value="CleanPeaks" selected="true">CleanPeaks - remove peaks that are too wide</option>
@@ -67,7 +65,7 @@
         </conditional>
         <param argument="msLevel" type="integer" value="1" label="msLevel for refinement" help="the MS level on which refinement should be performed. Defaults to 1." />
 
-        <expand macro="input_file_load"/>
+        <!-- <expand macro="input_file_load"/> -->
     </inputs>
 
     <outputs>
@@ -79,7 +77,7 @@
             test 1 - MergeNeighboringPeaks method
         -->
         <test>
-            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <param name="image" location="https://zenodo.org/records/22940496/files/test-xset.merged.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="MergeNeighboringPeaks"/>
                 <param name="expandRt" value="2" />
@@ -87,74 +85,64 @@
                 <param name="ppm" value="10" />
                 <param name="minProp" value="0.75" />
             </conditional>
-            <expand macro="test_file_load_single"/>
+            <!-- <expand macro="test_file_load_single"/> -->
             <assert_stderr>
-                <has_text text="Evaluating 547 peaks in file wt15.CDF for merging ... OK" />
-                <has_text text="Evaluating 547 peaks in file wt16.CDF for merging ... OK" />
-                <has_text text="Evaluating 558 peaks in file ko15.CDF for merging ... OK"/>
-                <has_text text="Evaluating 589 peaks in file ko16.CDF for merging ... OK" />
-                <has_text text="Merging reduced 9251 chromPeaks to 9093" />
+                <has_text text="Reduced from 3095 to 2020 chromatographic peaks." />
             </assert_stderr>
             <assert_stdout>
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2506.1-4477.9 seconds (41.8-74.6 minutes)" />
-                <has_text text="Mass range: 200.1-600 m/z" />
-                <has_text text="Peaks: 9093 (about 2273 per sample)" />
+                <has_text text="Object of class XcmsExperiment" />
+                <has_text text=" Experiment data: 4 sample(s)" />
+                <has_text text="  - spectra: 4 sample(s) to 5112 element(s)." />
+                <has_text text="  - chromatographic peaks: 2020 in MS level(s): 1 " />
             </assert_stdout>
         </test>
         <!--
             test 2 - FilterIntensity method
         -->
         <test>
-            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <param name="image" location="https://zenodo.org/records/22940496/files/test-xset.merged.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="FilterIntensity"/>
                 <param name="threshold" value="1e5" />
                 <param name="nValues" value="3" />
                 <param name="value" value="into" />
             </conditional>
-            <expand macro="test_file_load_single"/>
+            <!-- <expand macro="test_file_load_single"/> -->
             <assert_stderr>
-                <has_text text="Removed 9018 chromatographic peaks" />
+                <has_text text="Reduced from 3095 to 279 chromatographic peaks." />
             </assert_stderr>
             <assert_stdout>
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2657.9-4124.2 seconds (44.3-68.7 minutes)" />
-                <has_text text="Mass range: 256.1-599.4 m/z" />
-                <has_text text="Peaks: 233 (about 58 per sample)" />
+                <has_text text="Object of class XcmsExperiment" />
+                <has_text text=" Experiment data: 4 sample(s)" />
+                <has_text text="  - spectra: 4 sample(s) to 5112 element(s)." />
+                <has_text text="  - chromatographic peaks: 279 in MS level(s): 1" />
             </assert_stdout>
         </test>
         <!--
             test 3 - CleanPeaks method
         -->
         <test>
-            <param name="image" value="faahKO-single-class.xset.merged.group.RData" ftype="rdata"/>
+            <param name="image" location="https://zenodo.org/records/22940496/files/test-xset.merged.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="CleanPeaks"/>
                 <param name="maxPeakwidth" value="8" />
             </conditional>
-            <expand macro="test_file_load_single"/>
+            <!-- <expand macro="test_file_load_single"/> -->
             <assert_stderr>
-                <has_text text="Removed 6037 of 9251 chromatographic peaks" />
+                <has_text text="Removed 2691 of 3095 chromatographic peaks." />
             </assert_stderr>
             <assert_stdout>
-                <has_text text="object with 4 samples" />
-                <has_text text="Time range: 2524.9-4473.2 seconds (42.1-74.6 minutes)" />
-                <has_text text="Mass range: 200.2-600 m/z" />
-                <has_text text="Peaks: 3214 (about 804 per sample)" />
+                <has_text text="Object of class XcmsExperiment " />
+                <has_text text=" Experiment data: 4 sample(s)" />
+                <has_text text="  - spectra: 4 sample(s) to 5112 element(s)." />
+                <has_text text="  - chromatographic peaks: 404 in MS level(s): 1 " />
             </assert_stdout>
         </test>
     </tests>
 
     <help><![CDATA[
 
-.. class:: infomark
-
-**Authors**  Johannes Rainer Johannes.Rainer@eurac.edu and Mar Garcia-Aloy mar.garcia@fmach.it
-
-@HELP_AUTHORS_WRAPPERS@
-
----------------------------------------------------
+@HELP_AUTHORS@
 
 
 =====================
@@ -182,10 +170,9 @@ Workflow position
 Name                                 Output file              Format
 ==================================== ======================== ==============================
 xcms.findChromPeaks Merger (single)  xset.merged.RData        rdata.xcms.findchrompeaks
------------------------------------- ------------------------ ------------------------------
-xcms.findChromPeaks (zip)            ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
 ==================================== ======================== ==============================
 
+\  
 
 **Downstream tools**
 
@@ -193,20 +180,17 @@ xcms.findChromPeaks (zip)            ``*``.raw.xset.RData     rdata.xcms.findchr
 Name                                 Output file              Format
 ==================================== ======================== =========================
 xcms.findChromPeaks Merger (single)  ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
------------------------------------- ------------------------ -------------------------
-xcms.groupChromPeaks (zip)           ``*``.raw.xset.RData     rdata.xcms.findchrompeaks
 ==================================== ======================== =========================
 
 **General schema of the metabolomic workflow**
 
 This tool would appear between findChromPeaks and group, but only when the choice of peaks needs to be refined, e.g., to accommodate HILIC data.
 
----------------------------------------------------
-
 ----------
 Parameters
 ----------
 
+----------------------------
 Method to use for refinement
 ----------------------------
 
@@ -218,16 +202,14 @@ Method to use for refinement
 **FilterIntensity**
 
     | Remove chromatographic peaks based on intensity.
-    | See the FilterIntensity_manual_
 
 **MergeNeighboringPeaks**
 
     | Merge neighboring and overlapping chromatographic peaks.
     | See the MergeNeighboringPeaks_manual_
 
-.. _CleanPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
-.. _FilterIntensity_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
-.. _MergeNeighboringPeaks_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.refineChromPeaks.1
+.. _CleanPeaks_manual: https://sneumann.github.io/xcms/reference/refineChromPeaks.html
+.. _MergeNeighboringPeaks_manual: https://sneumann.github.io/xcms/reference/refineChromPeaks.html#details-for-mergeneighboringpeaksparam
 
 @HELP_XCMS_MANUAL@
 
@@ -238,7 +220,6 @@ Output files
 xset.RData: rdata.xcms.findchrompeaks format
 
     | (single) RData files that are necessary in the second step of the workflow "xcms.groupChromPeaks" - must be merged first using "xcms.findChromPeaks Merger"
-    | (zip) RData file that is necessary in the second step of the workflow "xcms.groupChromPeaks".
 
 
 ---------------------------------------------------
@@ -246,21 +227,11 @@ xset.RData: rdata.xcms.findchrompeaks format
 Changelog/News
 --------------
 
-.. _news: https://bioconductor.org/packages/release/bioc/news/xcms/NEWS
-
-
-**Version 3.6.1.0 - 08/02/2021**
-
-- NEW: first version of tool wrapper
+@HELP_XCMS_NEWVERSION_480@
 
 
     ]]></help>
 
-    <citations>
-      <citation type="doi">10.5281/zenodo.3909299</citation>
-      <expand macro="citation_w4m"/>
-      <citation type="doi">10.1021/ac051437y</citation>
-    </citations>
-
+    <expand macro="citation"/>
 
 </tool>

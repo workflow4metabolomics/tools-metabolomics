@@ -1,4 +1,7 @@
 #!/usr/bin/env Rscript
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # ----- LOG FILE -----
 log_file <- file("log.txt", open = "wt")
@@ -24,7 +27,7 @@ cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
+args <- parseCommandArgs(evaluate = FALSE)
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
 cat("\n\n")
@@ -33,7 +36,7 @@ cat("\n\n")
 cat("\tARGUMENTS PROCESSING INFO\n")
 
 # saving the specific parameters
-method <- "FillChromPeaks"
+method <- "ChromPeakArea"
 
 if (!is.null(args$convertRTMinute)) convertRTMinute <- args$convertRTMinute
 if (!is.null(args$numDigitsMZ)) numDigitsMZ <- args$numDigitsMZ
@@ -47,9 +50,8 @@ cat("\n\n")
 # ----- ARGUMENTS PROCESSING -----
 cat("\tINFILE PROCESSING INFO\n")
 
-# image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
-if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS 2.*")
+if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata' (MsExperiment or XcmsExperiment object)")
 
 # Verification of a group step before doing the fillpeaks job.
 if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. Otherwise it won't work for the fillpeaks step")
@@ -57,54 +59,82 @@ if (!hasFeatures(xdata)) stop("You must always do a group step after a retcor. O
 # Handle infiles
 if (!exists("singlefile")) singlefile <- NULL
 if (!exists("zipfile")) zipfile <- NULL
-rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
-
+# rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
+# zipfile <- rawFilePath$zipfile
+# singlefile <- rawFilePath$singlefile
 
 cat("\n\n")
 
 # ----- MAIN PROCESSING INFO -----
 cat("\tMAIN PROCESSING INFO\n")
 
+cat("Missing values before peak filling: ")
+na_before <- sum(is.na(featureValues(xdata)))
+print(na_before)
+cat("\n\n")
 
 cat("\t\tCOMPUTE\n")
 
-cat("\t\t\tFilling missing peaks using default settings\n")
-# clear the arguement list to remove unexpected key/value as singlefile_galaxyPath or method ...
-args <- args[names(args) %in% slotNames(do.call(paste0(method, "Param"), list()))]
+cat("\t\t\tFilling missing peaks using specified settings\n")
 
-fillChromPeaksParam <- do.call(paste0(method, "Param"), args)
+# Median value used
+if (!is.null(args$mzmin)) {
+    fillChromPeaksParam <- ChromPeakAreaParam(
+        mzmin = median,
+        mzmax = median,
+        rtmin = median,
+        rtmax = median,
+        minMzWidthPpm = args$minMzWidthPpm
+    )
+    # Default parameters (quartile)
+} else {
+    fillChromPeaksParam <- ChromPeakAreaParam(
+        minMzWidthPpm = args$minMzWidthPpm
+    )
+}
+
+cat("fillChromPeaks parameters\n")
 print(fillChromPeaksParam)
 
-# back compatibility between xcms-3.0.0 and xcms-3.5.2
-xdata <- updateObject(xdata)
+# XCMS 4.x - MsExperiment/XcmsExperiment objects only.
+if (is(xdata, "XCMSnExp") || is(xdata, "OnDiskMSnExp")) {
+    stop("\n\nERROR: The RData contains a legacy '", class(xdata)[1], "' object. This function only supports the 'MsExperiment'/'XcmsExperiment' objects produced by xcms >= 4. Please reprocess your data with a recent version of xcms.")
+}
+# Disable parallel processing to avoid memory known bugs of xcms
 register(SerialParam())
+# Fill peaks with defined paramaters
 xdata <- fillChromPeaks(xdata, param = fillChromPeaksParam)
+cat("\n\n")
+cat("Missing values after peak filling: ")
+na_after <- sum(is.na(featureValues(xdata)))
+print(na_after)
+cat("\n\n")
 
 if (exists("intval")) {
-    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
+    getPeaklistW4M(
+        xdata,
+        intval,
+        convertRTMinute,
+        numDigitsMZ,
+        numDigitsRT,
+        naTOzero,
+        "variableMetadata.tsv",
+        "dataMatrix.tsv"
+    )
 }
 
 cat("\n\n")
 
 # ----- EXPORT -----
 
-cat("\tXCMSnExp OBJECT INFO\n")
+cat("\tXcmsExperiment OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
 
-cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-xset <- getxcmsSetObject(xdata)
-print(xset)
-cat("\n\n")
-
 # saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI", "chromTIC_adjusted", "chromBPI_adjusted")
+objects2save <- c("xdata", "md5sumList", "sampleNamesList")
 save(list = objects2save[objects2save %in% ls()], file = "fillpeaks.RData")
 
 cat("\n\n")
-
 
 cat("\tDONE\n")

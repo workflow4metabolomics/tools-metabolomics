@@ -131,7 +131,13 @@ A Tool for automated Optimization of XCMS Parameters
  We strongly encourage you to read the `documentation <https://isoplot.readthedocs.io/en/latest/>`_ before using Isoplot.
 
 
-### [msnbase_readmsdata](tools/msnbase_readmsdata)
+### [msnbase_readmsdata](tools/xcms/msnbase_readmsdata)
+Reads as set of XML-based mass-spectrometry data files and
+generates an MSnExp object. This function uses the functionality
+provided by the ‘mzR’ package to access data and meta data in
+‘mzData’, ‘mzXML’ and ‘mzML’.
+
+### [xcms_read_msexperiment](tools/xcms/xcms_read_msexperiment)
 Reads as set of XML-based mass-spectrometry data files and
 generates an MSnExp object. This function uses the functionality
 provided by the ‘mzR’ package to access data and meta data in
@@ -174,13 +180,13 @@ Nuclear Magnetic Resonance Bruker files reading (from the PEPS-NMR R package (ht
 Normalization (operation applied on each (preprocessed) individual spectrum) of preprocessed data
 
 
-### [xcms_export_samplemetadata](tools/xcms_export_samplemetadata)
+### [xcms_export_samplemetadata](tools/xcms/xcms_export_samplemetadata)
 xcms get sampleMetadata
 This tool generates a skeleton of sampleMetadata with perhaps some strange sample names which are definitely compatible with xcms and R
 This sampleMetadata file have to be filled with extra information as the class, batch information and maybe conditions
 
 
-### [xcms_fillpeaks](tools/xcms_fillpeaks)
+### [xcms_fillpeaks](tools/xcms/xcms_fillpeaks)
 xcms fillChromPeaks
 **Integrate areas of missing peaks**
 For each sample, identify peak groups where that sample is not
@@ -188,7 +194,7 @@ represented. For each of those peak groups, integrate the signal
 in the region of that peak group and create a new peak.
 
 
-### [xcms_group](tools/xcms_group)
+### [xcms_group](tools/xcms/xcms_group)
 xcms groupChromPeaks
 
 After peak identification with xcmsSet, this tool groups the peaks which represent the same analyte across samples using overlapping m/z bins and calculation of smoothed peak distributions in chromatographic time. Allows rejection of features, which are only partially detected within the replicates of a sample class.
@@ -196,19 +202,20 @@ After peak identification with xcmsSet, this tool groups the peaks which represe
 ### [xcms_macro](tools/xcms_macro)
 xml macros for other xcms repos
 
-### [xcms_merge](tools/xcms_merge)
+### [xcms_merge](tools/xcms/xcms_merge)
 xcms findChromPeaks Merger
 This tool allows you to run one xcms findChromPeaks process per sample in parallel and then to merge all RData images into one.
 The result is then suitable for xcms groupChromPeaks.
 You can provide a sampleMetadata table to attribute phenotypic values to your samples.
 
 
-### [xcms_plot_chromatogram](tools/xcms_plot_chromatogram)
+### [xcms_plot_chromatogram](tools/xcms/xcms_plot_chromatogram)
 xcms plot chromatogram
 This tool will plot Base Peak Intensity chromatogram (BPI) and Total Ion Current chromatogram (TIC) from xcms experiments.
+2026 update: HTML plot (with plotly)
 
 
-### [xcms_refine](tools/xcms_refine)
+### [xcms_refine](tools/xcms/xcms_refine)
 xcms refineChromPeaks
 
 After peak identification with xcms findChromPeaks (xcmsSet), this tool refines those peaks.
@@ -217,10 +224,10 @@ Note well that refineChromPeaks methods will always remove feature definitions,
 because a call to this method can change or remove identified chromatographic peaks, which may be part of features.
 Therefore it must only be run immediately after findChromPeaks (xcmsSet).
 
-### [xcms_repository_suite](tools/xcms_repository_suite)
+### [xcms_repository_suite](tools/xcms/xcms_repository_suite)
 xml file describing dependencies for other xcms repos
 
-### [xcms_retcor](tools/xcms_retcor)
+### [xcms_retcor](tools/xcms/xcms_retcor)
 xcms adjustRtime
 After matching peaks into groups, xcms can use those groups to identify and correct
 correlated drifts in retention time from run to run. The aligned peaks can then be
@@ -231,7 +238,7 @@ fraction of samples and thus provide an incomplete picture of the drift at that 
 Still others may contain multiple peaks from the same sample, which is a sign of impropper grouping.
 
 
-### [xcms_summary](tools/xcms_summary)
+### [xcms_summary](tools/xcms/xcms_summary)
 xcms process history
 This tool provide a HTML summary which summarizes your analysis using the [W4M] XCMS and CAMERA tools
 
@@ -239,7 +246,7 @@ This tool provide a HTML summary which summarizes your analysis using the [W4M] 
 ### [xcms_test-data](tools/xcms_test-data)
 test data repo for xcms tool suit
 
-### [xcms_xcmsset](tools/xcms_xcmsset)
+### [xcms_xcmsset](tools/xcms/xcms_xcmsset)
 xcms findChromPeaks
 This tool is used for preprocessing data from multiple LC/MS files (NetCDF, mzXML and mzData formats) using the xcms_ R package.
 It extracts ions from each sample independently, and using a statistical model, peaks are filtered and integrated.
@@ -251,4 +258,5 @@ A tutorial on how to perform xcms preprocessing is available as GTN_ (Galaxy Tra
 - Marion Landi [PFEM](https://www6.ara.inra.fr/plateforme_exploration_metabolisme) / [MetaboHUB](https://www.metabohub.fr/home.html) - [INRA](http://www.inra.fr/) - France
 - Misharl Monsoor [@mmonsoor](https://github.com/mmonsoor) - [ABiMS](http://abims.sb-roscoff.fr/) / [IFB](http://www.france-bioinformatique.fr/) - [CNRS](www.cnrs.fr)/[Sorbonne Université](http://www.sorbonne-universite.fr/) - [Station Biologique de Roscoff](http://www.sb-roscoff.fr/) - France
 - Pierre Pericard [@ppericard](https://github.com/ppericard)- [ABiMS](http://abims.sb-roscoff.fr/) / [IFB](http://www.france-bioinformatique.fr/) - [CNRS](www.cnrs.fr)/[Sorbonne Université](http://www.sorbonne-universite.fr/) - [Station Biologique de Roscoff](http://www.sb-roscoff.fr/) - France
+- Camille Trottier[LABERCA](https://laberca.org) / [PARC](https://eu-parc.eu/) - [INRAE](https://inrae.fr) - France
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
-
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # ----- PACKAGE -----
 cat("\tSESSION INFO\n")
@@ -12,7 +14,7 @@ source_local <- function(fname) {
 }
 source_local("lib.r")
 
-pkgs <- c("xcms", "batch", "RColorBrewer")
+pkgs <- c("xcms", "batch", "RColorBrewer", "MsExperiment", "plotly", "htmlwidgets")
 loadAndDisplayPackages(pkgs)
 cat("\n\n")
 
@@ -35,7 +37,7 @@ cat("\tINFILE PROCESSING INFO\n")
 
 mergeXDataReturn <- mergeXData(args)
 xdata <- mergeXDataReturn$xdata
-singlefile <- mergeXDataReturn$singlefile
+# singlefile <- mergeXDataReturn$singlefile
 md5sumList <- mergeXDataReturn$md5sumList
 sampleNamesList <- mergeXDataReturn$sampleNamesList
 chromTIC <- mergeXDataReturn$chromTIC
@@ -65,14 +67,14 @@ if (!exists("chromBPI") || is.null(chromBPI)) {
 if (!is.null(chromTIC_adjusted)) chromTIC <- chromTIC_adjusted
 if (!is.null(chromBPI_adjusted)) chromBPI <- chromBPI_adjusted
 
-getPlotChromatogram(chromTIC, xdata, pdfname = "TICs.pdf", aggregationFun = "sum")
-getPlotChromatogram(chromBPI, xdata, pdfname = "BPIs.pdf", aggregationFun = "max")
+getPlotChromHTML(chromTIC, xdata, htmlFile = "TICs.html", aggregationFun = "sum")
+getPlotChromHTML(chromBPI, xdata, htmlFile = "BPIs.html", aggregationFun = "max")
 
 cat("\n\n")
 
 # ----- EXPORT -----
 
-cat("\tXCMSnExp OBJECT INFO\n")
+cat("\tMsExperiment OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
 

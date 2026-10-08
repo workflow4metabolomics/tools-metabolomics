@@ -31,7 +31,7 @@
 
 
     <token name="@INPUT_IMAGE_LABEL@">RData file</token>
-    <token name="@INPUT_IMAGE_HELP@">It contains a xcms3::XCMSnExp object (named xdata)</token>
+    <token name="@INPUT_IMAGE_HELP@">It contains a xcms4::XcmsExperiment object (named xdata)</token>
 
 
     <!-- MISC -->
@@ -39,7 +39,7 @@
 
 .. class:: infomark
 
-**Galaxy integration** ABiMS TEAM - SU/CNRS - Station biologique de Roscoff and Yann Guitton - LABERCA
+**Galaxy integration** ABiMS TEAM - SU/CNRS - Station biologique de Roscoff and Yann Guitton, Camille Trottier - LABERCA
 Part of Workflow4Metabolomics.org [W4M]
 
  | Contact support@workflow4metabolomics.org for any questions or concerns about the Galaxy implementation of this tool.

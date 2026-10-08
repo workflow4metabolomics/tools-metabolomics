@@ -83,7 +83,11 @@ xdata <- groupChromPeaks(xdata, param = groupChromPeaksParam)
 
 
 cat("\t\tDRAW GRAPHICS\n")
-getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
+if (method == "PeakDensity") {
+    getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
+} else {
+    cat("\t\t\tNo density plot available for method", method, "\n")
+}
 
 if (exists("intval")) {
     getPeaklistW4M(

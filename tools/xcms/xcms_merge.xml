@@ -22,10 +22,12 @@
             sampleMetadata '$sampleMetadata'
         #end if
 
+        @COMMAND_FILE_LOAD@
+
     ]]></command>
 
     <inputs>
-        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::XcmsExperiment object from multiple findChromPeaks" multiple="true" />
+        <param name="images" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::XcmsExperiment object from multiple findChromPeaks (*.raw.xset.RData)" multiple="true" />
         <param name="sampleMetadata" label="Sample metadata file " format="tabular" type="data" optional="true" help="must contain at least one column with the sample id and one column with the sample class"/>
 
         <expand macro="input_file_load"/>
@@ -41,7 +43,7 @@
     <tests>
         <test expect_num_outputs="1">
             <param name="images" location="https://zenodo.org/records/22940496/files/ko15-xset.RData,https://zenodo.org/records/22940496/files/ko16-xset.RData,https://zenodo.org/records/22940496/files/wt15-xset.RData,https://zenodo.org/records/22940496/files/wt16-xset.RData" ftype="rdata"/>
-            <!-- <expand macro="test_file_load_single"/> -->
+            <expand macro="test_file_load_single"/>
             <param name="sampleMetadata" value="sampleMetadata.tsv" />
             <assert_stdout>
                 <has_text text="wt16.CDF        wt16           WT      wt16.CDF" />

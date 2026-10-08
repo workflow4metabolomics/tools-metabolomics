@@ -21,13 +21,15 @@
             sampleMetadata '$sampleMetadata'
         #end if
 
+        @COMMAND_FILE_LOAD@
+
     ]]></command>
 
     <inputs>
         <param name="images" type="data" format="rdata.msnbase.raw,rdata.xcms.findchrompeaks,rdata.xcms.group,rdata.xcms.retcor,rdata.xcms.fillpeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::MsExperiment object from: findChromPeaks, groupChromPeaks or adjustRtime" multiple="true" />
         <param name="sampleMetadata" label="Sample metadata file " format="tabular" type="data" optional="true" help="Must contain at least one column with the sample id and one column with the sample class"/>
 
-        <!-- <expand macro="input_file_load"/> -->
+        <expand macro="input_file_load"/>
     </inputs>
 
     <outputs>
@@ -38,7 +40,7 @@
     <tests>
         <test expect_num_outputs="2">
             <param name="images" location="https://zenodo.org/records/22940496/files/ko15.raw.RData,https://zenodo.org/records/22940496/files/ko16.raw.RData,https://zenodo.org/records/22940496/files/wt15.raw.RData,https://zenodo.org/records/22940496/files/wt16.raw.RData" ftype="rdata.msnbase.raw"/>
-            <!-- <expand macro="test_file_load_single"/> -->
+            <expand macro="test_file_load_single"/>
             <param name="sampleMetadata" value="sampleMetadata.tsv" ftype="tabular"/>
             <output name="ticsHTML" ftype="html">
                 <assert_contents>

@@ -40,6 +40,8 @@
 
         @COMMAND_PEAKLIST@
 
+        @COMMAND_FILE_LOAD@
+
         @COMMAND_LOG_EXIT@
    ]]></command>
 
@@ -77,7 +79,7 @@
 
         <expand macro="input_peaklist_conditional"/>
 
-        <!-- <expand macro="input_file_load"/> -->
+        <expand macro="input_file_load"/>
     </inputs>
 
     <outputs>
@@ -89,7 +91,7 @@
     <tests>
         <!-- from merge -->
         <test expect_num_outputs="4">
-            <param name="image" location="https://zenodo.org/records/22940496/files/test-xset.merged.RData" ftype="rdata"/>
+            <param name="image" value="test-short-xset.merged.RData" ftype="rdata"/>
             <conditional name="methods">
                 <param name="method" value="PeakDensity"/>
                 <param name="bw" value="5"/>
@@ -106,16 +108,16 @@
                 <param name="numDigitsRT" value="1" />
                 <param name="naTOzero" value="false" />
             </conditional>
-            <!-- <expand macro="test_file_load_single"/> -->
+            <expand macro="test_file_load_single"/>
             <assert_stdout>
                 <has_text text="Object of class XcmsExperiment" />
-                <has_text text="Spectra: MS1 (5112)" />
+                <has_text text="Spectra: MS1 (452)" />
                 <has_text text="Experiment data: 4 sample(s)" />
-                <has_text text="chromatographic peaks: 3095 in MS level(s): 1" />
-                <has_text text="correspondence results: 2112 features in MS level(s): 1" />
+                <has_text text="chromatographic peaks: 646 in MS level(s): 1" />
+                <has_text text="correspondence results: 30 features in MS level(s): 1" />
             </assert_stdout>
-            <output name="variableMetadata" file="test-xset.group.variableMetadata.tsv" />
-            <output name="dataMatrix" file="test-xset.group.dataMatrix.tsv" />
+            <output name="variableMetadata" file="test-short-xset.group.variableMetadata.tsv" />
+            <output name="dataMatrix" file="test-short-xset.group.dataMatrix.tsv" />
         </test>
 
         <!-- from retcor -->

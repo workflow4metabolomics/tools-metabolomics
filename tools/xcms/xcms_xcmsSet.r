@@ -19,7 +19,7 @@ source_local <- function(fname) {
 }
 source_local("lib.r")
 
-pkgs <- c("xcms", "batch", "Spectra")
+pkgs <- c("xcms", "batch", "Spectra", "MsExperiment")
 loadAndDisplayPackages(pkgs)
 cat("\n\n")
 
@@ -76,12 +76,18 @@ cat("\tMAIN PROCESSING INFO\n")
 cat("\t\tCOMPUTE\n")
 
 cat("\t\t\tApply filter[s] (if asked)\n")
-if (exists("filterAcquisitionNumParam")) raw_data <- filterAcquisitionNum(raw_data, filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
-if (exists("filterRtParam")) raw_data <- filterRt(raw_data, filterRtParam)
-if (exists("filterMzParam")) raw_data <- filterMz(raw_data, filterMzParam)
+if (exists("filterAcquisitionNumParam")) {
+    raw_data <- filterSpectra(raw_data, filterAcquisitionNum, n = filterAcquisitionNumParam[1]:filterAcquisitionNumParam[2])
+}
+if (exists("filterRtParam")) {
+    raw_data <- filterRt(raw_data, filterRtParam)
+}
+if (exists("filterMzParam")) {
+    raw_data <- filterMz(raw_data, filterMzParam)
+}
 # Apply this filter only if file contain MS and MSn
 if (length(unique(msLevel(spectra(raw_data)))) != 1) {
-    raw_data <- filterMsLevel(raw_data, msLevel = 1)
+    raw_data <- filterSpectra(raw_data, filterMsLevel, msLevel. = 1)
 }
 
 cat("\t\t\tChromatographic peak detection\n")

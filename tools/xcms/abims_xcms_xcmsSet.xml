@@ -80,7 +80,7 @@
 
     <inputs>
 
-        <param name="image" type="data" format="rdata.msnbase.raw,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::MsExperiment object from Build Ms Experiment data" />
+        <param name="image" type="data" format="rdata.msnbase.raw,rdata" label="@INPUT_IMAGE_LABEL@" help="It contains a xcms4::MsExperiment object (*.raw.RData)" />
 
         <section name="filterSection" title="Spectra Filters" expanded="False">
             <param argument="filterAcquisitionNum" type="text" value="" optional="true" label="Filter on Acquisition Numbers" help="min,max">

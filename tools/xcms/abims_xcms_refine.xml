@@ -37,7 +37,7 @@
    ]]></command>
 
     <inputs>
-        <param name="image" type="data" format="rdata.xcms.findchrompeaks" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks" />
+        <param name="image" type="data" format="rdata.xcms.findchrompeaks,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from: findChromPeaks" />
         <conditional name="methods">
             <param name="method" type="select" label="Method for peak refinement" help="See the help section below">
                 <option value="CleanPeaks" selected="true">CleanPeaks - remove peaks that are too wide</option>

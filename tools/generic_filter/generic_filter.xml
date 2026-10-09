@@ -6,6 +6,7 @@
   </macros>
   <creator>
     <organization url="https://workflow4metabolomics.org/" email="workflow4metabolomics@proton.me" name="Workflow4Metabolomics"/>
+    <person givenName="Mélanie" familyName="Petera"></person>
   </creator>
   <requirements>
     <requirement type="package" version="4.3.3">r-base</requirement>
@@ -14,7 +15,7 @@
   <required_files>
     <include path="filter_wrap.R"/>
   </required_files>
-  <command><![CDATA[
+  <command detect_errors="exit_code"><![CDATA[
     Rscript '$__tool_directory__/filter_wrap.R'
       dataMatrix_in "$dataMatrix_in"
       sampleMetadata_in "$sampleMetadata_in"
@@ -153,9 +154,9 @@ Melanie Petera for original R code - Marion Landi and Melanie Petera for origina
 
 ---------------------------------------------------
 
-==============
+--------------
 Generic Filter
-==============
+--------------
 
 -----------
 Description
@@ -293,9 +294,14 @@ For more information about input files, refer to the corresponding "W4M HowTo" p
 Changelog/News
 --------------
 
-**Version 2.6 - September 2022**
+=================================
+Version 2020.01+galaxy0 (current)
+=================================
 
-- NEW FEATURE: The tool does not rely on the batch package anymore to parse its command line.
+INTERNAL MODIFICATION
+
+- changes in dependances (now relies on W4MRUtils R package for core function)
+- refactoring of the XML file to match best practices better
 
 
     ]]></help>

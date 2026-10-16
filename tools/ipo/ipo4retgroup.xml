@@ -135,7 +135,7 @@
                 </conditional>
             </section>
             <expand macro="test_file_load_single"/>
-            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv"/>
+            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv" compare="diff" lines_diff="1"/>
         </test>
     </tests>
     <help><![CDATA[

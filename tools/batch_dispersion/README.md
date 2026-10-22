@@ -1,14 +1,14 @@
-# Table Merge
+# Batch dispersion
 
 Metadata
 -----------
 
- * **@name**: Convex dispersion
- * **@galaxyID**: convex_dispersion
- * **@version**: 0.1+galaxy1
+ * **@name**: Batch dispersion
+ * **@galaxyID**: batch_dispersion
+ * **@version**: 0.1.6+galaxy1
  * **@authors**: Original code: Brice Mulot (PFEM - UNH - INRAE) - Maintainer: Etienne Jules (PFEM - UNH - INRAE - MetaboHUB)
  * **@init date**: 2025, July
- * **@main usage**: This tool displays convex hulls of metabolite intensities by injection order per batch.
+ * **@main usage**: This tool analyses dispersion of ions intensities across analytical batches of metabolomic analysis on quality controls samples.
 
  
 Context
@@ -20,18 +20,18 @@ Configuration
 -----------
 
 ### Requirement:
- * R software: version = 4.1.2
- * r-ggplot2 = 3.3.5
- * r-optparse = 1.6.6
- * r-dplyr = 1.0.10
+ * R software: version = 4.5.2
+ * r-ggplot2 = 3.5.2
+ * r-optparse = 1.7.5
+ * r-dispersionindicators = 0.1.6
 
 Technical description
 -----------
 
 Main files:
 
-- plot_convex_hull.R: R function (core script)
-- plot_convex_hull.xml: XML wrapper (interface for Galaxy)
+- convex_hull_analysis.R: R function (core script)
+- batch_dispersion.xml: XML wrapper (interface for Galaxy)
 
 
 Services provided
@@ -44,6 +44,6 @@ Services provided
 License
 -----------
 
- * Cea Cnrs Inria Logiciel Libre License, version 2.1 (CECILL-2.1)
+ * MIT
 
 

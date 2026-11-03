@@ -1,7 +1,8 @@
-<tool id="physiofit" name="PhysioFit: extracellular flux calculation" version="@TOOL_VERSION@+galaxy1" python_template_version="3.5" profile="21.05">
+<tool id="physiofit" name="PhysioFit: extracellular flux calculation" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="21.05">
     <description>PhysioFit is a scientific tool designed to quantify cell growth parameters and uptake and production fluxes</description>
     <macros>
-        <token name="@TOOL_VERSION@">3.4.0</token>
+        <token name="@TOOL_VERSION@">3.4.1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">physiofit</requirement>

@@ -15,14 +15,17 @@
   </required_files>
 
   <command detect_errors="aggressive"><![CDATA[
-    python '$__tool_directory__/mzXMLMetadataCollector.py' '$outputFile' '$input.files' 
+    python '$__tool_directory__/mzXMLMetadataCollector.py' '$outputFile' '$input.files'
     #if $input.files=="MULTIPLE"
+      #set datasetTypes = ','.join( [ str( $i.ext ) for $i in $input.inputFiles ] )
       '$input.inputFiles'
+      '$datasetTypes'
       #for $i in $input.inputFiles
         '$i.name'
-      #end for 
+      #end for
     #else if $input.files=="SINGLE"
       '$input.SingleInputFile'
+      '$input.SingleInputFile.ext'
       '$input.SingleInputFile.name'
     #end if
   ]]></command>
@@ -101,6 +104,8 @@ INPUT FILES
 
 mzML and/or mzXML files
 
+Which parser reads a dataset is decided by its Galaxy datatype, not by its name, so a dataset whose name carries no extension is read correctly. Only datasets of the generic "data" type, which states nothing about the content, are recognized from their file name.
+
 -----------------------------------------------------------------------------------------------------------------
 OUTPUT FILES
 -----------------------------------------------------------------------------------------------------------------
@@ -159,7 +164,7 @@ Some features are not reported for every format:
 - the entries describing a single spectrum -- MS level, spectrum type and encoding -- are read from the first spectrum of the file only, which is the one the header is parsed up to
 - a column filled with "Not found" means that the corresponding entry is absent from the header of the file, whereas "Not available" means that no entry the tool knows how to read was found for that feature
 
-Any other problem while reading a file (missing input, malformed XML, unsupported extension) makes the tool fail with an error message instead of silently returning empty columns.
+Any other problem while reading a file (missing input, malformed XML, a dataset type which is neither mzML nor mzXML, or content which contradicts the type of the dataset) makes the tool fail with an error message instead of silently returning empty columns.
 ]]>
 </help>
 <citations>

@@ -15,10 +15,15 @@ below ignore the difference between the mzML and mzXML schemas. Entries that
 describe a single spectrum are read from the first spectrum itself, not from
 the parsed tree, so that they do not depend on how far the parser read ahead.
 
+The format of a file is taken from the Galaxy datatype the wrapper passes for
+it, never from its name: names are editable and often carry no extension at
+all. Only datasets Galaxy could not classify, which carry the generic "data"
+type, are resolved from their name.
+
 The lookup helpers use the non raising ``find`` and ``get`` methods of the
 parser and return the "Not found" placeholder when an entry is missing from a
 file: an absent metadata entry is a normal case, not an error. Genuine errors
-(missing file, malformed XML, unsupported extension, inconsistent arguments)
+(missing file, malformed XML, unknown dataset type, inconsistent arguments)
 are not caught and make the tool fail.
 """
 import os
@@ -50,13 +55,20 @@ INSTRUMENT_MODEL_ACCESSIONS = (
 # mzXML files carry the same instrument accessions, always in the name.
 MZXML_INSTRUMENT_MODEL_ACCESSIONS = ("MS:1001547", "MS:1003123", "MS:1000495")
 
-# Root elements each format is allowed to declare, checked against the file
-# name so that a mislabelled file fails instead of producing an empty row.
-MZML_ROOT_TAGS = ("mzML", "indexedmzML")
-MZXML_ROOT_TAGS = ("mzXML",)
+# The two accepted dataset types, mapped to the name reported in the table,
+# the element holding the spectral data -- mzXML names its spectrum element
+# "scan" -- and the root elements the format may declare. The root element is
+# checked so that a file whose content contradicts its type fails instead of
+# producing an empty row.
+FORMATS = {
+    "mzml": ("mzML", "spectrum", ("mzML", "indexedmzML")),
+    "mzxml": ("mzXML", "scan", ("mzXML",)),
+}
+# Galaxy assigns this generic type to files it could not classify, which are
+# the only ones whose name decides their format.
+GENERIC_DATATYPE = "data"
 # Elements holding encoded data, and the attributes by which they declare the
-# number of points: mzML uses defaultArrayLength, mzXML peaksCount. mzXML names
-# its spectrum element "scan".
+# number of points: mzML uses defaultArrayLength, mzXML peaksCount.
 SPECTRUM_ELEMENTS = ("spectrum", "scan")
 CHROMATOGRAM_ELEMENTS = ("chromatogram",)
 POINTS_ATTRIBUTES = ("defaultArrayLength", "peaksCount")
@@ -67,21 +79,21 @@ HEADER = ("Name\tformat\tversion\tsize(ko)\tsize(Mo)\tsize(Go)\tMSlevel\t"
           "Number of chromatogram points\tEncoding\n")
 
 
-def get_info(path, name):
+def get_info(path, name, datatype):
     """Collect the metadata of one file as the fields of a table row."""
-    extension = name.split(".")[-1]
+    kind = resolve_format(datatype, name)
+    format_name, spectrum_tag, tags = FORMATS[kind]
+    root, spectrum = parse_header(path, spectrum_tag)
+    check_root(root, tags, name, format_name)
+    points, chromatogram_points = count_points(path)
+    sizes = (get_kb_size(path), get_mb_size(path), get_gb_size(path))
 
-    if extension.casefold() == "mzml":
-        root, spectrum = parse_header(path, "spectrum")
-        check_root(root, MZML_ROOT_TAGS, name)
+    if kind == "mzml":
         params = spectrum_params(root, spectrum)
-        points, chromatogram_points = count_points(path)
         return (
-            extension,
+            format_name,
             get_version(root),
-            get_kb_size(path),
-            get_mb_size(path),
-            get_gb_size(path),
+            *sizes,
             get_ms_level(params),
             get_spectrum_type(params),
             get_source_file(root),
@@ -95,31 +107,44 @@ def get_info(path, name):
             get_encoding(params),
         )
 
-    if extension.casefold() == "mzxml":
-        root, spectrum = parse_header(path, "scan")
-        check_root(root, MZXML_ROOT_TAGS, name)
-        points, chromatogram_points = count_points(path)
-        return (
-            extension,
-            get_mzxml_version(root),
-            get_kb_size(path),
-            get_mb_size(path),
-            get_gb_size(path),
-            MZXML_NOT_AVAILABLE,  # the MS level is not collected for mzXML
-            get_mzxml_spectrum_type(spectrum),
-            get_source_mzxml(root),
-            MZXML_NOT_AVAILABLE,  # no acquisition date is stored in mzXML
-            get_mzxml_software_list(root),
-            MZXML_NOT_AVAILABLE,  # no processing method is stored in mzXML
-            get_mzxml_instrument_model(root),
-            count_scans_mzxml(root),
-            points,
-            chromatogram_points,
-            get_encoding_mzxml(spectrum),
-        )
+    return (
+        format_name,
+        get_mzxml_version(root),
+        *sizes,
+        MZXML_NOT_AVAILABLE,  # the MS level is not collected for mzXML
+        get_mzxml_spectrum_type(spectrum),
+        get_source_mzxml(root),
+        MZXML_NOT_AVAILABLE,  # no acquisition date is stored in mzXML
+        get_mzxml_software_list(root),
+        MZXML_NOT_AVAILABLE,  # no processing method is stored in mzXML
+        get_mzxml_instrument_model(root),
+        count_scans_mzxml(root),
+        points,
+        chromatogram_points,
+        get_encoding_mzxml(spectrum),
+    )
 
-    raise SystemExit(
-        f"{name}: unsupported extension '{extension}', expected mzML or mzXML")
+
+def resolve_format(datatype, name):
+    """Key of ``FORMATS`` to parse a file with, from its Galaxy datatype.
+
+    The wrapper passes the datatype of every dataset, so the file name is not
+    consulted: it is editable and a dataset often has none, which makes it a
+    poor indicator of the format. Only the generic Galaxy "data" type, which
+    states nothing about the content, falls back to the name.
+    """
+    declared_by = "dataset type"
+    if datatype.casefold() == GENERIC_DATATYPE:
+        declared_by, datatype = "file name", name.rpartition(".")[2]
+        if "." not in name:
+            raise SystemExit(
+                f"{name}: its dataset type states nothing about its format and"
+                " its name carries no extension")
+    kind = datatype.casefold()
+    if kind not in FORMATS:
+        raise SystemExit(
+            f"{name}: {declared_by} '{datatype}' is neither mzML nor mzXML")
+    return kind
 
 
 def parse_header(path, spectrum_tag):
@@ -149,13 +174,12 @@ def parse_header(path, spectrum_tag):
     return strip_namespaces(root), spectrum
 
 
-def check_root(root, tags, name):
-    """Fail when the document is not of the format the file name announces."""
+def check_root(root, tags, name, format_name):
+    """Fail when the document is not of the format it was read as."""
     if root.tag not in tags:
         raise SystemExit(
-            f"{name}: declares the '{name.split('.')[-1]}' extension but its"
-            f" root element is '{root.tag}', not one of"
-            f" {' or '.join(tags)}")
+            f"{name}: read as {format_name} but its root element is"
+            f" '{root.tag}', not one of {' or '.join(tags)}")
 
 
 def spectrum_params(root, spectrum):
@@ -450,11 +474,11 @@ def get_encoding_mzxml(scan):
     return NOT_AVAILABLE
 
 
-def update_entries(paths, names):
+def update_entries(paths, names, datatypes):
     """Build the content of the output: a header and one row per file."""
     rows = [HEADER]
-    for path, name in zip(paths, names):
-        fields = [name, *get_info(path, name)]
+    for path, name, datatype in zip(paths, names, datatypes):
+        fields = [name, *get_info(path, name, datatype)]
         rows.append("\t".join(str(field) for field in fields) + "\t\n")
     return "".join(rows)
 
@@ -463,10 +487,10 @@ def main():
     print("Parameters passed to the tool:\n")
     print(list(sys.argv))
 
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 6:
         raise SystemExit(
             "usage: mzXMLMetadataCollector.py OUTPUT_FILE SINGLE|MULTIPLE"
-            " PATHS NAMES")
+            " PATHS DATATYPES NAMES")
 
     output_file = sys.argv[1]
     selection = sys.argv[2]
@@ -477,13 +501,18 @@ def main():
     else:
         raise SystemExit(f"unknown number of files selection '{selection}'")
 
-    names = sys.argv[4:]
-    if len(paths) != len(names):
+    # one dataset type per path, one name per path, both in the order of the
+    # paths; the names are passed as separate arguments so that they may
+    # contain any character
+    datatypes = sys.argv[4].split(",")
+    names = sys.argv[5:]
+    if len(paths) != len(datatypes) or len(paths) != len(names):
         raise SystemExit(
-            f"{len(paths)} file path(s) but {len(names)} file name(s) passed")
+            f"{len(paths)} file path(s) but {len(datatypes)} dataset type(s)"
+            f" and {len(names)} file name(s) passed")
 
     with open(output_file, "w", encoding="utf-8") as result:
-        result.write(update_entries(paths, names))
+        result.write(update_entries(paths, names, datatypes))
 
 
 if __name__ == "__main__":

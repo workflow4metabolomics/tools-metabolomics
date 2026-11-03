@@ -58,6 +58,13 @@
       </conditional>
       <output name="outputFile" file="metadata_single.tabular" ftype="tabular"/>
     </test>
+    <test>
+      <conditional name="input">
+        <param name="files" value="SINGLE"/>
+        <param name="SingleInputFile" location="https://github.com/RECETOX/recetox-aplcms/raw/v0.15.0/tests/testdata/test0_copy.mzxml"/>
+      </conditional>
+      <output name="outputFile" file="metadata_mzxml.tabular" ftype="tabular"/>
+    </test>
   </tests>
 <help><![CDATA[
 .. class:: infomark
@@ -80,7 +87,7 @@ mz(X)MLMetadataCollector
 DESCRIPTION
 ===========
 
-mz(X)MLMetadataCollector is designed to collect the main information contained in mzML and/or mzXML metadata headers. It can compile the name, format, format version, size (Ko, Mo & Go), MS level, spectrum type, source file, acquisition date, software(s) used, processing method(s), analytical device, number of scans, number of points and encoding method of a single file or an entire collection. The information is packed into a single table (.tabular text file).
+mz(X)MLMetadataCollector is designed to collect the main information contained in mzML and/or mzXML metadata headers. It can compile the name, format, format version, size (Ko, Mo & Go), MS level, spectrum type, source file, acquisition date, software(s) used, processing method(s), analytical device, number of scans, number of points, number of chromatogram points and encoding method of a single file or an entire collection. The information is packed into a single table (.tabular text file).
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -143,7 +150,15 @@ This tool may not cover all types of mzML or mzXML depending on the analytical d
 - Thermo Raw File Parser 1.3.4 (mzML and MZXML)
 
 The fact that the software you use does not appear in this list does not mean the tool won't find the metadata, but some features may be missing.
-    
+
+Some features are not reported for every format:
+
+- the *MSlevel*, *Acquisition date* and *Processing method(s)* columns are filled with "Not available in mzXML" for mzXML files: these three entries are not read for that format, and mzXML additionally stores acquisition times as a duration relative to the start of the run rather than as a date and time
+- for mzML files the *Spectrum type* column reports only centroided acquisitions (MS:1000127), so profile spectra are listed as "Not found"; for mzXML files it is read from the "centroided" attribute of the first scan and reports both "centroid" and "profile"
+- the entries describing a single spectrum -- MS level, spectrum type and encoding -- are read from the first spectrum of the file only, which is the one the header is parsed up to
+- a column filled with "Not found" means that the corresponding entry is absent from the header of the file, whereas "Not available" means that no entry the tool knows how to read was found for that feature
+
+Any other problem while reading a file (missing input, malformed XML, unsupported extension) makes the tool fail with an error message instead of silently returning empty columns.
 ]]>
 </help>
 <citations>

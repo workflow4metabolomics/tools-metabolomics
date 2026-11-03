@@ -17,7 +17,7 @@ Context
 
 The tool was created to efficiently and quickly collect essential metadata of mzML and mzXML files.
 
-It is based on the recognition of XML-like tags in the headers of the files, that vary with the constructors and the conversion method used.
+It is based on the parsing of the XML of the files, whose entries vary with the constructors and the conversion method used. The metadata header is streamed and parsing stops at the end of the first spectrum, so the encoded payloads of the remaining scans are never held in memory. Summing the spectral and chromatographic points needs a second pass over the whole file, in which every element is discarded as soon as it is complete, so the memory used stays independent of the number of scans. A missing metadata entry is reported as "Not found", while an unreadable file (missing input, malformed XML, unsupported extension, or root element contradicting the file extension) makes the tool fail.
 
 User interface is based on the Galaxy platform (homepage: https://galaxyproject.org/). It is an open, web-based platform for data intensive biomedical research. 
 Whether on the free public server or your own instance, you can perform, reproduce, and share complete analyses.
@@ -39,6 +39,7 @@ Main files:
 - mzXMLMetadataCollector.xml: XML wrapper (interface for Galaxy)
 - metadata_multiple.tabular: test file, expected resultats for the "multiple files or collection" parameter test
 - metadata_single.tabular: test file, expected resultats for the "single file" parameter test
+- metadata_mzxml.tabular: test file, expected resultats for the "single file" parameter test on an mzXML input
 
 Services provided
 -----------

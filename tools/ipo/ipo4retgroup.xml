@@ -135,7 +135,7 @@
                 </conditional>
             </section>
             <expand macro="test_file_load_single"/>
-            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv"/>
+            <output name="parametersOutput" file="faahKO_IPO_parameters4retgroup_bw.tsv" compare="diff" lines_diff="1"/>
         </test>
     </tests>
     <help><![CDATA[
@@ -186,7 +186,7 @@ Method to use for groupChromPeaks
 
 **PeakDensity**
 
-    | This method performs performs correspondence (chromatographic peak grouping) based on the density (distribution) of identified peaks along the retention time axis within slices of overlapping mz ranges.  All peaks (from the same or from different samples) being close on the retention time axis are grouped into a feature (peak group).
+    | This method performs correspondence (chromatographic peak grouping) based on the density (distribution) of identified peaks along the retention time axis within slices of overlapping mz ranges.  All peaks (from the same or from different samples) being close on the retention time axis are grouped into a feature (peak group).
     | See the PeakDensity_manual_
 
 

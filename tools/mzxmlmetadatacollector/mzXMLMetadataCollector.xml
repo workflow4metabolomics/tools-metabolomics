@@ -154,7 +154,8 @@ The fact that the software you use does not appear in this list does not mean th
 Some features are not reported for every format:
 
 - the *MSlevel*, *Acquisition date* and *Processing method(s)* columns are filled with "Not available in mzXML" for mzXML files: these three entries are not read for that format, and mzXML additionally stores acquisition times as a duration relative to the start of the run rather than as a date and time
-- for mzML files the *Spectrum type* column reports only centroided acquisitions (MS:1000127), so profile spectra are listed as "Not found"; for mzXML files it is read from the "centroided" attribute of the first scan and reports both "centroid" and "profile"
+- the *Spectrum type* column reports the acquisition mode declared by the file or, failing that, by its first spectrum: "centroid spectrum" or "profile spectrum" for mzML (MS:1000127 and MS:1000128), "centroid" or "profile" for mzXML, where every scan carries a "centroided" attribute
+- when an mzML file declares its MS level only as a number, the "ms level" term MS:1000511, the *MSlevel* column renders it as that number prefixed by "MS" and followed by "spectrum", e.g. "MS2 spectrum"
 - the entries describing a single spectrum -- MS level, spectrum type and encoding -- are read from the first spectrum of the file only, which is the one the header is parsed up to
 - a column filled with "Not found" means that the corresponding entry is absent from the header of the file, whereas "Not available" means that no entry the tool knows how to read was found for that feature
 

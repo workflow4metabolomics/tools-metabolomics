@@ -33,9 +33,11 @@ MZXML_NOT_AVAILABLE = "Not available in mzXML"
 
 # Accessions describing the MS level, ordered by decreasing priority.
 MS_LEVEL_ACCESSIONS = ("MS:1000580", "MS:1000579")
-# Accession of a centroid spectrum in mzML. Only centroided acquisitions are
-# reported for that format, profile spectra are returned as "Not found".
-CENTROID_ACCESSION = "MS:1000127"
+# Accession carrying the MS level as a plain number, used as a fallback for
+# files which declare no MS1/MSn label at all.
+MS_LEVEL_NUMERIC_ACCESSION = "MS:1000511"
+# Accessions of the two acquisition modes of a spectrum in mzML.
+SPECTRUM_TYPE_ACCESSIONS = ("MS:1000127", "MS:1000128")
 # Accessions holding the instrument name, with the attribute to read from.
 INSTRUMENT_MODEL_ACCESSIONS = (
     ("MS:1000703", "name"),
@@ -260,18 +262,33 @@ def get_version(root):
 
 
 def get_ms_level(params):
-    """Name of the MS level description of the file and first spectrum."""
+    """Name of the MS level description of the file and first spectrum.
+
+    Files which declare the level only as a number -- the ``ms level`` term
+    carries it in its value -- are reported as "MS<number> spectrum".
+    """
     for accession in MS_LEVEL_ACCESSIONS:
         for cv_param in params:
             if cv_param.get("accession") == accession:
-                return cv_param.get("name", NOT_FOUND)
+                name = cv_param.get("name")
+                if name:
+                    return name
+    for cv_param in params:
+        if cv_param.get("accession") == MS_LEVEL_NUMERIC_ACCESSION:
+            level = cv_param.get("value", "")
+            if level:
+                return f"MS{level} spectrum"
     return NOT_FOUND
 
 
 def get_spectrum_type(params):
-    """Name of the centroiding description, "Not found" when absent."""
+    """Name of the acquisition mode, centroid or profile, of the spectrum.
+
+    The first declaration found wins, so a file level statement takes
+    precedence over the one of the first spectrum.
+    """
     for cv_param in params:
-        if cv_param.get("accession") == CENTROID_ACCESSION:
+        if cv_param.get("accession") in SPECTRUM_TYPE_ACCESSIONS:
             return cv_param.get("name", NOT_FOUND)
     return NOT_FOUND
 

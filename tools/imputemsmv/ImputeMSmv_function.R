@@ -1,0 +1,827 @@
+# ========================================================.
+# Tool: ImputeMSmv
+#
+# Original tool code: Mathieu CLADIERE (Université Paris Saclay, INRAE, AgroParisTech, UMR Sayfood, Campus Agro Paris Saclay - Palaiseau, France)
+# Original tool wrapping: Anthony SLEIMAN (Internship student, PFEM, INRAE, MetaboHub)
+# Maintainer: Melanie PETERA (PFEM, INRAE, MetaboHub, W4M)
+#
+# Creation date: 2026-03-09 - v0.1.0
+# Last modification: 2026-05-26 - v1.0.0
+#
+# Versions:
+# version 0.1.0 - 2026-03-09 - Initial version
+# Version 1.0.0: version 1.0.0 - 2026-06-29 - addition of new features
+#
+# Description:
+# This tool performs imputation of missing values in mass spectrometry-based data
+# matrices. The primary objective is to handle incomplete metabolomic datasets by
+# estimating and replacing missing intensities in a statistically informed manner.
+#
+# Libraries and dependencies:
+# This is an R script
+# No external dependencies yet
+#
+# Input:
+# 3 tabular files in standard W4M format:
+# Datamatrix containing missing values in NA format
+# Sample Metadata containing a column describing samples from same group
+# Variable Metadata
+#
+# Output:
+# Datamatrix with no missing values (all imputed)
+# Sample Metadata with additional columns describing NA category and proportions in samples
+# Variable Metadata with additional columns describing NA category and proportions in variables
+# Graphics and plots in a pdf format
+# ========================================================.
+
+
+# ============ shared plotting helpers ===================.
+# Missing value categories, each bound to one colour. Keying the colour to the
+# category name means a slice can never pick up another category's colour when
+# a category happens to be absent (see plt_pie).
+MV_COLORS <- c(No_MV = "white", MAR = "#6551CC", MNAR = "#B22C2C")
+
+#' Percentages of `x`, guarded against a zero total
+#'
+#' Dividing by a zero total yields NaN, which base graphics happily renders as a
+#' literal "NaN%" label rather than failing. A zero total returns all zeros.
+#'
+#' @param x Numeric vector of counts
+#'
+#' @return Numeric vector of percentages summing to 100, or all zeros if the
+#'   total is zero or not finite
+pc <- function(x) {
+    total <- sum(x)
+    if (!is.finite(total) || total == 0) {
+        return(rep_len(0, length(x)))
+    }
+    x / total * 100
+}
+
+#' Draw a page saying there is nothing to plot
+#'
+#' Used when a chart has no data to show, so that the PDF still contains a
+#' readable page instead of a silently missing chart.
+#'
+#' @param message Text to centre on the page
+#'
+#' @return The page is drawn; nothing is returned
+plot_placeholder <- function(message) {
+    plot.new()
+    plot.window(xlim = c(0, 1), ylim = c(0, 1))
+    text(0.5, 0.5, message)
+}
+# ========================================================.
+
+
+# ================= imputemsmv ===========================.
+#' Main tool function imputemsmv
+#'
+#' This function performs missing value analysis and imputation on a
+#' feature-by-sample intensity matrix. It first classifies missing values into three categories (No_MV, MAR, MNAR)
+#' at the feature level within each biological group, then imputes missing values using different strategies
+#' depending on their classification.
+#' No_MV: no imputation required
+#' MAR: imputed using group-wise replicates mean or median with multiplicative noise
+#' MNAR: imputed using either LOD-based or minimum-value-based strategy
+#'
+#' @param DataMatrix Numeric matrix (features x samples) containing intensities with NA values
+#' @param sampleMetadata Data frame containing sample annotations and grouping variable
+#' @param variableMetadata Data frame containing feature annotations
+#' @param colClass Column name in sampleMetadata defining sample's group
+#' @param LimNan Numeric (0-1); threshold of missingness per feature within a group above which values are considered MNAR
+#' @param setSeed Whether to set random seed for reproducibility
+#' @param seed Random seed value
+#' @param mnar_method Method for MNAR imputation ("lod" or "min")
+#' @param percLOD Numeric (0-1); quantile used to estimate limit of detection (LOD)
+#' @param SDLOD Numeric (0-1); multiplicative noise amplitude for MNAR imputation
+#' @param pmin Numeric (0-1); scaling factor applied in "min" MNAR strategy
+#' @param mar_method Method for MAR imputation ("mean" or "median")
+#' @param SDmean Numeric (0-1); multiplicative noise amplitude for MAR imputation
+#' @param advanced Modifies MNAR/MAR classification threshold behavior
+#' @param digits Rounding precision applied during imputation
+#'
+#' @return A named list of 3 W4M-compatible tables with no missing values:
+#'   \code{Datamatrix}, the imputed intensity data matrix with no NA values;
+#'   \code{sampleMetadata}, the original sample metadata with the missing value
+#'   percentage added per sample; \code{VariableMetadata}, the original variable
+#'   metadata with the missing value classification added per group.
+#'
+#' @author
+#' Original code: Mathieu CLADIERE
+#' Function and minor modifications: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+imputemsmv <- function(DataMatrix,
+                       sampleMetadata,
+                       variableMetadata,
+                       colClass,
+                       LimNan,
+                       setSeed,
+                       seed,
+                       mnar_method,
+                       percLOD,
+                       SDLOD,
+                       pmin,
+                       mar_method,
+                       SDmean,
+                       mnar_computation,
+                       advanced,
+                       digits) {
+    # No argument defaults (C6): the tool is driven from Galaxy, which always
+    # supplies these, so a missing parameter must be an error rather than a
+    # silent first choice. Note that match.arg(NULL, choices = ...) returns
+    # choices[1], which would quietly reinstate the default -- hence require_arg.
+    require_arg <- function(value, name, choices) {
+        if (length(value) != 1L || is.na(value)) {
+            stop("Parameter '", name, "' is missing; expected one of: ",
+                 paste(choices, collapse = ", "), call. = FALSE)
+        }
+        match.arg(value, choices = choices)
+    }
+
+    require_num <- function(value, name) {
+        if (length(value) != 1L || is.na(value) || !is.numeric(value)) {
+            stop("Parameter '", name, "' is missing or not a single number.",
+                 call. = FALSE)
+        }
+        value
+    }
+
+    mnar_method <- require_arg(mnar_method, "mnar_method", c("lod", "min"))
+    mar_method <- require_arg(mar_method, "mar_method", c("mean", "median"))
+    # mnar_computation applies only to the "lod" branch, which the command block
+    # does not emit on the "min" branch; it is checked inside that branch.
+
+    # Reproducibility. Seeding happens here and only here: this function owns the
+    # draws, so seeding it twice (here and in the wrapper) only lets the two drift.
+    if (isTRUE(setSeed)) {
+        set.seed(seed)
+        cat("Seed set by the user:", seed, "\n")
+    } else {
+        # Draw a seed, then actually seed the RNG with it. The value printed used
+        # to be discarded, so the log advertised a seed that could not reproduce
+        # the run.
+        random_seed <- sample.int(.Machine$integer.max, 1L)
+        set.seed(random_seed)
+        cat("No seed was set by the user. RNG seeded with:", random_seed,
+            "- record this value to reproduce this exact run.\n")
+    }
+
+    cat(strrep("-", 60), "\nCounting features: \n")
+
+    # Create feature index to preserve original order after processing
+    numero <- seq_len(nrow(DataMatrix))
+    if (length(numero) == 0) {
+        stop("No features found in Data matrix. Aborting job.")
+    }
+    ordre <- data.frame(numero = numero, row.names = row.names(DataMatrix))
+
+    # Extract unique group labels from sample metadata
+    tUclass <- t(unique(sampleMetadata[colClass]))
+
+    # Global missing value statistics
+    nMV <- sum(is.na(DataMatrix))
+    pMV <- (nMV / (nrow(DataMatrix) * ncol(DataMatrix))) * 100
+    cat("In raw data matrix there are: \n .", length(numero), "feature(s) \n .", length(tUclass), "group(s)")
+    if (length(tUclass[1, ]) < 12) {
+        cat("-", tUclass[1, ])
+    }
+    cat("\n .", (nrow(DataMatrix) * ncol(DataMatrix)), "values (missing included) \n .", nMV, "missing values:", round(pMV, digits = 2), "% of total values \n")
+    cat(strrep("-", 60))
+    cat("\n")
+
+    # Compute missing values percentage per sample (used later in output metadata)
+    SM_new <- t(rbind(apply(DataMatrix, 2, function(x) round(((sum(is.na(x)) / length(numero)) * 100), 2))))
+    colnames(SM_new) <- c("MV_percentage")
+
+    # Prepare vector containers for per-group data
+    nom_sampleMedata_gp <- seq_along(tUclass)
+    nom_DataMatrix_gp <- seq_along(tUclass)
+
+    # Split data matrix and sample metadata by group (later, each group is imputed apart)
+    for (i in seq_along(tUclass)) {
+        nom_sampleMedata_gp[i] <- paste("SampleMetadata_", tUclass[i], sep = "")
+        assign(nom_sampleMedata_gp[i], subset(sampleMetadata, get(colClass) == tUclass[i]))
+        nom_DataMatrix_gp[i] <- paste("DataMatrix_", tUclass[i], sep = "")
+        assign(nom_DataMatrix_gp[i], cbind(ordre, subset(DataMatrix, select = rownames(get(nom_sampleMedata_gp[i])))))
+    }
+
+    # Missing Value management ##############################.
+
+    # Prepare vector containers for per-group data
+    nom_DataMatrix_gpMV <- seq_along(nom_DataMatrix_gp)
+    nom_DataMatrix_gpMARMNAR <- seq_along(nom_DataMatrix_gp)
+
+    # Count MV for each group and calculate mean
+    group <- c()
+    replicate_count <- c()
+    No_MV_count <- c()
+    MAR_count <- c()
+    MNAR_count <- c()
+    for (i in seq_along(nom_DataMatrix_gp)) {
+        # Count NA per feature within group
+        NbNaN <- apply(get(nom_DataMatrix_gp[i]), 1, function(x) sum(is.na(x)))
+        pNbNaN <- NbNaN / (ncol(get(nom_DataMatrix_gp[i])) - 1)
+
+        # Store NA counts and their proportions
+        nom_DataMatrix_gpMV[i] <- paste(nom_DataMatrix_gp[i], "_MV", sep = "")
+        assign(nom_DataMatrix_gpMV[i], cbind(get(nom_DataMatrix_gp[i]), "NbNaN" = NbNaN, "pNbNaN" = pNbNaN))
+
+        # Classify missingness type per feature
+        MARMNAR <- seq_along(numero)
+        rep_num <- ncol(get(nom_DataMatrix_gp[i])) - 1
+        if (advanced == TRUE) {
+            repTH <- 2
+        } else {
+            repTH <- 3
+        }
+        if (rep_num < repTH) {
+            for (j in seq_along(numero)) {
+                if (pNbNaN[j] == 0) {
+                    MARMNAR[j] <- "No_MV"
+                } else {
+                    MARMNAR[j] <- "MNAR"
+                }
+            }
+        } else {
+            for (j in seq_along(numero)) {
+                if (pNbNaN[j] == 0) {
+                    MARMNAR[j] <- "No_MV"
+                } else if (pNbNaN[j] <= LimNan) {
+                    MARMNAR[j] <- "MAR"
+                } else {
+                    MARMNAR[j] <- "MNAR"
+                }
+            }
+        }
+        group[i] <- tUclass[i]
+        replicate_count[i] <- rep_num
+        No_MV_count[i] <- sum(MARMNAR == "No_MV")
+        MAR_count[i] <- sum(MARMNAR == "MAR")
+        MNAR_count[i] <- sum(MARMNAR == "MNAR")
+
+        nom_DataMatrix_gpMARMNAR[i] <- paste(nom_DataMatrix_gp[i], "_MARMNAR", sep = "")
+        assign(nom_DataMatrix_gpMARMNAR[i], MARMNAR)
+    }
+
+    informations <- data.frame(group, replicate_count, No_MV_count, MAR_count, MNAR_count)
+    cat("\nPer group count summary:\n")
+    if (nrow(informations) < 12) {
+        cat("\n")
+        print(informations)
+    } else {
+        cat("(main groups extract)\n\n")
+        informations <- informations[order(informations[, 2], decreasing = TRUE), ]
+        print(informations[1:12, ])
+    }
+
+    # Combine classification across groups into variable metadata as final output
+    VariableData_MARMNAR <- cbind(as.data.frame(mget(nom_DataMatrix_gpMARMNAR[seq(nom_DataMatrix_gp)])))
+    tUclassName <- paste0("mv_type_", tUclass)
+    colnames(VariableData_MARMNAR) <- tUclassName
+
+    # MAR imputation ########################################.
+
+    # Prepare vector containers for per-group data
+    nom_DataMatrix_gp_MAR <- seq_along(nom_DataMatrix_gp)
+    nom_DataMatrix_gp_noMAR <- seq_along(nom_DataMatrix_gp)
+
+    for (i in seq_along(nom_DataMatrix_gp)) {
+        # Select MAR features
+        nom_DataMatrix_gp_MAR[i] <- paste(nom_DataMatrix_gp[i], "_MAR", sep = "")
+        assign(nom_DataMatrix_gp_MAR[i], subset(get(nom_DataMatrix_gpMV[i]), pNbNaN <= LimNan))
+        Mat_noMAR_temp <- t(get(nom_DataMatrix_gp_MAR[i]))
+        # drop = FALSE: with a single MAR feature the transposed subset has one
+        # column left after removing the bookkeeping rows, and R would drop it
+        # to a plain vector, making the seq_len(nrow(...)) below fail.
+        Mat_noMar_temp_2 <- Mat_noMAR_temp[!(row.names(Mat_noMAR_temp) %in% c("NbNaN", "pNbNaN")), , drop = FALSE]
+
+        # Impute according to chosen method (mean or median)
+        if (mar_method == "mean") {
+            for (k in seq_len(nrow(Mat_noMar_temp_2))) {
+                for (j in seq_len(ncol(Mat_noMar_temp_2))) {
+                    Mat_noMar_temp_2[k, j][is.na(Mat_noMar_temp_2[k, j])] <- round((mean(Mat_noMar_temp_2[seq(2, nrow(Mat_noMar_temp_2)), j], na.rm = TRUE) * round(runif(1, min = (1 - SDmean), max = (1 + SDmean)), digits = 2)), digits)
+                }
+            }
+        } else if (mar_method == "median") {
+            for (k in seq_len(nrow(Mat_noMar_temp_2))) {
+                for (j in seq_len(ncol(Mat_noMar_temp_2))) {
+                    Mat_noMar_temp_2[k, j][is.na(Mat_noMar_temp_2[k, j])] <- round((median(Mat_noMar_temp_2[seq(2, nrow(Mat_noMar_temp_2)), j], na.rm = TRUE) * round(runif(1, min = (1 - SDmean), max = (1 + SDmean)), digits = 2)), digits)
+                }
+            }
+        } else {
+            stop("Non valid method, choose one method between mean or median")
+        }
+        nom_DataMatrix_gp_noMAR[i] <- paste(nom_DataMatrix_gp[i], "_noMAR", sep = "")
+        assign(nom_DataMatrix_gp_noMAR[i], t(Mat_noMar_temp_2))
+    }
+
+    # MNAR imputation ######################################.
+
+    # Prepare vector containers for per-group data
+    nom_DataMatrix_gp_MNAR <- seq_along(nom_DataMatrix_gp)
+    nom_DataMatrix_gp_noMNAR <- seq_along(nom_DataMatrix_gp)
+
+    # Impute according to chosen method (LOD or minimum)
+    if (mnar_method == "lod") {
+        # Validated here rather than in the signature: the command block emits
+        # --mnar_computation only on this branch, so on the "min" path the
+        # argument legitimately never arrives.
+        mnar_computation <- require_arg(mnar_computation, "mnar_computation",
+                                        c("quantile", "mean", "median"))
+        percLOD <- require_num(percLOD, "percLOD")
+        # Compute global LOD from quantile. Checked here because quantile() with
+        # prob = NULL does not fail -- it silently returns every quantile.
+        Lod <- quantile(DataMatrix, na.rm = TRUE, prob = percLOD, names = FALSE)
+        if (mnar_computation != "quantile") {
+            low_lod <- na.omit(unlist(DataMatrix[DataMatrix <= Lod]))
+            if (mnar_computation == "mean") {
+                Lod <- mean(low_lod)
+            } else if (mnar_computation == "median") {
+                Lod <- median(low_lod)
+            } else {
+                stop("Non valid LOD computation method.\nAborting job.")
+            }
+        }
+
+        cat("\n")
+        cat(strrep("-", 60))
+        cat("\n")
+        cat("The data-driven limit of detection computed from data matrix is: ", Lod, "\nIn log(10), LOD is: ", log10(Lod))
+        for (i in seq_along(nom_DataMatrix_gp)) {
+            # Select MNAR features
+            nom_DataMatrix_gp_MNAR[i] <- paste(nom_DataMatrix_gp[i], "_MNAR", sep = "")
+            assign(nom_DataMatrix_gp_MNAR[i], subset(get(nom_DataMatrix_gpMV[i]), pNbNaN > LimNan))
+            Mat_noMNAR_temp <- get(nom_DataMatrix_gp_MNAR[i])
+
+            # Impute with LOD + noise
+            if (nrow(get(nom_DataMatrix_gp_MNAR[i])) > 0) {
+                for (j in seq_len(nrow(Mat_noMNAR_temp))) {
+                    for (k in seq_len(ncol(Mat_noMNAR_temp))) {
+                        Mat_noMNAR_temp[j, k][is.na(Mat_noMNAR_temp[j, k])] <- round((Lod * round(runif(1, min = (1 - SDLOD), max = (1 + SDLOD)), digits = 2)), digits)
+                    }
+                }
+            }
+            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN"),
+                                                 drop = FALSE]
+            nom_DataMatrix_gp_noMNAR[i] <- paste(nom_DataMatrix_gp[i], "_noMNAR", sep = "")
+            assign(nom_DataMatrix_gp_noMNAR[i], Mat_noMNAR_temp_2)
+        }
+        # Minimum-based per feature MNAR imputation
+    } else if (mnar_method == "min") {
+        # Checked up front: the loop below only runs when a group actually has
+        # MNAR features, so a missing pmin would otherwise slip through until it
+        # surfaced as "replacement has length zero" deep inside the sweep.
+        pmin <- require_num(pmin, "pmin")
+        for (i in seq_along(nom_DataMatrix_gp)) {
+            nom_DataMatrix_gp_MNAR[i] <- paste(nom_DataMatrix_gp[i], "_MNAR", sep = "")
+            assign(nom_DataMatrix_gp_MNAR[i], subset(get(nom_DataMatrix_gpMV[i]), pNbNaN > LimNan))
+            Mat_noMNAR_temp <- get(nom_DataMatrix_gp_MNAR[i])
+
+            if (nrow(get(nom_DataMatrix_gp_MNAR[i])) > 0) {
+                for (j in seq_len(nrow(Mat_noMNAR_temp))) {
+                    minimal_value <- min(Mat_noMNAR_temp[j, ], na.rm = TRUE)
+                    for (k in seq_len(ncol(Mat_noMNAR_temp))) {
+                        Mat_noMNAR_temp[j, k][is.na(Mat_noMNAR_temp[j, k])] <- round((pmin * (minimal_value * round(runif(1, min = (1 - SDLOD), max = (1 + SDLOD)), digits = 2))), digits)
+                    }
+                }
+            }
+            Mat_noMNAR_temp_2 <- Mat_noMNAR_temp[, !names(Mat_noMNAR_temp) %in% c("NbNaN", "pNbNaN"),
+                                                 drop = FALSE]
+            nom_DataMatrix_gp_noMNAR[i] <- paste(nom_DataMatrix_gp[i], "_noMNAR", sep = "")
+            assign(nom_DataMatrix_gp_noMNAR[i], Mat_noMNAR_temp_2)
+        }
+    } else {
+        stop("Non valid method, choose one method between LOD or Min")
+    }
+
+    # Reassemble full matrix ################################.
+
+    nom_DataMatrix_gp_noMV <- seq_along(nom_DataMatrix_gp)
+    for (i in seq_along(nom_DataMatrix_gp)) {
+        # Merge mAR and MNAR
+        Mat_NoMV_temp <- rbind(get(nom_DataMatrix_gp_noMAR[i]), get(nom_DataMatrix_gp_noMNAR[i]))
+        # Restore original feature order
+        Mat_noMV_temp2 <- Mat_NoMV_temp[order(Mat_NoMV_temp$numero), ]
+        # Remove index column
+        Mat_noMV_temp3 <- Mat_noMV_temp2[, -1]
+
+        nom_DataMatrix_gp_noMV[i] <- paste(nom_DataMatrix_gp[i], "_noMV", sep = "")
+        assign(nom_DataMatrix_gp_noMV[i], Mat_noMV_temp3)
+    }
+
+    # Combine all groups back into one matrix
+    DataMatrix_NoMV <- cbind(as.data.frame(mget(nom_DataMatrix_gp_noMV[seq_along(nom_DataMatrix_gp)])))
+    colnames(DataMatrix_NoMV) <- colnames(DataMatrix)
+
+    # Create final variableMetaData file with NaN type per feature per group
+    variableMetadata_MV <- cbind(variableMetadata, VariableData_MARMNAR)
+
+    # Create final sampleMetaData file with NaN percentage per sample
+    sampleMetadata_MV <- cbind(sampleMetadata, SM_new)
+
+    return(list(Datamatrix = DataMatrix_NoMV, sampleMetadata = sampleMetadata_MV, VariableMetadata = variableMetadata_MV))
+}
+# ========================================================.
+
+
+# ================= fix_head =============================.
+#' Restores row names from first column of a data frame in which column names are in first column
+#'
+#' This function assumes that the first column of the input data frame contains row names.
+#' It converts this column into row names then removes it.
+#' This function is typically used when reading tabular files where row names
+#' were imported as a regular column (e.g., using read.table with row.names = FALSE).
+#'
+#' @param df Dataframe with header = TRUE and row.names = FALSE
+#'
+#' @return Dataframe with restored row names and without the first column
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+fix_head <- function(df) {
+    if (any(duplicated(df[, 1]))) {
+        stop("First column contains duplicated row names.")
+    }
+    if (any(is.na(df[, 1]))) {
+        stop("First column contains NA values, cannot set rownames.")
+    }
+
+    rownames(df) <- df[, 1]
+    df2 <- df[, -1, drop = FALSE]
+    df2
+}
+# ========================================================.
+
+
+# ====================== plt_density =====================.
+#' Compare intensity distribution before and after imputation
+#'
+#' This function plots density of Log10-transformed intensity values from two data
+#' matrices: one before imputation and one after imputation.
+#'
+#' Missing values are removed prior to density estimation
+#'
+#' Both matrices must hold intensities only: no identifier column, since an
+#' identifier column would be silently dropped from the "after" curve by
+#' `fix_head()` and its absence would be a plotting-only failure.
+#'
+#' @param df1 Data matrix before imputation to be plotted
+#' @param df2 Data matrix after imputation to be plotted
+#'
+#' @return A base R plot showing density curves before (dashed cyan line) and after (solid magenta line) imputation
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_density <- function(df1, df2) {
+    # Choose plot colors
+    color <- c("#009B9F", "#C75DAA")
+
+    # Flatten matrices and remove missing values
+    logDataVector1 <- log10(na.omit(unlist(df1)))
+    logDataVector2 <- log10(na.omit(unlist(df2)))
+
+    # Density of original data
+    plot(density(logDataVector1),
+        col = adjustcolor(color[1], alpha.f = 0.7),
+        lty = 2,
+        lwd = 2,
+        main = "Density before vs after imputation",
+        xlab = expression(log[10](Intensity))
+    )
+
+    # Density after imputation
+    lines(density(logDataVector2),
+        col = adjustcolor(color[2], alpha.f = 0.7), lwd = 2
+    )
+
+    legend(
+        x = "topright",
+        legend = c("Before", "After"),
+        lty = c(2, 1),
+        col = color,
+        lwd = 2
+    )
+}
+# ========================================================.
+
+
+# ====================== plt_matrix ======================.
+#' Visualize missing value pattern map in a data matrix
+#' Useful for visualizing the structure of missingness across samples and features.
+#' Detect batch effects or systematic missingness patterns.
+#'
+#' Converts a data matrix into a binary presence/absence map.
+#' Missing values are encoded as 0 and observed intensities as 1.
+#'
+#' @param df_original Numeric data matrix
+#'
+#' @return Presence/absence map of data matrix intensities. NA in black, intensities in white
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_matrix <- function(df_original) {
+    # Convert to binary presence/absence matrix (NA -> 0 ; everything else -> 1)
+    df <- ifelse(is.na(df_original), 0, 1)
+    # Transpose so samples become columns
+    df <- t(df)
+
+    # Choose colors
+    color <- c("black", "white") # black for missing values, white for non missing values
+
+    # Plot binary matrix
+    image(as.matrix(df),
+        col = color,
+        xaxt = "n", yaxt = "n"
+    )
+    axis(1, at = seq(from = 0, to = 1, length.out = length(row.names(df))), labels = FALSE)
+    text(
+        x = seq(from = 0, to = 1, length.out = length(row.names(df))),
+        y = par("usr")[3] - 0.01,
+        labels = row.names(df),
+        srt = 40,
+        adj = 1,
+        xpd = TRUE,
+        cex = 0.6
+    )
+    title(main = "Presence/absence map of data matrix intensities", col.main = "black")
+    mtext("Samples", side = 3, line = 0)
+    mtext("Features", side = 2, line = 0)
+    par(xpd = FALSE)
+    legend(
+        x = "topright", xpd = TRUE, inset = c(0, -0.07),
+        legend = c("MV", "No_MV"), bty = "n",
+        fill = color,
+        border = "black",
+        cex = 0.6, horiz = TRUE
+    )
+}
+# ========================================================.
+
+
+# ====================== plt_group =======================.
+#' Visualize missing value categories per sample group
+
+#' Computes the proportion of missing value categories (No_MV, MA, MNAR) for
+#' each biological group and displays them as stacked bar plot
+#'
+#' @param SM Sample metadata containing samples grouping information
+#' @param VM Variable metadata containing missing value classification (output of imputemsmv)
+#' @param ID Column name in SM defining sample groups
+#'
+#' @return A stacked bar plot showing percentage distribution of MV types per sample group
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_group <- function(SM, VM, ID) {
+    # Extract group names from metadata
+    group_name <- as.character(unique(SM[, ID]))
+    # Corresponding VM columns
+    group_cols <- paste0("mv_type_", group_name)
+    groups <- as.data.frame(VM[, group_cols])
+
+    # Compute percentage per category per group, as named vectors so that
+    # counts, colours and labels can never fall out of step
+    info <- data.frame(type = names(MV_COLORS))
+    for (i in seq_along(group_name)) {
+        # Count categories
+        counts <- c(
+            No_MV = sum(groups[, i] == "No_MV"),
+            MAR = sum(groups[, i] == "MAR"),
+            MNAR = sum(groups[, i] == "MNAR")
+        )
+        # Convert to percentage and append as a new column. pc() keeps a group
+        # with nothing classified at 0 instead of producing NaN, which barplot()
+        # would otherwise draw as a "NaN%" label. Its denominator is the number
+        # of classified cells, matching plt_type and plt_pie.
+        info <- cbind(info, pc(counts))
+    }
+
+    # Fix column structure (using helper function fix_head from above)
+    info <- fix_head(info)
+    colnames(info) <- group_name
+    info <- as.matrix(info)
+
+    # Choose colors per category
+    color <- unname(MV_COLORS) # white for No_MV, purple for MAR and maroon for MNAR
+
+    # Stacked bar plot
+    bp <- barplot(info, col = color, yaxt = "n", log = "")
+    # Add percentage labels (centered in stacks)
+    # Compute label positions
+    y_pos <- apply(info, 2, cumsum) - info / 2
+    # Flatten everything
+    x_vals <- rep(bp, each = nrow(info))
+    y_vals <- as.vector(y_pos)
+    labels <- paste0(round(as.vector(info), 1), "%")
+    # Keep only non-zero values
+    keep <- as.vector(info) > 0
+    text(
+        x = x_vals[keep],
+        y = y_vals[keep],
+        labels = labels[keep],
+        cex = 0.6,
+        font = 2
+    )
+    title(main = "Missing values attribution type per sample group")
+    par(xpd = FALSE)
+    legend(
+        x = "topright", xpd = TRUE, inset = c(0, -0.13),
+        legend = names(MV_COLORS),
+        fill = color,
+        border = "black",
+        cex = 0.6, horiz = FALSE
+    )
+}
+# ========================================================.
+
+
+# ====================== plt_type ========================.
+#' Visualize distribution of groups within each missing value type.
+#'
+#' Computes how each missing value category (No_MN, MAR, MNAR) is distributed across sample groups.
+#' For each type, proportions are normalized across groups so that each category sums to 100%.
+#' Allows identification of whether certain groups are enriched in specific missingness mechanisms.
+#'
+#' @param SM Sample metadata containing samples grouping information
+#' @param VM Variable metadata containing missing value classification (output of imputemsmv)
+#' @param ID Column name in SM defining sample groups
+#'
+#' @return A stacked barplot showing the proportion of groups within each category
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_type <- function(SM, VM, ID) {
+    # Extract group names from metadata
+    group_name <- as.character(unique(SM[, ID]))
+    # Corresponding VM columns
+    group_cols <- paste0("mv_type_", group_name)
+    groups <- as.data.frame(VM[, group_cols])
+
+    # Count occurences per group for each MV category
+    info <- cbind(
+        No_MV = colSums(groups == "No_MV"),
+        MAR = colSums(groups == "MAR"),
+        MNAR = colSums(groups == "MNAR")
+    )
+
+    # Drop categories that are absent from the whole dataset before
+    # normalizing: such a column sums to zero, and dividing by that total used
+    # to yield NaN, which barplot() drew as "NaN%" labels without complaining
+    # (C15). An empty stack carries no information, so it is not drawn at all.
+    info <- info[, colSums(info) > 0, drop = FALSE]
+
+    if (ncol(info) == 0) {
+        plot_placeholder("No classified values to display")
+        return(invisible(NULL))
+    }
+
+    # Normalize occurences per group for each MV category. sweep() rather than
+    # apply(), which would collapse the shape to a vector when a single group or
+    # a single category is left. Totals are all non-zero after the drop above.
+    info <- sweep(info, 2, colSums(info), "/") * 100
+
+    # Choose colors: one shade per sample group
+    color <- hcl.colors(nrow(info), palette = "Tropic")
+
+    # Stacked bar plot
+    bp <- barplot(info, col = color, yaxt = "n", log = "")
+    text(
+        x = rep(bp, each = nrow(info)),
+        y = apply(info, 2, cumsum) - info / 2,
+        labels = paste0(round(info, 2), "%"), cex = 0.6, font = 2
+    )
+    title(main = "Distribution of sample groups across NA type", col.main = "black")
+    par(xpd = FALSE)
+    legend(
+        x = "topright", xpd = TRUE, inset = c(-0.025, 0),
+        legend = group_name, title = "Groups",
+        # reuse the shades actually drawn: rebuilding them from length(groups),
+        # the number of feature x group cells rather than of groups, gave legend
+        # swatches that did not match the bars
+        fill = color,
+        border = "black",
+        cex = 0.6, horiz = FALSE
+    )
+}
+# ========================================================.
+
+
+# ====================== plt_pie =========================.
+#' Plot global distribution of values' category (No_MV, MAR, MNAR)
+#'
+#' Compute the overall proportion of missing value categories across the entire dataset and visualize it as a pie chart
+#'
+#' @param SM Sample metadata containing samples grouping information
+#' @param VM Variable metadata containing missing value classification (output of imputemsmv)
+#' @param ID Column name in SM defining sample groups
+#'
+#' @return A pie chart showing global proportions of No_MV, MAR, MNAR
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_pie <- function(SM, VM, ID) {
+    # Extract group names from metadata
+    group_name <- as.character(unique(SM[, ID]))
+    # Corresponding VM columns
+    group_cols <- paste0("mv_type_", group_name)
+    groups <- as.data.frame(VM[, group_cols])
+
+    # Count occurrences of each missing value type, as one named vector so that
+    # counts, colours and labels can never fall out of step
+    counts <- c(
+        No_MV = sum(groups == "No_MV"),
+        MAR = sum(groups == "MAR"),
+        MNAR = sum(groups == "MNAR")
+    )
+
+    # Drop empty categories once, up front, and reuse that single mask. The old
+    # code recomputed `info > 0` after shortening `info`, and R recycles a short
+    # logical subscript, so colours and legend entries kept their full length and
+    # slices were drawn in the wrong colour.
+    keep <- counts > 0
+    counts <- counts[keep]
+    info <- pc(counts)
+    color <- unname(MV_COLORS[names(counts)])
+    label <- names(counts)
+
+    if (length(info) == 0) {
+        plot_placeholder("No classified values to display")
+        title(main = "Pie chart of values category in datamatrix", col.main = "black")
+        return(invisible(NULL))
+    }
+
+    # Plot pie chart
+    pie(info,
+        labels = paste0(round(info, 2), "%"),
+        col = color
+    )
+    title(main = "Pie chart of values category in datamatrix", col.main = "black")
+    par(xpd = FALSE)
+    legend(
+        x = "topright",
+        legend = label,
+        fill = color,
+        border = "black",
+        cex = 0.6, horiz = FALSE
+    )
+}
+# ========================================================.
+
+
+# ====================== plt_distribution ================.
+#' Plot total number of missing values per intensity bin
+#'
+#' This function explores the relationship between feature intensity and missingness
+#' For each feature (row), the minimum observed intensity is computed, then features are binned on this value (log10 scale)
+#' The total number within each bin is then summed and displayed as a bar plot
+#' Help assess MNAR behavior when the minimum-method is chosen
+#'
+#' @param df_original Numeric data matrix
+#' @param bins Number of bins used to cut intensity values
+#'
+#' @return A bar plot showing total NA per intensity bin
+#'
+#' @author
+#' Original code: Anthony SLEIMAN
+#' Maintainer: Mélanie PETERA
+plt_distribution <- function(df_original, bins) {
+    # Check total missingness and remove empty features
+    df <- df_original[rowSums(is.na(df_original)) != ncol(df_original), ]
+    # Compute per-feature minimum intensity
+    row_min <- apply(df, 1, function(x) min(x, na.rm = TRUE))
+    # Log-transform
+    row_min <- log10(row_min + 1e-9)
+    # Count number of NA per feature
+    row_na <- apply(df, 1, function(x) sum(is.na(x)))
+    # Combine into matrix
+    added_min <- cbind(row_min, row_na)
+
+    # Bin features based on their minimum intensity
+    bins <- cut(added_min[, 1], breaks = bins, include.lowest = TRUE)
+    # Sum total NA per bin
+    na_sum <- tapply(added_min[, 2], bins, sum)
+
+    # Plot bar plot
+    par(mgp = c(2, 0.5, 0))
+    barplot(na_sum,
+        las = 2,
+        col = "#009B9F",
+        border = NA,
+        angle = 45,
+        main = "Repartition of missing values according to the minimum of their corresponding ions",
+        ylab = "Missing values count",
+        cex.names = 0.7, cex.lab = 0.7, cex.axis = 0.7
+    )
+    mtext(expression(log[10](minimum_intensity_values)),
+        side = 1,
+        line = 3, cex = 0.7
+    )
+}
+# ========================================================.

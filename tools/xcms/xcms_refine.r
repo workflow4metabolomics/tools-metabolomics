@@ -1,4 +1,7 @@
 #!/usr/bin/env Rscript
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # ----- LOG FILE -----
 log_file <- file("log.txt", open = "wt")
@@ -23,7 +26,7 @@ cat("\n\n")
 
 # ----- ARGUMENTS -----
 cat("\tARGUMENTS INFO\n")
-# interpretation of arguments given in command line as an R list of objects
+
 args <- parseCommandArgs(evaluate = FALSE)
 write.table(as.matrix(args), col.names = FALSE, quote = FALSE, sep = "\t")
 
@@ -64,9 +67,9 @@ if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object call
 # Handle infiles
 if (!exists("singlefile")) singlefile <- NULL
 if (!exists("zipfile")) zipfile <- NULL
-rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
+# rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
+# zipfile <- rawFilePath$zipfile
+# singlefile <- rawFilePath$singlefile
 
 cat("\n\n")
 
@@ -106,21 +109,14 @@ cat("\n\n")
 
 # ----- EXPORT -----
 
-cat("\tXCMSnExp OBJECT INFO\n")
+cat("\tXcmsExperiment OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
 
-cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-xset <- getxcmsSetObject(xdata)
-print(xset)
-cat("\n\n")
-
-# saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList")
+# saving in .Rdata file
+objects2save <- c("xdata", "md5sumList", "sampleNamesList")
 save(list = objects2save[objects2save %in% ls()], file = "xcmsSet.RData")
 
 cat("\n\n")
-
 
 cat("\tDONE\n")

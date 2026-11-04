@@ -19,30 +19,26 @@ cat("\tXSET MERGING...\n")
 
 mergeXDataReturn <- mergeXData(args)
 xdata <- mergeXDataReturn$xdata
-singlefile <- mergeXDataReturn$singlefile
+# singlefile <- mergeXDataReturn$singlefile
 md5sumList <- mergeXDataReturn$md5sumList
-sampleNamesList <- mergeXDataReturn$sampleNamesList
 chromTIC <- mergeXDataReturn$chromTIC
 chromBPI <- mergeXDataReturn$chromBPI
 
+cat("\tGET SAMPLE METADATA\n")
 # Create a sampleMetada file
 sampleNamesList <- getSampleMetadata(xdata = xdata, sampleMetadataOutput = "sampleMetadata.tsv")
 
 cat("\n\n")
 
-cat("\tXCMSnExp OBJECT INFO\n")
-print(pData(xdata))
+cat("\tMsExperiment OBJECT INFO\n")
+print(MsExperiment::sampleData(xdata))
 print(xdata)
 cat("\n\n")
-
-cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-xset <- getxcmsSetObject(xdata)
-print(xset@phenoData)
-print(xset)
+cat("\tSpectra INFO\n")
+print(spectra(xdata))
 cat("\n\n")
 
 cat("\tSAVE RData\n")
 # saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI")
+objects2save <- c("xdata", "md5sumList", "sampleNamesList") # zipfile, singlefile removed
 save(list = objects2save[objects2save %in% ls()], file = "merged.RData")

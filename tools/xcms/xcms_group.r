@@ -1,4 +1,7 @@
 #!/usr/bin/env Rscript
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # ----- LOG FILE -----
 log_file <- file("log.txt", open = "wt")
@@ -17,7 +20,7 @@ source_local <- function(fname) {
 }
 source_local("lib.r")
 
-pkgs <- c("xcms", "batch", "RColorBrewer")
+pkgs <- c("xcms", "batch", "RColorBrewer", "plotly", "htmlwidgets", "htmltools", "MsExperiment")
 loadAndDisplayPackages(pkgs)
 cat("\n\n")
 
@@ -49,14 +52,14 @@ cat("\tINFILE PROCESSING INFO\n")
 
 # image is an .RData file necessary to use xset variable given by previous tools
 load(args$image)
-if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS 2.*")
+if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'from XCMS version 4")
 
 # Handle infiles
 if (!exists("singlefile")) singlefile <- NULL
 if (!exists("zipfile")) zipfile <- NULL
-rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
-zipfile <- rawFilePath$zipfile
-singlefile <- rawFilePath$singlefile
+# rawFilePath <- retrieveRawfileInTheWorkingDir(singlefile, zipfile, args)
+# zipfile <- rawFilePath$zipfile
+# singlefile <- rawFilePath$singlefile
 
 cat("\n\n")
 
@@ -69,9 +72,9 @@ cat("\t\tCOMPUTE\n")
 
 
 cat("\t\t\tPerform the correspondence\n")
-args$sampleGroups <- xdata$sample_group
+args$sampleGroups <- MsExperiment::sampleData(xdata)$sample_group
 
-# clear the arguement list to remove unexpected key/value as singlefile_galaxyPath or method ...
+# clear the argument list
 args <- args[names(args) %in% slotNames(do.call(paste0(method, "Param"), list(sampleGroups = c(1, 2))))]
 
 groupChromPeaksParam <- do.call(paste0(method, "Param"), args)
@@ -80,31 +83,37 @@ xdata <- groupChromPeaks(xdata, param = groupChromPeaksParam)
 
 
 cat("\t\tDRAW GRAPHICS\n")
-getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
-
-if (exists("intval")) {
-    getPeaklistW4M(xdata, intval, convertRTMinute, numDigitsMZ, numDigitsRT, naTOzero, "variableMetadata.tsv", "dataMatrix.tsv")
+if (method == "PeakDensity") {
+    getPlotChromPeakDensity(xdata, param = groupChromPeaksParam)
+} else {
+    cat("\t\t\tNo density plot available for method", method, "\n")
 }
 
-cat("\n\n")
+if (exists("intval")) {
+    getPeaklistW4M(
+        xdata,
+        intval,
+        convertRTMinute,
+        numDigitsMZ,
+        numDigitsRT,
+        naTOzero,
+        "variableMetadata.tsv",
+        "dataMatrix.tsv"
+    )
+}
+
+# cat("\n\n")
 
 # ----- EXPORT -----
 
-cat("\tXCMSnExp OBJECT INFO\n")
+cat("\tXcmsExperiment OBJECT INFO\n")
 print(xdata)
 cat("\n\n")
 
-cat("\txcmsSet OBJECT INFO\n")
-# Get the legacy xcmsSet object
-xset <- getxcmsSetObject(xdata)
-print(xset)
-cat("\n\n")
-
-# saving R data in .Rdata file to save the variables used in the present tool
-objects2save <- c("xdata", "zipfile", "singlefile", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI", "chromTIC_adjusted", "chromBPI_adjusted")
+# saving in .Rdata file
+objects2save <- c("xdata", "md5sumList", "sampleNamesList") # , "chromTIC", "chromBPI", "chromTIC_adjusted", "chromBPI_adjusted")
 save(list = objects2save[objects2save %in% ls()], file = "group.RData")
 
 cat("\n\n")
-
 
 cat("\tDONE\n")

@@ -1,4 +1,7 @@
 #!/usr/bin/env Rscript
+# Authors:
+#   - ABiMS Team
+#   - LABERCA - PARC project founding
 
 # Import the different functions
 source_local <- function(fname) {
@@ -12,21 +15,22 @@ pkgs <- c("xcms", "batch")
 loadAndDisplayPackages(pkgs)
 cat("\n\n")
 
-args <- parseCommandArgs(evaluate = FALSE) # interpretation of arguments given in command line as an R list of objects
-
+args <- parseCommandArgs(evaluate = FALSE)
 
 sampleMetadata <- NULL
 for (image in args$images) {
     load(image)
     if (exists("raw_data")) xdata <- raw_data
-    if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS 2.*")
+    if (!exists("xdata")) stop("\n\nERROR: The RData doesn't contain any object called 'xdata'. This RData should have been created by an old version of XMCS")
     if (is.null(sampleMetadata)) {
-        sampleMetadata <- xdata@phenoData@data
+        sampleMetadata <- xdata@sampleData
     } else {
-        sampleMetadata <- rbind(sampleMetadata, xdata@phenoData@data)
+        sampleMetadata <- rbind(sampleMetadata, xdata@sampleData)
     }
 }
-colnames(sampleMetadata) <- c("sample_name", "class")
+sampleMetadata <- sampleMetadata[, c("sample_name", "sample_group")]
+print(sampleMetadata)
+colnames(sampleMetadata) <- c("sample_name", "sample_group")
 sampleMetadata$sample_name <- make.names(sampleMetadata$sample_name)
 
 # Create a sampleMetada file

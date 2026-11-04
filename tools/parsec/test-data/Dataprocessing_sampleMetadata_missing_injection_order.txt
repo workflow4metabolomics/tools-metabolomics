@@ -1,0 +1,45 @@
+sampleMetadata	Group	Osmo	batch	sampleType
+Samp1	A	389	B2	sample
+Samp2	A	857	B2	sample
+Samp3	A	978	B1	sample
+Samp4	A	317	B1	sample
+Samp5	A	633	B1	sample
+Samp6	A	292	B2	sample
+Samp7	A	995	B1	sample
+Samp8	A	1035	B2	sample
+Samp9	A	1120	B2	sample
+Samp10	A	1175	B2	sample
+Samp11	A	902	B1	sample
+Samp12	A	291	B1	sample
+Samp13	A	894	B1	sample
+Samp14	A	482	B2	sample
+Samp15	A	1019	B2	sample
+Samp16	B	1120	B2	sample
+Samp17	B	479	B1	sample
+Samp18	B	435	B2	sample
+Samp19	B	903	B1	sample
+Samp20	B	860	B2	sample
+Samp21	B	410	B2	sample
+Samp22	B	938	B1	sample
+Samp23	B	1150	B1	sample
+Samp24	B	622	B1	sample
+Samp25	B	1014	B1	sample
+Samp26	B	767	B2	sample
+Samp27	B	624	B2	sample
+Samp28	B	546	B1	sample
+Samp29	B	899	B1	sample
+Samp30	B	380	B2	sample
+Pool1			B1	pool
+Pool2			B1	pool
+Pool3			B1	pool
+Pool4			B1	pool
+Pool5			B2	pool
+Pool6			B2	pool
+Pool7			B2	pool
+Pool8			B2	pool
+Blank1			B1	blank
+Blank2			B1	blank
+Blank3			B1	blank
+Blank4			B2	blank
+Blank5			B2	blank
+Blank6			B2	blank

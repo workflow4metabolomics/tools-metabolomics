@@ -5,4 +5,5 @@ homepage_url: https://github.com/rietho/IPO
 long_description: 'Part of the W4M project: http://workflow4metabolomics.org'
 name: ipo
 owner: lecorguille
-remote_repository_url: https://github.com/rietho/IPO
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/ipo
+type: unrestricted

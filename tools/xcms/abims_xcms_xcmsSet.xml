@@ -1,19 +1,16 @@
 <tool id="abims_xcms_xcmsSet" name="xcms findChromPeaks (xcmsSet)" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>Chromatographic peak detection</description>
-
     <macros>
         <import>macros.xml</import>
         <import>macros_xcms.xml</import>
     </macros>
-
+    <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <required_files>
-        <include path="xcms_xcmsSet.r" />
-        <include path="lib.r" />
+        <include path="xcms_xcmsSet.r"/>
+        <include path="lib.r"/>
     </required_files>
-    <expand macro="stdio"/>
-
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         @COMMAND_RSCRIPT@xcms_xcmsSet.r
 
         image '$image'
@@ -79,11 +76,8 @@
 
         @COMMAND_LOG_EXIT@
     ]]></command>
-
     <inputs>
-
-        <param name="image" type="data" format="rdata.msnbase.raw,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from MSnbase readMSData" />
-
+        <param name="image" type="data" format="rdata.msnbase.raw,rdata" label="@INPUT_IMAGE_LABEL@" help="@INPUT_IMAGE_HELP@ from MSnbase readMSData"/>
         <section name="filterSection" title="Spectra Filters" expanded="False">
             <param argument="filterAcquisitionNum" type="text" value="" optional="true" label="Filter on Acquisition Numbers" help="min,max">
                 <expand macro="input_validator_range_integer"/>
@@ -95,7 +89,6 @@
                 <expand macro="input_validator_range_integer"/>
             </param>
         </section>
-
         <conditional name="methods">
             <param name="method" type="select" label="Extraction method for peaks detection" help="See the help section below">
                 <option value="MatchedFilter" selected="true">MatchedFilter - peak detection in chromatographic space</option>
@@ -103,23 +96,21 @@
                 <option value="CentWavePredIso">CentWaveWithPredIsoROIs - performs a two-step centWave-based chromatographic peak detection</option>
                 <option value="MSW">MSW - single-spectrum non-chromatography MS data peak detection</option>
             </param>
-
             <!-- CentWave -->
             <when value="CentWave">
                 <expand macro="input_centwave"/>
                 <section name="CentWaveAdv" title="Advanced Options" expanded="False">
                     <expand macro="input_centwaveAdv"/>
-                    <param argument="peaklist" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Get a list of found chromatographic peaks" help="Generates a tabular file with all the chromatographic peaks obtained." />
+                    <param argument="peaklist" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Get a list of found chromatographic peaks" help="Generates a tabular file with all the chromatographic peaks obtained."/>
                     <section name="CentWaveAdvROI" title="List of regions-of-interest (ROI)" expanded="False">
-                        <expand macro="input_centwaveAdvROI"  optional="true"/>
+                        <expand macro="input_centwaveAdvROI" optional="true"/>
                     </section>
                 </section>
             </when>
-
             <!-- MatchedFilter -->
             <when value="MatchedFilter">
-                <param argument="fwhm" type="integer" value="30" label="Full width at half maximum of matched filtration gaussian model peak" help="Only used to calculate the actual sigma" />
-                <param argument="binSize" type="float" value="0.1" label="Step size to use for profile generation" help="The peak detection algorithm creates extracted ion base peak chromatograms (EIBPC) on a fixed step size. (Previously step)" />
+                <param argument="fwhm" type="integer" value="30" label="Full width at half maximum of matched filtration gaussian model peak" help="Only used to calculate the actual sigma"/>
+                <param argument="binSize" type="float" value="0.1" label="Step size to use for profile generation" help="The peak detection algorithm creates extracted ion base peak chromatograms (EIBPC) on a fixed step size. (Previously step)"/>
                 <section name="MatchedFilterAdv" title="Advanced Options" expanded="False">
                     <conditional name="impute_cond">
                         <param argument="impute" type="select" label="Method to be used for missing value imputation" help="(previously profmethod)">
@@ -128,24 +119,23 @@
                             <option value="linbase">linbase - linear interpolation within a certain bin-neighborhood</option>
                             <option value="intlin">intlin - integral of the linearly interpolated data from plus to minus half the step size</option>
                         </param>
-                        <when value="none" />
-                        <when value="lin" />
+                        <when value="none"/>
+                        <when value="lin"/>
                         <when value="linbase">
-                            <param argument="baseValue" type="float" value="" optional="true" label="The base value to which empty elements should be set" help="The default for the ‘baseValue’ is half of the smallest value in ‘x’ (‘NA’s being removed)." />
-                            <param argument="distance" type="integer" value="0" label="Number of non-empty neighboring element of an empty element that should be considered for linear interpolation." />
+                            <param argument="baseValue" type="float" value="" optional="true" label="The base value to which empty elements should be set" help="The default for the ‘baseValue’ is half of the smallest value in ‘x’ (‘NA’s being removed)."/>
+                            <param argument="distance" type="integer" value="0" label="Number of non-empty neighboring element of an empty element that should be considered for linear interpolation."/>
                         </when>
-                        <when value="intlin" />
+                        <when value="intlin"/>
                     </conditional>
-                    <param argument="sigma" type="float" value="" optional="true" label="Standard deviation (width) of matched filtration model peak" help="Leave it to empty to calculate it using fwhm by default at fwhm/2.3548" />
-                    <param argument="max" type="integer" value="5" label="Maximum number of peaks that are expected/will be identified per slice" />
-                    <param argument="snthresh" type="integer" value="10" label="Signal to Noise ratio cutoff" help="defining the signal to noise cutoff to be used in the chromatographic peak detection step" />
-                    <param argument="steps" type="integer" value="2" label="Number of bins to be merged before filtration" help="(i.e. the number of neighboring bins that will be joined to the slice in which filtration and peak detection will be performed)" />
-                    <param argument="mzdiff" type="float" value="0.6" label="Minimum difference in m/z for peaks with overlapping Retention Times" help="By default: 0.8-binSize*steps " />
-                    <param argument="peaklist" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Get a list of found chromatographic peaks" help="Generates a tabular file with all the chromatographic peaks obtained." />
+                    <param argument="sigma" type="float" value="" optional="true" label="Standard deviation (width) of matched filtration model peak" help="Leave it to empty to calculate it using fwhm by default at fwhm/2.3548"/>
+                    <param argument="max" type="integer" value="5" label="Maximum number of peaks that are expected/will be identified per slice"/>
+                    <param argument="snthresh" type="integer" value="10" label="Signal to Noise ratio cutoff" help="defining the signal to noise cutoff to be used in the chromatographic peak detection step"/>
+                    <param argument="steps" type="integer" value="2" label="Number of bins to be merged before filtration" help="(i.e. the number of neighboring bins that will be joined to the slice in which filtration and peak detection will be performed)"/>
+                    <param argument="mzdiff" type="float" value="0.6" label="Minimum difference in m/z for peaks with overlapping Retention Times" help="By default: 0.8-binSize*steps "/>
+                    <param argument="peaklist" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="Get a list of found chromatographic peaks" help="Generates a tabular file with all the chromatographic peaks obtained."/>
                     <!-- index -->
                 </section>
             </when>
-
             <!-- CentWaveWithPredIsoROIs -->
             <when value="CentWavePredIso">
                 <expand macro="input_centwave"/>
@@ -153,11 +143,11 @@
                     <expand macro="input_centwaveAdv"/>
                 </section>
                 <section name="CentWaveAdvROI" title="List of regions-of-interest (ROI)" expanded="True">
-                    <expand macro="input_centwaveAdvROI" optional="true" />
-                    <param argument="snthreshIsoROIs" type="float" value="6.25" label="Signal to noise ratio cutoff" help="used in the second centWave run to identify peaks for predicted isotope ROIs." />
-                    <param argument="maxCharge" type="integer" value="3" label="Maximal isotope charge" help="Isotopes will be defined for charges ‘1:maxCharge’." />
-                    <param argument="maxIso" type="integer" value="5" label="Number of isotope peaks that should be predicted for each peak identified in the first centWave run" />
-                    <param argument="mzIntervalExtension" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Is the mz range for the predicted isotope ROIs should be extended to increase detection of low intensity peaks" />
+                    <expand macro="input_centwaveAdvROI" optional="true"/>
+                    <param argument="snthreshIsoROIs" type="float" value="6.25" label="Signal to noise ratio cutoff" help="used in the second centWave run to identify peaks for predicted isotope ROIs."/>
+                    <param argument="maxCharge" type="integer" value="3" label="Maximal isotope charge" help="Isotopes will be defined for charges ‘1:maxCharge’."/>
+                    <param argument="maxIso" type="integer" value="5" label="Number of isotope peaks that should be predicted for each peak identified in the first centWave run"/>
+                    <param argument="mzIntervalExtension" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Is the mz range for the predicted isotope ROIs should be extended to increase detection of low intensity peaks"/>
                     <param argument="polarity" type="select" label="Polarity of the data">
                         <option value="unknown">unknown</option>
                         <option value="positive">positive</option>
@@ -165,18 +155,17 @@
                     </param>
                 </section>
             </when>
-
             <!-- MSW -->
             <when value="MSW">
                 <!---@TODO <param argument="winSize_noise" type="integer" value="500" label="The local window size to estimate the noise level" help="[winSize.noise]" />-->
-                <param argument="snthresh" type="integer" value="3" label="Signal to Noise ratio cutoff" help="" />
-                <param argument="verboseColumns" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="verbose Columns" help="whether additional peak meta data columns should be returned" />
-                <param argument="scales" type="text" value="1,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,36,40,44,48,52,56,60,64" label="Scales of the Continuous Wavelet Transform (CWT)" help="Scales are linked to the width of the peaks that are to be detected." >
+                <param argument="snthresh" type="integer" value="3" label="Signal to Noise ratio cutoff" help=""/>
+                <param argument="verboseColumns" type="boolean" checked="false" truevalue="TRUE" falsevalue="FALSE" label="verbose Columns" help="whether additional peak meta data columns should be returned"/>
+                <param argument="scales" type="text" value="1,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,36,40,44,48,52,56,60,64" label="Scales of the Continuous Wavelet Transform (CWT)" help="Scales are linked to the width of the peaks that are to be detected.">
                     <expand macro="input_validator_list_integer"/>
                 </param>
-                <param argument="nearbyPeak" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Determine whether to include the nearby small peaks of major peaks" />
+                <param argument="nearbyPeak" type="boolean" checked="true" truevalue="TRUE" falsevalue="FALSE" label="Determine whether to include the nearby small peaks of major peaks"/>
                 <!-- peakScaleRange -->
-                <param argument="ampTh" type="float" value="0.01" label="Minimum required relative amplitude of the peak" help="Ratio to the maximum of CWT coefficients" />
+                <param argument="ampTh" type="float" value="0.01" label="Minimum required relative amplitude of the peak" help="Ratio to the maximum of CWT coefficients"/>
                 <!-- minNoiseLevel -->
                 <!-- ridgeLength -->
                 <!-- peakThr -->
@@ -184,20 +173,16 @@
                 <!---@TODO <param argument="SNR_method" type="text" value="data.mean" label="SNR (Signal to Noise Ratio) method" help="[SNR.method] Method to estimate noise level. Currently, only 95 percentage quantile is supported." />-->
             </when>
         </conditional>
-
         <expand macro="input_file_load"/>
     </inputs>
-
     <outputs>
-        <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="${image.name.rsplit('.',1)[0]}.xset.RData" from_work_dir="xcmsSet.RData" />
-        <data name="log" format="txt" label="${image.name.rsplit('.',1)[0]}.xset.log.txt" from_work_dir="log.txt" />
-        <data name="peaklist_out" format="tabular" label="${image.name[:-6]}.chromPeak_table.tsv" from_work_dir="chromPeak_table.tsv" >
+        <data name="xsetRData" format="rdata.xcms.findchrompeaks" label="${image.name.rsplit('.',1)[0]}.xset.RData" from_work_dir="xcmsSet.RData"/>
+        <data name="log" format="txt" label="${image.name.rsplit('.',1)[0]}.xset.log.txt" from_work_dir="log.txt"/>
+        <data name="peaklist_out" format="tabular" label="${image.name[:-6]}.chromPeak_table.tsv" from_work_dir="chromPeak_table.tsv">
             <filter>methods['method'] in ['CentWave', 'MatchedFilter'] and (methods['CentWaveAdv']['peaklist'])</filter>
         </data>
     </outputs>
-
     <tests>
-
         <!--<test>
             <param name="image" value="faahKO.raw.Rdata" ftype="rdata" />
             <section name="filterSection">
@@ -209,13 +194,13 @@
                 <param name="method" value="CentWave" />
                 <param name="ppm" value="25" />
                 <param name="peakwidth" value="20,50" />-->
-                <!-- DISABLE: just for testing the arguments
+        <!-- DISABLE: just for testing the arguments
                 <section name="CentWaveAdv">
                     <section name="CentWaveAdvROI">
                         <param name="roiList" value="roiList.txt" ftype="tabular" />
                     </section>
                 </section>-->
-            <!--</conditional>
+        <!--</conditional>
             <expand macro="test_file_load_zip"/>
             <assert_stdout>
                 <has_text text="ppm: 25" />
@@ -229,22 +214,22 @@
             </assert_stdout>
         </test>-->
         <test expect_num_outputs="2">
-            <param name="image" value="ko15-raw.RData" ftype="rdata" />
+            <param name="image" value="ko15-raw.RData" ftype="rdata"/>
             <conditional name="methods">
-                <param name="method" value="CentWave" />
-                <param name="ppm" value="25" />
-                <param name="peakwidth" value="20,50" />
+                <param name="method" value="CentWave"/>
+                <param name="ppm" value="25"/>
+                <param name="peakwidth" value="20,50"/>
             </conditional>
             <expand macro="test_file_load_single_file" filename="ko15"/>
             <assert_stdout>
-                <has_text text="ppm: 25" />
-                <has_text text="peakwidth: 20, 50" />
-                <has_text text="object with 1 samples" />
-                <has_text text="Time range: 2506.1-4471.7 seconds (41.8-74.5 minutes)" />
-                <has_text text="Mass range: 200.2-600 m/z" />
-                <has_text text="Peaks: 2262 (about 2262 per sample)" />
-                <has_text text="Peak Groups: 0" />
-                <has_text text="Sample classes: ." />
+                <has_text text="ppm: 25"/>
+                <has_text text="peakwidth: 20, 50"/>
+                <has_text text="object with 1 samples"/>
+                <has_text text="Time range: 2506.1-4471.7 seconds (41.8-74.5 minutes)"/>
+                <has_text text="Mass range: 200.2-600 m/z"/>
+                <has_text text="Peaks: 2262 (about 2262 per sample)"/>
+                <has_text text="Peak Groups: 0"/>
+                <has_text text="Sample classes: ."/>
             </assert_stdout>
             <!--<output name="xsetRData" file="ko15-xset.RData" />-->
         </test>
@@ -400,7 +385,6 @@
         </test>
         -->
     </tests>
-
     <help><![CDATA[
 
 @HELP_AUTHORS@
@@ -480,10 +464,10 @@ Extraction method for peaks detection
     | Wavelet based, used for direct infusion data. Continuous wavelet transform (CWT) can be used to locate chromatographic peaks on different scales.
     | See the MSW_manual_
 
-.. _MatchedFilter_manual: https://rdrr.io/bioc/xcms/man/findChromPeaks-matchedFilter.html#heading-2
-.. _CentWave_manual: https://rdrr.io/bioc/xcms/man/findChromPeaks-centWave.html#heading-2
-.. _CentWaveWithPredIsoROIs_manual: https://rdrr.io/bioc/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html#heading-2
-.. _MSW_manual: https://rdrr.io/bioc/xcms/man/findPeaks-MSW.html#heading-2
+.. _MatchedFilter_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.findChromPeaks.Rdash.matchedFilter.1
+.. _CentWave_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.findChromPeaks.Rdash.centWave.1
+.. _CentWaveWithPredIsoROIs_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.findChromPeaks.Rdash.centWaveWithPredIsoROIs.1
+.. _MSW_manual: https://bioconductor.org/packages//release/bioc/manuals/xcms/man/xcms.pdf#Rfn.findPeaks.Rdash.MSW.1
 
 @HELP_XCMS_MANUAL@
 
@@ -601,6 +585,5 @@ Changelog/News
 - IMPROVEMENT: parameter labels have changed to facilitate their reading.
 
     ]]></help>
-
-    <expand macro="citation" />
+    <expand macro="citation"/>
 </tool>

@@ -8,7 +8,7 @@ definitions:
 
 name: xcms
 owner: workflow4metabolomics
-remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/xcms
 homepage_url: https://github.com/sneumann/xcms
 categories:
 - Metabolomics

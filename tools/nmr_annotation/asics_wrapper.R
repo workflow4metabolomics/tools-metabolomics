@@ -21,7 +21,6 @@ library(batch)
 library(ASICS)
 
 
-
 # R script call
 source_local <- function(fname) {
     argv <- commandArgs(trailingOnly = FALSE)

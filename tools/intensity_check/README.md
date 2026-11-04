@@ -5,7 +5,7 @@ Metadata
 -----------
 
  * **@name**: Intensity check
- * **@version**: 2.0.0
+ * **@version**: 2.0.2
  * **@authors**: Original code: Anthony Fernandes (PFEM - INRA) - Maintainer: Melanie Petera (PFEM - INRAE - MetaboHUB)
  * **@contributors**: Wrapper update/refactoring: Helge Hecht
  * **@init date**: 2018, September
@@ -26,8 +26,8 @@ Configuration
 -----------
 
 ### Requirement:
- * R software: version > 3.0.0 recommended
- * Specific R libraries: 'argparse' (for the Galaxy wrapper only)
+ * R software: version > 4.0.0 recommended
+ * Specific R libraries: 'W4MRutils' (for core function and checks)
 
 
 Technical description

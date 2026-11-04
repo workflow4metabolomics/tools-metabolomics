@@ -2,7 +2,7 @@
 <macros>
 
     <token name="@TOOL_VERSION@">3.12.0</token>
-    <token name="@VERSION_SUFFIX@">3</token>
+    <token name="@VERSION_SUFFIX@">4</token>
     <token name="@PROFILE@">21.09</token>
     <xml name="requirements">
         <requirements>
@@ -273,5 +273,18 @@ For details and explanations concerning all the parameters and workflow of xcms_
             <citation type="doi">10.1021/ac051437y</citation>
             <expand macro="citation_w4m"/>
         </citations>
+    </xml>
+    <xml name="edam_topics">
+        <edam_topics>
+            <edam_topic>topic_2259</edam_topic> <!-- Systems biology -->
+            <edam_topic>topic_3172</edam_topic> <!-- Metabolomics -->
+            <edam_topic>topic_3307</edam_topic> <!-- Computational biology -->
+        </edam_topics>
+    </xml>
+    <xml name="xrefs">
+      <xrefs>
+          <xref type="bio.tools">xcms</xref>
+          <xref type="bio.tools">workflow4metabolomics</xref>
+      </xrefs>
     </xml>
 </macros>

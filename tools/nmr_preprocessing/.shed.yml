@@ -1,7 +1,14 @@
-categories: [Metabolomics]
+definitions:
+  include: &default-includes
+    - test-data
+    - static
+    - macros.xml
+
 description: '[Metabolomics][W4M][NMR] NMR Preprocessing - Preprocessing of 1D NMR spectra from FID to baseline correction'
 homepage_url: http://workflow4metabolomics.org
 long_description: 'Part of the W4M project: http://workflow4metabolomics.org'
 name: nmr_preprocessing
 owner: marie-tremblay-metatoul
-remote_repository_url: https://github.com/workflow4metabolomics/nmr_preprocessing
+remote_repository_url: https://github.com/workflow4metabolomics/tools-metabolomics/tree/master/tools/nmr_preprocessing
+categories:
+- Metabolomics

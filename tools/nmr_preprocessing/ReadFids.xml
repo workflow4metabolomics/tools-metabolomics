@@ -1,0 +1,197 @@
+<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@+galaxy2">
+    <description> Read Bruker NMR raw files</description>
+
+    <macros>
+       <import>macros.xml</import>
+    </macros>
+    
+    <expand macro="requirements"/>
+
+    <required_files>
+        <include path="DrawFunctions.R" />
+        <include path="ReadFids_wrapper.R" />
+        <include path="ReadFids_script.R" />
+    </required_files>
+
+    <command detect_errors="aggressive"><![CDATA[
+        Rscript
+            -e "source('${__tool_directory__}/DrawFunctions.R')"
+            -e "source('${__tool_directory__}/ReadFids_script.R')"
+            -e "source('${__tool_directory__}/ReadFids_wrapper.R')"
+                --fidzipfile '$fidzipfile'
+                --title_line $title_line
+                $subdirectories
+                $dirs_names
+    ]]></command>
+
+    <inputs>
+        <param name="fidzipfile" type="data" format="zip" label="Bruker FID file" />
+        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" help="Default value is line 1"/>
+        <param name="subdirectories" label="Presence of subdirectories?" type="boolean" truevalue="--subdirectories" falsevalue="" checked="false" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories"/>
+        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="boolean" truevalue="--dirs_names" falsevalue="" checked="false" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)"/>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="datamatrix" from_work_dir="datamatrix.tsv" label="${tool.name}_datamatrix" />
+        <data format="tabular" name="samplemetadata" from_work_dir="samplemetadata.tsv" label="${tool.name}_samplemetadata" />
+        <data format="txt" name="logOut" from_work_dir="logOut.txt" label="${tool.name}_log" />
+        <data format="pdf" name="graphOut" from_work_dir="graphOut.pdf" label="${tool.name}_graph" />
+    </outputs>
+
+
+    <tests>
+        <test>
+          <param name="fidzipfile" location="https://nextcloud.inrae.fr/s/ksGZq9GZfL9R6PD/download/MTBLS1.zip" ftype="zip" />
+          <param name="title_line" value="1" />
+          <param name="subdirectories" value="TRUE" />
+          <param name="dirs_names" value="TRUE" />
+
+          <output name="datamatrix" location="https://nextcloud.inrae.fr/s/aMs9eM4RwRjeign/download/NMR_ReadFids_dataMatrix.tabular" />
+          <output name="samplemetadata" value="NMR_ReadFids_sampleMetadata.tabular" />
+          <output name="logOut" value="NMR_ReadFids_log.txt" compare="diff" lines_diff="100" />
+          <output name="graphOut" value="NMR_ReadFids_graph.pdf" compare="diff" lines_diff="100" />
+        </test>
+    </tests>
+
+    <help>
+
+@HELP_AUTHORS@
+
+
+=============
+NMR Read
+=============
+
+-----------
+Description
+-----------
+
+Nuclear Magnetic Resonance Bruker files reading (from the PEPS-NMR R package (https://github.com/ManonMartin/PEPSNMR))
+
+-----------------
+Workflow position
+-----------------
+
+**Upstream tools**
+
+========================= ================= =======
+Name                      output file       format
+========================= ================= =======
+NA                        NA                NA
+========================= ================= =======
+
+
+**Downstream tools**
+
++-----------------------+--------------------------+--------+
+| Name                  | Output file              | Format |
++=======================+==========================+========+
+|NMR_Preprocessing      | dataMatrix               | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |  sampleMetadata          | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |     NMR_Read_log         | TXT    |
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |     NMR_Read_graph       | PDF    |
++-----------------------+--------------------------+--------+
+|NMR_Alignement         |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Bucketing          |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|Normalization          |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|Univariate             |     variableMetadata     | Tabular|
++-----------------------+--------------------------+--------+
+|Multivariate           |     sampleMetadata       | Tabular|
++-----------------------+--------------------------+--------+
+|                       |     variableMetadata     | Tabular|
++-----------------------+--------------------------+--------+
+
+
+-----------
+Input files
+-----------
+
++---------------------------+-----------------+
+| Parameter : num + label   |   Format        |
++===========================+=================+
+| 1 : Choose your inputs    |     zip         |
++---------------------------+-----------------+
+
+
+**Choose your inputs**
+
+    | Zip file (recommended) of FID Bruker files: you can put a zip file containing your FID Bruker files: myinputs.zip.
+
+
+----------
+Parameters
+----------
+
+FID Title line
+    | Line in the acqus file to find the FID title (name)
+    |
+
+subdirectories
+    | Organization of individual's files
+    | TRUE: will search inside subdirectories for FIDs and will merge them to have unique FID and info matrices.
+    |
+
+dirs_names
+    | Use the (sub)directories names as FID names?
+    |
+
+
+------------
+Output files
+------------
+
+NMR_Read_dataMatrix
+    | tabular output
+    | Data matrix with n rows (samples) and p columns (time) containing the raw FIDs.
+    |
+
+NMR_Read_sampleMetadata
+    | tabular output
+    | Data matrix with n rows (samples) containing the acquisition parameters for each sample.
+    |
+
+NMR_Read_log
+    | Text output
+    | Contains warnings
+    |
+
+
+NMR_Read_graph
+    | pdf output
+    | line plots of FID
+    |
+
+
+Creating the zip file
+-----------------------
+
+.. class:: warningmark you must use the 7Zip software (http://www.7-zip.org/) to zip under Windows.
+
+Must contain at least the following files for every sample: fid, acqu and acqus
+
+.. image:: ./static/images/ReadFids.png
+
+
+
+**Possible structure and parameters values:**
+
+
+(1) use title file and presence of sub-directories: set the FID Title line, subdirectories = TRUE,  dirs_names = FALSE
+(2) use title file and no sub-directories: set the FID Title line, subdirectories = FALSE,  dirs_names = FALSE
+(3) don't use title file and presence of sub-directories: subdirectories = TRUE,  dirs_names = TRUE
+(4) don't use title file and no sub-directories: subdirectories = FALSE,  dirs_names = TRUE
+
+
+@HELP_CHANGELOG@
+
+    </help>
+
+    <expand macro="citation" />
+
+</tool>

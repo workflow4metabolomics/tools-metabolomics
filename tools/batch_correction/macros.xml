@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<macros>
+
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="1.7_20">r-ade4</requirement>
+            <requirement type="package" version="1.90.0">bioconductor-pcamethods</requirement>
+            <requirement type="package" version="1.0.0">r-w4mrutils</requirement>
+            <yield />
+        </requirements>
+    </xml>
+
+    <xml name="sm_customisation">
+      <section name="smcust" title="Sample metadata file coding parameters" expanded="False">
+        <param name="batch_col_name" label="Batch column name" type="text" size="64" value="batch" help="The name of the column containing the batch values."/>
+        <param name="injection_order_col_name" label="Injection order column name" type="text" size="64" value="injectionOrder" help="The name of the column containing the injection order values."/>
+        <param name="sample_type_col_name" label="Sample type column name" type="text" size="64" value="sampleType" help="The name of the column containing the sample type values."/>
+        <param name="sampleTypeTagPool" type="text" size="64"  value="pool" label="Set the name used to tag samples as pool in the sample type column."/>
+        <param name="sampleTypeTagBlank" type="text" size="64"  value="blank" label="Set the name used to tag samples as blank in the sample type column."/>
+        <param name="sampleTypeTagSample" type="text" size="64"  value="sample" label="Set the name used to tag samples as real sample in the sample type column."/>
+      </section>
+    </xml>
+
+    <token name="@SM_CUSTOM@">
+        batch_col_name "$smcust.batch_col_name"
+        injection_order_col_name "$smcust.injection_order_col_name"
+        sample_type_col_name "$smcust.sample_type_col_name"
+        sample_type_tags "blank=$smcust.sampleTypeTagBlank,pool=$smcust.sampleTypeTagPool,sample=$smcust.sampleTypeTagSample"
+    </token>
+
+    <xml name="foi">
+        <param name="ref_factor" label="Factor of interest " type="text"  value="batch" help="Column name of a factor of interest in the sampleMatadata table (if none, fill with the batch column name). Used for graphical display only; this factor does not affect correction calculation." />
+    </xml>
+
+    <xml name="lll_span">
+        <param name="span" type="float" value="1" label="span" help="It is an advanced option; strictly > 0 and maximum to 1."/>
+    </xml>
+
+    <xml name="lll_options">
+        <param name="valnull" label="Unconsistant values" type="select" display="radio" help="What to do of generated negative or infinite values">
+            <option value="none">Prevent it: normalisation term reset to adequate minimum one</option>
+            <option value="0">Consider it as a null intensity ('0')</option>
+            <option value="NA">Consider it as a missing value ('NA')</option>
+        </param>
+        <expand macro="foi"/>
+        <param name="detail" label="Level of details for plots " type="select" help="Amount of plots in the pdf file output. See Help section for more details.">
+            <option value="no">basic</option>
+            <option value="plot">standard</option>
+            <option value="reg">complete</option>
+        </param>
+    </xml>
+
+</macros>

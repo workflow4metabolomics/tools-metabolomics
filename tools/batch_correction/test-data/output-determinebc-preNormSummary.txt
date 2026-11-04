@@ -1,0 +1,11 @@
+labion	batch.1.linear	batch.1.loess	batch.1.lowess	batch.2.linear	batch.2.loess	batch.2.lowess
+M53T345	0	0	0	0	0	0
+M58T69	0	0	0	0	0	0
+M59T246	0	0	0	5	0	0
+M59T62	0	0	0	3	3	3
+M59T270	0	0	0	0	0	0
+M62T56	0	0	0	0	0	0
+M64T348	0	0	0	0	0	0
+M64T379	0	0	0	0	0	0
+M65T347	5	0	0	5	0	0
+M65T379	0	0	0	0	0	0

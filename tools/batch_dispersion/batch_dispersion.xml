@@ -4,7 +4,7 @@
         Indicators computation and convex hull plots to assess intra and inter batch dispersion.
     </description>
     <macros>
-        <token name="@TOOL_VERSION@">0.1.6</token>
+        <token name="@TOOL_VERSION@">0.2.0</token>
         <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
@@ -17,8 +17,8 @@
     </creator>
     <requirements>
         <requirement type="package" version="4.5.2">r-base</requirement>
-	    <requirement type="package" version="3.5.2">r-ggplot2</requirement>
-	    <requirement type="package" version="1.7.5">r-optparse</requirement>
+	    <requirement type="package" version="4.0.3">r-ggplot2</requirement>
+	    <requirement type="package" version="1.8.2">r-optparse</requirement>
         <requirement type="package" version="@TOOL_VERSION@">r-dispersionindicators</requirement>
     </requirements>
     
